@@ -75,14 +75,14 @@
   border:1px solid transparent;
 }
 .moneyHighlight.product{
-  background:#ecfdf5;
-  color:#047857;
-  border-color:#bbf7d0;
-}
-.moneyHighlight.cash{
   background:#eff6ff;
   color:#1d4ed8;
   border-color:#bfdbfe;
+}
+.moneyHighlight.cash{
+  background:#ecfdf5;
+  color:#047857;
+  border-color:#bbf7d0;
 }
 .rankCommissionLabel{
   display:block;
@@ -120,6 +120,36 @@
   color:#6b7280;
 }
 
+
+.checkboxWrap{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-weight:800;
+  color:#374151;
+}
+.checkboxWrap.disabled{
+  opacity:.42;
+  cursor:not-allowed;
+}
+.paidBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:#ecfdf5;
+  color:#047857;
+  border:1px solid #bbf7d0;
+  font-weight:900;
+  font-size:12px;
+}
+.paidBadge:before{
+  content:"✓";
+  font-weight:900;
+}
+
 </style>
 </head>
 <body>
@@ -130,6 +160,7 @@
       <button class="active" data-page="dashboard">Visão geral</button>
       <button data-page="launches">Lançamentos</button>
       <button data-page="influencers">Influencers</button>
+      <button data-page="paid">Pagos</button>
       <button data-page="products">Produto escolhido</button>
       <button data-page="accumulations">Acumular</button>
       <button data-page="pix">Chaves PIX</button>
@@ -138,7 +169,7 @@
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V45 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V47 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -149,104 +180,9 @@
       <div class="panel"><div class="panelHead"><h3>Novo lançamento</h3><span class="muted">Marque Acumular para jogar o saldo na carteira do influencer.</span></div>
         <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="resetLaunchForm()">Cancelar</button></div></form>
       </div>
-      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
       <div class="panel"><div class="panelHead"><h3>Resumo por influencer no mês</h3><span class="muted">Comissão em produtos e comissão em dinheiro ficam separadas.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
-    </section>
-
-    <section id="influencers" class="view">
-      <div class="panel"><div class="panelHead"><h3>Cadastro de influencer</h3></div><form id="infForm" class="form"><input type="hidden" id="infId"><label>Nome<input id="infName" required></label><label>Cupom<input id="infCoupon" required></label><label>% comissão produto<input type="number" id="infProductRate" step="0.01"></label><label>% comissão dinheiro<input type="number" id="infCashRate" step="0.01"></label><label>Instagram<input id="infInstagram"></label><label>WhatsApp<input id="infWhatsapp"></label><div class="actions two"><button class="primary" type="submit">Salvar influencer</button><button class="secondary" type="button" onclick="resetInfForm()">Cancelar</button></div></form></div>
-      <div class="panel"><div class="panelHead"><h3>Influencers cadastrados</h3></div><div class="tableWrap"><table><thead><tr><th>Nome</th><th>Cupom</th><th>% Produto</th><th>% Dinheiro</th><th>Instagram</th><th>WhatsApp</th><th>Ações</th></tr></thead><tbody id="infRows"></tbody></table></div></div>
-    </section>
-
-    <section id="products" class="view">
-      <div class="panel"><div class="panelHead"><h3>Produto escolhido</h3><span class="muted">A diferença a pagar calcula automaticamente.</span></div><form id="productForm" class="form"><input type="hidden" id="productId"><label>Data<input type="date" id="productDate"></label><label>Influencer<select id="productInfluencer"></select></label><label>Produto escolhido<input id="productName" placeholder="Ex.: Calça Cargo"></label><label>Valor do produto<input type="number" id="productValue" step="0.01" min="0"></label><label>Saldo produto disponível<input id="productAvailable" readonly></label><label>Saldo usado<input type="number" id="productUsed" step="0.01" min="0"></label><label>Diferença a pagar<input id="productDifference" readonly></label><label>Status<select id="productStatus"><option>Pendente</option><option>Pago</option><option>Resgatado</option><option>Cancelado</option></select></label><label class="two">Observação<input id="productNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar produto</button><button class="secondary" type="button" onclick="resetProductForm()">Cancelar</button></div></form></div>
-      <div class="panel"><div class="panelHead"><h3>Produtos registrados</h3></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Influencer</th><th>Cupom</th><th>Produto</th><th>Valor</th><th>Saldo usado</th><th>Diferença</th><th>Status</th><th>Ações</th></tr></thead><tbody id="productRows"></tbody></table></div></div>
-    </section>
-
-    
-    <section id="accumulations" class="view">
-      <div class="grid">
-        <div class="card"><small>Total em produtos</small><strong id="accProductTotal">R$ 0,00</strong></div>
-        <div class="card"><small>Total em dinheiro</small><strong id="accCashTotal">R$ 0,00</strong></div>
-        <div class="card"><small>Influencers acumulando</small><strong id="accInfluencerCount">0</strong></div>
-        <div class="card"><small>Controle separado</small><strong>Produto / Dinheiro</strong></div>
-      </div>
-
-      <div class="panel">
-        <div class="panelHead">
-          <h3>Saldo acumulado por influencer</h3>
-          <div class="filters">
-            <select id="accReportInfluencer" onchange="renderAccumulationReport()"></select>
-            <button class="primary" onclick="printAccumulationReport()">Exportar PDF do acúmulo</button>
-            <button class="secondary" onclick="exportAccumulationsCSV()">Exportar acúmulos</button>
-          </div>
-        </div>
-        <div class="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Influencer</th>
-                <th>Cupom</th>
-                <th>Produto acumulado</th>
-                <th>Dinheiro acumulado</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="accRows"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="panel printPanel accPrintPanel printOnly">
-        <div class="printArea" id="accPrintArea">
-          <img id="accReportWatermark" class="reportWatermark" style="display:none">
-
-          <div class="pdfCleanHeader">
-            <div>
-              <h1>Resumo de acúmulo</h1>
-              <p>Saldo de comissão acumulada disponível para o influencer.</p>
-            </div>
-            <img id="accReportLogo" class="printLogo" style="display:none">
-          </div>
-
-          <div class="pdfIdentity">
-            <h2 id="accReportName">Selecione um influencer</h2>
-            <p id="accReportCoupon" class="muted">Cupom: -</p>
-          </div>
-
-          <div class="pdfTwoCards">
-            <div class="pdfBox">
-              <small>Saldo em produtos</small>
-              <strong id="accReportProduct">R$ 0,00</strong>
-            </div>
-            <div class="pdfBox">
-              <small>Saldo em dinheiro</small>
-              <strong id="accReportCash">R$ 0,00</strong>
-            </div>
-          </div>
-
-          <p class="pdfFooterClean">Relatório gerado automaticamente pelo painel.</p>
-        </div>
-      </div>
-    </section>
-
-    <section id="pix" class="view"><div class="panel"><div class="panelHead"><h3>Chaves PIX</h3><span class="muted">Área separada só para dados de pagamento.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Chave PIX</th><th>Ação</th></tr></thead><tbody id="pixRows"></tbody></table></div></div></section>
-
-    
-    <section id="reports" class="view">
-      <div class="panel noPrint">
-        <div class="panelHead">
-          <h3>Exportar PDF do influencer</h3>
-          <div class="filters">
-            <select id="reportInfluencer" onchange="renderReport()"></select>
-            <button class="primary" onclick="printReport()">Exportar PDF</button>
-            <button class="secondary" onclick="exportReportCSV()">Exportar CSV</button>
-            <button class="secondary" onclick="markReportSent()">Marcar como enviado</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel printPanel">
+<div class="panel printPanel">
         <div class="printArea" id="printArea">
           <img id="reportWatermark" class="reportWatermark" style="display:none">
 
@@ -361,7 +297,7 @@
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v45_filtered_corrigido";
+const KEY = "painel_influencers_limpo_v47_pagos_acumulo";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -477,7 +413,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V45 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V47 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -592,7 +528,39 @@ async function startApp(){
 }
 
 
-function normalize(){state.settings={...INITIAL_STATE.settings,...(state.settings||{})};state.settings.systemLogo=state.settings.systemLogo||state.settings.logo||"";state.settings.pdfLogo=state.settings.pdfLogo||state.settings.logo||"";state.influencers=state.influencers||[];state.launches=state.launches||[];state.redemptions=state.redemptions||[];state.launches.forEach(l=>{l.accumulate=!!l.accumulate;l.pdfSent=!!l.pdfSent;l.month=l.month||(l.date||today()).slice(0,7);});}
+function normalize(){
+  state.settings={...INITIAL_STATE.settings,...(state.settings||{})};
+  state.settings.systemLogo=state.settings.systemLogo||state.settings.logo||"";
+  state.settings.pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
+  state.influencers=state.influencers||[];
+  state.launches=state.launches||[];
+  state.redemptions=state.redemptions||[];
+  state.cashPayments=state.cashPayments||[];
+
+  state.launches.forEach(l=>{
+    l.accumulate=!!l.accumulate;
+    l.pdfSent=!!l.pdfSent;
+    l.paid=!!l.paid;
+    l.month=l.month||(l.date||today()).slice(0,7);
+    if(l.paid){
+      l.paidAt=l.paidAt||today();
+      l.paidMonth=l.paidMonth||(l.paidAt||l.date||today()).slice(0,7);
+    }
+    if(l.accumulate){
+      l.paid=false;
+      l.paidAt="";
+      l.paidMonth="";
+    }
+  });
+
+  state.cashPayments.forEach(p=>{
+    p.id=p.id||uid();
+    p.date=p.date||today();
+    p.month=p.month||(p.date||today()).slice(0,7);
+    p.amount=Number(p.amount||p.cash||0);
+    p.cash=Number(p.cash||p.amount||0);
+  });
+}
 function selectedMonth(){return $("globalMonth").value||currentMonth();}
 function monthLabel(m){const [y,mo]=m.split("-");return `${mo}/${y}`;}
 function dateBR(d){if(!d)return"-";const [y,m,day]=d.split("-");return `${day}/${m}/${y}`;}
@@ -627,12 +595,10 @@ function renderDashboard(){
     <td>${esc(r.i.coupon)}</td>
     <td>${money(r.sold)}</td>
     <td>
-      <span class="rankCommissionLabel">Produtos</span>
-      <span class="moneyHighlight product">${money(r.product)}</span>
+<span class="moneyHighlight product">${money(r.product)}</span>
     </td>
     <td>
-      <span class="rankCommissionLabel">Dinheiro</span>
-      <span class="moneyHighlight cash">${money(r.cash)}</span>
+<span class="moneyHighlight cash">${money(r.cash)}</span>
     </td>
   </tr>`).join(""):`<tr><td colspan="6">Sem lançamentos no mês.</td></tr>`;
 }
@@ -640,6 +606,7 @@ function renderLaunches(){
   const rows=filteredLaunches();
   $("launchRows").innerHTML=rows.length?rows.map(l=>{
     const i=infById(l.influencerId)||{};
+    const paidDisabled=!!l.accumulate;
     return `<tr>
       <td>${dateBR(l.date)}</td>
       <td>${esc(l.origin)}</td>
@@ -651,10 +618,17 @@ function renderLaunches(){
       <td><span class="badge ${l.status==="Enviado"?"blue":l.status==="Pago"?"green":l.status==="Cancelado"?"red":"yellow"}">${esc(l.status)}</span></td>
       <td><input class="checkbox" type="checkbox" ${l.pdfSent?"checked":""} onchange="togglePdfSent('${l.id}',this.checked)"></td>
       <td><input class="checkbox" type="checkbox" ${l.accumulate?"checked":""} onchange="toggleAccumulate('${l.id}',this.checked)"></td>
+      <td>
+        <label class="checkboxWrap ${paidDisabled?"disabled":""}" title="${paidDisabled?"Bloqueado porque este lançamento está em Acumular.":""}">
+          <input class="checkbox" type="checkbox" ${l.paid?"checked":""} ${paidDisabled?"disabled":""} onchange="togglePaid('${l.id}',this.checked)">
+          PAGO
+        </label>
+      </td>
       <td><button class="small secondary" onclick="editLaunch('${l.id}')">Editar</button> <button class="small danger" onclick="deleteLaunch('${l.id}')">Excluir</button></td>
     </tr>`;
-  }).join(""):`<tr><td colspan="11">Nenhum lançamento neste mês.</td></tr>`;
+  }).join(""):`<tr><td colspan="12">Nenhum lançamento neste mês.</td></tr>`;
   renderLaunchTotals();
+  renderPaidPage();
 }
 function renderLaunchTotals(){
   const rows=state.influencers.map(i=>{
@@ -672,21 +646,144 @@ function renderLaunchTotals(){
     <td>${r.acc?"Sim":"Não"}</td>
   </tr>`).join(""):`<tr><td colspan="7">Sem resumo para mostrar.</td></tr>`;
 }
+
+
+function selectedPaidMonth(){
+  const el=$("paidMonth");
+  if(!el)return selectedMonth();
+  if(!el.value)el.value=selectedMonth();
+  return el.value;
+}
+
+function paidRecordsForMonth(month){
+  const launchRecords=state.launches
+    .filter(l=>l.paid&&!l.accumulate&&((l.paidMonth||l.month||(l.date||"").slice(0,7))===month))
+    .map(l=>({
+      id:l.id,
+      influencerId:l.influencerId,
+      cash:Number(l.cashCommission||0),
+      product:Number(l.productCommission||0),
+      date:l.paidAt||l.date,
+      source:l.origin||"Lançamento",
+      kind:"Lançamento"
+    }));
+
+  const accumulatedRecords=(state.cashPayments||[])
+    .filter(p=>(p.month||(p.date||"").slice(0,7))===month&&p.status!=="Cancelado")
+    .map(p=>({
+      id:p.id,
+      influencerId:p.influencerId,
+      cash:Number(p.cash||p.amount||0),
+      product:0,
+      date:p.date,
+      source:p.source||"Acúmulo",
+      kind:"Acúmulo"
+    }));
+
+  return [...launchRecords,...accumulatedRecords];
+}
+
+function paidGroupsForMonth(month){
+  const map=new Map();
+  paidRecordsForMonth(month).forEach(r=>{
+    const key=r.influencerId;
+    if(!map.has(key)){
+      map.set(key,{influencerId:key,cash:0,product:0,dates:[],sources:new Set(),count:0});
+    }
+    const g=map.get(key);
+    g.cash+=r.cash;
+    g.product+=r.product;
+    g.count++;
+    if(r.date)g.dates.push(r.date);
+    g.sources.add(r.kind);
+  });
+
+  return [...map.values()].map(g=>{
+    const i=infById(g.influencerId)||{};
+    return {...g,i,sourcesText:[...g.sources].join(" + "),dateText:g.dates.length?[...new Set(g.dates.map(dateBR))].join(", "):"-"};
+  }).sort((a,b)=>b.cash-a.cash||b.product-a.product);
+}
+
+function renderPaidPage(){
+  if(!$("paidPageRows"))return;
+  const month=selectedPaidMonth();
+  const rows=paidGroupsForMonth(month);
+
+  $("paidCashTotal").textContent=money(rows.reduce((a,r)=>a+r.cash,0));
+  $("paidProductTotal").textContent=money(rows.reduce((a,r)=>a+r.product,0));
+  $("paidInfluencerCount").textContent=rows.length;
+  $("paidMonthLabel").textContent=monthLabel(month);
+
+  $("paidPageRows").innerHTML=rows.length?rows.map(r=>`<tr>
+    <td>${esc(r.i.name||"-")}</td>
+    <td>${esc(r.i.coupon||"-")}</td>
+    <td><span class="moneyHighlight cash">${money(r.cash)}</span></td>
+    <td><span class="moneyHighlight product">${money(r.product)}</span></td>
+    <td>${esc(r.sourcesText||"-")}</td>
+    <td>${esc(r.dateText||"-")}</td>
+    <td><span class="paidBadge">Pago</span></td>
+  </tr>`).join(""):`<tr><td colspan="7">Nenhum influencer pago neste mês.</td></tr>`;
+}
+
+function exportPaidCSV(){
+  const month=selectedPaidMonth();
+  const rows=paidGroupsForMonth(month);
+  rowsCSV([["Mês","Influencer","Cupom","Comissão em dinheiro paga","Comissão em produtos separada","Origem do pagamento","Data do pagamento"],...rows.map(r=>[monthLabel(month),r.i.name||"-",r.i.coupon||"-",r.cash,r.product,r.sourcesText,r.dateText])],`influencers-pagos-${month}.csv`);
+}
+
+
 function calcLaunch(){}
 function resetLaunchForm(){$("launchForm").reset();$("launchId").value="";$("launchDate").value=today();$("launchAccumulate").checked=false;if(state.influencers[0])$("launchInfluencer").value=state.influencers[0].id;if(state.settings.origins[0])$("launchOrigin").value=state.settings.origins[0];if(state.settings.statuses[0])$("launchStatus").value=state.settings.statuses[0];calcLaunch();}
 function autoCommission(){if($("launchId").value)return;const inf=infById($("launchInfluencer").value);const sold=Number($("launchSold").value||0);if(inf&&sold){$("launchProduct").value=(sold*Number(inf.productRate||0)/100).toFixed(2);$("launchCash").value=(sold*Number(inf.cashRate||0)/100).toFixed(2);}calcLaunch();}
 function editLaunch(id){const l=state.launches.find(x=>x.id===id);if(!l)return;showPage("launches");$("launchId").value=l.id;$("launchDate").value=l.date;$("launchInfluencer").value=l.influencerId;$("launchOrigin").value=l.origin;$("launchSold").value=l.sold;$("launchProduct").value=l.productCommission;$("launchCash").value=l.cashCommission;$("launchStatus").value=l.status;$("launchPdfSent").checked=!!l.pdfSent;$("launchAccumulate").checked=!!l.accumulate;$("launchNotes").value=l.notes||"";calcLaunch();}
 function deleteLaunch(id){if(confirm("Excluir este lançamento?")){state.launches=state.launches.filter(l=>l.id!==id);save();render();}}
 function togglePdfSent(id,val){const l=state.launches.find(x=>x.id===id);if(l){l.pdfSent=!!val;if(val)l.status="Enviado";save();render();}}
-function toggleAccumulate(id,val){const l=state.launches.find(x=>x.id===id);if(l){l.accumulate=!!val;save();render();}}
+function toggleAccumulate(id,val){
+  const l=state.launches.find(x=>x.id===id);
+  if(l){
+    l.accumulate=!!val;
+    if(l.accumulate){
+      l.paid=false;
+      l.paidAt="";
+      l.paidMonth="";
+    }
+    save();
+    render();
+  }
+}
+function togglePaid(id,val){
+  const l=state.launches.find(x=>x.id===id);
+  if(l){
+    l.paid=!!val;
+    if(l.paid){
+      l.accumulate=false;
+      l.paidAt=today();
+      l.paidMonth=selectedMonth();
+    }else{
+      l.paidAt="";
+      l.paidMonth="";
+    }
+    save();
+    render();
+    if(l.paid)showPage("paid");
+  }
+}
 function accumulatedRows(){return state.launches.filter(l=>l.accumulate);}
+function accumulatedCashPaid(infId){
+  return (state.cashPayments||[])
+    .filter(p=>p.influencerId===infId&&p.status!=="Cancelado")
+    .reduce((a,p)=>a+Number(p.cash||p.amount||0),0);
+}
+
 function accumulationByInfluencer(){
   return state.influencers.map(i=>{
     const list=accumulatedRows().filter(l=>l.influencerId===i.id);
-    const product=list.reduce((a,l)=>a+Number(l.productCommission||0),0);
-    const cash=list.reduce((a,l)=>a+Number(l.cashCommission||0),0);
-    return {i,list,product,cash};
-  }).filter(r=>r.list.length).sort((a,b)=>b.product-a.product||b.cash-a.cash);
+    const earnedProduct=list.reduce((a,l)=>a+Number(l.productCommission||0),0);
+    const earnedCash=list.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+    const product=Math.max(0,earnedProduct-productUsed(i.id));
+    const cash=Math.max(0,earnedCash-accumulatedCashPaid(i.id));
+    return {i,list,product,cash,earnedProduct,earnedCash};
+  }).filter(r=>r.product>0||r.cash>0).sort((a,b)=>b.product-a.product||b.cash-a.cash);
 }
 function renderAccumulations(){
   const groups=accumulationByInfluencer();
@@ -702,45 +799,12 @@ function renderAccumulations(){
     <td>${esc(r.i.coupon)}</td>
     <td>${money(r.product)}</td>
     <td>${money(r.cash)}</td>
-    <td><button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Remover</button></td>
-  </tr>`).join(""):`<tr><td colspan="5">Nenhum influencer com acúmulo.</td></tr>`;
+    <td>
+      ${r.cash>0?`<button class="small primary" onclick="payAccumulatedCash('${r.i.id}')">Pagar dinheiro</button> `:""}
+      <button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Zerar acúmulo</button>
+    </td>
+  </tr>`).join(""):`<tr><td colspan="5">Nenhum influencer com saldo acumulado aberto.</td></tr>`;
 }
-
-function applyPdfWatermark(id){
-  const el=$(id);
-  if(!el) return;
-  const s=state.settings||{};
-  if(!s.pdfWatermarkLogo){
-    el.style.display="none";
-    el.removeAttribute("src");
-    return;
-  }
-  el.src=s.pdfWatermarkLogo;
-  el.style.display="block";
-  el.style.left=Number(s.pdfWatermarkX ?? 50)+"%";
-  el.style.top=Number(s.pdfWatermarkY ?? 72)+"%";
-  el.style.width=Number(s.pdfWatermarkSize ?? 45)+"%";
-  el.style.opacity=String(Number(s.pdfWatermarkOpacity ?? 0.12));
-}
-
-function setWatermarkPreset(value){
-  const presets={
-    "top-left":[20,20],"top-center":[50,20],"top-right":[80,20],
-    "middle-left":[20,50],"center":[50,50],"middle-right":[80,50],
-    "bottom-left":[20,78],"bottom-center":[50,78],"bottom-right":[80,78]
-  };
-  if(presets[value]){
-    const [x,y]=presets[value];
-    $("setPdfWatermarkX").value=x;
-    $("setPdfWatermarkY").value=y;
-    state.settings.pdfWatermarkX=x;
-    state.settings.pdfWatermarkY=y;
-    save();
-    renderReport();
-    renderAccumulationReport();
-  }
-}
-
 function renderAccumulationReport(){
   const sel=$("accReportInfluencer");
   const inf=sel?infById(sel.value):null;
@@ -776,7 +840,31 @@ function printAccumulationReport(){
 }
 
 
-function stopAccumulatingInfluencer(infId){if(confirm("Remover todos os lançamentos deste influencer do Acumular?")){state.launches.forEach(l=>{if(l.influencerId===infId)l.accumulate=false});save();render();}}
+function payAccumulatedCash(infId){
+  const row=accumulationByInfluencer().find(r=>r.i.id===infId);
+  if(!row||row.cash<=0){
+    alert("Este influencer não possui saldo em dinheiro acumulado para pagar.");
+    return;
+  }
+  if(confirm(`Marcar ${money(row.cash)} como pago para ${row.i.name}?`)){
+    state.cashPayments=state.cashPayments||[];
+    state.cashPayments.push({
+      id:uid(),
+      date:today(),
+      month:selectedMonth(),
+      influencerId:infId,
+      amount:row.cash,
+      cash:row.cash,
+      source:"Acúmulo",
+      status:"Pago",
+      notes:"Pagamento do saldo acumulado em dinheiro"
+    });
+    save();
+    render();
+    showPage("paid");
+  }
+}
+function stopAccumulatingInfluencer(infId){if(confirm("Zerar o acúmulo deste influencer? Os lançamentos sairão da carteira de acúmulo.")){state.launches.forEach(l=>{if(l.influencerId===infId)l.accumulate=false});save();render();}}
 function resetInfForm(){$("infForm").reset();$("infId").value="";$("infProductRate").value=20;$("infCashRate").value=10;}
 function renderInfluencers(){$("infRows").innerHTML=state.influencers.length?state.influencers.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.coupon)}</td><td>${Number(i.productRate||0)}%</td><td>${Number(i.cashRate||0)}%</td><td>${esc(i.instagram||"")}</td><td>${esc(i.whatsapp||"")}</td><td><button class="small secondary" onclick="editInf('${i.id}')">Editar</button> <button class="small danger" onclick="deleteInf('${i.id}')">Excluir</button></td></tr>`).join(""):`<tr><td colspan="7">Nenhum influencer cadastrado.</td></tr>`;}
 function editInf(id){const i=infById(id);if(!i)return;showPage("influencers");$("infId").value=i.id;$("infName").value=i.name;$("infCoupon").value=i.coupon;$("infProductRate").value=i.productRate;$("infCashRate").value=i.cashRate;$("infInstagram").value=i.instagram||"";$("infWhatsapp").value=i.whatsapp||"";}
@@ -916,9 +1004,9 @@ function removePdfLogo(){state.settings.pdfLogo="";tempPdfLogo=null;save();rende
 function removeLogo(){removeSystemLogo();}
 function removePdfWatermark(){state.settings.pdfWatermarkLogo="";tempWatermarkLogo=null;save();render();}
 function showPage(id){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));$(id).classList.add("active");const btn=document.querySelector(`[data-page="${id}"]`);if(btn){btn.classList.add("active");$("pageTitle").textContent=btn.textContent;}}
-function render(){normalize();applyTheme();populate();renderDashboard();renderLaunches();renderInfluencers();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();save();}
+function render(){normalize();applyTheme();populate();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();save();}
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
-function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Total","Status","PDF enviado","Acumular"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,totalLaunch(l),l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não"]})],"lancamentos.csv");}
+function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
 function exportAccumulationsCSV(){rowsCSV([["Influencer","Cupom","Produto acumulado","Dinheiro acumulado"],...accumulationByInfluencer().map(r=>[r.i.name,r.i.coupon,r.product,r.cash])],"acumulos.csv");}
 function exportReportCSV(){
   const inf=infById($("reportInfluencer").value);
@@ -953,7 +1041,45 @@ async function clearAll(){
   }
 }
 $("launchSold").addEventListener("input",autoCommission);$("launchInfluencer").addEventListener("change",autoCommission);$("launchProduct").addEventListener("input",calcLaunch);$("launchCash").addEventListener("input",calcLaunch);
-$("launchForm").addEventListener("submit",e=>{e.preventDefault();const infId=$("launchInfluencer").value;const sold=Number($("launchSold").value||0);if(!infId){alert("Selecione um influencer.");return}if(sold<=0){alert("Informe o valor vendido.");return}const date=$("launchDate").value||today();const id=$("launchId").value||uid();const item={id,date,month:date.slice(0,7),influencerId:infId,origin:$("launchOrigin").value||"Site",sold,productCommission:Number($("launchProduct").value||0),cashCommission:Number($("launchCash").value||0),status:$("launchStatus").value||"Pendente",pdfSent:$("launchPdfSent").checked,accumulate:$("launchAccumulate").checked,notes:$("launchNotes").value||""};const idx=state.launches.findIndex(l=>l.id===id);if(idx>=0)state.launches[idx]=item;else state.launches.push(item);save();resetLaunchForm();render();showPage("launches");});
+$("launchForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const infId=$("launchInfluencer").value;
+  const sold=Number($("launchSold").value||0);
+  if(!infId){alert("Selecione um influencer.");return}
+  if(sold<=0){alert("Informe o valor vendido.");return}
+
+  const date=$("launchDate").value||today();
+  const id=$("launchId").value||uid();
+  const old=state.launches.find(l=>l.id===id);
+  const accumulate=$("launchAccumulate").checked;
+
+  const item={
+    id,
+    date,
+    month:date.slice(0,7),
+    influencerId:infId,
+    origin:$("launchOrigin").value||"Site",
+    sold,
+    productCommission:Number($("launchProduct").value||0),
+    cashCommission:Number($("launchCash").value||0),
+    status:$("launchStatus").value||"Pendente",
+    pdfSent:$("launchPdfSent").checked,
+    accumulate,
+    paid:accumulate?false:!!(old&&old.paid),
+    paidAt:accumulate?"":(old&&old.paidAt)||"",
+    paidMonth:accumulate?"":(old&&old.paidMonth)||"",
+    notes:$("launchNotes").value||""
+  };
+
+  const idx=state.launches.findIndex(l=>l.id===id);
+  if(idx>=0)state.launches[idx]=item;
+  else state.launches.push(item);
+
+  save();
+  resetLaunchForm();
+  render();
+  showPage("launches");
+});
 $("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId").value||uid();const item={id,name:$("infName").value.trim(),coupon:$("infCoupon").value.trim(),productRate:Number($("infProductRate").value||0),cashRate:Number($("infCashRate").value||0),instagram:$("infInstagram").value,whatsapp:$("infWhatsapp").value,pix:(infById(id)||{}).pix||""};if(!item.name||!item.coupon){alert("Informe nome e cupom.");return}const idx=state.influencers.findIndex(i=>i.id===id);if(idx>=0)state.influencers[idx]=item;else state.influencers.push(item);save();resetInfForm();render();});
 $("productInfluencer").addEventListener("change",renderProductCalc);$("productValue").addEventListener("input",renderProductCalc);$("productUsed").addEventListener("input",renderProductCalc);
 $("productForm").addEventListener("submit",e=>{e.preventDefault();const id=$("productId").value||uid();const infId=$("productInfluencer").value;if(!infId){alert("Selecione um influencer.");return}const value=Number($("productValue").value||0),used=Number($("productUsed").value||0);const item={id,date:$("productDate").value||today(),influencerId:infId,name:$("productName").value||"Produto",value,used,difference:Math.max(0,value-used),status:$("productStatus").value,notes:$("productNotes").value||""};const idx=state.redemptions.findIndex(r=>r.id===id);if(idx>=0)state.redemptions[idx]=item;else state.redemptions.push(item);save();resetProductForm();render();});
