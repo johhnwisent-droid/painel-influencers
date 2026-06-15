@@ -1,0 +1,907 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel de Influencers</title>
+<style>
+:root{--primary:#111827;--accent:#2563eb;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--danger:#dc2626;--success:#16a34a;--warn:#d97706;}
+*{box-sizing:border-box} html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,Arial,sans-serif} button,input,select,textarea{font:inherit} button{cursor:pointer}
+.app{display:flex;min-height:100vh;background:var(--bg)} .side{width:280px;background:var(--primary);color:white;padding:22px;position:sticky;top:0;height:100vh;overflow:auto}.brand{display:flex;gap:12px;align-items:center;margin-bottom:22px}.logo{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-weight:900;overflow:hidden}.logo img{width:100%;height:100%;object-fit:cover}.brand h1{font-size:18px;margin:0}.brand p{font-size:12px;opacity:.78;margin:4px 0 0;line-height:1.35}.menu{display:grid;gap:8px}.menu button{border:0;border-radius:14px;padding:12px 14px;text-align:left;background:transparent;color:white;opacity:.82}.menu button:hover,.menu button.active{background:rgba(255,255,255,.13);opacity:1}.main{flex:1;padding:26px;min-width:0;background:var(--bg)}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.top h2{margin:0;font-size:25px}.monthbox{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 12px}.view{display:none}.view.active{display:block}.grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:14px;margin-bottom:16px}.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 24px rgba(15,23,42,.06)}.card{padding:18px}.card small{display:block;color:var(--muted);font-size:12px;margin-bottom:8px}.card strong{font-size:24px}.panel{padding:18px;margin-bottom:16px}.panelHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}.panelHead h3{margin:0;font-size:18px}.muted{color:var(--muted);font-size:13px}.notice{background:#eef2ff;border:1px solid #c7d2fe;border-radius:16px;padding:13px 15px;margin-bottom:16px;color:#1e3a8a}.form{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}.form .two{grid-column:span 2}.form .full{grid-column:1/-1} label{display:grid;gap:6px;font-size:12px;color:var(--muted);font-weight:700} input,select,textarea{width:100%;border:1px solid var(--line);background:white;border-radius:12px;padding:10px 12px;color:var(--text)}textarea{min-height:80px;resize:vertical}.checkbox{width:20px;height:20px;padding:0}.actions{display:flex;gap:10px;align-items:end}.actions.two{grid-column:span 2}button{border:0;border-radius:12px;padding:10px 14px;font-weight:800}button.primary{background:var(--accent);color:white}button.secondary{background:#eef2ff;color:#1e40af}button.danger{background:#fee2e2;color:#991b1b}.small{padding:7px 10px;font-size:12px}.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.filters select,.filters input{width:auto}.tableWrap{overflow:auto;border:1px solid var(--line);border-radius:16px}table{width:100%;border-collapse:collapse;background:white}th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;font-size:14px}th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f9fafb}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:5px 9px;font-size:12px;font-weight:800}.badge.yellow{background:#fef3c7;color:#92400e}.badge.green{background:#dcfce7;color:#166534}.badge.blue{background:#dbeafe;color:#1d4ed8}.badge.red{background:#fee2e2;color:#991b1b}.printArea{position:relative;overflow:hidden;background:white;border:1px solid var(--line);border-radius:18px;padding:24px 24px 190px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.printLogo{max-height:96px;max-width:270px}.reportWatermark{position:absolute;left:50%;top:72%;transform:translate(-50%,-50%);width:45%;height:auto;opacity:.12;pointer-events:none;user-select:none;z-index:0}.printArea > *:not(.reportWatermark){position:relative;z-index:1}.accPrintArea{margin-top:16px}.accPrintArea .printArea{min-height:760px}.settingsGrid{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:12px}.settingsGrid .full{grid-column:1/-1}.hidden{display:none!important}
+@media(max-width:1000px){.app{display:block}.side{position:relative;width:100%;height:auto}.grid{grid-template-columns:repeat(2,1fr)}.form{grid-template-columns:repeat(2,1fr)}.main{padding:18px}}@media(max-width:650px){.grid,.form,.settingsGrid{grid-template-columns:1fr}.form .two,.actions.two{grid-column:1}.top{display:block}.monthbox{margin-top:12px}}
+@media print{.side,.top,.noPrint,.menu,.panel:not(.printPanel){display:none!important}.app,.main,body{display:block;background:white;padding:0}.printArea{border:0;box-shadow:none;padding-bottom:190px}.view{display:none!important}body.print-report #reports,body.print-accumulation #accumulations{display:block!important}.printPanel{display:block!important}body.print-accumulation #accumulations .panel:not(.accPrintPanel){display:none!important}body.print-accumulation .accPrintPanel{display:block!important}}
+
+.printOnly{display:none!important}
+.pdfCleanHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;border-bottom:1px solid #e5e7eb;padding-bottom:18px;margin-bottom:22px}
+.pdfCleanHeader h1{margin:0;font-size:30px;letter-spacing:-.03em}
+.pdfCleanHeader p{margin:6px 0 0;color:#6b7280}
+.pdfIdentity{background:#f9fafb;border:1px solid #e5e7eb;border-radius:18px;padding:18px;margin-bottom:18px}
+.pdfIdentity h2{margin:0 0 6px;font-size:24px}
+.pdfIdentity .muted{margin:4px 0}
+.pdfTwoCards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0}
+.pdfThreeCards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+.pdfBox{border:1px solid #e5e7eb;border-radius:18px;padding:16px;background:#fff}
+.pdfBox small{display:block;color:#6b7280;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.pdfBox strong{font-size:24px}
+.pdfFooterClean{margin-top:22px;color:#6b7280;font-size:12px;border-top:1px solid #e5e7eb;padding-top:12px}
+@media print{
+  body.print-report .side,
+  body.print-report .top,
+  body.print-report .noPrint,
+  body.print-report .view{
+    display:none!important;
+  }
+  body.print-report #reports{
+    display:block!important;
+  }
+  body.print-report #reports .printPanel{
+    display:block!important;
+  }
+
+  body.print-accumulation .side,
+  body.print-accumulation .top,
+  body.print-accumulation .noPrint,
+  body.print-accumulation .view,
+  body.print-accumulation #accumulations > .grid,
+  body.print-accumulation #accumulations > .panel:not(.accPrintPanel){
+    display:none!important;
+  }
+  body.print-accumulation #accumulations{
+    display:block!important;
+  }
+  body.print-accumulation .accPrintPanel.printOnly{
+    display:block!important;
+  }
+
+  body.print-report .printArea,
+  body.print-accumulation .printArea{
+    margin:0!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+  }
+}
+
+
+.moneyHighlight{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:112px;
+  padding:8px 12px;
+  border-radius:999px;
+  font-weight:900;
+  letter-spacing:-.01em;
+  border:1px solid transparent;
+}
+.moneyHighlight.product{
+  background:#ecfdf5;
+  color:#047857;
+  border-color:#bbf7d0;
+}
+.moneyHighlight.cash{
+  background:#eff6ff;
+  color:#1d4ed8;
+  border-color:#bfdbfe;
+}
+.rankCommissionLabel{
+  display:block;
+  font-size:10px;
+  color:#6b7280;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-bottom:3px;
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><div class="logo" id="sideLogo">JS</div><div><h1 id="sideTitle">Painel</h1><p id="sideSub">Controle de comissões</p></div></div>
+    <nav class="menu">
+      <button class="active" data-page="dashboard">Visão geral</button>
+      <button data-page="launches">Lançamentos</button>
+      <button data-page="influencers">Influencers</button>
+      <button data-page="products">Produto escolhido</button>
+      <button data-page="accumulations">Acumular</button>
+      <button data-page="pix">Chaves PIX</button>
+      <button data-page="reports">Relatório PDF</button>
+      <button data-page="settings">Personalizar</button>
+    </nav>
+  </aside>
+  <main class="main">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+
+    <section id="dashboard" class="view active">
+      <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
+      <div class="panel"><div class="panelHead"><h3>Ranking do mês</h3><span class="muted">Soma automática por influencer</span></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Influencer</th><th>Cupom</th><th>Vendido</th><th>Comissão em produtos</th><th>Comissão em dinheiro</th><th>Lançamentos</th></tr></thead><tbody id="rankingRows"></tbody></table></div></div>
+    </section>
+
+    <section id="launches" class="view">
+      <div class="panel"><div class="panelHead"><h3>Novo lançamento</h3><span class="muted">Marque Acumular para jogar o saldo na carteira do influencer.</span></div>
+        <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="resetLaunchForm()">Cancelar</button></div></form>
+      </div>
+      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Resumo por influencer no mês</h3><span class="muted">Comissão em produtos e comissão em dinheiro ficam separadas.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
+    </section>
+
+    <section id="influencers" class="view">
+      <div class="panel"><div class="panelHead"><h3>Cadastro de influencer</h3></div><form id="infForm" class="form"><input type="hidden" id="infId"><label>Nome<input id="infName" required></label><label>Cupom<input id="infCoupon" required></label><label>% comissão produto<input type="number" id="infProductRate" step="0.01"></label><label>% comissão dinheiro<input type="number" id="infCashRate" step="0.01"></label><label>Instagram<input id="infInstagram"></label><label>WhatsApp<input id="infWhatsapp"></label><div class="actions two"><button class="primary" type="submit">Salvar influencer</button><button class="secondary" type="button" onclick="resetInfForm()">Cancelar</button></div></form></div>
+      <div class="panel"><div class="panelHead"><h3>Influencers cadastrados</h3></div><div class="tableWrap"><table><thead><tr><th>Nome</th><th>Cupom</th><th>% Produto</th><th>% Dinheiro</th><th>Instagram</th><th>WhatsApp</th><th>Ações</th></tr></thead><tbody id="infRows"></tbody></table></div></div>
+    </section>
+
+    <section id="products" class="view">
+      <div class="panel"><div class="panelHead"><h3>Produto escolhido</h3><span class="muted">A diferença a pagar calcula automaticamente.</span></div><form id="productForm" class="form"><input type="hidden" id="productId"><label>Data<input type="date" id="productDate"></label><label>Influencer<select id="productInfluencer"></select></label><label>Produto escolhido<input id="productName" placeholder="Ex.: Calça Cargo"></label><label>Valor do produto<input type="number" id="productValue" step="0.01" min="0"></label><label>Saldo produto disponível<input id="productAvailable" readonly></label><label>Saldo usado<input type="number" id="productUsed" step="0.01" min="0"></label><label>Diferença a pagar<input id="productDifference" readonly></label><label>Status<select id="productStatus"><option>Pendente</option><option>Pago</option><option>Resgatado</option><option>Cancelado</option></select></label><label class="two">Observação<input id="productNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar produto</button><button class="secondary" type="button" onclick="resetProductForm()">Cancelar</button></div></form></div>
+      <div class="panel"><div class="panelHead"><h3>Produtos registrados</h3></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Influencer</th><th>Cupom</th><th>Produto</th><th>Valor</th><th>Saldo usado</th><th>Diferença</th><th>Status</th><th>Ações</th></tr></thead><tbody id="productRows"></tbody></table></div></div>
+    </section>
+
+    
+    <section id="accumulations" class="view">
+      <div class="grid">
+        <div class="card"><small>Total em produtos</small><strong id="accProductTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Total em dinheiro</small><strong id="accCashTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Influencers acumulando</small><strong id="accInfluencerCount">0</strong></div>
+        <div class="card"><small>Controle separado</small><strong>Produto / Dinheiro</strong></div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHead">
+          <h3>Saldo acumulado por influencer</h3>
+          <div class="filters">
+            <select id="accReportInfluencer" onchange="renderAccumulationReport()"></select>
+            <button class="primary" onclick="printAccumulationReport()">Exportar PDF do acúmulo</button>
+            <button class="secondary" onclick="exportAccumulationsCSV()">Exportar acúmulos</button>
+          </div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Influencer</th>
+                <th>Cupom</th>
+                <th>Produto acumulado</th>
+                <th>Dinheiro acumulado</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="accRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel printPanel accPrintPanel printOnly">
+        <div class="printArea" id="accPrintArea">
+          <img id="accReportWatermark" class="reportWatermark" style="display:none">
+
+          <div class="pdfCleanHeader">
+            <div>
+              <h1>Resumo de acúmulo</h1>
+              <p>Saldo de comissão acumulada disponível para o influencer.</p>
+            </div>
+            <img id="accReportLogo" class="printLogo" style="display:none">
+          </div>
+
+          <div class="pdfIdentity">
+            <h2 id="accReportName">Selecione um influencer</h2>
+            <p id="accReportCoupon" class="muted">Cupom: -</p>
+          </div>
+
+          <div class="pdfTwoCards">
+            <div class="pdfBox">
+              <small>Saldo em produtos</small>
+              <strong id="accReportProduct">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Saldo em dinheiro</small>
+              <strong id="accReportCash">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <p class="pdfFooterClean">Relatório gerado automaticamente pelo painel.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pix" class="view"><div class="panel"><div class="panelHead"><h3>Chaves PIX</h3><span class="muted">Área separada só para dados de pagamento.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Chave PIX</th><th>Ação</th></tr></thead><tbody id="pixRows"></tbody></table></div></div></section>
+
+    
+    <section id="reports" class="view">
+      <div class="panel noPrint">
+        <div class="panelHead">
+          <h3>Exportar PDF do influencer</h3>
+          <div class="filters">
+            <select id="reportInfluencer" onchange="renderReport()"></select>
+            <button class="primary" onclick="printReport()">Exportar PDF</button>
+            <button class="secondary" onclick="exportReportCSV()">Exportar CSV</button>
+            <button class="secondary" onclick="markReportSent()">Marcar como enviado</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel printPanel">
+        <div class="printArea" id="printArea">
+          <img id="reportWatermark" class="reportWatermark" style="display:none">
+
+          <div class="pdfCleanHeader">
+            <div>
+              <h1 id="reportTitle">Relatório de comissão</h1>
+              <p id="reportMsg" class="muted"></p>
+            </div>
+            <img id="reportLogo" class="printLogo" style="display:none">
+          </div>
+
+          <div class="pdfIdentity">
+            <h2 id="reportName">Selecione um influencer</h2>
+            <p id="reportCoupon" class="muted">Cupom: -</p>
+            <p id="reportPeriod" class="muted">Mês: -</p>
+          </div>
+
+          <div class="pdfThreeCards">
+            <div class="pdfBox">
+              <small>Total vendido</small>
+              <strong id="reportSold">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Comissão em produtos</small>
+              <strong id="reportProduct">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Comissão em dinheiro</small>
+              <strong id="reportCash">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <p id="reportFooter" class="pdfFooterClean"></p>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="settings" class="view">
+      <div class="panel">
+        <div class="panelHead">
+          <h3>Personalizar sistema</h3>
+          <span class="muted">Altere nomes, cores, logos, origens, status e texto do PDF.</span>
+        </div>
+
+        <div class="settingsGrid">
+          <label>Nome do sistema<input id="setName"></label>
+          <label>Subtítulo<input id="setSub"></label>
+
+          <label>Cor principal<input type="color" id="setPrimary"></label>
+          <label>Cor de destaque<input type="color" id="setAccent"></label>
+          <label>Fundo<input type="color" id="setBg"></label>
+          <label>Cards<input type="color" id="setCard"></label>
+          <label>Texto<input type="color" id="setText"></label>
+
+          <label>Logo do sistema<input type="file" id="setSystemLogo" accept="image/*" onchange="previewSystemLogo(event)"></label>
+          <div class="card">
+            <small>Logo atual do sistema</small>
+            <div id="systemLogoPreview" style="height:70px;display:flex;align-items:center"></div>
+          </div>
+
+          <label>Logo superior do PDF<input type="file" id="setPdfLogo" accept="image/*" onchange="previewPdfLogo(event)"></label>
+          <div class="card">
+            <small>Logo atual do PDF</small>
+            <div id="pdfLogoPreview" style="height:70px;display:flex;align-items:center"></div>
+          </div>
+
+          <label>Marca d'água do PDF<input type="file" id="setPdfWatermarkLogo" accept="image/*" onchange="previewWatermarkLogo(event)"></label>
+          <label>Posição rápida da marca d'água
+            <select id="setPdfWatermarkPreset" onchange="setWatermarkPreset(this.value)">
+              <option value="">Personalizada</option>
+              <option value="top-left">Superior esquerda</option>
+              <option value="top-center">Superior centro</option>
+              <option value="top-right">Superior direita</option>
+              <option value="middle-left">Meio esquerda</option>
+              <option value="center">Centro</option>
+              <option value="middle-right">Meio direita</option>
+              <option value="bottom-left">Inferior esquerda</option>
+              <option value="bottom-center">Inferior centro</option>
+              <option value="bottom-right">Inferior direita</option>
+            </select>
+          </label>
+
+          <label>Horizontal da marca d'água (%)<input type="number" id="setPdfWatermarkX" min="0" max="100" step="1"></label>
+          <label>Vertical da marca d'água (%)<input type="number" id="setPdfWatermarkY" min="0" max="100" step="1"></label>
+          <label>Tamanho da marca d'água (%)<input type="number" id="setPdfWatermarkSize" min="10" max="100" step="1"></label>
+          <label>Opacidade da marca d'água<input type="range" id="setPdfWatermarkOpacity" min="0.03" max="0.35" step="0.01"></label>
+
+          <label class="full">Origens de venda, separadas por vírgula<input id="setOrigins"></label>
+          <label class="full">Status de lançamento, separados por vírgula<input id="setStatuses"></label>
+
+          <label class="full">Título do PDF<input id="setPdfTitle"></label>
+          <label class="full">Mensagem do PDF<textarea id="setPdfMessage"></textarea></label>
+          <label class="full">Rodapé do PDF<input id="setPdfFooter"></label>
+
+          <div class="actions full">
+            <button type="button" class="primary" onclick="saveSettings()">Salvar personalização</button>
+            <button type="button" class="secondary" onclick="removeSystemLogo()">Remover logo do sistema</button>
+            <button type="button" class="secondary" onclick="removePdfLogo()">Remover logo do PDF</button>
+            <button type="button" class="secondary" onclick="removePdfWatermark()">Remover marca d'água</button>
+            <button type="button" class="secondary" onclick="exportBackup()">Exportar backup</button>
+            <label style="display:inline-flex">
+              <span class="secondary" style="padding:10px 14px;border-radius:12px;color:#1e40af;background:#eef2ff">Importar backup</span>
+              <input type="file" accept="application/json" onchange="importBackup(event)" class="hidden">
+            </label>
+            <button type="button" class="danger" onclick="clearAll()">Resetar tudo</button>
+          </div>
+        </div>
+      </div>
+    </section>
+</main>
+</div>
+<script>
+const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
+const KEY = "painel_influencers_limpo_v41_supabase_direto";
+const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
+const CLOUD_STATE_KEY = "painel_state";
+function safeStorageGet(){
+  const keys=[
+    KEY,
+    "painel_influencers_limpo_v36_salvamento_protegido",
+    "painel_influencers_limpo_v35_botoes_funcionando",
+    "painel_influencers_limpo_v28_final_resumos"
+  ];
+
+  for(const k of keys){
+    try{
+      const v=localStorage.getItem(k);
+      if(v)return v;
+    }catch(e){}
+  }
+
+  try{
+    for(const k of keys){
+      const prefix=k+"::";
+      if(window.name&&window.name.startsWith(prefix))return window.name.slice(prefix.length);
+    }
+  }catch(_){}
+
+  return null;
+}
+
+function safeStorageRemove(){
+  try{localStorage.removeItem(KEY);}catch(e){}
+  try{
+    const prefix=KEY+"::";
+    if(window.name&&window.name.startsWith(prefix))window.name="";
+  }catch(_){}
+}
+
+let state;
+try{
+  const saved=safeStorageGet();
+  state=saved?JSON.parse(saved):structuredClone(INITIAL_STATE);
+}catch(e){
+  state=structuredClone(INITIAL_STATE);
+}
+let tempSystemLogo=null;
+let tempPdfLogo=null;
+let tempWatermarkLogo=null;
+let cloudBooting=true;
+let cloudSaveTimer=null;
+let cloudLastSavedAt=null;
+const $=id=>document.getElementById(id);
+const money=v=>(Number(v||0)).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const today=()=>new Date().toISOString().slice(0,10);
+const currentMonth=()=>today().slice(0,7);
+const uid=()=> (crypto&&crypto.randomUUID?crypto.randomUUID():(Date.now()+"-"+Math.random().toString(16).slice(2)));
+const esc=v=>String(v??"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]));
+function save(){
+  const data=JSON.stringify(state);
+
+  try{
+    localStorage.setItem(KEY,data);
+  }catch(e){
+    try{window.name=KEY+"::"+data;}catch(_){}
+  }
+
+  if(!cloudBooting)scheduleCloudSave();
+  return true;
+}
+
+function updateCloudStatus(text,isError=false){
+  const el=$("cloudStatus");
+  if(!el)return;
+  el.textContent=text;
+  el.style.color=isError?"#dc2626":"#6b7280";
+}
+
+function cloudHeaders(extra={}){
+  return {
+    "apikey": SUPABASE_ANON_KEY,
+    "Authorization": "Bearer "+SUPABASE_ANON_KEY,
+    "Content-Type": "application/json",
+    ...extra
+  };
+}
+
+async function cloudLoad(){
+  updateCloudStatus("Carregando dados da nuvem...");
+
+  try{
+    const url=SUPABASE_URL+"/rest/v1/personalizacao?chave=eq."+encodeURIComponent(CLOUD_STATE_KEY)+"&select=valor";
+    const response=await fetch(url,{
+      method:"GET",
+      headers:cloudHeaders()
+    });
+
+    if(!response.ok){
+      const text=await response.text();
+      console.error("Erro ao carregar Supabase:",text);
+      updateCloudStatus("Erro ao carregar dados da nuvem.",true);
+      return false;
+    }
+
+    const data=await response.json();
+    const row=Array.isArray(data)?data[0]:null;
+
+    if(row&&row.valor){
+      try{
+        state=JSON.parse(row.valor);
+        updateCloudStatus("Dados carregados da nuvem.");
+        return true;
+      }catch(e){
+        console.error("Erro ao interpretar dados da nuvem:",e);
+        updateCloudStatus("Dados da nuvem inválidos.",true);
+        return false;
+      }
+    }
+
+    updateCloudStatus("Nuvem conectada. Criando primeiro salvamento...");
+    return false;
+  }catch(e){
+    console.error("Falha ao conectar Supabase:",e);
+    updateCloudStatus("Falha ao conectar na nuvem. Verifique a internet.",true);
+    return false;
+  }
+}
+
+async function cloudSaveNow(){
+  try{
+    updateCloudStatus("Salvando na nuvem...");
+
+    const response=await fetch(SUPABASE_URL+"/rest/v1/personalizacao",{
+      method:"POST",
+      headers:cloudHeaders({"Prefer":"resolution=merge-duplicates"}),
+      body:JSON.stringify({
+        chave:CLOUD_STATE_KEY,
+        valor:JSON.stringify(state)
+      })
+    });
+
+    if(!response.ok){
+      const text=await response.text();
+      console.error("Erro ao salvar Supabase:",text);
+      updateCloudStatus("Erro ao salvar na nuvem.",true);
+      return false;
+    }
+
+    cloudLastSavedAt=new Date();
+    updateCloudStatus("Salvo na nuvem automaticamente.");
+    return true;
+  }catch(e){
+    console.error("Falha ao salvar na nuvem:",e);
+    updateCloudStatus("Falha ao salvar na nuvem.",true);
+    return false;
+  }
+}
+
+function scheduleCloudSave(){
+  clearTimeout(cloudSaveTimer);
+  cloudSaveTimer=setTimeout(()=>cloudSaveNow(),650);
+}
+
+async function startApp(){
+  normalize();
+  $("globalMonth").value=currentMonth();
+  populate();
+  resetLaunchForm();
+  resetInfForm();
+  resetProductForm();
+  render();
+
+  const loaded=await cloudLoad();
+
+  if(loaded){
+    normalize();
+    $("globalMonth").value=$("globalMonth").value||currentMonth();
+    populate();
+    resetLaunchForm();
+    resetInfForm();
+    resetProductForm();
+    render();
+  }
+
+  cloudBooting=false;
+  save();
+}
+
+
+function normalize(){state.settings={...INITIAL_STATE.settings,...(state.settings||{})};state.settings.systemLogo=state.settings.systemLogo||state.settings.logo||"";state.settings.pdfLogo=state.settings.pdfLogo||state.settings.logo||"";state.influencers=state.influencers||[];state.launches=state.launches||[];state.redemptions=state.redemptions||[];state.launches.forEach(l=>{l.accumulate=!!l.accumulate;l.pdfSent=!!l.pdfSent;l.month=l.month||(l.date||today()).slice(0,7);});}
+function selectedMonth(){return $("globalMonth").value||currentMonth();}
+function monthLabel(m){const [y,mo]=m.split("-");return `${mo}/${y}`;}
+function dateBR(d){if(!d)return"-";const [y,m,day]=d.split("-");return `${day}/${m}/${y}`;}
+function infById(id){return state.influencers.find(i=>i.id===id);}
+function totalLaunch(l){return Number(l.productCommission||0)+Number(l.cashCommission||0);}
+function monthLaunches(){return state.launches.filter(l=>(l.month||(l.date||"").slice(0,7))===selectedMonth());}
+function stats(rows){return rows.reduce((a,l)=>{a.sold+=Number(l.sold||0);a.product+=Number(l.productCommission||0);a.cash+=Number(l.cashCommission||0);a.total=a.product+a.cash;a.count++;return a;},{sold:0,product:0,cash:0,total:0,count:0});}
+function applyTheme(){const s=state.settings;document.documentElement.style.setProperty("--primary",s.primaryColor);document.documentElement.style.setProperty("--accent",s.accentColor);document.documentElement.style.setProperty("--bg",s.backgroundColor);document.documentElement.style.setProperty("--card",s.cardColor);document.documentElement.style.setProperty("--text",s.textColor);$("sideTitle").textContent=s.systemName;$("sideSub").textContent=s.subtitle;const sysLogo=s.systemLogo||"";$("sideLogo").innerHTML=sysLogo?`<img src="${sysLogo}">`:"JS";}
+function fillSelect(id,options,blank){const el=$(id);if(!el)return;const old=el.value;el.innerHTML=(blank?`<option value="">${blank}</option>`:"")+options.map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");if([...el.options].some(o=>o.value===old))el.value=old;}
+function populate(){const infl=state.influencers.map(i=>({value:i.id,label:`${i.name} (${i.coupon})`}));fillSelect("launchInfluencer",infl);fillSelect("productInfluencer",infl);fillSelect("reportInfluencer",infl,"Selecione influencer");fillSelect("accReportInfluencer",infl,"Selecione influencer");fillSelect("filterInfluencer",infl,"Todos os influencers");fillSelect("launchOrigin",state.settings.origins.map(o=>({value:o,label:o})));fillSelect("filterOrigin",state.settings.origins.map(o=>({value:o,label:o})),"Todas as origens");fillSelect("launchStatus",state.settings.statuses.map(s=>({value:s,label:s})));}
+function renderDashboard(){
+  const list=monthLaunches();
+  const s=stats(list);
+  $("dashSold").textContent=money(s.sold);
+  $("dashProduct").textContent=money(s.product);
+  $("dashCash").textContent=money(s.cash);
+  $("dashCount").textContent=s.count;
+
+  const ranking=state.influencers.map(i=>{
+    const r=stats(list.filter(l=>l.influencerId===i.id));
+    return {i,...r};
+  }).filter(r=>r.count).sort((a,b)=>b.sold-a.sold||b.product-a.product||b.cash-a.cash).slice(0,10);
+
+  $("rankingRows").innerHTML=ranking.length?ranking.map((r,idx)=>`<tr>
+    <td><b>${idx+1}</b></td>
+    <td>${esc(r.i.name)}</td>
+    <td>${esc(r.i.coupon)}</td>
+    <td>${money(r.sold)}</td>
+    <td>
+      <span class="rankCommissionLabel">Produtos</span>
+      <span class="moneyHighlight product">${money(r.product)}</span>
+    </td>
+    <td>
+      <span class="rankCommissionLabel">Dinheiro</span>
+      <span class="moneyHighlight cash">${money(r.cash)}</span>
+    </td>
+  </tr>`).join(""):`<tr><td colspan="6">Sem lançamentos no mês.</td></tr>`;
+}
+function renderLaunches(){
+  const rows=filteredLaunches();
+  $("launchRows").innerHTML=rows.length?rows.map(l=>{
+    const i=infById(l.influencerId)||{};
+    return `<tr>
+      <td>${dateBR(l.date)}</td>
+      <td>${esc(l.origin)}</td>
+      <td>${esc(i.coupon||"-")}</td>
+      <td>${esc(i.name||"-")}</td>
+      <td>${money(l.sold)}</td>
+      <td>${money(l.productCommission)}</td>
+      <td>${money(l.cashCommission)}</td>
+      <td><span class="badge ${l.status==="Enviado"?"blue":l.status==="Pago"?"green":l.status==="Cancelado"?"red":"yellow"}">${esc(l.status)}</span></td>
+      <td><input class="checkbox" type="checkbox" ${l.pdfSent?"checked":""} onchange="togglePdfSent('${l.id}',this.checked)"></td>
+      <td><input class="checkbox" type="checkbox" ${l.accumulate?"checked":""} onchange="toggleAccumulate('${l.id}',this.checked)"></td>
+      <td><button class="small secondary" onclick="editLaunch('${l.id}')">Editar</button> <button class="small danger" onclick="deleteLaunch('${l.id}')">Excluir</button></td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="11">Nenhum lançamento neste mês.</td></tr>`;
+  renderLaunchTotals();
+}
+function renderLaunchTotals(){
+  const rows=state.influencers.map(i=>{
+    const list=filteredLaunches().filter(l=>l.influencerId===i.id);
+    return {i,...stats(list),acc:list.filter(l=>l.accumulate).length};
+  }).filter(r=>r.count).sort((a,b)=>b.sold-a.sold||b.product-a.product||b.cash-a.cash);
+
+  $("launchTotalsRows").innerHTML=rows.length?rows.map(r=>`<tr>
+    <td>${esc(r.i.name)}</td>
+    <td>${esc(r.i.coupon)}</td>
+    <td>${money(r.sold)}</td>
+    <td>${money(r.product)}</td>
+    <td>${money(r.cash)}</td>
+    <td>${r.count}</td>
+    <td>${r.acc?"Sim":"Não"}</td>
+  </tr>`).join(""):`<tr><td colspan="7">Sem resumo para mostrar.</td></tr>`;
+}
+function calcLaunch(){}
+function resetLaunchForm(){$("launchForm").reset();$("launchId").value="";$("launchDate").value=today();$("launchAccumulate").checked=false;if(state.influencers[0])$("launchInfluencer").value=state.influencers[0].id;if(state.settings.origins[0])$("launchOrigin").value=state.settings.origins[0];if(state.settings.statuses[0])$("launchStatus").value=state.settings.statuses[0];calcLaunch();}
+function autoCommission(){if($("launchId").value)return;const inf=infById($("launchInfluencer").value);const sold=Number($("launchSold").value||0);if(inf&&sold){$("launchProduct").value=(sold*Number(inf.productRate||0)/100).toFixed(2);$("launchCash").value=(sold*Number(inf.cashRate||0)/100).toFixed(2);}calcLaunch();}
+function editLaunch(id){const l=state.launches.find(x=>x.id===id);if(!l)return;showPage("launches");$("launchId").value=l.id;$("launchDate").value=l.date;$("launchInfluencer").value=l.influencerId;$("launchOrigin").value=l.origin;$("launchSold").value=l.sold;$("launchProduct").value=l.productCommission;$("launchCash").value=l.cashCommission;$("launchStatus").value=l.status;$("launchPdfSent").checked=!!l.pdfSent;$("launchAccumulate").checked=!!l.accumulate;$("launchNotes").value=l.notes||"";calcLaunch();}
+function deleteLaunch(id){if(confirm("Excluir este lançamento?")){state.launches=state.launches.filter(l=>l.id!==id);save();render();}}
+function togglePdfSent(id,val){const l=state.launches.find(x=>x.id===id);if(l){l.pdfSent=!!val;if(val)l.status="Enviado";save();render();}}
+function toggleAccumulate(id,val){const l=state.launches.find(x=>x.id===id);if(l){l.accumulate=!!val;save();render();}}
+function accumulatedRows(){return state.launches.filter(l=>l.accumulate);}
+function accumulationByInfluencer(){
+  return state.influencers.map(i=>{
+    const list=accumulatedRows().filter(l=>l.influencerId===i.id);
+    const product=list.reduce((a,l)=>a+Number(l.productCommission||0),0);
+    const cash=list.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+    return {i,list,product,cash};
+  }).filter(r=>r.list.length).sort((a,b)=>b.product-a.product||b.cash-a.cash);
+}
+function renderAccumulations(){
+  const groups=accumulationByInfluencer();
+  const productTotal=groups.reduce((a,r)=>a+r.product,0);
+  const cashTotal=groups.reduce((a,r)=>a+r.cash,0);
+
+  $("accProductTotal").textContent=money(productTotal);
+  $("accCashTotal").textContent=money(cashTotal);
+  $("accInfluencerCount").textContent=groups.length;
+
+  $("accRows").innerHTML=groups.length?groups.map(r=>`<tr>
+    <td>${esc(r.i.name)}</td>
+    <td>${esc(r.i.coupon)}</td>
+    <td>${money(r.product)}</td>
+    <td>${money(r.cash)}</td>
+    <td><button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Remover</button></td>
+  </tr>`).join(""):`<tr><td colspan="5">Nenhum influencer com acúmulo.</td></tr>`;
+}
+
+function applyPdfWatermark(id){
+  const el=$(id);
+  if(!el) return;
+  const s=state.settings||{};
+  if(!s.pdfWatermarkLogo){
+    el.style.display="none";
+    el.removeAttribute("src");
+    return;
+  }
+  el.src=s.pdfWatermarkLogo;
+  el.style.display="block";
+  el.style.left=Number(s.pdfWatermarkX ?? 50)+"%";
+  el.style.top=Number(s.pdfWatermarkY ?? 72)+"%";
+  el.style.width=Number(s.pdfWatermarkSize ?? 45)+"%";
+  el.style.opacity=String(Number(s.pdfWatermarkOpacity ?? 0.12));
+}
+
+function setWatermarkPreset(value){
+  const presets={
+    "top-left":[20,20],"top-center":[50,20],"top-right":[80,20],
+    "middle-left":[20,50],"center":[50,50],"middle-right":[80,50],
+    "bottom-left":[20,78],"bottom-center":[50,78],"bottom-right":[80,78]
+  };
+  if(presets[value]){
+    const [x,y]=presets[value];
+    $("setPdfWatermarkX").value=x;
+    $("setPdfWatermarkY").value=y;
+    state.settings.pdfWatermarkX=x;
+    state.settings.pdfWatermarkY=y;
+    save();
+    renderReport();
+    renderAccumulationReport();
+  }
+}
+
+function renderAccumulationReport(){
+  const sel=$("accReportInfluencer");
+  const inf=sel?infById(sel.value):null;
+  const rows=inf?accumulatedRows().filter(l=>l.influencerId===inf.id):[];
+
+  const product=rows.reduce((a,l)=>a+Number(l.productCommission||0),0);
+  const cash=rows.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+
+  if($("accReportLogo")){
+    const pdfLogo=state.settings.pdfLogo||"";
+    $("accReportLogo").style.display=pdfLogo?"block":"none";
+    if(pdfLogo)$("accReportLogo").src=pdfLogo;
+  }
+
+  applyPdfWatermark("accReportWatermark");
+
+  if($("accReportName"))$("accReportName").textContent=inf?inf.name:"Selecione um influencer";
+  if($("accReportCoupon"))$("accReportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
+  if($("accReportProduct"))$("accReportProduct").textContent=money(product);
+  if($("accReportCash"))$("accReportCash").textContent=money(cash);
+}
+
+function printAccumulationReport(){
+  if(!$("accReportInfluencer") || !$("accReportInfluencer").value){
+    alert("Selecione um influencer para exportar o acúmulo.");
+    return;
+  }
+  renderAccumulationReport();
+  document.body.classList.remove("print-report");
+  document.body.classList.add("print-accumulation");
+  window.print();
+  setTimeout(()=>document.body.classList.remove("print-accumulation"),500);
+}
+
+
+function stopAccumulatingInfluencer(infId){if(confirm("Remover todos os lançamentos deste influencer do Acumular?")){state.launches.forEach(l=>{if(l.influencerId===infId)l.accumulate=false});save();render();}}
+function resetInfForm(){$("infForm").reset();$("infId").value="";$("infProductRate").value=20;$("infCashRate").value=10;}
+function renderInfluencers(){$("infRows").innerHTML=state.influencers.length?state.influencers.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.coupon)}</td><td>${Number(i.productRate||0)}%</td><td>${Number(i.cashRate||0)}%</td><td>${esc(i.instagram||"")}</td><td>${esc(i.whatsapp||"")}</td><td><button class="small secondary" onclick="editInf('${i.id}')">Editar</button> <button class="small danger" onclick="deleteInf('${i.id}')">Excluir</button></td></tr>`).join(""):`<tr><td colspan="7">Nenhum influencer cadastrado.</td></tr>`;}
+function editInf(id){const i=infById(id);if(!i)return;showPage("influencers");$("infId").value=i.id;$("infName").value=i.name;$("infCoupon").value=i.coupon;$("infProductRate").value=i.productRate;$("infCashRate").value=i.cashRate;$("infInstagram").value=i.instagram||"";$("infWhatsapp").value=i.whatsapp||"";}
+function deleteInf(id){if(confirm("Excluir influencer? Os lançamentos antigos continuarão no histórico.")){state.influencers=state.influencers.filter(i=>i.id!==id);save();render();}}
+function productUsed(infId){return state.redemptions.filter(r=>r.influencerId===infId&&r.status!=="Cancelado").reduce((a,r)=>a+Number(r.used||0),0);}
+function productAvailable(infId){const earned=accumulatedRows().filter(l=>l.influencerId===infId).reduce((a,l)=>a+Number(l.productCommission||0),0);return Math.max(0,earned-productUsed(infId));}
+function renderProductCalc(){const infId=$("productInfluencer").value;const available=productAvailable(infId);$("productAvailable").value=money(available);const value=Number($("productValue").value||0);if(!$("productId").value){$("productUsed").value=Math.min(available,value||available).toFixed(2)}const used=Number($("productUsed").value||0);$("productDifference").value=money(Math.max(0,value-used));}
+function resetProductForm(){$("productForm").reset();$("productId").value="";$("productDate").value=today();if(state.influencers[0])$("productInfluencer").value=state.influencers[0].id;$("productStatus").value="Pendente";renderProductCalc();}
+function renderProducts(){renderProductCalc();$("productRows").innerHTML=state.redemptions.length?state.redemptions.map(r=>{const i=infById(r.influencerId)||{};return `<tr><td>${dateBR(r.date)}</td><td>${esc(i.name||"-")}</td><td>${esc(i.coupon||"-")}</td><td>${esc(r.name)}</td><td>${money(r.value)}</td><td>${money(r.used)}</td><td>${money(r.difference)}</td><td><span class="badge ${r.status==="Pago"||r.status==="Resgatado"?"green":r.status==="Cancelado"?"red":"yellow"}">${esc(r.status)}</span></td><td><button class="small secondary" onclick="editProduct('${r.id}')">Editar</button> <button class="small danger" onclick="deleteProduct('${r.id}')">Excluir</button></td></tr>`}).join(""):`<tr><td colspan="9">Nenhum produto registrado.</td></tr>`;}
+function editProduct(id){const r=state.redemptions.find(x=>x.id===id);if(!r)return;showPage("products");$("productId").value=r.id;$("productDate").value=r.date;$("productInfluencer").value=r.influencerId;$("productName").value=r.name;$("productValue").value=r.value;$("productUsed").value=r.used;$("productStatus").value=r.status;$("productNotes").value=r.notes||"";renderProductCalc();}
+function deleteProduct(id){if(confirm("Excluir produto registrado?")){state.redemptions=state.redemptions.filter(r=>r.id!==id);save();render();}}
+function renderPix(){$("pixRows").innerHTML=state.influencers.length?state.influencers.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.coupon)}</td><td><input value="${esc(i.pix||"")}" onchange="updatePix('${i.id}',this.value)" placeholder="Digite a chave PIX"></td><td><button class="small secondary" onclick="copyPix('${i.id}')">Copiar</button></td></tr>`).join(""):`<tr><td colspan="4">Nenhum influencer cadastrado.</td></tr>`;}
+function updatePix(id,val){const i=infById(id);if(i){i.pix=val;save();}}
+function copyPix(id){const i=infById(id);if(!i||!i.pix){alert("Este influencer ainda não tem chave PIX.");return}navigator.clipboard&&navigator.clipboard.writeText(i.pix);alert("Chave PIX copiada.");}
+function renderReport(){
+  const inf=infById($("reportInfluencer").value);
+  const rows=inf?monthLaunches().filter(l=>l.influencerId===inf.id):[];
+
+  const sold=rows.reduce((a,l)=>a+Number(l.sold||0),0);
+  const product=rows.reduce((a,l)=>a+Number(l.productCommission||0),0);
+  const cash=rows.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+
+  $("reportTitle").textContent=state.settings.pdfTitle;
+  $("reportMsg").textContent=state.settings.pdfMessage;
+  $("reportFooter").textContent=state.settings.pdfFooter;
+
+  const pdfLogo=state.settings.pdfLogo||"";
+  $("reportLogo").style.display=pdfLogo?"block":"none";
+  if(pdfLogo)$("reportLogo").src=pdfLogo;
+
+  applyPdfWatermark("reportWatermark");
+
+  $("reportName").textContent=inf?inf.name:"Selecione um influencer";
+  $("reportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
+  $("reportPeriod").textContent=`Mês: ${monthLabel(selectedMonth())}`;
+  $("reportSold").textContent=money(sold);
+  $("reportProduct").textContent=money(product);
+  $("reportCash").textContent=money(cash);
+}
+
+function printReport(){if(!$("reportInfluencer").value){alert("Selecione um influencer.");return}document.body.classList.remove("print-accumulation");document.body.classList.add("print-report");window.print();setTimeout(()=>document.body.classList.remove("print-report"),500);}
+function markReportSent(){const inf=infById($("reportInfluencer").value);if(!inf){alert("Selecione um influencer.");return}monthLaunches().filter(l=>l.influencerId===inf.id).forEach(l=>{l.pdfSent=true;l.status="Enviado"});save();render();alert("Lançamentos marcados como enviados.");}
+function renderSettings(){
+  const s=state.settings;
+  $("setName").value=s.systemName||"";
+  $("setSub").value=s.subtitle||"";
+  $("setPrimary").value=s.primaryColor||"#111827";
+  $("setAccent").value=s.accentColor||"#2563eb";
+  $("setBg").value=s.backgroundColor||"#f3f4f6";
+  $("setCard").value=s.cardColor||"#ffffff";
+  $("setText").value=s.textColor||"#111827";
+
+  $("setOrigins").value=(s.origins||[]).join(", ");
+  $("setStatuses").value=(s.statuses||[]).join(", ");
+
+  $("setPdfTitle").value=s.pdfTitle||"";
+  $("setPdfMessage").value=s.pdfMessage||"";
+  $("setPdfFooter").value=s.pdfFooter||"";
+
+  $("setPdfWatermarkOpacity").value=String(s.pdfWatermarkOpacity??0.12);
+  $("setPdfWatermarkX").value=String(s.pdfWatermarkX??50);
+  $("setPdfWatermarkY").value=String(s.pdfWatermarkY??72);
+  $("setPdfWatermarkSize").value=String(s.pdfWatermarkSize??45);
+  $("setPdfWatermarkPreset").value="";
+
+  const sysLogo=tempSystemLogo||s.systemLogo||"";
+  const pdfLogo=tempPdfLogo||s.pdfLogo||"";
+
+  $("systemLogoPreview").innerHTML=sysLogo?`<img src="${sysLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
+  $("pdfLogoPreview").innerHTML=pdfLogo?`<img src="${pdfLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
+}
+
+function saveSettings(){
+  const s=state.settings;
+
+  s.systemName=$("setName").value||"Painel";
+  s.subtitle=$("setSub").value||"";
+  s.primaryColor=$("setPrimary").value||"#111827";
+  s.accentColor=$("setAccent").value||"#2563eb";
+  s.backgroundColor=$("setBg").value||"#f3f4f6";
+  s.cardColor=$("setCard").value||"#ffffff";
+  s.textColor=$("setText").value||"#111827";
+
+  s.origins=$("setOrigins").value.split(",").map(x=>x.trim()).filter(Boolean);
+  s.statuses=$("setStatuses").value.split(",").map(x=>x.trim()).filter(Boolean);
+
+  s.pdfTitle=$("setPdfTitle").value||"Relatório de comissão";
+  s.pdfMessage=$("setPdfMessage").value||"";
+  s.pdfFooter=$("setPdfFooter").value||"";
+
+  s.pdfWatermarkOpacity=Number($("setPdfWatermarkOpacity").value||0.12);
+  s.pdfWatermarkX=Number($("setPdfWatermarkX").value||50);
+  s.pdfWatermarkY=Number($("setPdfWatermarkY").value||72);
+  s.pdfWatermarkSize=Number($("setPdfWatermarkSize").value||45);
+
+  if(tempSystemLogo!==null){s.systemLogo=tempSystemLogo;tempSystemLogo=null;}
+  if(tempPdfLogo!==null){s.pdfLogo=tempPdfLogo;tempPdfLogo=null;}
+  if(tempWatermarkLogo!==null){s.pdfWatermarkLogo=tempWatermarkLogo;tempWatermarkLogo=null;}
+
+  save();
+  render();
+  alert("Personalização salva.");
+}
+
+function previewSystemLogo(event){
+  const f=event.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    tempSystemLogo=r.result;
+    $("systemLogoPreview").innerHTML=`<img src="${tempSystemLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`;
+  };
+  r.readAsDataURL(f);
+}
+
+function previewPdfLogo(event){
+  const f=event.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    tempPdfLogo=r.result;
+    $("pdfLogoPreview").innerHTML=`<img src="${tempPdfLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`;
+  };
+  r.readAsDataURL(f);
+}
+
+function previewWatermarkLogo(event){
+  const f=event.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{tempWatermarkLogo=r.result;};
+  r.readAsDataURL(f);
+}
+
+function removeSystemLogo(){state.settings.systemLogo="";tempSystemLogo=null;save();render();}
+function removePdfLogo(){state.settings.pdfLogo="";tempPdfLogo=null;save();render();}
+function removeLogo(){removeSystemLogo();}
+function removePdfWatermark(){state.settings.pdfWatermarkLogo="";tempWatermarkLogo=null;save();render();}
+function showPage(id){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));$(id).classList.add("active");const btn=document.querySelector(`[data-page="${id}"]`);if(btn){btn.classList.add("active");$("pageTitle").textContent=btn.textContent;}}
+function render(){normalize();applyTheme();populate();renderDashboard();renderLaunches();renderInfluencers();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();save();}
+function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
+function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Total","Status","PDF enviado","Acumular"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,totalLaunch(l),l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não"]})],"lancamentos.csv");}
+function exportAccumulationsCSV(){rowsCSV([["Influencer","Cupom","Produto acumulado","Dinheiro acumulado"],...accumulationByInfluencer().map(r=>[r.i.name,r.i.coupon,r.product,r.cash])],"acumulos.csv");}
+function exportReportCSV(){
+  const inf=infById($("reportInfluencer").value);
+  if(!inf){
+    alert("Selecione um influencer.");
+    return;
+  }
+  const rows=monthLaunches().filter(l=>l.influencerId===inf.id);
+  const sold=rows.reduce((a,l)=>a+Number(l.sold||0),0);
+  const product=rows.reduce((a,l)=>a+Number(l.productCommission||0),0);
+  const cash=rows.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+  rowsCSV([
+    ["Influencer",inf.name],
+    ["Cupom",inf.coupon],
+    ["Mês",monthLabel(selectedMonth())],
+    ["Total vendido",sold],
+    ["Comissão em produtos",product],
+    ["Comissão em dinheiro",cash]
+  ],`relatorio-${inf.coupon}.csv`);
+}
+
+function exportBackup(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="backup-painel-influencers.json";a.click();URL.revokeObjectURL(url);}
+function importBackup(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=JSON.parse(r.result);normalize();save();render();alert("Backup importado.");}catch(err){alert("Arquivo inválido.");}};r.readAsText(f);}
+async function clearAll(){
+  if(confirm("Resetar todos os dados salvos neste navegador e na nuvem?")){
+    state=structuredClone(INITIAL_STATE);
+    normalize();
+    safeStorageRemove();
+    cloudBooting=false;
+    await cloudSaveNow();
+    location.reload();
+  }
+}
+$("launchSold").addEventListener("input",autoCommission);$("launchInfluencer").addEventListener("change",autoCommission);$("launchProduct").addEventListener("input",calcLaunch);$("launchCash").addEventListener("input",calcLaunch);
+$("launchForm").addEventListener("submit",e=>{e.preventDefault();const infId=$("launchInfluencer").value;const sold=Number($("launchSold").value||0);if(!infId){alert("Selecione um influencer.");return}if(sold<=0){alert("Informe o valor vendido.");return}const date=$("launchDate").value||today();const id=$("launchId").value||uid();const item={id,date,month:date.slice(0,7),influencerId:infId,origin:$("launchOrigin").value||"Site",sold,productCommission:Number($("launchProduct").value||0),cashCommission:Number($("launchCash").value||0),status:$("launchStatus").value||"Pendente",pdfSent:$("launchPdfSent").checked,accumulate:$("launchAccumulate").checked,notes:$("launchNotes").value||""};const idx=state.launches.findIndex(l=>l.id===id);if(idx>=0)state.launches[idx]=item;else state.launches.push(item);save();resetLaunchForm();render();showPage("launches");});
+$("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId").value||uid();const item={id,name:$("infName").value.trim(),coupon:$("infCoupon").value.trim(),productRate:Number($("infProductRate").value||0),cashRate:Number($("infCashRate").value||0),instagram:$("infInstagram").value,whatsapp:$("infWhatsapp").value,pix:(infById(id)||{}).pix||""};if(!item.name||!item.coupon){alert("Informe nome e cupom.");return}const idx=state.influencers.findIndex(i=>i.id===id);if(idx>=0)state.influencers[idx]=item;else state.influencers.push(item);save();resetInfForm();render();});
+$("productInfluencer").addEventListener("change",renderProductCalc);$("productValue").addEventListener("input",renderProductCalc);$("productUsed").addEventListener("input",renderProductCalc);
+$("productForm").addEventListener("submit",e=>{e.preventDefault();const id=$("productId").value||uid();const infId=$("productInfluencer").value;if(!infId){alert("Selecione um influencer.");return}const value=Number($("productValue").value||0),used=Number($("productUsed").value||0);const item={id,date:$("productDate").value||today(),influencerId:infId,name:$("productName").value||"Produto",value,used,difference:Math.max(0,value-used),status:$("productStatus").value,notes:$("productNotes").value||""};const idx=state.redemptions.findIndex(r=>r.id===id);if(idx>=0)state.redemptions[idx]=item;else state.redemptions.push(item);save();resetProductForm();render();});
+
+
+["setPdfWatermarkOpacity","setPdfWatermarkX","setPdfWatermarkY","setPdfWatermarkSize"].forEach(id=>{
+  const el=$(id);
+  if(el)el.addEventListener("input",()=>{
+    state.settings.pdfWatermarkOpacity=Number($("setPdfWatermarkOpacity")?.value||0.12);
+    state.settings.pdfWatermarkX=Number($("setPdfWatermarkX")?.value||50);
+    state.settings.pdfWatermarkY=Number($("setPdfWatermarkY")?.value||72);
+    state.settings.pdfWatermarkSize=Number($("setPdfWatermarkSize")?.value||45);
+    save();
+    renderReport();
+    renderAccumulationReport();
+  });
+});
+document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",render);
+setTimeout(()=>{
+  const el=$("cloudStatus");
+  if(el&&el.textContent==="Conectando à nuvem..."){
+    updateCloudStatus("Ainda tentando conectar à nuvem. Atualize a página em alguns segundos.",true);
+  }
+},6000);
+startApp();
+</script>
+</body></html>
