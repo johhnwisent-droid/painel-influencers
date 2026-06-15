@@ -93,6 +93,33 @@
   margin-bottom:3px;
 }
 
+
+.versionBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-top:8px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#111827;
+  color:#fff;
+  font-weight:900;
+  font-size:12px;
+  letter-spacing:.04em;
+}
+.versionBadge span{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#22c55e;
+}
+.cloudDebug{
+  margin-top:4px;
+  font-size:12px;
+  color:#6b7280;
+}
+
 </style>
 </head>
 <body>
@@ -111,11 +138,11 @@
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V44 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
-      <div class="panel"><div class="panelHead"><h3>Ranking do mês</h3><span class="muted">Soma automática por influencer</span></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Influencer</th><th>Cupom</th><th>Vendido</th><th>Comissão em produtos</th><th>Comissão em dinheiro</th><th>Lançamentos</th></tr></thead><tbody id="rankingRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Ranking do mês</h3><span class="muted">Soma automática por influencer</span></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Influencer</th><th>Cupom</th><th>Vendido</th><th>Comissão em produtos</th><th>Comissão em dinheiro</th></tr></thead><tbody id="rankingRows"></tbody></table></div></div>
     </section>
 
     <section id="launches" class="view">
@@ -334,7 +361,7 @@
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v41_supabase_direto";
+const KEY = "painel_influencers_limpo_v44_supabase_corrigido";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -384,6 +411,18 @@ let tempWatermarkLogo=null;
 let cloudBooting=true;
 let cloudSaveTimer=null;
 let cloudLastSavedAt=null;
+window.addEventListener("error",e=>{
+  const el=document.getElementById("cloudStatus");
+  const dbg=document.getElementById("cloudDebug");
+  if(el){el.textContent="Erro no código do painel.";el.style.color="#dc2626";}
+  if(dbg)dbg.textContent="Diagnóstico: "+(e.message||"erro desconhecido");
+});
+window.addEventListener("unhandledrejection",e=>{
+  const el=document.getElementById("cloudStatus");
+  const dbg=document.getElementById("cloudDebug");
+  if(el){el.textContent="Erro de conexão ou promessa no painel.";el.style.color="#dc2626";}
+  if(dbg)dbg.textContent="Diagnóstico: "+((e.reason&&e.reason.message)||e.reason||"erro desconhecido");
+});
 const $=id=>document.getElementById(id);
 const money=v=>(Number(v||0)).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 const today=()=>new Date().toISOString().slice(0,10);
@@ -410,6 +449,11 @@ function updateCloudStatus(text,isError=false){
   el.style.color=isError?"#dc2626":"#6b7280";
 }
 
+function updateCloudDebug(text){
+  const el=$("cloudDebug");
+  if(el)el.textContent="Diagnóstico: "+text;
+}
+
 function cloudHeaders(extra={}){
   return {
     "apikey": SUPABASE_ANON_KEY,
@@ -419,20 +463,37 @@ function cloudHeaders(extra={}){
   };
 }
 
+async function fetchWithTimeout(url,options={},timeout=10000){
+  const controller=new AbortController();
+  const timer=setTimeout(()=>controller.abort(),timeout);
+  try{
+    const response=await fetch(url,{...options,signal:controller.signal});
+    clearTimeout(timer);
+    return response;
+  }catch(e){
+    clearTimeout(timer);
+    throw e;
+  }
+}
+
 async function cloudLoad(){
-  updateCloudStatus("Carregando dados da nuvem...");
+  updateCloudStatus("V44 carregada. Conectando ao Supabase...");
+  updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
     const url=SUPABASE_URL+"/rest/v1/personalizacao?chave=eq."+encodeURIComponent(CLOUD_STATE_KEY)+"&select=valor";
-    const response=await fetch(url,{
+    const response=await fetchWithTimeout(url,{
       method:"GET",
       headers:cloudHeaders()
-    });
+    },10000);
+
+    updateCloudDebug("resposta do Supabase na leitura: HTTP "+response.status);
 
     if(!response.ok){
       const text=await response.text();
       console.error("Erro ao carregar Supabase:",text);
       updateCloudStatus("Erro ao carregar dados da nuvem.",true);
+      updateCloudDebug("verifique RLS/policies da tabela personalizacao. Detalhe: "+text.slice(0,160));
       return false;
     }
 
@@ -443,49 +504,59 @@ async function cloudLoad(){
       try{
         state=JSON.parse(row.valor);
         updateCloudStatus("Dados carregados da nuvem.");
+        updateCloudDebug("linha painel_state encontrada e carregada");
         return true;
       }catch(e){
         console.error("Erro ao interpretar dados da nuvem:",e);
         updateCloudStatus("Dados da nuvem inválidos.",true);
+        updateCloudDebug("a linha painel_state existe, mas o JSON salvo está inválido");
         return false;
       }
     }
 
     updateCloudStatus("Nuvem conectada. Criando primeiro salvamento...");
+    updateCloudDebug("nenhuma linha painel_state encontrada ainda");
     return false;
   }catch(e){
     console.error("Falha ao conectar Supabase:",e);
-    updateCloudStatus("Falha ao conectar na nuvem. Verifique a internet.",true);
+    updateCloudStatus("Falha ao conectar na nuvem.",true);
+    updateCloudDebug(e.name==="AbortError"?"tempo esgotado ao conectar no Supabase":"erro de conexão: "+(e.message||e));
     return false;
   }
 }
 
 async function cloudSaveNow(){
-  try{
-    updateCloudStatus("Salvando na nuvem...");
+  updateCloudStatus("Salvando na nuvem...");
+  updateCloudDebug("enviando salvamento para personalizacao/painel_state");
 
-    const response=await fetch(SUPABASE_URL+"/rest/v1/personalizacao",{
+  try{
+    const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
       method:"POST",
-      headers:cloudHeaders({"Prefer":"resolution=merge-duplicates"}),
+      headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
       body:JSON.stringify({
         chave:CLOUD_STATE_KEY,
         valor:JSON.stringify(state)
       })
-    });
+    },10000);
+
+    updateCloudDebug("resposta do Supabase no salvamento: HTTP "+response.status);
 
     if(!response.ok){
       const text=await response.text();
       console.error("Erro ao salvar Supabase:",text);
       updateCloudStatus("Erro ao salvar na nuvem.",true);
+      updateCloudDebug("verifique insert/update policy da tabela personalizacao. Detalhe: "+text.slice(0,160));
       return false;
     }
 
     cloudLastSavedAt=new Date();
     updateCloudStatus("Salvo na nuvem automaticamente.");
+    updateCloudDebug("último salvamento: "+cloudLastSavedAt.toLocaleTimeString("pt-BR"));
     return true;
   }catch(e){
     console.error("Falha ao salvar na nuvem:",e);
     updateCloudStatus("Falha ao salvar na nuvem.",true);
+    updateCloudDebug(e.name==="AbortError"?"tempo esgotado ao salvar no Supabase":"erro de salvamento: "+(e.message||e));
     return false;
   }
 }
@@ -535,10 +606,10 @@ function populate(){const infl=state.influencers.map(i=>({value:i.id,label:`${i.
 function renderDashboard(){
   const list=monthLaunches();
   const s=stats(list);
-  $("dashSold").textContent=money(s.sold);
-  $("dashProduct").textContent=money(s.product);
-  $("dashCash").textContent=money(s.cash);
-  $("dashCount").textContent=s.count;
+  if($("dashSold"))$("dashSold").textContent=money(s.sold);
+  if($("dashProduct"))$("dashProduct").textContent=money(s.product);
+  if($("dashCash"))$("dashCash").textContent=money(s.cash);
+  if($("dashSent"))$("dashSent").textContent=list.filter(l=>l.pdfSent).length;
 
   const ranking=state.influencers.map(i=>{
     const r=stats(list.filter(l=>l.influencerId===i.id));
@@ -899,9 +970,15 @@ document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",
 setTimeout(()=>{
   const el=$("cloudStatus");
   if(el&&el.textContent==="Conectando à nuvem..."){
-    updateCloudStatus("Ainda tentando conectar à nuvem. Atualize a página em alguns segundos.",true);
+    updateCloudStatus("O painel carregou, mas a inicialização não começou.",true);
+    updateCloudDebug("isso indica cache do GitHub ou erro antes do startApp");
   }
 },6000);
-startApp();
+
+startApp().catch(e=>{
+  console.error("Erro no startApp:",e);
+  updateCloudStatus("Erro ao iniciar o painel.",true);
+  updateCloudDebug(e.message||String(e));
+});
 </script>
 </body></html>
