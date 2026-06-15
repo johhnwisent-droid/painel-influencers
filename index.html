@@ -94,7 +94,6 @@
 }
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <div class="app">
@@ -335,7 +334,7 @@
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v40_supabase_ranking_sem_total";
+const KEY = "painel_influencers_limpo_v41_supabase_direto";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -383,7 +382,6 @@ let tempSystemLogo=null;
 let tempPdfLogo=null;
 let tempWatermarkLogo=null;
 let cloudBooting=true;
-let cloudClient=null;
 let cloudSaveTimer=null;
 let cloudLastSavedAt=null;
 const $=id=>document.getElementById(id);
@@ -412,62 +410,72 @@ function updateCloudStatus(text,isError=false){
   el.style.color=isError?"#dc2626":"#6b7280";
 }
 
-function getCloudClient(){
-  if(cloudClient)return cloudClient;
-  if(!window.supabase){
-    updateCloudStatus("Supabase não carregou. Verifique a internet.",true);
-    return null;
-  }
-  cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-  return cloudClient;
+function cloudHeaders(extra={}){
+  return {
+    "apikey": SUPABASE_ANON_KEY,
+    "Authorization": "Bearer "+SUPABASE_ANON_KEY,
+    "Content-Type": "application/json",
+    ...extra
+  };
 }
 
 async function cloudLoad(){
-  const client=getCloudClient();
-  if(!client)return false;
-
   updateCloudStatus("Carregando dados da nuvem...");
 
-  const {data,error}=await client
-    .from("personalizacao")
-    .select("valor")
-    .eq("chave",CLOUD_STATE_KEY)
-    .maybeSingle();
+  try{
+    const url=SUPABASE_URL+"/rest/v1/personalizacao?chave=eq."+encodeURIComponent(CLOUD_STATE_KEY)+"&select=valor";
+    const response=await fetch(url,{
+      method:"GET",
+      headers:cloudHeaders()
+    });
 
-  if(error){
-    console.error("Erro ao carregar Supabase:",error);
-    updateCloudStatus("Erro ao carregar dados da nuvem.",true);
-    return false;
-  }
-
-  if(data&&data.valor){
-    try{
-      state=JSON.parse(data.valor);
-      updateCloudStatus("Dados carregados da nuvem.");
-      return true;
-    }catch(e){
-      console.error("Erro ao interpretar dados da nuvem:",e);
-      updateCloudStatus("Dados da nuvem inválidos.",true);
+    if(!response.ok){
+      const text=await response.text();
+      console.error("Erro ao carregar Supabase:",text);
+      updateCloudStatus("Erro ao carregar dados da nuvem.",true);
       return false;
     }
-  }
 
-  updateCloudStatus("Nuvem conectada. Criando primeiro salvamento...");
-  return false;
+    const data=await response.json();
+    const row=Array.isArray(data)?data[0]:null;
+
+    if(row&&row.valor){
+      try{
+        state=JSON.parse(row.valor);
+        updateCloudStatus("Dados carregados da nuvem.");
+        return true;
+      }catch(e){
+        console.error("Erro ao interpretar dados da nuvem:",e);
+        updateCloudStatus("Dados da nuvem inválidos.",true);
+        return false;
+      }
+    }
+
+    updateCloudStatus("Nuvem conectada. Criando primeiro salvamento...");
+    return false;
+  }catch(e){
+    console.error("Falha ao conectar Supabase:",e);
+    updateCloudStatus("Falha ao conectar na nuvem. Verifique a internet.",true);
+    return false;
+  }
 }
 
 async function cloudSaveNow(){
-  const client=getCloudClient();
-  if(!client)return false;
-
   try{
     updateCloudStatus("Salvando na nuvem...");
-    const {error}=await client
-      .from("personalizacao")
-      .upsert({chave:CLOUD_STATE_KEY,valor:JSON.stringify(state)},{onConflict:"chave"});
 
-    if(error){
-      console.error("Erro ao salvar Supabase:",error);
+    const response=await fetch(SUPABASE_URL+"/rest/v1/personalizacao",{
+      method:"POST",
+      headers:cloudHeaders({"Prefer":"resolution=merge-duplicates"}),
+      body:JSON.stringify({
+        chave:CLOUD_STATE_KEY,
+        valor:JSON.stringify(state)
+      })
+    });
+
+    if(!response.ok){
+      const text=await response.text();
+      console.error("Erro ao salvar Supabase:",text);
       updateCloudStatus("Erro ao salvar na nuvem.",true);
       return false;
     }
@@ -888,6 +896,12 @@ $("productForm").addEventListener("submit",e=>{e.preventDefault();const id=$("pr
   });
 });
 document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",render);
+setTimeout(()=>{
+  const el=$("cloudStatus");
+  if(el&&el.textContent==="Conectando à nuvem..."){
+    updateCloudStatus("Ainda tentando conectar à nuvem. Atualize a página em alguns segundos.",true);
+  }
+},6000);
 startApp();
 </script>
 </body></html>
