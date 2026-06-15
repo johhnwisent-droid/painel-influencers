@@ -169,7 +169,7 @@
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V47 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V48 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -182,7 +182,138 @@
       </div>
       <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
       <div class="panel"><div class="panelHead"><h3>Resumo por influencer no mês</h3><span class="muted">Comissão em produtos e comissão em dinheiro ficam separadas.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
-<div class="panel printPanel">
+
+    </section>
+
+    <section id="influencers" class="view">
+      <div class="panel"><div class="panelHead"><h3>Cadastro de influencer</h3></div><form id="infForm" class="form"><input type="hidden" id="infId"><label>Nome<input id="infName" required></label><label>Cupom<input id="infCoupon" required></label><label>% comissão produto<input type="number" id="infProductRate" step="0.01"></label><label>% comissão dinheiro<input type="number" id="infCashRate" step="0.01"></label><label>Instagram<input id="infInstagram"></label><label>WhatsApp<input id="infWhatsapp"></label><div class="actions two"><button class="primary" type="submit">Salvar influencer</button><button class="secondary" type="button" onclick="resetInfForm()">Cancelar</button></div></form></div>
+      <div class="panel"><div class="panelHead"><h3>Influencers cadastrados</h3></div><div class="tableWrap"><table><thead><tr><th>Nome</th><th>Cupom</th><th>% Produto</th><th>% Dinheiro</th><th>Instagram</th><th>WhatsApp</th><th>Ações</th></tr></thead><tbody id="infRows"></tbody></table></div></div>
+    </section>
+
+
+    <section id="paid" class="view">
+      <div class="grid">
+        <div class="card"><small>Total pago em dinheiro</small><strong id="paidCashTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Influencers pagos</small><strong id="paidInfluencerCount">0</strong></div>
+        <div class="card"><small>Comissão em produtos separada</small><strong id="paidProductTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Mês consultado</small><strong id="paidMonthLabel">-</strong></div>
+      </div>
+      <div class="panel">
+        <div class="panelHead">
+          <h3>Influencers pagos</h3>
+          <div class="filters">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:800;color:#6b7280">Mês <input id="paidMonth" type="month" onchange="renderPaidPage()"></label>
+            <button class="secondary" onclick="exportPaidCSV()">Exportar CSV</button>
+          </div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Influencer</th>
+                <th>Cupom</th>
+                <th>Comissão em dinheiro paga</th>
+                <th>Comissão em produtos separada</th>
+                <th>Origem do pagamento</th>
+                <th>Data do pagamento</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="paidPageRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="products" class="view">
+      <div class="panel"><div class="panelHead"><h3>Produto escolhido</h3><span class="muted">A diferença a pagar calcula automaticamente.</span></div><form id="productForm" class="form"><input type="hidden" id="productId"><label>Data<input type="date" id="productDate"></label><label>Influencer<select id="productInfluencer"></select></label><label>Produto escolhido<input id="productName" placeholder="Ex.: Calça Cargo"></label><label>Valor do produto<input type="number" id="productValue" step="0.01" min="0"></label><label>Saldo produto disponível<input id="productAvailable" readonly></label><label>Saldo usado<input type="number" id="productUsed" step="0.01" min="0"></label><label>Diferença a pagar<input id="productDifference" readonly></label><label>Status<select id="productStatus"><option>Pendente</option><option>Pago</option><option>Resgatado</option><option>Cancelado</option></select></label><label class="two">Observação<input id="productNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar produto</button><button class="secondary" type="button" onclick="resetProductForm()">Cancelar</button></div></form></div>
+      <div class="panel"><div class="panelHead"><h3>Produtos registrados</h3></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Influencer</th><th>Cupom</th><th>Produto</th><th>Valor</th><th>Saldo usado</th><th>Diferença</th><th>Status</th><th>Ações</th></tr></thead><tbody id="productRows"></tbody></table></div></div>
+    </section>
+
+    
+    <section id="accumulations" class="view">
+      <div class="grid">
+        <div class="card"><small>Total em produtos</small><strong id="accProductTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Total em dinheiro</small><strong id="accCashTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Influencers acumulando</small><strong id="accInfluencerCount">0</strong></div>
+        <div class="card"><small>Controle separado</small><strong>Produto / Dinheiro</strong></div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHead">
+          <h3>Saldo acumulado por influencer</h3>
+          <div class="filters">
+            <select id="accReportInfluencer" onchange="renderAccumulationReport()"></select>
+            <button class="primary" onclick="printAccumulationReport()">Exportar PDF do acúmulo</button>
+            <button class="secondary" onclick="exportAccumulationsCSV()">Exportar acúmulos</button>
+          </div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Influencer</th>
+                <th>Cupom</th>
+                <th>Produto acumulado</th>
+                <th>Dinheiro acumulado</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="accRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel printPanel accPrintPanel printOnly">
+        <div class="printArea" id="accPrintArea">
+          <img id="accReportWatermark" class="reportWatermark" style="display:none">
+
+          <div class="pdfCleanHeader">
+            <div>
+              <h1>Resumo de acúmulo</h1>
+              <p>Saldo de comissão acumulada disponível para o influencer.</p>
+            </div>
+            <img id="accReportLogo" class="printLogo" style="display:none">
+          </div>
+
+          <div class="pdfIdentity">
+            <h2 id="accReportName">Selecione um influencer</h2>
+            <p id="accReportCoupon" class="muted">Cupom: -</p>
+          </div>
+
+          <div class="pdfTwoCards">
+            <div class="pdfBox">
+              <small>Saldo em produtos</small>
+              <strong id="accReportProduct">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Saldo em dinheiro</small>
+              <strong id="accReportCash">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <p class="pdfFooterClean">Relatório gerado automaticamente pelo painel.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pix" class="view"><div class="panel"><div class="panelHead"><h3>Chaves PIX</h3><span class="muted">Área separada só para dados de pagamento.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Chave PIX</th><th>Ação</th></tr></thead><tbody id="pixRows"></tbody></table></div></div></section>
+
+    
+    <section id="reports" class="view">
+      <div class="panel noPrint">
+        <div class="panelHead">
+          <h3>Exportar PDF do influencer</h3>
+          <div class="filters">
+            <select id="reportInfluencer" onchange="renderReport()"></select>
+            <button class="primary" onclick="printReport()">Exportar PDF</button>
+            <button class="secondary" onclick="exportReportCSV()">Exportar CSV</button>
+            <button class="secondary" onclick="markReportSent()">Marcar como enviado</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel printPanel">
         <div class="printArea" id="printArea">
           <img id="reportWatermark" class="reportWatermark" style="display:none">
 
@@ -297,7 +428,7 @@
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v47_pagos_acumulo";
+const KEY = "painel_influencers_limpo_v48_pagos_acumulo_corrigido";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -413,7 +544,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V47 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V48 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -647,6 +778,23 @@ function renderLaunchTotals(){
   </tr>`).join(""):`<tr><td colspan="7">Sem resumo para mostrar.</td></tr>`;
 }
 
+function renderPaidInfluencers(){
+  if(!$("paidInfluencerRows"))return;
+
+  const rows=state.influencers.map(i=>{
+    const list=filteredLaunches().filter(l=>l.influencerId===i.id&&l.paid&&!l.accumulate);
+    const totals=stats(list);
+    return {i,...totals};
+  }).filter(r=>r.count).sort((a,b)=>b.cash-a.cash||b.product-a.product||b.sold-a.sold);
+
+  $("paidInfluencerRows").innerHTML=rows.length?rows.map(r=>`<tr>
+    <td>${esc(r.i.name)}</td>
+    <td>${esc(r.i.coupon)}</td>
+    <td><span class="moneyHighlight cash">${money(r.cash)}</span></td>
+    <td><span class="moneyHighlight product">${money(r.product)}</span></td>
+    <td><span class="paidBadge">Pago</span></td>
+  </tr>`).join(""):`<tr><td colspan="5">Nenhum influencer marcado como pago neste mês.</td></tr>`;
+}
 
 function selectedPaidMonth(){
   const el=$("paidMonth");
@@ -687,9 +835,7 @@ function paidGroupsForMonth(month){
   const map=new Map();
   paidRecordsForMonth(month).forEach(r=>{
     const key=r.influencerId;
-    if(!map.has(key)){
-      map.set(key,{influencerId:key,cash:0,product:0,dates:[],sources:new Set(),count:0});
-    }
+    if(!map.has(key))map.set(key,{influencerId:key,cash:0,product:0,dates:[],sources:new Set(),count:0});
     const g=map.get(key);
     g.cash+=r.cash;
     g.product+=r.product;
@@ -725,12 +871,13 @@ function renderPaidPage(){
   </tr>`).join(""):`<tr><td colspan="7">Nenhum influencer pago neste mês.</td></tr>`;
 }
 
+function renderPaidInfluencers(){renderPaidPage();}
+
 function exportPaidCSV(){
   const month=selectedPaidMonth();
   const rows=paidGroupsForMonth(month);
   rowsCSV([["Mês","Influencer","Cupom","Comissão em dinheiro paga","Comissão em produtos separada","Origem do pagamento","Data do pagamento"],...rows.map(r=>[monthLabel(month),r.i.name||"-",r.i.coupon||"-",r.cash,r.product,r.sourcesText,r.dateText])],`influencers-pagos-${month}.csv`);
 }
-
 
 function calcLaunch(){}
 function resetLaunchForm(){$("launchForm").reset();$("launchId").value="";$("launchDate").value=today();$("launchAccumulate").checked=false;if(state.influencers[0])$("launchInfluencer").value=state.influencers[0].id;if(state.settings.origins[0])$("launchOrigin").value=state.settings.origins[0];if(state.settings.statuses[0])$("launchStatus").value=state.settings.statuses[0];calcLaunch();}
@@ -785,6 +932,7 @@ function accumulationByInfluencer(){
     return {i,list,product,cash,earnedProduct,earnedCash};
   }).filter(r=>r.product>0||r.cash>0).sort((a,b)=>b.product-a.product||b.cash-a.cash);
 }
+
 function renderAccumulations(){
   const groups=accumulationByInfluencer();
   const productTotal=groups.reduce((a,r)=>a+r.product,0);
@@ -805,6 +953,67 @@ function renderAccumulations(){
     </td>
   </tr>`).join(""):`<tr><td colspan="5">Nenhum influencer com saldo acumulado aberto.</td></tr>`;
 }
+
+function payAccumulatedCash(infId){
+  const row=accumulationByInfluencer().find(r=>r.i.id===infId);
+  if(!row||row.cash<=0){
+    alert("Este influencer não possui saldo em dinheiro acumulado para pagar.");
+    return;
+  }
+  if(confirm(`Marcar ${money(row.cash)} como pago para ${row.i.name}?`)){
+    state.cashPayments=state.cashPayments||[];
+    state.cashPayments.push({
+      id:uid(),
+      date:today(),
+      month:selectedMonth(),
+      influencerId:infId,
+      amount:row.cash,
+      cash:row.cash,
+      source:"Acúmulo",
+      status:"Pago",
+      notes:"Pagamento do saldo acumulado em dinheiro"
+    });
+    save();
+    render();
+    showPage("paid");
+  }
+}
+
+function applyPdfWatermark(id){
+  const el=$(id);
+  if(!el) return;
+  const s=state.settings||{};
+  if(!s.pdfWatermarkLogo){
+    el.style.display="none";
+    el.removeAttribute("src");
+    return;
+  }
+  el.src=s.pdfWatermarkLogo;
+  el.style.display="block";
+  el.style.left=Number(s.pdfWatermarkX ?? 50)+"%";
+  el.style.top=Number(s.pdfWatermarkY ?? 72)+"%";
+  el.style.width=Number(s.pdfWatermarkSize ?? 45)+"%";
+  el.style.opacity=String(Number(s.pdfWatermarkOpacity ?? 0.12));
+}
+
+function setWatermarkPreset(value){
+  const presets={
+    "top-left":[20,20],"top-center":[50,20],"top-right":[80,20],
+    "middle-left":[20,50],"center":[50,50],"middle-right":[80,50],
+    "bottom-left":[20,78],"bottom-center":[50,78],"bottom-right":[80,78]
+  };
+  if(presets[value]){
+    const [x,y]=presets[value];
+    $("setPdfWatermarkX").value=x;
+    $("setPdfWatermarkY").value=y;
+    state.settings.pdfWatermarkX=x;
+    state.settings.pdfWatermarkY=y;
+    save();
+    renderReport();
+    renderAccumulationReport();
+  }
+}
+
 function renderAccumulationReport(){
   const sel=$("accReportInfluencer");
   const inf=sel?infById(sel.value):null;
@@ -840,30 +1049,6 @@ function printAccumulationReport(){
 }
 
 
-function payAccumulatedCash(infId){
-  const row=accumulationByInfluencer().find(r=>r.i.id===infId);
-  if(!row||row.cash<=0){
-    alert("Este influencer não possui saldo em dinheiro acumulado para pagar.");
-    return;
-  }
-  if(confirm(`Marcar ${money(row.cash)} como pago para ${row.i.name}?`)){
-    state.cashPayments=state.cashPayments||[];
-    state.cashPayments.push({
-      id:uid(),
-      date:today(),
-      month:selectedMonth(),
-      influencerId:infId,
-      amount:row.cash,
-      cash:row.cash,
-      source:"Acúmulo",
-      status:"Pago",
-      notes:"Pagamento do saldo acumulado em dinheiro"
-    });
-    save();
-    render();
-    showPage("paid");
-  }
-}
 function stopAccumulatingInfluencer(infId){if(confirm("Zerar o acúmulo deste influencer? Os lançamentos sairão da carteira de acúmulo.")){state.launches.forEach(l=>{if(l.influencerId===infId)l.accumulate=false});save();render();}}
 function resetInfForm(){$("infForm").reset();$("infId").value="";$("infProductRate").value=20;$("infCashRate").value=10;}
 function renderInfluencers(){$("infRows").innerHTML=state.influencers.length?state.influencers.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.coupon)}</td><td>${Number(i.productRate||0)}%</td><td>${Number(i.cashRate||0)}%</td><td>${esc(i.instagram||"")}</td><td>${esc(i.whatsapp||"")}</td><td><button class="small secondary" onclick="editInf('${i.id}')">Editar</button> <button class="small danger" onclick="deleteInf('${i.id}')">Excluir</button></td></tr>`).join(""):`<tr><td colspan="7">Nenhum influencer cadastrado.</td></tr>`;}
@@ -1072,9 +1257,7 @@ $("launchForm").addEventListener("submit",e=>{
   };
 
   const idx=state.launches.findIndex(l=>l.id===id);
-  if(idx>=0)state.launches[idx]=item;
-  else state.launches.push(item);
-
+  if(idx>=0)state.launches[idx]=item;else state.launches.push(item);
   save();
   resetLaunchForm();
   render();
