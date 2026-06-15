@@ -138,11 +138,11 @@
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V43 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V44 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
-      <div class="panel"><div class="panelHead"><h3>Ranking do mês</h3><span class="muted">Soma automática por influencer</span></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Influencer</th><th>Cupom</th><th>Vendido</th><th>Comissão em produtos</th><th>Comissão em dinheiro</th><th>Lançamentos</th></tr></thead><tbody id="rankingRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Ranking do mês</h3><span class="muted">Soma automática por influencer</span></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Influencer</th><th>Cupom</th><th>Vendido</th><th>Comissão em produtos</th><th>Comissão em dinheiro</th></tr></thead><tbody id="rankingRows"></tbody></table></div></div>
     </section>
 
     <section id="launches" class="view">
@@ -361,7 +361,7 @@
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v43_supabase_diagnostico";
+const KEY = "painel_influencers_limpo_v44_supabase_corrigido";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -477,7 +477,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V43 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V44 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -606,10 +606,10 @@ function populate(){const infl=state.influencers.map(i=>({value:i.id,label:`${i.
 function renderDashboard(){
   const list=monthLaunches();
   const s=stats(list);
-  $("dashSold").textContent=money(s.sold);
-  $("dashProduct").textContent=money(s.product);
-  $("dashCash").textContent=money(s.cash);
-  $("dashCount").textContent=s.count;
+  if($("dashSold"))$("dashSold").textContent=money(s.sold);
+  if($("dashProduct"))$("dashProduct").textContent=money(s.product);
+  if($("dashCash"))$("dashCash").textContent=money(s.cash);
+  if($("dashSent"))$("dashSent").textContent=list.filter(l=>l.pdfSent).length;
 
   const ranking=state.influencers.map(i=>{
     const r=stats(list.filter(l=>l.influencerId===i.id));
