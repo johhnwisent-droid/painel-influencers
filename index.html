@@ -138,7 +138,7 @@
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V44 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V45 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -361,7 +361,7 @@
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v44_supabase_corrigido";
+const KEY = "painel_influencers_limpo_v45_filtered_corrigido";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -477,7 +477,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V44 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V45 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -603,6 +603,11 @@ function stats(rows){return rows.reduce((a,l)=>{a.sold+=Number(l.sold||0);a.prod
 function applyTheme(){const s=state.settings;document.documentElement.style.setProperty("--primary",s.primaryColor);document.documentElement.style.setProperty("--accent",s.accentColor);document.documentElement.style.setProperty("--bg",s.backgroundColor);document.documentElement.style.setProperty("--card",s.cardColor);document.documentElement.style.setProperty("--text",s.textColor);$("sideTitle").textContent=s.systemName;$("sideSub").textContent=s.subtitle;const sysLogo=s.systemLogo||"";$("sideLogo").innerHTML=sysLogo?`<img src="${sysLogo}">`:"JS";}
 function fillSelect(id,options,blank){const el=$(id);if(!el)return;const old=el.value;el.innerHTML=(blank?`<option value="">${blank}</option>`:"")+options.map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");if([...el.options].some(o=>o.value===old))el.value=old;}
 function populate(){const infl=state.influencers.map(i=>({value:i.id,label:`${i.name} (${i.coupon})`}));fillSelect("launchInfluencer",infl);fillSelect("productInfluencer",infl);fillSelect("reportInfluencer",infl,"Selecione influencer");fillSelect("accReportInfluencer",infl,"Selecione influencer");fillSelect("filterInfluencer",infl,"Todos os influencers");fillSelect("launchOrigin",state.settings.origins.map(o=>({value:o,label:o})));fillSelect("filterOrigin",state.settings.origins.map(o=>({value:o,label:o})),"Todas as origens");fillSelect("launchStatus",state.settings.statuses.map(s=>({value:s,label:s})));}
+
+function filteredLaunches(){
+  return monthLaunches();
+}
+
 function renderDashboard(){
   const list=monthLaunches();
   const s=stats(list);
