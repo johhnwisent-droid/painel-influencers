@@ -62,6 +62,37 @@
   }
 }
 
+
+.moneyHighlight{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:112px;
+  padding:8px 12px;
+  border-radius:999px;
+  font-weight:900;
+  letter-spacing:-.01em;
+  border:1px solid transparent;
+}
+.moneyHighlight.product{
+  background:#ecfdf5;
+  color:#047857;
+  border-color:#bbf7d0;
+}
+.moneyHighlight.cash{
+  background:#eff6ff;
+  color:#1d4ed8;
+  border-color:#bfdbfe;
+}
+.rankCommissionLabel{
+  display:block;
+  font-size:10px;
+  color:#6b7280;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  margin-bottom:3px;
+}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -85,15 +116,15 @@
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
-      <div class="panel"><div class="panelHead"><h3>Ranking do mês</h3><span class="muted">Soma automática por influencer</span></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Influencer</th><th>Cupom</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Total</th><th>Lançamentos</th></tr></thead><tbody id="rankingRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Ranking do mês</h3><span class="muted">Soma automática por influencer</span></div><div class="tableWrap"><table><thead><tr><th>#</th><th>Influencer</th><th>Cupom</th><th>Vendido</th><th>Comissão em produtos</th><th>Comissão em dinheiro</th><th>Lançamentos</th></tr></thead><tbody id="rankingRows"></tbody></table></div></div>
     </section>
 
     <section id="launches" class="view">
       <div class="panel"><div class="panelHead"><h3>Novo lançamento</h3><span class="muted">Marque Acumular para jogar o saldo na carteira do influencer.</span></div>
-        <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Total comissão<input id="launchTotal" readonly></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="resetLaunchForm()">Cancelar</button></div></form>
+        <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="resetLaunchForm()">Cancelar</button></div></form>
       </div>
-      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Total</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
-      <div class="panel"><div class="panelHead"><h3>Total por influencer no mês</h3><span class="muted">Soma todos os lançamentos do mês selecionado.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Total vendido</th><th>Produto</th><th>Dinheiro</th><th>Total comissão</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Resumo por influencer no mês</h3><span class="muted">Comissão em produtos e comissão em dinheiro ficam separadas.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
     </section>
 
     <section id="influencers" class="view">
@@ -304,7 +335,7 @@
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v38_supabase_sem_total_lancamentos";
+const KEY = "painel_influencers_limpo_v40_supabase_ranking_sem_total";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -493,11 +524,71 @@ function stats(rows){return rows.reduce((a,l)=>{a.sold+=Number(l.sold||0);a.prod
 function applyTheme(){const s=state.settings;document.documentElement.style.setProperty("--primary",s.primaryColor);document.documentElement.style.setProperty("--accent",s.accentColor);document.documentElement.style.setProperty("--bg",s.backgroundColor);document.documentElement.style.setProperty("--card",s.cardColor);document.documentElement.style.setProperty("--text",s.textColor);$("sideTitle").textContent=s.systemName;$("sideSub").textContent=s.subtitle;const sysLogo=s.systemLogo||"";$("sideLogo").innerHTML=sysLogo?`<img src="${sysLogo}">`:"JS";}
 function fillSelect(id,options,blank){const el=$(id);if(!el)return;const old=el.value;el.innerHTML=(blank?`<option value="">${blank}</option>`:"")+options.map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");if([...el.options].some(o=>o.value===old))el.value=old;}
 function populate(){const infl=state.influencers.map(i=>({value:i.id,label:`${i.name} (${i.coupon})`}));fillSelect("launchInfluencer",infl);fillSelect("productInfluencer",infl);fillSelect("reportInfluencer",infl,"Selecione influencer");fillSelect("accReportInfluencer",infl,"Selecione influencer");fillSelect("filterInfluencer",infl,"Todos os influencers");fillSelect("launchOrigin",state.settings.origins.map(o=>({value:o,label:o})));fillSelect("filterOrigin",state.settings.origins.map(o=>({value:o,label:o})),"Todas as origens");fillSelect("launchStatus",state.settings.statuses.map(s=>({value:s,label:s})));}
-function renderDashboard(){const s=stats(monthLaunches());$("dashSold").textContent=money(s.sold);$("dashProduct").textContent=money(s.product);$("dashCash").textContent=money(s.cash);$("dashSent").textContent=monthLaunches().filter(l=>l.pdfSent).length;const rows=state.influencers.map(i=>{const list=monthLaunches().filter(l=>l.influencerId===i.id);return {i,...stats(list)}}).filter(r=>r.count).sort((a,b)=>b.total-a.total);$("rankingRows").innerHTML=rows.length?rows.map((r,n)=>`<tr><td>${n+1}</td><td>${esc(r.i.name)}</td><td>${esc(r.i.coupon)}</td><td>${money(r.sold)}</td><td>${money(r.product)}</td><td>${money(r.cash)}</td><td><b>${money(r.total)}</b></td><td>${r.count}</td></tr>`).join(""):`<tr><td colspan="8">Nenhum lançamento neste mês.</td></tr>`;}
-function filteredLaunches(){let rows=monthLaunches();if($("filterInfluencer").value)rows=rows.filter(l=>l.influencerId===$("filterInfluencer").value);if($("filterOrigin").value)rows=rows.filter(l=>l.origin===$("filterOrigin").value);return rows.sort((a,b)=>(b.date||"").localeCompare(a.date||""));}
-function renderLaunches(){const rows=filteredLaunches();$("launchRows").innerHTML=rows.length?rows.map(l=>{const i=infById(l.influencerId)||{};return `<tr><td>${dateBR(l.date)}</td><td>${esc(l.origin)}</td><td>${esc(i.coupon||"-")}</td><td>${esc(i.name||"-")}</td><td>${money(l.sold)}</td><td>${money(l.productCommission)}</td><td>${money(l.cashCommission)}</td><td><b>${money(totalLaunch(l))}</b></td><td><span class="badge ${l.status==="Enviado"?"blue":l.status==="Pago"?"green":l.status==="Cancelado"?"red":"yellow"}">${esc(l.status)}</span></td><td><input class="checkbox" type="checkbox" ${l.pdfSent?"checked":""} onchange="togglePdfSent('${l.id}',this.checked)"></td><td><input class="checkbox" type="checkbox" ${l.accumulate?"checked":""} onchange="toggleAccumulate('${l.id}',this.checked)"></td><td><button class="small secondary" onclick="editLaunch('${l.id}')">Editar</button> <button class="small danger" onclick="deleteLaunch('${l.id}')">Excluir</button></td></tr>`}).join(""):`<tr><td colspan="12">Nenhum lançamento neste mês.</td></tr>`;renderLaunchTotals();}
-function renderLaunchTotals(){const rows=state.influencers.map(i=>{const list=filteredLaunches().filter(l=>l.influencerId===i.id);return {i,...stats(list),acc:list.filter(l=>l.accumulate).length}}).filter(r=>r.count).sort((a,b)=>b.total-a.total);$("launchTotalsRows").innerHTML=rows.length?rows.map(r=>`<tr><td>${esc(r.i.name)}</td><td>${esc(r.i.coupon)}</td><td>${money(r.sold)}</td><td>${money(r.product)}</td><td>${money(r.cash)}</td><td><b>${money(r.total)}</b></td><td>${r.count}</td><td>${r.acc?"Sim":"Não"}</td></tr>`).join(""):`<tr><td colspan="8">Sem totais para mostrar.</td></tr>`;}
-function calcLaunch(){const p=Number($("launchProduct").value||0),c=Number($("launchCash").value||0);$("launchTotal").value=money(p+c);}
+function renderDashboard(){
+  const list=monthLaunches();
+  const s=stats(list);
+  $("dashSold").textContent=money(s.sold);
+  $("dashProduct").textContent=money(s.product);
+  $("dashCash").textContent=money(s.cash);
+  $("dashCount").textContent=s.count;
+
+  const ranking=state.influencers.map(i=>{
+    const r=stats(list.filter(l=>l.influencerId===i.id));
+    return {i,...r};
+  }).filter(r=>r.count).sort((a,b)=>b.sold-a.sold||b.product-a.product||b.cash-a.cash).slice(0,10);
+
+  $("rankingRows").innerHTML=ranking.length?ranking.map((r,idx)=>`<tr>
+    <td><b>${idx+1}</b></td>
+    <td>${esc(r.i.name)}</td>
+    <td>${esc(r.i.coupon)}</td>
+    <td>${money(r.sold)}</td>
+    <td>
+      <span class="rankCommissionLabel">Produtos</span>
+      <span class="moneyHighlight product">${money(r.product)}</span>
+    </td>
+    <td>
+      <span class="rankCommissionLabel">Dinheiro</span>
+      <span class="moneyHighlight cash">${money(r.cash)}</span>
+    </td>
+  </tr>`).join(""):`<tr><td colspan="6">Sem lançamentos no mês.</td></tr>`;
+}
+function renderLaunches(){
+  const rows=filteredLaunches();
+  $("launchRows").innerHTML=rows.length?rows.map(l=>{
+    const i=infById(l.influencerId)||{};
+    return `<tr>
+      <td>${dateBR(l.date)}</td>
+      <td>${esc(l.origin)}</td>
+      <td>${esc(i.coupon||"-")}</td>
+      <td>${esc(i.name||"-")}</td>
+      <td>${money(l.sold)}</td>
+      <td>${money(l.productCommission)}</td>
+      <td>${money(l.cashCommission)}</td>
+      <td><span class="badge ${l.status==="Enviado"?"blue":l.status==="Pago"?"green":l.status==="Cancelado"?"red":"yellow"}">${esc(l.status)}</span></td>
+      <td><input class="checkbox" type="checkbox" ${l.pdfSent?"checked":""} onchange="togglePdfSent('${l.id}',this.checked)"></td>
+      <td><input class="checkbox" type="checkbox" ${l.accumulate?"checked":""} onchange="toggleAccumulate('${l.id}',this.checked)"></td>
+      <td><button class="small secondary" onclick="editLaunch('${l.id}')">Editar</button> <button class="small danger" onclick="deleteLaunch('${l.id}')">Excluir</button></td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="11">Nenhum lançamento neste mês.</td></tr>`;
+  renderLaunchTotals();
+}
+function renderLaunchTotals(){
+  const rows=state.influencers.map(i=>{
+    const list=filteredLaunches().filter(l=>l.influencerId===i.id);
+    return {i,...stats(list),acc:list.filter(l=>l.accumulate).length};
+  }).filter(r=>r.count).sort((a,b)=>b.sold-a.sold||b.product-a.product||b.cash-a.cash);
+
+  $("launchTotalsRows").innerHTML=rows.length?rows.map(r=>`<tr>
+    <td>${esc(r.i.name)}</td>
+    <td>${esc(r.i.coupon)}</td>
+    <td>${money(r.sold)}</td>
+    <td>${money(r.product)}</td>
+    <td>${money(r.cash)}</td>
+    <td>${r.count}</td>
+    <td>${r.acc?"Sim":"Não"}</td>
+  </tr>`).join(""):`<tr><td colspan="7">Sem resumo para mostrar.</td></tr>`;
+}
+function calcLaunch(){}
 function resetLaunchForm(){$("launchForm").reset();$("launchId").value="";$("launchDate").value=today();$("launchAccumulate").checked=false;if(state.influencers[0])$("launchInfluencer").value=state.influencers[0].id;if(state.settings.origins[0])$("launchOrigin").value=state.settings.origins[0];if(state.settings.statuses[0])$("launchStatus").value=state.settings.statuses[0];calcLaunch();}
 function autoCommission(){if($("launchId").value)return;const inf=infById($("launchInfluencer").value);const sold=Number($("launchSold").value||0);if(inf&&sold){$("launchProduct").value=(sold*Number(inf.productRate||0)/100).toFixed(2);$("launchCash").value=(sold*Number(inf.cashRate||0)/100).toFixed(2);}calcLaunch();}
 function editLaunch(id){const l=state.launches.find(x=>x.id===id);if(!l)return;showPage("launches");$("launchId").value=l.id;$("launchDate").value=l.date;$("launchInfluencer").value=l.influencerId;$("launchOrigin").value=l.origin;$("launchSold").value=l.sold;$("launchProduct").value=l.productCommission;$("launchCash").value=l.cashCommission;$("launchStatus").value=l.status;$("launchPdfSent").checked=!!l.pdfSent;$("launchAccumulate").checked=!!l.accumulate;$("launchNotes").value=l.notes||"";calcLaunch();}
