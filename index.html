@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Painel de Influencers</title>
 <style>
 :root{--primary:#111827;--accent:#2563eb;--bg:#f3f4f6;--card:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--danger:#dc2626;--success:#16a34a;--warn:#d97706;}
@@ -173,6 +173,386 @@ button[disabled]{
   font-weight:900;
 }
 
+
+/* ===== V51 MOBILE RESPONSIVO ===== */
+html{
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+}
+*{
+  box-sizing:border-box;
+}
+button,input,select,textarea{
+  font-size:16px;
+}
+.tableWrap{
+  -webkit-overflow-scrolling:touch;
+}
+.tableWrap table{
+  min-width:760px;
+}
+#launches .tableWrap table{
+  min-width:1120px;
+}
+#paid .tableWrap table,
+#products .tableWrap table,
+#accumulations .tableWrap table{
+  min-width:820px;
+}
+button{
+  min-height:42px;
+}
+.versionBadge{
+  width:max-content;
+  max-width:100%;
+}
+
+@media(max-width:1100px){
+  .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .form{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  .main{
+    padding:18px;
+  }
+  .panelHead{
+    align-items:flex-start;
+  }
+}
+
+@media(max-width:760px){
+  body{
+    background:var(--bg);
+  }
+
+  .app{
+    display:block;
+    min-height:100dvh;
+  }
+
+  .side{
+    position:sticky;
+    top:0;
+    z-index:50;
+    width:100%;
+    height:auto;
+    max-height:none;
+    padding:12px 12px 10px;
+    border-radius:0 0 18px 18px;
+    box-shadow:0 10px 24px rgba(15,23,42,.16);
+    overflow:visible;
+  }
+
+  .brand{
+    margin-bottom:10px;
+    gap:10px;
+  }
+
+  .logo{
+    width:38px;
+    height:38px;
+    border-radius:12px;
+    flex:0 0 auto;
+  }
+
+  .brand h1{
+    font-size:15px;
+    line-height:1.15;
+  }
+
+  .brand p{
+    font-size:11px;
+    line-height:1.25;
+    margin-top:2px;
+  }
+
+  .menu{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    overflow-y:hidden;
+    padding:2px 2px 8px;
+    margin:0 -2px;
+    scroll-snap-type:x proximity;
+    -webkit-overflow-scrolling:touch;
+  }
+
+  .menu::-webkit-scrollbar{
+    height:4px;
+  }
+
+  .menu button{
+    flex:0 0 auto;
+    white-space:nowrap;
+    padding:10px 12px;
+    border-radius:999px;
+    font-size:13px;
+    scroll-snap-align:start;
+    background:rgba(255,255,255,.08);
+  }
+
+  .menu button.active{
+    background:white;
+    color:var(--primary);
+    opacity:1;
+  }
+
+  .main{
+    padding:14px;
+  }
+
+  .top{
+    display:grid;
+    gap:12px;
+    margin-bottom:14px;
+  }
+
+  .top h2{
+    font-size:22px;
+  }
+
+  .monthbox{
+    width:100%;
+    justify-content:space-between;
+    margin-top:0;
+  }
+
+  .monthbox input{
+    max-width:170px;
+  }
+
+  .grid{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:12px;
+  }
+
+  .card{
+    padding:14px;
+    border-radius:16px;
+  }
+
+  .card small{
+    font-size:11px;
+    line-height:1.25;
+  }
+
+  .card strong{
+    font-size:19px;
+    line-height:1.15;
+    word-break:break-word;
+  }
+
+  .panel{
+    padding:14px;
+    border-radius:16px;
+    margin-bottom:12px;
+  }
+
+  .panelHead{
+    display:grid;
+    gap:10px;
+    margin-bottom:12px;
+  }
+
+  .panelHead h3{
+    font-size:17px;
+  }
+
+  .filters{
+    width:100%;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .filters select,
+  .filters input,
+  .filters button{
+    width:100%;
+  }
+
+  .form{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+
+  .form .two,
+  .form .full,
+  .actions.two{
+    grid-column:1/-1;
+  }
+
+  .actions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    align-items:stretch;
+  }
+
+  .actions button,
+  .form button{
+    width:100%;
+  }
+
+  input,select,textarea{
+    border-radius:12px;
+    padding:11px 12px;
+  }
+
+  textarea{
+    min-height:92px;
+  }
+
+  .tableWrap{
+    margin-left:-2px;
+    margin-right:-2px;
+    border-radius:14px;
+    max-width:calc(100vw - 24px);
+    overflow:auto;
+  }
+
+  th,td{
+    padding:10px;
+    font-size:13px;
+  }
+
+  th{
+    font-size:11px;
+  }
+
+  .small{
+    min-height:36px;
+    padding:8px 10px;
+    font-size:12px;
+  }
+
+  .checkbox{
+    width:22px;
+    height:22px;
+  }
+
+  .checkboxWrap{
+    justify-content:flex-start;
+    min-width:88px;
+  }
+
+  .settingsGrid{
+    grid-template-columns:1fr;
+  }
+
+  .settingsGrid .full{
+    grid-column:1/-1;
+  }
+
+  .printArea{
+    padding:16px 14px 150px;
+    border-radius:16px;
+  }
+
+  .printLogo{
+    max-width:190px;
+    max-height:72px;
+  }
+
+  .reportWatermark{
+    width:70%;
+  }
+
+  .paidBadge,
+  .productPaidBadge,
+  .badge{
+    white-space:nowrap;
+  }
+}
+
+@media(max-width:430px){
+  .main{
+    padding:12px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .card{
+    padding:13px;
+  }
+
+  .card strong{
+    font-size:21px;
+  }
+
+  .panel{
+    padding:12px;
+  }
+
+  .top h2{
+    font-size:20px;
+  }
+
+  .monthbox{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+  }
+
+  .monthbox input{
+    max-width:none;
+    width:100%;
+  }
+
+  .brand h1{
+    font-size:14px;
+  }
+
+  .brand p{
+    font-size:10.5px;
+  }
+
+  .menu button{
+    padding:9px 11px;
+    font-size:12px;
+  }
+
+  .notice{
+    padding:11px 12px;
+    border-radius:14px;
+    font-size:13px;
+  }
+
+  .versionBadge{
+    font-size:11px;
+    padding:7px 10px;
+  }
+
+  .cloudDebug{
+    font-size:11px;
+    line-height:1.35;
+  }
+
+  .tableWrap{
+    max-width:calc(100vw - 20px);
+  }
+}
+
+@media(max-width:360px){
+  .main{
+    padding:10px;
+  }
+
+  .side{
+    padding-left:10px;
+    padding-right:10px;
+  }
+
+  .tableWrap{
+    max-width:calc(100vw - 18px);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -192,7 +572,7 @@ button[disabled]{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V50 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V51 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -451,7 +831,7 @@ button[disabled]{
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v50_pago_produto";
+const KEY = "painel_influencers_limpo_v51_mobile_responsivo";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -567,7 +947,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V50 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V51 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
