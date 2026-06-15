@@ -150,6 +150,29 @@
   font-weight:900;
 }
 
+
+button[disabled]{
+  opacity:.45;
+  cursor:not-allowed;
+  filter:grayscale(.25);
+}
+.productPaidBadge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:#eff6ff;
+  color:#1d4ed8;
+  border:1px solid #bfdbfe;
+  font-weight:900;
+  font-size:12px;
+}
+.productPaidBadge:before{
+  content:"✓";
+  font-weight:900;
+}
+
 </style>
 </head>
 <body>
@@ -169,7 +192,7 @@
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V49 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V50 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -428,7 +451,7 @@
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v49_pagos_sem_redirecionar";
+const KEY = "painel_influencers_limpo_v50_pago_produto";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -544,7 +567,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V49 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V50 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -915,6 +938,18 @@ function togglePaid(id,val){
   }
 }
 function accumulatedRows(){return state.launches.filter(l=>l.accumulate);}
+function productAccumulationPaid(infId){
+  return (state.redemptions||[]).some(r=>
+    r.influencerId===infId &&
+    r.status!=="Cancelado" &&
+    (
+      r.type==="produto_pago" ||
+      r.name==="Pago em produto" ||
+      r.name==="Saldo em produtos zerado no pagamento"
+    )
+  );
+}
+
 function accumulatedCashPaid(infId){
   return (state.cashPayments||[])
     .filter(p=>p.influencerId===infId&&p.status!=="Cancelado")
@@ -941,22 +976,57 @@ function renderAccumulations(){
   $("accCashTotal").textContent=money(cashTotal);
   $("accInfluencerCount").textContent=groups.length;
 
-  $("accRows").innerHTML=groups.length?groups.map(r=>`<tr>
-    <td>${esc(r.i.name)}</td>
-    <td>${esc(r.i.coupon)}</td>
-    <td>${money(r.product)}</td>
-    <td>${money(r.cash)}</td>
-    <td>
-      ${r.cash>0?`<button class="small primary" onclick="payAccumulatedCash('${r.i.id}')">Pagar dinheiro</button> `:""}
-      <button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Zerar acúmulo</button>
-    </td>
-  </tr>`).join(""):`<tr><td colspan="5">Nenhum influencer com saldo acumulado aberto.</td></tr>`;
+  $("accRows").innerHTML=groups.length?groups.map(r=>{
+    const productPaid=productAccumulationPaid(r.i.id);
+    return `<tr>
+      <td>${esc(r.i.name)}</td>
+      <td>${esc(r.i.coupon)}</td>
+      <td>${money(r.product)}</td>
+      <td>${money(r.cash)}</td>
+      <td>
+        ${r.product>0?`<button class="small secondary" onclick="payAccumulatedProduct('${r.i.id}')">Pago em produto</button> `:productPaid?`<span class="productPaidBadge">Produto pago</span> `:""}
+        ${r.cash>0?`<button class="small primary" ${productPaid?"disabled title='Bloqueado porque o produto já foi marcado como pago.'":""} onclick="${productPaid?"return false;":`payAccumulatedCash('${r.i.id}')`}">Pagar dinheiro</button> `:""}
+        <button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Zerar acúmulo</button>
+      </td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="5">Nenhum influencer com saldo acumulado aberto.</td></tr>`;
+}
+
+function payAccumulatedProduct(infId){
+  const row=accumulationByInfluencer().find(r=>r.i.id===infId);
+  if(!row||row.product<=0){
+    alert("Este influencer não possui saldo em produtos acumulado para marcar como pago.");
+    return;
+  }
+
+  if(confirm(`Marcar ${money(row.product)} como pago em produto para ${row.i.name}? O botão Pagar dinheiro ficará bloqueado para este saldo acumulado.`)){
+    state.redemptions=state.redemptions||[];
+    state.redemptions.push({
+      id:uid(),
+      date:today(),
+      influencerId:infId,
+      name:"Pago em produto",
+      type:"produto_pago",
+      value:row.product,
+      used:row.product,
+      difference:0,
+      status:"Resgatado",
+      notes:"Saldo em produtos marcado como pago na página Acumular"
+    });
+
+    save();
+    render();
+  }
 }
 
 function payAccumulatedCash(infId){
   const row=accumulationByInfluencer().find(r=>r.i.id===infId);
   if(!row||row.cash<=0){
     alert("Este influencer não possui saldo em dinheiro acumulado para pagar.");
+    return;
+  }
+  if(productAccumulationPaid(infId)){
+    alert("O pagamento em dinheiro está bloqueado porque este influencer já foi marcado como Pago em produto.");
     return;
   }
 
