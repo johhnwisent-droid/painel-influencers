@@ -1799,6 +1799,98 @@ canvas{
   }
 }
 
+
+/* ===== V59 MOBILE PERSONALIZÁVEL ===== */
+:root{
+  --mobile-menu-bg:#0b0f19;
+  --mobile-menu-text:#ffffff;
+  --mobile-menu-active-bg:#ffffff;
+  --mobile-menu-active-text:#111827;
+  --mobile-bottom-bg:#0b0f19;
+  --mobile-bottom-text:#ffffff;
+  --mobile-bottom-active-bg:#ffffff;
+  --mobile-bottom-active-text:#111827;
+}
+.mobileSettingsBox{
+  padding:18px;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  background:linear-gradient(135deg,#f8fafc,#ffffff);
+}
+.mobileSettingsTitle{
+  margin-bottom:14px;
+}
+.mobileSettingsTitle h4{
+  margin:0 0 4px;
+  font-size:16px;
+  letter-spacing:-.02em;
+}
+.mobileSettingsTitle p{
+  margin:0;
+  color:#6b7280;
+  font-size:13px;
+  line-height:1.4;
+}
+.mobileColorGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(180px,1fr));
+  gap:12px;
+}
+@media(max-width:760px){
+  .mobileColorGrid{
+    grid-template-columns:1fr;
+  }
+  .mobileSettingsBox{
+    padding:14px;
+    border-radius:18px;
+  }
+
+  .side{
+    background:var(--mobile-menu-bg)!important;
+  }
+  .side .brand h1,
+  .side .brand p,
+  .mobileDrawerHead strong{
+    color:var(--mobile-menu-text)!important;
+  }
+  .mobileDrawerHead{
+    border-bottom-color:color-mix(in srgb, var(--mobile-menu-text) 18%, transparent);
+  }
+  .mobileDrawerHead button{
+    background:color-mix(in srgb, var(--mobile-menu-text) 12%, transparent)!important;
+    color:var(--mobile-menu-text)!important;
+  }
+  .menu button{
+    color:color-mix(in srgb, var(--mobile-menu-text) 84%, transparent)!important;
+    background:color-mix(in srgb, var(--mobile-menu-text) 7%, transparent)!important;
+    border-color:color-mix(in srgb, var(--mobile-menu-text) 9%, transparent)!important;
+  }
+  .menu button.active{
+    background:var(--mobile-menu-active-bg)!important;
+    color:var(--mobile-menu-active-text)!important;
+  }
+
+  .mobileBottomNav{
+    background:var(--mobile-bottom-bg)!important;
+    border-color:color-mix(in srgb, var(--mobile-bottom-text) 12%, transparent)!important;
+  }
+  .mobileBottomNav button{
+    color:color-mix(in srgb, var(--mobile-bottom-text) 78%, transparent)!important;
+  }
+  .mobileBottomNav button.active{
+    background:var(--mobile-bottom-active-bg)!important;
+    color:var(--mobile-bottom-active-text)!important;
+  }
+
+  .mobileMenuToggle{
+    background:var(--mobile-menu-bg)!important;
+    border-color:color-mix(in srgb, var(--mobile-menu-text) 14%, transparent)!important;
+  }
+  .mobileMenuToggle span{
+    background:var(--mobile-menu-text)!important;
+  }
+}
+
 </style>
 </head>
 <body class="page-dashboard">
@@ -1828,7 +1920,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V58 ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V59 ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -2028,6 +2120,24 @@ canvas{
           <label>Cards<input type="color" id="setCard"></label>
           <label>Texto<input type="color" id="setText"></label>
 
+
+          <div class="mobileSettingsBox full">
+            <div class="mobileSettingsTitle">
+              <h4>Personalização do mobile</h4>
+              <p>Essas cores aparecem somente no celular: menu sanduíche, gaveta lateral e menu inferior.</p>
+            </div>
+            <div class="mobileColorGrid">
+              <label>Fundo do menu mobile<input type="color" id="setMobileMenuBg"></label>
+              <label>Texto do menu mobile<input type="color" id="setMobileMenuText"></label>
+              <label>Fundo item ativo<input type="color" id="setMobileMenuActiveBg"></label>
+              <label>Texto item ativo<input type="color" id="setMobileMenuActiveText"></label>
+              <label>Fundo menu inferior<input type="color" id="setMobileBottomBg"></label>
+              <label>Texto menu inferior<input type="color" id="setMobileBottomText"></label>
+              <label>Fundo ativo inferior<input type="color" id="setMobileBottomActiveBg"></label>
+              <label>Texto ativo inferior<input type="color" id="setMobileBottomActiveText"></label>
+            </div>
+          </div>
+
           <label>Logo do sistema<input type="file" id="setSystemLogo" accept="image/*" onchange="previewSystemLogo(event)"></label>
           <div class="card">
             <small>Logo atual do sistema</small>
@@ -2086,8 +2196,8 @@ canvas{
 </main>
 </div>
 <script>
-const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v58_busca_destaque_mobile";
+const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827"}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
+const KEY = "painel_influencers_limpo_v59_mobile_personalizavel";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -2205,7 +2315,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V58 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V59 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -2328,7 +2438,15 @@ function normalize(){
   state.settings={...INITIAL_STATE.settings,...(state.settings||{})};
   state.settings.systemLogo=state.settings.systemLogo||state.settings.logo||"";
   state.settings.pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
-  state.influencers=state.influencers||[];
+  state.settings.mobileMenuBg=state.settings.mobileMenuBg||"#0b0f19";
+  state.settings.mobileMenuText=state.settings.mobileMenuText||"#ffffff";
+  state.settings.mobileMenuActiveBg=state.settings.mobileMenuActiveBg||"#ffffff";
+  state.settings.mobileMenuActiveText=state.settings.mobileMenuActiveText||"#111827";
+  state.settings.mobileBottomBg=state.settings.mobileBottomBg||"#0b0f19";
+  state.settings.mobileBottomText=state.settings.mobileBottomText||"#ffffff";
+  state.settings.mobileBottomActiveBg=state.settings.mobileBottomActiveBg||"#ffffff";
+  state.settings.mobileBottomActiveText=state.settings.mobileBottomActiveText||"#111827";
+    state.influencers=state.influencers||[];
   state.launches=state.launches||[];
   state.redemptions=state.redemptions||[];
   state.cashPayments=state.cashPayments||[];
@@ -2364,7 +2482,28 @@ function infById(id){return state.influencers.find(i=>i.id===id);}
 function totalLaunch(l){return Number(l.productCommission||0)+Number(l.cashCommission||0);}
 function monthLaunches(){return state.launches.filter(l=>(l.month||(l.date||"").slice(0,7))===selectedMonth());}
 function stats(rows){return rows.reduce((a,l)=>{a.sold+=Number(l.sold||0);a.product+=Number(l.productCommission||0);a.cash+=Number(l.cashCommission||0);a.total=a.product+a.cash;a.count++;return a;},{sold:0,product:0,cash:0,total:0,count:0});}
-function applyTheme(){const s=state.settings;document.documentElement.style.setProperty("--primary",s.primaryColor);document.documentElement.style.setProperty("--accent",s.accentColor);document.documentElement.style.setProperty("--bg",s.backgroundColor);document.documentElement.style.setProperty("--card",s.cardColor);document.documentElement.style.setProperty("--text",s.textColor);$("sideTitle").textContent=s.systemName;$("sideSub").textContent=s.subtitle;const sysLogo=s.systemLogo||"";$("sideLogo").innerHTML=sysLogo?`<img src="${sysLogo}">`:"JS";}
+function applyTheme(){
+  const s=state.settings;
+  document.documentElement.style.setProperty("--primary",s.primaryColor);
+  document.documentElement.style.setProperty("--accent",s.accentColor);
+  document.documentElement.style.setProperty("--bg",s.backgroundColor);
+  document.documentElement.style.setProperty("--card",s.cardColor);
+  document.documentElement.style.setProperty("--text",s.textColor);
+
+  document.documentElement.style.setProperty("--mobile-menu-bg",s.mobileMenuBg||"#0b0f19");
+  document.documentElement.style.setProperty("--mobile-menu-text",s.mobileMenuText||"#ffffff");
+  document.documentElement.style.setProperty("--mobile-menu-active-bg",s.mobileMenuActiveBg||"#ffffff");
+  document.documentElement.style.setProperty("--mobile-menu-active-text",s.mobileMenuActiveText||"#111827");
+  document.documentElement.style.setProperty("--mobile-bottom-bg",s.mobileBottomBg||"#0b0f19");
+  document.documentElement.style.setProperty("--mobile-bottom-text",s.mobileBottomText||"#ffffff");
+  document.documentElement.style.setProperty("--mobile-bottom-active-bg",s.mobileBottomActiveBg||"#ffffff");
+  document.documentElement.style.setProperty("--mobile-bottom-active-text",s.mobileBottomActiveText||"#111827");
+
+  $("sideTitle").textContent=s.systemName;
+  $("sideSub").textContent=s.subtitle;
+  const sysLogo=s.systemLogo||"";
+  $("sideLogo").innerHTML=sysLogo?`<img src="${sysLogo}">`:"JS";
+}
 function fillSelect(id,options,blank){const el=$(id);if(!el)return;const old=el.value;el.innerHTML=(blank?`<option value="">${blank}</option>`:"")+options.map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");if([...el.options].some(o=>o.value===old))el.value=old;}
 function populate(){const infl=state.influencers.map(i=>({value:i.id,label:`${i.name} (${i.coupon})`}));fillSelect("launchInfluencer",infl);fillSelect("productInfluencer",infl);fillSelect("reportInfluencer",infl,"Selecione influencer");fillSelect("accReportInfluencer",infl,"Selecione influencer");fillSelect("filterInfluencer",infl,"Todos os influencers");fillSelect("launchOrigin",state.settings.origins.map(o=>({value:o,label:o})));fillSelect("filterOrigin",state.settings.origins.map(o=>({value:o,label:o})),"Todas as origens");fillSelect("launchStatus",state.settings.statuses.map(s=>({value:s,label:s})));}
 
@@ -2846,6 +2985,16 @@ function renderSettings(){
   $("setCard").value=s.cardColor||"#ffffff";
   $("setText").value=s.textColor||"#111827";
 
+  $("setMobileMenuBg").value=s.mobileMenuBg||"#0b0f19";
+  $("setMobileMenuText").value=s.mobileMenuText||"#ffffff";
+  $("setMobileMenuActiveBg").value=s.mobileMenuActiveBg||"#ffffff";
+  $("setMobileMenuActiveText").value=s.mobileMenuActiveText||"#111827";
+  $("setMobileBottomBg").value=s.mobileBottomBg||"#0b0f19";
+  $("setMobileBottomText").value=s.mobileBottomText||"#ffffff";
+  $("setMobileBottomActiveBg").value=s.mobileBottomActiveBg||"#ffffff";
+  $("setMobileBottomActiveText").value=s.mobileBottomActiveText||"#111827";
+
+
   $("setOrigins").value=(s.origins||[]).join(", ");
   $("setStatuses").value=(s.statuses||[]).join(", ");
 
@@ -2876,6 +3025,16 @@ function saveSettings(){
   s.backgroundColor=$("setBg").value||"#f3f4f6";
   s.cardColor=$("setCard").value||"#ffffff";
   s.textColor=$("setText").value||"#111827";
+
+  s.mobileMenuBg=$("setMobileMenuBg").value||"#0b0f19";
+  s.mobileMenuText=$("setMobileMenuText").value||"#ffffff";
+  s.mobileMenuActiveBg=$("setMobileMenuActiveBg").value||"#ffffff";
+  s.mobileMenuActiveText=$("setMobileMenuActiveText").value||"#111827";
+  s.mobileBottomBg=$("setMobileBottomBg").value||"#0b0f19";
+  s.mobileBottomText=$("setMobileBottomText").value||"#ffffff";
+  s.mobileBottomActiveBg=$("setMobileBottomActiveBg").value||"#ffffff";
+  s.mobileBottomActiveText=$("setMobileBottomActiveText").value||"#111827";
+
 
   s.origins=$("setOrigins").value.split(",").map(x=>x.trim()).filter(Boolean);
   s.statuses=$("setStatuses").value.split(",").map(x=>x.trim()).filter(Boolean);
