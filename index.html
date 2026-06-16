@@ -4796,6 +4796,80 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V83 HISTÓRICO CONTÁBIL DO ACÚMULO ===== */
+.accStatusBadge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  padding:7px 10px;
+  font-weight:950;
+  font-size:12px;
+  border:1px solid transparent;
+  white-space:normal;
+  text-align:center;
+}
+.accStatusBadge.money{
+  background:#ecfdf5;
+  color:#047857;
+  border-color:#bbf7d0;
+}
+.accStatusBadge.product{
+  background:#eff6ff;
+  color:#1d4ed8;
+  border-color:#bfdbfe;
+}
+.accStatusBadge.manual{
+  background:#f8fafc;
+  color:#475569;
+  border-color:#cbd5e1;
+}
+.accBeforeAfter{
+  display:grid;
+  gap:4px;
+  font-size:12px;
+  line-height:1.25;
+}
+.accBeforeAfter .before{
+  color:#991b1b;
+  font-weight:900;
+}
+.accBeforeAfter .after{
+  color:#166534;
+  font-weight:900;
+}
+.accReasonBox{
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  border-radius:12px;
+  padding:8px 10px;
+  color:#78350f;
+  font-weight:800;
+  line-height:1.3;
+  max-width:320px;
+  white-space:normal;
+}
+.accHistoryTableName{
+  font-weight:950;
+  color:#0f172a;
+}
+.accHistoryResponsible{
+  display:grid;
+  gap:2px;
+  font-size:12px;
+  color:#475569;
+  font-weight:850;
+}
+@media(max-width:760px){
+  #accHistoryRows .accReasonBox{
+    max-width:none;
+  }
+  .accStatusBadge{
+    width:100%;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -4875,7 +4949,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V82 COLABORADORES</div></div><div class="topUserBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V83 HISTORICO ACUMULAR</div></div><div class="topUserBox" id="topUserBox">
       <span id="loggedUserName">Sem login</span>
       <button type="button" class="secondary small" onclick="logoutUser()">Sair</button>
     </div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
@@ -5260,6 +5334,46 @@ body:not(.authLocked) .loginScreen{
               </tr>
             </thead>
             <tbody id="accRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="panel">
+        <div class="panelHead">
+          <div>
+            <h3>Histórico de alterações do acúmulo</h3>
+            <span class="muted">Registro contábil com motivo, antes/depois e responsável por cada mudança no saldo acumulado.</span>
+          </div>
+          <div class="filters">
+            <select id="accHistoryFilter" onchange="renderAccumulationHistory()">
+              <option value="">Todos</option>
+              <option value="cash_paid">Pagos em dinheiro</option>
+              <option value="product_paid">Pagos em produto</option>
+              <option value="product_choice_paid">Produto escolhido pago</option>
+              <option value="manual_zero">Zerados manualmente</option>
+            </select>
+            <button class="secondary" onclick="exportAccumulationHistoryCSV()">Exportar histórico</button>
+          </div>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Influencer</th>
+                <th>Cupom</th>
+                <th>Tipo</th>
+                <th>Motivo</th>
+                <th>Produto antes</th>
+                <th>Produto depois</th>
+                <th>Dinheiro antes</th>
+                <th>Dinheiro depois</th>
+                <th>Responsável</th>
+              </tr>
+            </thead>
+            <tbody id="accHistoryRows"></tbody>
           </table>
         </div>
       </div>
@@ -6072,7 +6186,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V82 COLABORADORES carregada. Conectando ao Supabase...");
+  updateCloudStatus("V83 HISTORICO ACUMULAR carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -6214,6 +6328,7 @@ function normalize(){
   state.redemptions=state.redemptions||[];
   state.wholesaleRetail=state.wholesaleRetail||[];
   state.cashPayments=state.cashPayments||[];
+  state.accumulationHistory=state.accumulationHistory||[];
 
   state.launches.forEach(l=>{
     l.accumulate=!!l.accumulate;
@@ -6265,6 +6380,23 @@ function normalize(){
     w.updatedByUsername=w.updatedByUsername||"";
     w.updatedAt=w.updatedAt||"";
     w.notes=w.notes||"";
+  });
+
+
+  state.accumulationHistory.forEach(h=>{
+    h.id=h.id||uid();
+    h.date=h.date||today();
+    h.createdAt=h.createdAt||h.date||today();
+    h.influencerId=h.influencerId||"";
+    h.type=h.type||"manual_zero";
+    h.label=h.label||"Alteração no acúmulo";
+    h.reason=h.reason||"Sem motivo informado";
+    h.beforeProduct=Number(h.beforeProduct||0);
+    h.afterProduct=Number(h.afterProduct||0);
+    h.beforeCash=Number(h.beforeCash||0);
+    h.afterCash=Number(h.afterCash||0);
+    h.createdByName=h.createdByName||"Não registrado";
+    h.relatedId=h.relatedId||"";
   });
 
   state.cashPayments.forEach(p=>{
@@ -6518,6 +6650,105 @@ function togglePaid(id,val){
     render();
   }
 }
+
+function accTypeLabel(type){
+  const map={
+    cash_paid:"Pago em dinheiro",
+    product_paid:"Pago em produto",
+    product_choice_paid:"Produto escolhido pago",
+    manual_zero:"Zerado manualmente"
+  };
+  return map[type]||"Alteração";
+}
+
+function accTypeClass(type){
+  if(type==="cash_paid")return "money";
+  if(type==="product_paid"||type==="product_choice_paid")return "product";
+  return "manual";
+}
+
+function promptAccumulationReason(defaultReason){
+  const reason=prompt("Informe o motivo da mudança no saldo acumulado:", defaultReason||"");
+  if(reason===null)return null;
+  return (reason||defaultReason||"Sem motivo informado").trim();
+}
+
+function addAccumulationHistory(data){
+  state.accumulationHistory=state.accumulationHistory||[];
+  const audit=typeof currentAuditInfo==="function"?currentAuditInfo():{name:"Não registrado",username:"",at:new Date().toISOString()};
+  const inf=infById(data.influencerId)||{};
+  state.accumulationHistory.push({
+    id:uid(),
+    date:today(),
+    createdAt:new Date().toISOString(),
+    influencerId:data.influencerId,
+    influencerName:inf.name||data.influencerName||"",
+    coupon:inf.coupon||data.coupon||"",
+    type:data.type||"manual_zero",
+    label:data.label||accTypeLabel(data.type),
+    reason:data.reason||"Sem motivo informado",
+    beforeProduct:Number(data.beforeProduct||0),
+    afterProduct:Number(data.afterProduct||0),
+    beforeCash:Number(data.beforeCash||0),
+    afterCash:Number(data.afterCash||0),
+    relatedId:data.relatedId||"",
+    createdByName:audit.name||"Não registrado",
+    createdByUsername:audit.username||""
+  });
+}
+
+function latestAccumulationHistoryByInfluencer(){
+  const map={};
+  (state.accumulationHistory||[]).slice().sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||""))).forEach(h=>{
+    if(h.influencerId&&!map[h.influencerId])map[h.influencerId]=h;
+  });
+  return map;
+}
+
+function accumulationDisplayRows(){
+  const active=accumulationByInfluencer();
+  const activeIds=new Set(active.map(r=>r.i.id));
+  const latest=latestAccumulationHistoryByInfluencer();
+  const closed=Object.values(latest).filter(h=>!activeIds.has(h.influencerId)).map(h=>{
+    const i=infById(h.influencerId)||{id:h.influencerId,name:h.influencerName||"Influencer removido",coupon:h.coupon||"-"};
+    return {
+      i,
+      list:[],
+      product:Number(h.afterProduct||0),
+      cash:Number(h.afterCash||0),
+      earnedProduct:Number(h.beforeProduct||0),
+      earnedCash:Number(h.beforeCash||0),
+      closed:true,
+      history:h
+    };
+  });
+  return [...active,...closed];
+}
+
+function renderAccumulationHistory(){
+  if(!$("accHistoryRows"))return;
+  const type=$("accHistoryFilter")?.value||"";
+  let rows=(state.accumulationHistory||[]).slice().sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+  if(type)rows=rows.filter(h=>h.type===type);
+
+  $("accHistoryRows").innerHTML=rows.length?rows.map(h=>{
+    const i=infById(h.influencerId)||{name:h.influencerName||"Influencer removido",coupon:h.coupon||"-"};
+    return `<tr>
+      <td>${dateTimeBR(h.createdAt)}</td>
+      <td><span class="accHistoryTableName">${esc(i.name||"-")}</span></td>
+      <td>${esc(i.coupon||"-")}</td>
+      <td><span class="accStatusBadge ${accTypeClass(h.type)}">${esc(accTypeLabel(h.type))}</span></td>
+      <td><div class="accReasonBox">${esc(h.reason||"Sem motivo informado")}</div></td>
+      <td><span class="before">${money(h.beforeProduct)}</span></td>
+      <td><span class="after">${money(h.afterProduct)}</span></td>
+      <td><span class="before">${money(h.beforeCash)}</span></td>
+      <td><span class="after">${money(h.afterCash)}</span></td>
+      <td><div class="accHistoryResponsible"><strong>${esc(h.createdByName||"Não registrado")}</strong><span>${esc(h.createdByUsername||"")}</span></div></td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="10">Nenhuma alteração registrada no histórico.</td></tr>`;
+}
+
+
 function accumulatedRows(){return state.launches.filter(l=>l.accumulate);}
 function productAccumulationPaid(infId){
   return (state.redemptions||[]).some(r=>
@@ -6549,30 +6780,43 @@ function accumulationByInfluencer(){
 }
 
 function renderAccumulations(){
-  const groups=accumulationByInfluencer();
-  const productTotal=groups.reduce((a,r)=>a+r.product,0);
-  const cashTotal=groups.reduce((a,r)=>a+r.cash,0);
+  const activeGroups=accumulationByInfluencer();
+  const groups=accumulationDisplayRows();
+  const productTotal=activeGroups.reduce((a,r)=>a+r.product,0);
+  const cashTotal=activeGroups.reduce((a,r)=>a+r.cash,0);
 
   $("accProductTotal").textContent=money(productTotal);
   $("accCashTotal").textContent=money(cashTotal);
-  $("accInfluencerCount").textContent=groups.length;
+  $("accInfluencerCount").textContent=activeGroups.length;
 
   $("accRows").innerHTML=groups.length?groups.map(r=>{
     const productPaid=productAccumulationPaid(r.i.id);
+    const h=r.history;
+    if(r.closed&&h){
+      return `<tr>
+        <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
+        <td><span class="mobileCouponText">${esc(r.i.coupon||"-")}</span></td>
+        <td><div class="accBeforeAfter"><span class="before">Antes: ${money(h.beforeProduct)}</span><span class="after">Depois: ${money(h.afterProduct)}</span></div></td>
+        <td><div class="accBeforeAfter"><span class="before">Antes: ${money(h.beforeCash)}</span><span class="after">Depois: ${money(h.afterCash)}</span></div></td>
+        <td><span class="accStatusBadge ${accTypeClass(h.type)}">✓ ${esc(accTypeLabel(h.type))}</span><div class="accReasonBox" style="margin-top:6px">${esc(h.reason||"Sem motivo informado")}</div></td>
+      </tr>`;
+    }
+
     return `<tr>
       <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
       <td><span class="mobileCouponText">${esc(r.i.coupon)}</span></td>
       <td><span class="mobileValueText">${money(r.product)}</span></td>
       <td><span class="mobileValueText">${money(r.cash)}</span></td>
       <td>
-        ${r.product>0?`<button class="small secondary" onclick="payAccumulatedProduct('${r.i.id}')">Pago em produto</button> `:productPaid?`<span class="productPaidBadge">Produto pago</span> `:""}
+        ${r.product>0?`<button class="small secondary" onclick="payAccumulatedProduct('${r.i.id}')">Pago em produto</button> `:productPaid?`<span class="accStatusBadge product">✓ Produto pago</span> `:""}
         ${r.cash>0?`<button class="small primary" ${productPaid?"disabled title='Bloqueado porque o produto já foi marcado como pago.'":""} onclick="${productPaid?"return false;":`payAccumulatedCash('${r.i.id}')`}">Pagar dinheiro</button> `:""}
         <button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Zerar acúmulo</button>
       </td>
     </tr>`;
   }).join(""):`<tr><td colspan="5">Nenhum influencer com saldo acumulado aberto.</td></tr>`;
-}
 
+  renderAccumulationHistory();
+}
 function payAccumulatedProduct(infId){
   const row=accumulationByInfluencer().find(r=>r.i.id===infId);
   if(!row||row.product<=0){
@@ -6580,7 +6824,13 @@ function payAccumulatedProduct(infId){
     return;
   }
 
-  if(confirm(`Marcar ${money(row.product)} como pago em produto para ${row.i.name}? O botão Pagar dinheiro ficará bloqueado para este saldo acumulado.`)){
+  const reason=promptAccumulationReason("Pago em produto / comissão usada em produtos");
+  if(reason===null)return;
+
+  if(confirm(`Marcar ${money(row.product)} como pago em produto para ${row.i.name}? O saldo em dinheiro também será zerado para fechar este acúmulo.`)){
+    const beforeProduct=Number(row.product||0);
+    const beforeCash=Number(row.cash||0);
+
     state.redemptions=state.redemptions||[];
     state.redemptions.push({
       id:uid(),
@@ -6588,11 +6838,37 @@ function payAccumulatedProduct(infId){
       influencerId:infId,
       name:"Pago em produto",
       type:"produto_pago",
-      value:row.product,
-      used:row.product,
+      value:beforeProduct,
+      used:beforeProduct,
       difference:0,
       status:"Resgatado",
-      notes:"Saldo em produtos marcado como pago na página Acumular"
+      notes:reason
+    });
+
+    if(beforeCash>0){
+      state.cashPayments=state.cashPayments||[];
+      state.cashPayments.push({
+        id:uid(),
+        date:today(),
+        month:selectedMonth(),
+        influencerId:infId,
+        amount:beforeCash,
+        cash:beforeCash,
+        source:"Acúmulo",
+        status:"Pago em produto",
+        notes:"Saldo em dinheiro zerado porque o influencer foi pago em produto"
+      });
+    }
+
+    addAccumulationHistory({
+      influencerId:infId,
+      type:"product_paid",
+      label:"Pago em produto",
+      reason,
+      beforeProduct,
+      beforeCash,
+      afterProduct:0,
+      afterCash:0
     });
 
     save();
@@ -6611,35 +6887,52 @@ function payAccumulatedCash(infId){
     return;
   }
 
+  const reason=promptAccumulationReason("Pago em dinheiro / PIX");
+  if(reason===null)return;
+
   const productText=row.product>0?` Também será zerado o saldo em produtos de ${money(row.product)}.`:"";
   if(confirm(`Marcar ${money(row.cash)} como pago para ${row.i.name}?${productText}`)){
+    const beforeProduct=Number(row.product||0);
+    const beforeCash=Number(row.cash||0);
+
     state.cashPayments=state.cashPayments||[];
     state.cashPayments.push({
       id:uid(),
       date:today(),
       month:selectedMonth(),
       influencerId:infId,
-      amount:row.cash,
-      cash:row.cash,
+      amount:beforeCash,
+      cash:beforeCash,
       source:"Acúmulo",
       status:"Pago",
-      notes:"Pagamento do saldo acumulado em dinheiro"
+      notes:reason
     });
 
-    if(row.product>0){
+    if(beforeProduct>0){
       state.redemptions=state.redemptions||[];
       state.redemptions.push({
         id:uid(),
         date:today(),
         influencerId:infId,
         name:"Saldo em produtos zerado no pagamento",
-        value:row.product,
-        used:row.product,
+        value:beforeProduct,
+        used:beforeProduct,
         difference:0,
         status:"Resgatado",
         notes:"Saldo em produtos zerado junto ao pagamento em dinheiro acumulado"
       });
     }
+
+    addAccumulationHistory({
+      influencerId:infId,
+      type:"cash_paid",
+      label:"Pago em dinheiro",
+      reason,
+      beforeProduct,
+      beforeCash,
+      afterProduct:0,
+      afterCash:0
+    });
 
     save();
     render();
@@ -6716,7 +7009,38 @@ function printAccumulationReport(){
 }
 
 
-function stopAccumulatingInfluencer(infId){if(confirm("Zerar o acúmulo deste influencer? Os lançamentos sairão da carteira de acúmulo.")){state.launches.forEach(l=>{if(l.influencerId===infId)l.accumulate=false});save();render();}}
+function stopAccumulatingInfluencer(infId){
+  const row=accumulationByInfluencer().find(r=>r.i.id===infId);
+  const inf=infById(infId);
+  if(!row&&!inf){
+    alert("Influencer não encontrado.");
+    return;
+  }
+
+  const reason=promptAccumulationReason("Zerado manualmente em Acumular");
+  if(reason===null)return;
+
+  if(confirm("Zerar o acúmulo deste influencer? Os lançamentos sairão da carteira de acúmulo e a alteração ficará registrada no histórico.")){
+    const beforeProduct=Number(row?.product||0);
+    const beforeCash=Number(row?.cash||0);
+
+    state.launches.forEach(l=>{if(l.influencerId===infId)l.accumulate=false});
+
+    addAccumulationHistory({
+      influencerId:infId,
+      type:"manual_zero",
+      label:"Zerado manualmente",
+      reason,
+      beforeProduct,
+      beforeCash,
+      afterProduct:0,
+      afterCash:0
+    });
+
+    save();
+    render();
+  }
+}
 function resetInfForm(){$("infForm").reset();$("infId").value="";$("infProductRate").value=20;$("infCashRate").value=10;}
 function renderInfluencers(){
   const term=($("infSearch")?.value||"").trim().toLowerCase();
@@ -7102,6 +7426,51 @@ function exportWholesaleRetailCSV(){
 }
 
 
+
+function removeProductChoiceAutoCash(productId){
+  state.cashPayments=(state.cashPayments||[]).filter(p=>p.productRedemptionId!==productId);
+  state.accumulationHistory=(state.accumulationHistory||[]).filter(h=>h.relatedId!==`product-choice-${productId}`);
+}
+
+function reconcileProductChoicePaid(item){
+  removeProductChoiceAutoCash(item.id);
+
+  if(item.status!=="Pago")return;
+
+  const row=accumulationByInfluencer().find(r=>r.i.id===item.influencerId);
+  const beforeProduct=Number(row?.product||0);
+  const beforeCash=Number(row?.cash||0);
+
+  if(beforeCash>0){
+    state.cashPayments=state.cashPayments||[];
+    state.cashPayments.push({
+      id:uid(),
+      date:item.date||today(),
+      month:(item.date||today()).slice(0,7),
+      influencerId:item.influencerId,
+      amount:beforeCash,
+      cash:beforeCash,
+      source:"Produto escolhido",
+      status:"Pago em produto",
+      productRedemptionId:item.id,
+      notes:"Saldo em dinheiro zerado automaticamente porque o produto escolhido foi marcado como Pago"
+    });
+  }
+
+  addAccumulationHistory({
+    influencerId:item.influencerId,
+    type:"product_choice_paid",
+    label:"Produto escolhido pago",
+    reason:`Produto escolhido marcado como Pago: ${item.name||"Produto"}`,
+    beforeProduct,
+    beforeCash,
+    afterProduct:0,
+    afterCash:0,
+    relatedId:`product-choice-${item.id}`
+  });
+}
+
+
 function productUsed(infId){return state.redemptions.filter(r=>r.influencerId===infId&&r.status!=="Cancelado").reduce((a,r)=>a+Number(r.used||0),0);}
 function productAvailable(infId){const earned=accumulatedRows().filter(l=>l.influencerId===infId).reduce((a,l)=>a+Number(l.productCommission||0),0);return Math.max(0,earned-productUsed(infId));}
 function renderProductCalc(){const infId=$("productInfluencer").value;const available=productAvailable(infId);$("productAvailable").value=money(available);const value=Number($("productValue").value||0);if(!$("productId").value){$("productUsed").value=Math.min(available,value||available).toFixed(2)}const used=Number($("productUsed").value||0);$("productDifference").value=money(Math.max(0,value-used));}
@@ -7345,6 +7714,30 @@ function showPage(id){
 function render(){normalize();applyTheme();populate();currentPage=window.currentPage||currentPage||"dashboard";setPageClass(currentPage);syncMobileBottomNav(currentPage);syncMonthInputs();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderWholesaleRetail();renderWholesaleOrder();renderAuthUsers();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
+
+function exportAccumulationHistoryCSV(){
+  const type=$("accHistoryFilter")?.value||"";
+  let rows=(state.accumulationHistory||[]).slice().sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+  if(type)rows=rows.filter(h=>h.type===type);
+
+  rowsCSV([["Data/hora","Influencer","Cupom","Tipo","Motivo","Produto antes","Produto depois","Dinheiro antes","Dinheiro depois","Responsável"],...rows.map(h=>{
+    const i=infById(h.influencerId)||{name:h.influencerName||"",coupon:h.coupon||""};
+    return [
+      dateTimeBR(h.createdAt),
+      i.name||"",
+      i.coupon||"",
+      accTypeLabel(h.type),
+      h.reason||"",
+      h.beforeProduct||0,
+      h.afterProduct||0,
+      h.beforeCash||0,
+      h.afterCash||0,
+      h.createdByName||""
+    ];
+  })],"historico-acumulo.csv");
+}
+
+
 function exportAccumulationsCSV(){rowsCSV([["Influencer","Cupom","Produto acumulado","Dinheiro acumulado"],...accumulationByInfluencer().map(r=>[r.i.name,r.i.coupon,r.product,r.cash])],"acumulos.csv");}
 function exportReportCSV(){
   const inf=infById($("reportInfluencer").value);
@@ -7513,7 +7906,39 @@ if($("wholesaleForm")){
 
 
 $("productInfluencer").addEventListener("change",renderProductCalc);$("productValue").addEventListener("input",renderProductCalc);$("productUsed").addEventListener("input",renderProductCalc);
-$("productForm").addEventListener("submit",e=>{e.preventDefault();const id=$("productId").value||uid();const infId=$("productInfluencer").value;if(!infId){alert("Selecione um influencer.");return}const value=Number($("productValue").value||0),used=Number($("productUsed").value||0);const item={id,date:$("productDate").value||today(),influencerId:infId,name:$("productName").value||"Produto",value,used,difference:Math.max(0,value-used),status:$("productStatus").value,notes:$("productNotes").value||""};const idx=state.redemptions.findIndex(r=>r.id===id);if(idx>=0)state.redemptions[idx]=item;else state.redemptions.push(item);save();resetProductForm();render();});
+$("productForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const id=$("productId").value||uid();
+  const infId=$("productInfluencer").value;
+  if(!infId){
+    alert("Selecione um influencer.");
+    return;
+  }
+
+  const value=Number($("productValue").value||0);
+  const used=Number($("productUsed").value||0);
+  const item={
+    id,
+    date:$("productDate").value||today(),
+    influencerId:infId,
+    name:$("productName").value||"Produto",
+    value,
+    used,
+    difference:Math.max(0,value-used),
+    status:$("productStatus").value,
+    notes:$("productNotes").value||""
+  };
+
+  const idx=state.redemptions.findIndex(r=>r.id===id);
+  if(idx>=0)state.redemptions[idx]=item;
+  else state.redemptions.push(item);
+
+  reconcileProductChoicePaid(item);
+
+  save();
+  resetProductForm();
+  render();
+});
 
 
 ["setPdfWatermarkOpacity","setPdfWatermarkX","setPdfWatermarkY","setPdfWatermarkSize"].forEach(id=>{
