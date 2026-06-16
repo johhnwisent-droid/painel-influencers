@@ -3850,6 +3850,267 @@ canvas{
   #wholesaleRetail td:nth-child(14){min-width:136px!important;max-width:136px!important}
 }
 
+
+/* ===== V77 MOBILE IGUAL DESKTOP - TABELA TRADICIONAL REAL ===== */
+/* Corrige regras antigas que ainda transformavam a tabela em grid/cards no celular */
+@media(max-width:760px){
+  #wholesaleRetail .tableWrap{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    border:1px solid #e5e7eb!important;
+    border-radius:18px!important;
+    background:#fff!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+
+  #wholesaleRetail table{
+    display:table!important;
+    width:1500px!important;
+    min-width:1500px!important;
+    max-width:none!important;
+    table-layout:fixed!important;
+    border-collapse:separate!important;
+    border-spacing:0!important;
+    background:#fff!important;
+  }
+
+  #wholesaleRetail thead{
+    display:table-header-group!important;
+    width:auto!important;
+  }
+
+  #wholesaleRetail tbody{
+    display:table-row-group!important;
+    width:auto!important;
+  }
+
+  #wholesaleRetail tr,
+  #wholesaleRetail tr.wholesaleOrderRow{
+    display:table-row!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    padding:0!important;
+    margin:0!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    background:#fff!important;
+    transform:none!important;
+    overflow:visible!important;
+  }
+
+  #wholesaleRetail tr.wholesaleOrderRow:hover{
+    background:#f8fafc!important;
+    transform:none!important;
+    box-shadow:none!important;
+  }
+
+  #wholesaleRetail th,
+  #wholesaleRetail td,
+  #wholesaleRetail td[data-label],
+  #wholesaleRetail td[data-label="Data"],
+  #wholesaleRetail td[data-label="Tipo"],
+  #wholesaleRetail td[data-label="Origem"],
+  #wholesaleRetail td[data-label="Cliente"],
+  #wholesaleRetail td[data-label="Produto"],
+  #wholesaleRetail td[data-label="Preço produto"],
+  #wholesaleRetail td[data-label="Frete"],
+  #wholesaleRetail td[data-label="Cupom"],
+  #wholesaleRetail td[data-label="Desconto"],
+  #wholesaleRetail td[data-label="Total"],
+  #wholesaleRetail td[data-label="Pagamento"],
+  #wholesaleRetail td[data-label="Taxa"],
+  #wholesaleRetail td[data-label="Valor real"],
+  #wholesaleRetail td[data-label="Observação"],
+  #wholesaleRetail td[data-label="Ações"]{
+    display:table-cell!important;
+    grid-template-columns:none!important;
+    grid-column:auto!important;
+    width:auto!important;
+    min-width:0!important;
+    max-width:none!important;
+    vertical-align:middle!important;
+    padding:9px 7px!important;
+    border:0!important;
+    border-bottom:1px solid #edf2f7!important;
+    border-radius:0!important;
+    background:transparent!important;
+    white-space:normal!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+    hyphens:none!important;
+    line-height:1.25!important;
+    font-size:11px!important;
+    box-sizing:border-box!important;
+  }
+
+  #wholesaleRetail td:before,
+  #wholesaleRetail td[data-label]:before,
+  #wholesaleRetail td[data-label="Cliente"]:before,
+  #wholesaleRetail td[data-label="Produto"]:before,
+  #wholesaleRetail td[data-label="Taxa"]:before,
+  #wholesaleRetail td[data-label="Observação"]:before,
+  #wholesaleRetail td[data-label="Ações"]:before{
+    display:none!important;
+    content:none!important;
+  }
+
+  #wholesaleRetail th{
+    position:sticky!important;
+    top:0!important;
+    z-index:4!important;
+    background:#f8fafc!important;
+    color:#475569!important;
+    font-size:9.5px!important;
+    font-weight:950!important;
+    text-transform:uppercase!important;
+    letter-spacing:.03em!important;
+    white-space:nowrap!important;
+  }
+
+  /* Larguras reais das colunas no mobile, mantendo formato desktop */
+  #wholesaleRetail th:nth-child(1),  #wholesaleRetail td:nth-child(1){width:80px!important}
+  #wholesaleRetail th:nth-child(2),  #wholesaleRetail td:nth-child(2){width:86px!important}
+  #wholesaleRetail th:nth-child(3),  #wholesaleRetail td:nth-child(3){width:96px!important}
+  #wholesaleRetail th:nth-child(4),  #wholesaleRetail td:nth-child(4){width:128px!important}
+  #wholesaleRetail th:nth-child(5),  #wholesaleRetail td:nth-child(5){width:180px!important}
+  #wholesaleRetail th:nth-child(6),  #wholesaleRetail td:nth-child(6){width:104px!important}
+  #wholesaleRetail th:nth-child(7),  #wholesaleRetail td:nth-child(7){width:92px!important}
+  #wholesaleRetail th:nth-child(8),  #wholesaleRetail td:nth-child(8){width:106px!important}
+  #wholesaleRetail th:nth-child(9),  #wholesaleRetail td:nth-child(9){width:100px!important}
+  #wholesaleRetail th:nth-child(10), #wholesaleRetail td:nth-child(10){width:110px!important}
+  #wholesaleRetail th:nth-child(11), #wholesaleRetail td:nth-child(11){width:126px!important}
+  #wholesaleRetail th:nth-child(12), #wholesaleRetail td:nth-child(12){width:150px!important}
+  #wholesaleRetail th:nth-child(13), #wholesaleRetail td:nth-child(13){width:126px!important}
+  #wholesaleRetail th:nth-child(14), #wholesaleRetail td:nth-child(14){width:146px!important}
+  #wholesaleRetail th:nth-child(15), #wholesaleRetail td:nth-child(15){width:118px!important}
+
+  #wholesaleRetail .mobileInfluencerName{
+    display:block!important;
+    font-size:12px!important;
+    font-weight:950!important;
+    line-height:1.22!important;
+    color:#0f172a!important;
+    white-space:normal!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+  }
+
+  #wholesaleRetail .wholesaleProductList{
+    display:block!important;
+    width:100%!important;
+    background:transparent!important;
+    border:0!important;
+    padding:0!important;
+    white-space:pre-line!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+    line-height:1.26!important;
+    font-size:11px!important;
+    font-weight:850!important;
+    color:#0f172a!important;
+  }
+
+  #wholesaleRetail .wholesaleNoteMini{
+    width:100%!important;
+    max-width:100%!important;
+    background:#fffbeb!important;
+    border:1px solid #fde68a!important;
+    border-radius:10px!important;
+    padding:6px!important;
+    font-size:10.5px!important;
+    line-height:1.25!important;
+    white-space:normal!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+  }
+
+  #wholesaleRetail .wholesaleMoneyPill,
+  #wholesaleRetail .paymentMethodPill,
+  #wholesaleRetail .saleTypePill,
+  #wholesaleRetail .originPill,
+  #wholesaleRetail .feePill,
+  #wholesaleRetail .receivedPill,
+  #wholesaleRetail .wholesaleCouponPill{
+    display:inline-flex!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    justify-content:center!important;
+    align-items:center!important;
+    text-align:center!important;
+    white-space:normal!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+    line-height:1.16!important;
+    padding:6px 6px!important;
+    font-size:10px!important;
+    box-sizing:border-box!important;
+  }
+
+  #wholesaleRetail .feePill{
+    font-size:9px!important;
+  }
+
+  #wholesaleRetail .receivedPill,
+  #wholesaleRetail .wholesaleMoneyPill.total{
+    font-size:11px!important;
+    font-weight:950!important;
+  }
+
+  #wholesaleRetail td[data-label="Ações"],
+  #wholesaleRetail td:nth-child(15){
+    display:table-cell!important;
+  }
+
+  #wholesaleRetail td:nth-child(15) button{
+    display:block!important;
+    width:100%!important;
+    margin:2px 0!important;
+    min-height:30px!important;
+    font-size:10px!important;
+    padding:5px 6px!important;
+    box-sizing:border-box!important;
+  }
+
+  #wholesaleRetail .tableWrap::after{
+    content:"Arraste para o lado para ver todas as colunas";
+    display:block!important;
+    position:sticky!important;
+    left:0!important;
+    width:100%!important;
+    padding:8px 10px!important;
+    font-size:11px!important;
+    color:#64748b!important;
+    background:#f8fafc!important;
+    border-top:1px solid #e5e7eb!important;
+    text-align:center!important;
+    font-weight:850!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media(max-width:430px){
+  #wholesaleRetail table{
+    width:1420px!important;
+    min-width:1420px!important;
+  }
+
+  #wholesaleRetail th,
+  #wholesaleRetail td,
+  #wholesaleRetail td[data-label]{
+    padding:8px 6px!important;
+  }
+
+  #wholesaleRetail th:nth-child(5),  #wholesaleRetail td:nth-child(5){width:165px!important}
+  #wholesaleRetail th:nth-child(12), #wholesaleRetail td:nth-child(12){width:140px!important}
+  #wholesaleRetail th:nth-child(14), #wholesaleRetail td:nth-child(14){width:132px!important}
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -3903,7 +4164,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V76 TABELA MOBILE CORRIGIDA</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V77 TABELA MOBILE DESKTOP</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -4725,7 +4986,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V76 TABELA MOBILE CORRIGIDA carregada. Conectando ao Supabase...");
+  updateCloudStatus("V77 TABELA MOBILE DESKTOP carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
