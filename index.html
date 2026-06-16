@@ -4949,7 +4949,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V83 HISTORICO ACUMULAR</div></div><div class="topUserBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V84 ACUMULAR AJUSTADO</div></div><div class="topUserBox" id="topUserBox">
       <span id="loggedUserName">Sem login</span>
       <button type="button" class="secondary small" onclick="logoutUser()">Sair</button>
     </div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
@@ -6186,7 +6186,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V83 HISTORICO ACUMULAR carregada. Conectando ao Supabase...");
+  updateCloudStatus("V84 ACUMULAR AJUSTADO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -6655,7 +6655,7 @@ function accTypeLabel(type){
   const map={
     cash_paid:"Pago em dinheiro",
     product_paid:"Pago em produto",
-    product_choice_paid:"Produto escolhido pago",
+    product_choice_paid:"Pago em produto",
     manual_zero:"Zerado manualmente"
   };
   return map[type]||"Alteração";
@@ -6790,15 +6790,25 @@ function renderAccumulations(){
   $("accInfluencerCount").textContent=activeGroups.length;
 
   $("accRows").innerHTML=groups.length?groups.map(r=>{
-    const productPaid=productAccumulationPaid(r.i.id);
     const h=r.history;
+
     if(r.closed&&h){
       return `<tr>
         <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
         <td><span class="mobileCouponText">${esc(r.i.coupon||"-")}</span></td>
-        <td><div class="accBeforeAfter"><span class="before">Antes: ${money(h.beforeProduct)}</span><span class="after">Depois: ${money(h.afterProduct)}</span></div></td>
-        <td><div class="accBeforeAfter"><span class="before">Antes: ${money(h.beforeCash)}</span><span class="after">Depois: ${money(h.afterCash)}</span></div></td>
-        <td><span class="accStatusBadge ${accTypeClass(h.type)}">✓ ${esc(accTypeLabel(h.type))}</span><div class="accReasonBox" style="margin-top:6px">${esc(h.reason||"Sem motivo informado")}</div></td>
+        <td>
+          <div class="accBeforeAfter">
+            <span class="before">Antes: ${money(h.beforeProduct)}</span>
+            <span class="after">Depois: ${money(h.afterProduct)}</span>
+          </div>
+        </td>
+        <td>
+          <div class="accBeforeAfter">
+            <span class="before">Antes: ${money(h.beforeCash)}</span>
+            <span class="after">Depois: ${money(h.afterCash)}</span>
+          </div>
+        </td>
+        <td><span class="accStatusBadge ${accTypeClass(h.type)}">✓ ${esc(accTypeLabel(h.type))}</span></td>
       </tr>`;
     }
 
@@ -6808,8 +6818,7 @@ function renderAccumulations(){
       <td><span class="mobileValueText">${money(r.product)}</span></td>
       <td><span class="mobileValueText">${money(r.cash)}</span></td>
       <td>
-        ${r.product>0?`<button class="small secondary" onclick="payAccumulatedProduct('${r.i.id}')">Pago em produto</button> `:productPaid?`<span class="accStatusBadge product">✓ Produto pago</span> `:""}
-        ${r.cash>0?`<button class="small primary" ${productPaid?"disabled title='Bloqueado porque o produto já foi marcado como pago.'":""} onclick="${productPaid?"return false;":`payAccumulatedCash('${r.i.id}')`}">Pagar dinheiro</button> `:""}
+        ${r.cash>0?`<button class="small primary" onclick="payAccumulatedCash('${r.i.id}')">Pagar dinheiro</button> `:""}
         <button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Zerar acúmulo</button>
       </td>
     </tr>`;
@@ -6818,62 +6827,7 @@ function renderAccumulations(){
   renderAccumulationHistory();
 }
 function payAccumulatedProduct(infId){
-  const row=accumulationByInfluencer().find(r=>r.i.id===infId);
-  if(!row||row.product<=0){
-    alert("Este influencer não possui saldo em produtos acumulado para marcar como pago.");
-    return;
-  }
-
-  const reason=promptAccumulationReason("Pago em produto / comissão usada em produtos");
-  if(reason===null)return;
-
-  if(confirm(`Marcar ${money(row.product)} como pago em produto para ${row.i.name}? O saldo em dinheiro também será zerado para fechar este acúmulo.`)){
-    const beforeProduct=Number(row.product||0);
-    const beforeCash=Number(row.cash||0);
-
-    state.redemptions=state.redemptions||[];
-    state.redemptions.push({
-      id:uid(),
-      date:today(),
-      influencerId:infId,
-      name:"Pago em produto",
-      type:"produto_pago",
-      value:beforeProduct,
-      used:beforeProduct,
-      difference:0,
-      status:"Resgatado",
-      notes:reason
-    });
-
-    if(beforeCash>0){
-      state.cashPayments=state.cashPayments||[];
-      state.cashPayments.push({
-        id:uid(),
-        date:today(),
-        month:selectedMonth(),
-        influencerId:infId,
-        amount:beforeCash,
-        cash:beforeCash,
-        source:"Acúmulo",
-        status:"Pago em produto",
-        notes:"Saldo em dinheiro zerado porque o influencer foi pago em produto"
-      });
-    }
-
-    addAccumulationHistory({
-      influencerId:infId,
-      type:"product_paid",
-      label:"Pago em produto",
-      reason,
-      beforeProduct,
-      beforeCash,
-      afterProduct:0,
-      afterCash:0
-    });
-
-    save();
-    render();
-  }
+  alert("A opção Pago em produto foi removida da página Acumular. Para usar comissão em produtos, registre em Produto escolhido e marque como Pago.");
 }
 
 function payAccumulatedCash(infId){
@@ -6882,11 +6836,6 @@ function payAccumulatedCash(infId){
     alert("Este influencer não possui saldo em dinheiro acumulado para pagar.");
     return;
   }
-  if(productAccumulationPaid(infId)){
-    alert("O pagamento em dinheiro está bloqueado porque este influencer já foi marcado como Pago em produto.");
-    return;
-  }
-
   const reason=promptAccumulationReason("Pago em dinheiro / PIX");
   if(reason===null)return;
 
@@ -7437,9 +7386,19 @@ function reconcileProductChoicePaid(item){
 
   if(item.status!=="Pago")return;
 
-  const row=accumulationByInfluencer().find(r=>r.i.id===item.influencerId);
-  const beforeProduct=Number(row?.product||0);
-  const beforeCash=Number(row?.cash||0);
+  /*
+    Quando o produto escolhido é marcado como Pago:
+    - a comissão em produto já é consumida pelo próprio registro do produto escolhido;
+    - a comissão em dinheiro também precisa zerar;
+    - o histórico deve mostrar antes/depois dos dois saldos.
+  */
+  const rowsBeforeCash=accumulationByInfluencer();
+  const rowBeforeCash=rowsBeforeCash.find(r=>r.i.id===item.influencerId);
+  const beforeCash=Number(rowBeforeCash?.cash||0);
+
+  const beforeProduct=Number(item.used||0);
+  const afterProduct=0;
+  const afterCash=0;
 
   if(beforeCash>0){
     state.cashPayments=state.cashPayments||[];
@@ -7461,15 +7420,14 @@ function reconcileProductChoicePaid(item){
     influencerId:item.influencerId,
     type:"product_choice_paid",
     label:"Produto escolhido pago",
-    reason:`Produto escolhido marcado como Pago: ${item.name||"Produto"}`,
+    reason:"Comissão usada em produto escolhido",
     beforeProduct,
     beforeCash,
-    afterProduct:0,
-    afterCash:0,
+    afterProduct,
+    afterCash,
     relatedId:`product-choice-${item.id}`
   });
 }
-
 
 function productUsed(infId){return state.redemptions.filter(r=>r.influencerId===infId&&r.status!=="Cancelado").reduce((a,r)=>a+Number(r.used||0),0);}
 function productAvailable(infId){const earned=accumulatedRows().filter(l=>l.influencerId===infId).reduce((a,l)=>a+Number(l.productCommission||0),0);return Math.max(0,earned-productUsed(infId));}
