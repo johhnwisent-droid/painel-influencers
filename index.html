@@ -4427,6 +4427,308 @@ canvas{
   #wholesaleRetail th:nth-child(5),  #wholesaleRetail td:nth-child(5){width:160px!important}
 }
 
+
+/* ===== V80 PRODUTO ALINHADO AO PADRÃO DA TABELA ===== */
+/* Ajusta a coluna Produto para ficar encaixada no mesmo padrão dos outros campos */
+#wholesaleRetail td[data-label="Produto"],
+#wholesaleRetail td:nth-child(5){
+  vertical-align:middle!important;
+  text-align:left!important;
+  overflow:hidden!important;
+}
+
+#wholesaleRetail td[data-label="Produto"] .wholesaleProductList,
+#wholesaleRetail td:nth-child(5) .wholesaleProductList{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:8px 10px!important;
+  box-sizing:border-box!important;
+  border-radius:13px!important;
+  background:#f8fafc!important;
+  border:1px solid #e2e8f0!important;
+  color:#0f172a!important;
+  font-weight:900!important;
+  line-height:1.28!important;
+  text-align:left!important;
+  white-space:pre-line!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+  hyphens:none!important;
+}
+
+/* Desktop: mantém o produto visualmente encaixado na célula */
+@media(min-width:761px){
+  #wholesaleRetail td[data-label="Produto"] .wholesaleProductList,
+  #wholesaleRetail td:nth-child(5) .wholesaleProductList{
+    min-height:38px!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:center!important;
+  }
+}
+
+/* Mobile: mesmo padrão, sem deslocar para fora da coluna */
+@media(max-width:760px){
+  #wholesaleRetail td[data-label="Produto"],
+  #wholesaleRetail td:nth-child(5){
+    vertical-align:middle!important;
+    text-align:left!important;
+    overflow:hidden!important;
+  }
+
+  #wholesaleRetail td[data-label="Produto"] .wholesaleProductList,
+  #wholesaleRetail td:nth-child(5) .wholesaleProductList{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:7px 8px!important;
+    box-sizing:border-box!important;
+    border-radius:11px!important;
+    background:#f8fafc!important;
+    border:1px solid #e2e8f0!important;
+    line-height:1.24!important;
+    font-size:11px!important;
+    text-align:left!important;
+    white-space:pre-line!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+    hyphens:none!important;
+  }
+}
+
+
+/* ===== V81 LOGIN INTERNO SIMPLES ===== */
+.authLocked .app{
+  pointer-events:none;
+  user-select:none;
+  filter:blur(2px);
+}
+.loginScreen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:radial-gradient(circle at top,#1e293b,#020617 70%);
+}
+body:not(.authLocked) .loginScreen{
+  display:none!important;
+}
+.loginCard{
+  width:min(94vw,430px);
+  background:#fff;
+  border-radius:26px;
+  padding:24px;
+  box-shadow:0 30px 90px rgba(0,0,0,.35);
+  border:1px solid rgba(255,255,255,.16);
+}
+.loginBrand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  margin-bottom:18px;
+}
+.loginLogo{
+  width:54px;
+  height:54px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000;
+  color:#fff;
+  font-weight:1000;
+  font-size:22px;
+  overflow:hidden;
+}
+.loginLogo img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.loginBrand h1{
+  margin:0;
+  font-size:24px;
+  color:#0f172a;
+}
+.loginBrand p{
+  margin:4px 0 0;
+  color:#64748b;
+  font-size:13px;
+  font-weight:800;
+}
+.loginForm{
+  display:grid;
+  gap:12px;
+}
+.loginForm input{
+  min-height:44px;
+  font-weight:850;
+}
+.loginForm button{
+  min-height:46px;
+}
+.loginMsg{
+  margin:0;
+  color:#64748b;
+  font-size:12px;
+  font-weight:850;
+  text-align:center;
+}
+.loginMsg.error{
+  color:#b91c1c;
+}
+.loginHint{
+  margin:0;
+  color:#94a3b8;
+  font-size:11px;
+  text-align:center;
+}
+.topUserBox{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  padding:8px 10px;
+  box-shadow:0 8px 24px rgba(15,23,42,.05);
+}
+.topUserBox span{
+  color:#0f172a;
+  font-weight:950;
+  font-size:13px;
+  max-width:180px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.createdByMini{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  margin-top:6px;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10.5px;
+  line-height:1.15;
+  font-weight:900;
+  color:#334155;
+  background:#f1f5f9;
+  border:1px solid #e2e8f0;
+  box-sizing:border-box;
+}
+.authManagerBox{
+  grid-column:1/-1;
+  border:1px solid #dbeafe;
+  background:linear-gradient(135deg,#eff6ff,#ffffff);
+  border-radius:20px;
+  padding:16px;
+}
+.authManagerHead{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom:12px;
+}
+.authManagerHead h4{
+  margin:0;
+  color:#0f172a;
+  font-size:17px;
+}
+.authManagerHead p{
+  margin:4px 0 0;
+  color:#64748b;
+  font-size:12px;
+  line-height:1.35;
+}
+.authUserForm{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+  align-items:end;
+  margin-bottom:14px;
+}
+.authUserForm .authActions{
+  display:flex;
+  gap:8px;
+}
+.authUsersList{
+  display:grid;
+  gap:8px;
+}
+.authUserItem{
+  display:grid;
+  grid-template-columns:1.1fr 1fr .8fr auto;
+  gap:10px;
+  align-items:center;
+  background:#fff;
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+  padding:10px;
+}
+.authUserItem strong{
+  color:#0f172a;
+}
+.authUserItem small{
+  color:#64748b;
+  font-weight:850;
+}
+.authUserItem .badgeAuth{
+  justify-self:start;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:900;
+  background:#ecfdf5;
+  color:#047857;
+  border:1px solid #bbf7d0;
+}
+.authUserItem .badgeAuth.off{
+  background:#f8fafc;
+  color:#64748b;
+  border-color:#e2e8f0;
+}
+.receiptAuditBox{
+  background:#f8fafc!important;
+  border-color:#cbd5e1!important;
+}
+.receiptAuditBox strong{
+  color:#334155!important;
+}
+@media(max-width:900px){
+  .authUserForm{
+    grid-template-columns:1fr 1fr;
+  }
+  .authUserForm .authActions{
+    grid-column:1/-1;
+  }
+  .authUserItem{
+    grid-template-columns:1fr;
+  }
+}
+@media(max-width:650px){
+  .topUserBox{
+    margin-top:10px;
+    width:100%;
+    justify-content:space-between;
+  }
+  .authUserForm{
+    grid-template-columns:1fr;
+  }
+  .authUserForm .authActions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -4443,7 +4745,32 @@ canvas{
 <link rel="shortcut icon" href="apple-touch-icon.png">
 
 </head>
-<body class="page-dashboard">
+<body class="page-dashboard authLocked">
+
+<div id="loginScreen" class="loginScreen noPrint">
+  <div class="loginCard">
+    <div class="loginBrand">
+      <div class="loginLogo" id="loginLogo">W</div>
+      <div>
+        <h1>Login interno</h1>
+        <p>Painel de Influencers</p>
+      </div>
+    </div>
+
+    <form id="loginForm" class="loginForm">
+      <label>Usuário
+        <input id="loginUsername" autocomplete="username" placeholder="Ex.: admin" required>
+      </label>
+      <label>Senha
+        <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Digite a senha" required>
+      </label>
+      <button class="primary" type="submit">Entrar no painel</button>
+      <p id="loginMsg" class="loginMsg">Carregando dados do painel...</p>
+      <p class="loginHint">Login interno simples para rastrear quem fez cada lançamento.</p>
+    </form>
+  </div>
+</div>
+
 <div class="app">
     <div id="pwaUpdateToast" class="pwaUpdateToast noPrint">
       <strong>Atualização disponível</strong>
@@ -4480,7 +4807,10 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V79 MOBILE TABELA ALINHADA</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V81 LOGIN INTERNO</div></div><div class="topUserBox" id="topUserBox">
+      <span id="loggedUserName">Sem login</span>
+      <button type="button" class="secondary small" onclick="logoutUser()">Sair</button>
+    </div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -4758,6 +5088,14 @@ canvas{
               <small>Base da taxa</small>
               <strong id="wholesaleReceiptFeeBase">R$ 0,00</strong>
             </div>
+            <div class="wholesaleReceiptInfo receiptAuditBox">
+              <small>Responsável pelo lançamento</small>
+              <strong id="wholesaleReceiptCreatedBy">-</strong>
+            </div>
+            <div class="wholesaleReceiptInfo receiptAuditBox">
+              <small>Data e hora do lançamento</small>
+              <strong id="wholesaleReceiptCreatedAt">-</strong>
+            </div>
             <div class="wholesaleReceiptInfo obs">
               <small>Observações</small>
               <strong id="wholesaleReceiptNotes">Nenhuma observação adicionada.</strong>
@@ -4961,6 +5299,49 @@ canvas{
           </div>
 
 
+          <div class="authManagerBox">
+            <div class="authManagerHead">
+              <div>
+                <h4>Login interno</h4>
+                <p>Cadastre os usuários da equipe. Cada lançamento de Atacado e Varejo registra automaticamente quem fez.</p>
+              </div>
+              <span class="badge blue">Rastreamento interno</span>
+            </div>
+
+            <input type="hidden" id="authUserId">
+
+            <div class="authUserForm">
+              <label>Nome
+                <input id="authName" placeholder="Ex.: Matheus Silva">
+              </label>
+              <label>Usuário
+                <input id="authUsername" placeholder="Ex.: matheus">
+              </label>
+              <label>Senha
+                <input id="authPassword" placeholder="Ex.: 1234">
+              </label>
+              <label>Perfil
+                <select id="authRole">
+                  <option value="Admin">Admin</option>
+                  <option value="Equipe">Equipe</option>
+                </select>
+              </label>
+              <label>Status
+                <select id="authActive">
+                  <option value="true">Ativo</option>
+                  <option value="false">Inativo</option>
+                </select>
+              </label>
+              <div class="authActions">
+                <button type="button" class="primary" onclick="saveAuthUser()">Salvar usuário</button>
+                <button type="button" class="secondary" onclick="resetAuthUserForm()">Cancelar</button>
+              </div>
+            </div>
+
+            <div id="authUsersRows" class="authUsersList"></div>
+          </div>
+
+
           <label>Nome do sistema<input id="setName"></label>
           <label>Subtítulo<input id="setSub"></label>
 
@@ -5047,7 +5428,7 @@ canvas{
 </main>
 </div>
 <script>
-const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827"}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": [], "wholesaleRetail": []};
+const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827", "authUsers": [{"id": "admin", "name": "Administrador", "username": "admin", "password": "1234", "role": "Admin", "active": true}]}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": [], "wholesaleRetail": []};
 const KEY = "painel_influencers_backup_estavel_v60";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
@@ -5195,6 +5576,226 @@ const today=()=>new Date().toISOString().slice(0,10);
 const currentMonth=()=>today().slice(0,7);
 const uid=()=> (crypto&&crypto.randomUUID?crypto.randomUUID():(Date.now()+"-"+Math.random().toString(16).slice(2)));
 const esc=v=>String(v??"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[s]));
+
+const AUTH_SESSION_KEY="painel_login_interno_usuario_v81";
+let currentUser=null;
+
+function defaultAuthUsers(){
+  return [{id:"admin",name:"Administrador",username:"admin",password:"1234",role:"Admin",active:true}];
+}
+
+function normalizeAuthUsers(){
+  let users=state.settings.authUsers;
+  if(!Array.isArray(users)||!users.length)users=defaultAuthUsers();
+  state.settings.authUsers=users.map((u,idx)=>({
+    id:u.id||uid(),
+    name:(u.name||u.username||`Usuário ${idx+1}`).trim(),
+    username:(u.username||u.name||`usuario${idx+1}`).trim(),
+    password:String(u.password||"1234"),
+    role:u.role||"Equipe",
+    active:u.active!==false
+  }));
+  if(!state.settings.authUsers.some(u=>u.username==="admin")){
+    state.settings.authUsers.unshift(defaultAuthUsers()[0]);
+  }
+}
+
+function dateTimeBR(v){
+  if(!v)return "-";
+  const d=new Date(v);
+  if(Number.isNaN(d.getTime()))return "-";
+  return d.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
+}
+
+function getSessionUser(){
+  try{
+    const raw=localStorage.getItem(AUTH_SESSION_KEY);
+    if(!raw)return null;
+    const saved=JSON.parse(raw);
+    const users=state.settings.authUsers||[];
+    return users.find(u=>u.active!==false && (u.id===saved.id || u.username===saved.username))||null;
+  }catch(e){
+    return null;
+  }
+}
+
+function setSessionUser(user){
+  currentUser=user?{id:user.id,name:user.name,username:user.username,role:user.role}:null;
+  try{
+    if(user)localStorage.setItem(AUTH_SESSION_KEY,JSON.stringify(currentUser));
+    else localStorage.removeItem(AUTH_SESSION_KEY);
+  }catch(e){}
+}
+
+function updateAuthVisuals(){
+  const logo=state.settings.systemLogo||state.settings.logo||"";
+  const loginLogo=$("loginLogo");
+  if(loginLogo){
+    loginLogo.innerHTML=logo?`<img src="${logo}">`:"W";
+  }
+
+  const logged=$("loggedUserName");
+  if(logged)logged.textContent=currentUser?`👤 ${currentUser.name}`:"Sem login";
+}
+
+function showLoginScreen(msg="",isError=false){
+  document.body.classList.add("authLocked");
+  const el=$("loginMsg");
+  if(el){
+    el.textContent=msg||"Entre com seu usuário interno.";
+    el.classList.toggle("error",!!isError);
+  }
+  setTimeout(()=>$("loginUsername")?.focus(),80);
+  updateAuthVisuals();
+}
+
+function hideLoginScreen(){
+  document.body.classList.remove("authLocked");
+  updateAuthVisuals();
+}
+
+function initAuthUi(){
+  normalizeAuthUsers();
+  const session=getSessionUser();
+  if(session){
+    setSessionUser(session);
+    hideLoginScreen();
+  }else{
+    setSessionUser(null);
+    showLoginScreen("Use seu usuário interno para entrar.");
+  }
+  renderAuthUsers();
+}
+
+function handleLoginSubmit(e){
+  e.preventDefault();
+  normalizeAuthUsers();
+  const username=($("loginUsername")?.value||"").trim();
+  const password=String($("loginPassword")?.value||"");
+  const user=(state.settings.authUsers||[]).find(u=>u.active!==false && u.username.toLowerCase()===username.toLowerCase() && String(u.password)===password);
+
+  if(!user){
+    showLoginScreen("Usuário ou senha incorretos.",true);
+    return;
+  }
+
+  setSessionUser(user);
+  if($("loginPassword"))$("loginPassword").value="";
+  hideLoginScreen();
+}
+
+function logoutUser(){
+  setSessionUser(null);
+  showLoginScreen("Você saiu do painel.");
+}
+
+function currentAuditInfo(){
+  return currentUser?{
+    id:currentUser.id,
+    name:currentUser.name,
+    username:currentUser.username,
+    at:new Date().toISOString()
+  }:{
+    id:"",
+    name:"Sem login",
+    username:"",
+    at:new Date().toISOString()
+  };
+}
+
+function resetAuthUserForm(){
+  if(!$("authUserId"))return;
+  $("authUserId").value="";
+  $("authName").value="";
+  $("authUsername").value="";
+  $("authPassword").value="";
+  $("authRole").value="Equipe";
+  $("authActive").value="true";
+}
+
+function renderAuthUsers(){
+  if(!$("authUsersRows"))return;
+  normalizeAuthUsers();
+  $("authUsersRows").innerHTML=(state.settings.authUsers||[]).map(u=>`<div class="authUserItem">
+    <div><strong>${esc(u.name)}</strong><br><small>Usuário: ${esc(u.username)}</small></div>
+    <div><small>Perfil</small><br><strong>${esc(u.role||"Equipe")}</strong></div>
+    <span class="badgeAuth ${u.active===false?"off":""}">${u.active===false?"Inativo":"Ativo"}</span>
+    <div>
+      <button type="button" class="small secondary" onclick="editAuthUser('${u.id}')">Editar</button>
+      <button type="button" class="small danger" onclick="deleteAuthUser('${u.id}')">Excluir</button>
+    </div>
+  </div>`).join("");
+}
+
+function editAuthUser(id){
+  const u=(state.settings.authUsers||[]).find(x=>x.id===id);
+  if(!u)return;
+  $("authUserId").value=u.id;
+  $("authName").value=u.name||"";
+  $("authUsername").value=u.username||"";
+  $("authPassword").value=u.password||"";
+  $("authRole").value=u.role||"Equipe";
+  $("authActive").value=String(u.active!==false);
+}
+
+function saveAuthUser(){
+  normalizeAuthUsers();
+  const id=$("authUserId").value||uid();
+  const name=($("authName").value||"").trim();
+  const username=($("authUsername").value||"").trim();
+  const password=String($("authPassword").value||"").trim();
+  const role=$("authRole").value||"Equipe";
+  const active=$("authActive").value!=="false";
+
+  if(!name||!username||!password){
+    alert("Preencha nome, usuário e senha.");
+    return;
+  }
+
+  const duplicate=(state.settings.authUsers||[]).find(u=>u.id!==id && u.username.toLowerCase()===username.toLowerCase());
+  if(duplicate){
+    alert("Já existe um usuário com esse login.");
+    return;
+  }
+
+  const item={id,name,username,password,role,active};
+  const idx=state.settings.authUsers.findIndex(u=>u.id===id);
+  if(idx>=0)state.settings.authUsers[idx]=item;
+  else state.settings.authUsers.push(item);
+
+  if(currentUser&&currentUser.id===id){
+    setSessionUser(item.active!==false?item:null);
+  }
+
+  save();
+  resetAuthUserForm();
+  renderAuthUsers();
+  updateAuthVisuals();
+  alert("Usuário salvo.");
+}
+
+function deleteAuthUser(id){
+  normalizeAuthUsers();
+  if((state.settings.authUsers||[]).length<=1){
+    alert("Mantenha pelo menos um usuário ativo no sistema.");
+    return;
+  }
+  const u=state.settings.authUsers.find(x=>x.id===id);
+  if(!u)return;
+  if(!confirm(`Excluir o usuário ${u.name}?`))return;
+
+  state.settings.authUsers=state.settings.authUsers.filter(x=>x.id!==id);
+
+  if(currentUser&&currentUser.id===id){
+    setSessionUser(null);
+    showLoginScreen("Seu usuário foi removido. Entre com outro login.");
+  }
+
+  save();
+  renderAuthUsers();
+}
+
+
 function save(){
   const data=JSON.stringify(state);
 
@@ -5302,7 +5903,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V79 MOBILE TABELA ALINHADA carregada. Conectando ao Supabase...");
+  updateCloudStatus("V81 LOGIN INTERNO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -5421,6 +6022,7 @@ async function startApp(){
   }
 
   cloudBooting=false;
+  initAuthUi();
   save();
 }
 
@@ -5437,6 +6039,7 @@ function normalize(){
   state.settings.mobileBottomText=state.settings.mobileBottomText||"#ffffff";
   state.settings.mobileBottomActiveBg=state.settings.mobileBottomActiveBg||"#ffffff";
   state.settings.mobileBottomActiveText=state.settings.mobileBottomActiveText||"#111827";
+  normalizeAuthUsers();
     state.influencers=state.influencers||[];
   state.launches=state.launches||[];
   state.redemptions=state.redemptions||[];
@@ -5485,6 +6088,13 @@ function normalize(){
     w.feeValue=Number(calc.feeValue||0);
     w.realReceived=Number(calc.realReceived||0);
     w.feeRule=calc.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments);
+    w.createdByName=w.createdByName||"Não registrado";
+    w.createdByUsername=w.createdByUsername||"";
+    w.createdById=w.createdById||"";
+    w.createdAt=w.createdAt||"";
+    w.updatedByName=w.updatedByName||"";
+    w.updatedByUsername=w.updatedByUsername||"";
+    w.updatedAt=w.updatedAt||"";
     w.notes=w.notes||"";
   });
 
@@ -6130,7 +6740,7 @@ function renderWholesaleRetail(){
 
   $("wholesaleRows").innerHTML=rows.length?rows.map(w=>`<tr class="wholesaleOrderRow" onclick="openWholesaleRetailOrder('${w.id}')" title="Clique para abrir o comprovante do pedido">
     <td data-label="Data">${dateBR(w.date)}</td>
-    <td data-label="Cliente"><span class="clientNamePill">${esc(w.clientName||"-")}</span></td>
+    <td data-label="Cliente"><span class="clientNamePill">${esc(w.clientName||"-")}</span><span class="createdByMini">Por: ${esc(w.createdByName||"Não registrado")}</span></td>
     <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
     <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
     <td data-label="Produto"><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
@@ -6207,6 +6817,8 @@ function renderWholesaleOrder(){
     if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent="0% • R$ 0,00";
     if($("wholesaleReceiptFeeBase"))$("wholesaleReceiptFeeBase").textContent=money(0);
     if($("wholesaleReceiptRealReceived"))$("wholesaleReceiptRealReceived").textContent=money(0);
+    if($("wholesaleReceiptCreatedBy"))$("wholesaleReceiptCreatedBy").textContent="-";
+    if($("wholesaleReceiptCreatedAt"))$("wholesaleReceiptCreatedAt").textContent="-";
     $("wholesaleReceiptTotal").textContent=money(0);
     return;
   }
@@ -6229,6 +6841,8 @@ function renderWholesaleOrder(){
   $("wholesaleReceiptNotes").textContent=(w.notes||"").trim()||"Nenhuma observação adicionada.";
   $("wholesaleReceiptTotal").textContent=money(w.total);
   if($("wholesaleReceiptRealReceived"))$("wholesaleReceiptRealReceived").textContent=money(w.realReceived);
+  if($("wholesaleReceiptCreatedBy"))$("wholesaleReceiptCreatedBy").textContent=w.createdByName||"Não registrado";
+  if($("wholesaleReceiptCreatedAt"))$("wholesaleReceiptCreatedAt").textContent=dateTimeBR(w.createdAt);
   $("wholesaleReceiptFooter").textContent=state.settings.pdfFooter||"Comprovante gerado automaticamente pelo painel.";
 }
 
@@ -6294,11 +6908,13 @@ function clearWholesaleDateFilter(){
 
 function exportWholesaleRetailCSV(){
   const rows=wholesaleRetailRows();
-  rowsCSV([["Data","Tipo","Origem","Cliente","Produto","Preço produto","Frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
+  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
     dateBR(w.date),
     w.saleType||"Varejo",
     w.origin||"Site",
     w.clientName||"",
+    w.createdByName||"Não registrado",
+    dateTimeBR(w.createdAt),
     String(w.product||"").replace(/\r?\n/g," | "),
     w.productPrice||0,
     w.freightCost||0,
@@ -6393,6 +7009,7 @@ function renderSettings(){
 
   $("systemLogoPreview").innerHTML=sysLogo?`<img src="${sysLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
   $("pdfLogoPreview").innerHTML=pdfLogo?`<img src="${pdfLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
+  renderAuthUsers();
 }
 
 function saveSettings(){
@@ -6649,9 +7266,15 @@ if($("wholesalePaymentMethod")){
 if($("wholesaleForm")){
   $("wholesaleForm").addEventListener("submit",e=>{
     e.preventDefault();
+    if(!currentUser){
+      showLoginScreen("Faça login para salvar o lançamento.",true);
+      return;
+    }
 
     const c=calcWholesaleRetail();
     const id=$("wholesaleId").value||uid();
+    const existingWholesale=(state.wholesaleRetail||[]).find(w=>w.id===id);
+    const audit=currentAuditInfo();
     const date=$("wholesaleDate").value||today();
 
     const item={
@@ -6675,6 +7298,14 @@ if($("wholesaleForm")){
       feeValue:c.feeValue,
       realReceived:c.realReceived,
       feeRule:c.feeRule,
+      createdById:existingWholesale?.createdById||audit.id,
+      createdByName:existingWholesale?.createdByName||audit.name,
+      createdByUsername:existingWholesale?.createdByUsername||audit.username,
+      createdAt:existingWholesale?.createdAt||audit.at,
+      updatedById:existingWholesale?audit.id:"",
+      updatedByName:existingWholesale?audit.name:"",
+      updatedByUsername:existingWholesale?audit.username:"",
+      updatedAt:existingWholesale?audit.at:"",
       notes:$("wholesaleNotes").value||""
     };
 
@@ -6732,6 +7363,7 @@ $("productForm").addEventListener("submit",e=>{e.preventDefault();const id=$("pr
 document.addEventListener("keydown",e=>{
   if(e.key==="Escape")closeMobileMenu();
 });
+if($("loginForm"))$("loginForm").addEventListener("submit",handleLoginSubmit);
 
 document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",()=>{syncMonthInputs();render();});
 setTimeout(()=>{
