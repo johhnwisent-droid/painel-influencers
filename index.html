@@ -4870,6 +4870,79 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V85 DESFAZER ALTERAÇÃO ===== */
+.undoBtn{
+  border-color:#fbbf24!important;
+  background:#fffbeb!important;
+  color:#92400e!important;
+  font-weight:950!important;
+}
+.undoBtn:not(:disabled):hover{
+  background:#fef3c7!important;
+  color:#78350f!important;
+}
+.undoBtn:disabled{
+  opacity:.48!important;
+  cursor:not-allowed!important;
+  filter:grayscale(.25);
+}
+.undoToast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:9998;
+  max-width:360px;
+  background:#0f172a;
+  color:#fff;
+  border-radius:18px;
+  padding:13px 15px;
+  box-shadow:0 18px 60px rgba(15,23,42,.25);
+  font-size:13px;
+  font-weight:850;
+  line-height:1.35;
+  display:none;
+}
+.undoToast.show{
+  display:block;
+}
+@media(max-width:650px){
+  .topUserBox{
+    flex-wrap:wrap;
+  }
+  .topUserBox .undoBtn{
+    order:3;
+    width:100%;
+  }
+}
+
+
+/* ===== V86 BOTÃO DISCRETO RESETAR TESTES ===== */
+.resetTestBtn{
+  opacity:.32!important;
+  border-color:#fee2e2!important;
+  background:#fff!important;
+  color:#991b1b!important;
+  font-weight:850!important;
+  transform:scale(.96);
+}
+.resetTestBtn:hover{
+  opacity:1!important;
+  background:#fef2f2!important;
+  border-color:#fecaca!important;
+  color:#7f1d1d!important;
+}
+.resetTestBtn:focus{
+  opacity:1!important;
+}
+@media(max-width:650px){
+  .topUserBox .resetTestBtn{
+    order:4;
+    width:100%;
+    opacity:.42!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -4888,6 +4961,7 @@ body:not(.authLocked) .loginScreen{
 </head>
 <body class="page-dashboard authLocked">
 
+<div id="undoToast" class="undoToast noPrint"></div>
 <div id="loginScreen" class="loginScreen noPrint">
   <div class="loginCard">
     <div class="loginBrand">
@@ -4949,8 +5023,10 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V84 ACUMULAR AJUSTADO</div></div><div class="topUserBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V86 RESET TESTES</div></div><div class="topUserBox" id="topUserBox">
       <span id="loggedUserName">Sem login</span>
+      <button type="button" class="secondary small undoBtn" data-undo-button onclick="undoLastChange()" disabled>Desfazer alteração</button>
+      <button type="button" class="secondary small resetTestBtn" onclick="resetTestData()">Resetar testes</button>
       <button type="button" class="secondary small" onclick="logoutUser()">Sair</button>
     </div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
@@ -5795,6 +5871,204 @@ const esc=v=>String(v??"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&
 const AUTH_SESSION_KEY="painel_login_interno_usuario_v81";
 let currentUser=null;
 
+
+const UNDO_KEY=KEY+"_undo_v85";
+const MAX_UNDO_STACK=30;
+let undoRestoring=false;
+let lastUndoSnapshot=JSON.stringify(state);
+
+function readUndoStack(){
+  try{
+    const raw=localStorage.getItem(UNDO_KEY);
+    const stack=raw?JSON.parse(raw):[];
+    return Array.isArray(stack)?stack.filter(x=>x&&x.state):[];
+  }catch(e){
+    return [];
+  }
+}
+
+function writeUndoStack(stack){
+  try{
+    localStorage.setItem(UNDO_KEY,JSON.stringify((stack||[]).slice(-MAX_UNDO_STACK)));
+  }catch(e){
+    console.warn("Não foi possível salvar histórico de desfazer:",e);
+  }
+}
+
+function currentPageLabelForUndo(){
+  try{
+    const btn=document.querySelector(`.menu button[data-page="${currentPage||"dashboard"}"]`);
+    return btn?btn.textContent.trim():(currentPage||"Painel");
+  }catch(e){
+    return currentPage||"Painel";
+  }
+}
+
+function showUndoToast(text){
+  const el=$("undoToast");
+  if(!el)return;
+  el.textContent=text;
+  el.classList.add("show");
+  clearTimeout(window.__undoToastTimer);
+  window.__undoToastTimer=setTimeout(()=>el.classList.remove("show"),3600);
+}
+
+function updateUndoButtons(){
+  const count=readUndoStack().length;
+  document.querySelectorAll("[data-undo-button]").forEach(btn=>{
+    btn.disabled=count<=0;
+    btn.textContent=count>0?`Desfazer alteração (${count})`:"Desfazer alteração";
+    btn.title=count>0?"Voltar para o estado anterior salvo":"Nenhuma alteração para desfazer";
+  });
+}
+
+function handleUndoCommit(currentData){
+  if(cloudBooting||undoRestoring){
+    lastUndoSnapshot=currentData;
+    updateUndoButtons();
+    return;
+  }
+
+  if(!lastUndoSnapshot){
+    lastUndoSnapshot=currentData;
+    updateUndoButtons();
+    return;
+  }
+
+  if(currentData!==lastUndoSnapshot){
+    const stack=readUndoStack();
+    const last=stack[stack.length-1];
+
+    if(!last||last.state!==lastUndoSnapshot){
+      stack.push({
+        id:uid(),
+        at:new Date().toISOString(),
+        page:currentPage||"dashboard",
+        pageLabel:currentPageLabelForUndo(),
+        user:currentUser?.name||"Não registrado",
+        state:lastUndoSnapshot
+      });
+      writeUndoStack(stack);
+    }
+
+    lastUndoSnapshot=currentData;
+  }
+
+  updateUndoButtons();
+}
+
+
+function resetTestData(){
+  const msg1=[
+    "Resetar todos os dados de teste?",
+    "",
+    "Será apagado:",
+    "- lançamentos",
+    "- saldos gerados",
+    "- atacado e varejo",
+    "- produtos escolhidos",
+    "- pagamentos",
+    "- acúmulos e histórico contábil",
+    "- histórico de desfazer",
+    "",
+    "Será mantido:",
+    "- influencers cadastrados",
+    "- colaboradores/login",
+    "- personalização, logos e Pix",
+    "",
+    "Essa ação é para limpar o sistema antes de colocar em prática."
+  ].join("\n");
+
+  if(!confirm(msg1))return;
+
+  const typed=prompt("Para confirmar, digite exatamente: RESETAR");
+  if(typed!=="RESETAR"){
+    alert("Reset cancelado. Nada foi alterado.");
+    return;
+  }
+
+  const settingsBackup=JSON.parse(JSON.stringify(state.settings||{}));
+  const influencersBackup=JSON.parse(JSON.stringify(state.influencers||[]));
+  const pixBackup=JSON.parse(JSON.stringify(state.pix||{}));
+
+  const previousData=JSON.stringify(state);
+  const stack=readUndoStack();
+  stack.push({
+    id:uid(),
+    at:new Date().toISOString(),
+    page:currentPage||"dashboard",
+    pageLabel:"Resetar testes",
+    user:currentUser?.name||"Não registrado",
+    state:previousData
+  });
+  writeUndoStack(stack);
+
+  state={
+    settings:settingsBackup,
+    influencers:influencersBackup,
+    pix:pixBackup,
+    launches:[],
+    wholesaleRetail:[],
+    redemptions:[],
+    cashPayments:[],
+    productPayments:[],
+    balances:[],
+    accumulationHistory:[],
+    paidHistory:[],
+    payments:[],
+    notes:[]
+  };
+
+  normalize();
+  lastUndoSnapshot=JSON.stringify(state);
+  save();
+  render();
+  updateUndoButtons();
+  showUndoToast("Sistema resetado para uso real. Influencers, colaboradores, login, logos e Pix foram mantidos.");
+  alert("Reset concluído. Os dados de teste foram apagados e o sistema ficou limpo para começar.");
+}
+
+
+function undoLastChange(){
+  const stack=readUndoStack();
+  if(!stack.length){
+    alert("Não há alteração para desfazer.");
+    updateUndoButtons();
+    return;
+  }
+
+  const item=stack[stack.length-1];
+  const when=dateTimeBR(item.at);
+  const page=item.pageLabel||"Painel";
+  const user=item.user||"Não registrado";
+
+  if(!confirm(`Desfazer a última alteração salva?\n\nPágina: ${page}\nFeita por: ${user}\nData/hora: ${when}\n\nIsso volta os saldos e dados para o estado anterior.`)){
+    return;
+  }
+
+  try{
+    const previous=JSON.parse(item.state);
+    stack.pop();
+    writeUndoStack(stack);
+
+    undoRestoring=true;
+    state=previous;
+    normalize();
+    save();
+    render();
+    undoRestoring=false;
+
+    updateUndoButtons();
+    showUndoToast("Alteração desfeita com sucesso. Os dados foram restaurados para o estado anterior.");
+  }catch(e){
+    undoRestoring=false;
+    console.error("Erro ao desfazer alteração:",e);
+    alert("Não foi possível desfazer esta alteração.");
+  }
+}
+
+
+
 function defaultAuthUsers(){
   return [{id:"admin",name:"Administrador",username:"admin",password:"1234",role:"Admin",active:true}];
 }
@@ -6082,6 +6356,8 @@ function deleteAuthUser(id){
 function save(){
   const data=JSON.stringify(state);
 
+  handleUndoCommit(data);
+
   try{
     localStorage.setItem(KEY,data);
   }catch(e){
@@ -6089,6 +6365,7 @@ function save(){
   }
 
   if(!cloudBooting)scheduleCloudSave();
+  updateUndoButtons();
   return true;
 }
 
@@ -6186,7 +6463,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V84 ACUMULAR AJUSTADO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V86 RESET TESTES carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -6307,6 +6584,7 @@ async function startApp(){
   cloudBooting=false;
   initAuthUi();
   save();
+  updateUndoButtons();
 }
 
 
