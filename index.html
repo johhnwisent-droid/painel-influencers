@@ -5273,6 +5273,185 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V88 PERFIL COM MENU COMPACTO ===== */
+.profileMenuBox{
+  position:relative!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  width:auto!important;
+  max-width:280px!important;
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+
+.profileMenuTrigger{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  gap:8px!important;
+  width:auto!important;
+  max-width:260px!important;
+  min-height:42px!important;
+  padding:9px 13px!important;
+  border-radius:999px!important;
+  border:1px solid #e2e8f0!important;
+  background:#fff!important;
+  color:#0f172a!important;
+  box-shadow:0 8px 24px rgba(15,23,42,.06)!important;
+  cursor:pointer!important;
+  box-sizing:border-box!important;
+}
+
+.profileMenuTrigger:hover{
+  background:#f8fafc!important;
+  border-color:#cbd5e1!important;
+}
+
+.profileMenuTrigger #loggedUserName{
+  display:block!important;
+  max-width:190px!important;
+  min-width:0!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  border:0!important;
+  color:#0f172a!important;
+  font-size:13px!important;
+  font-weight:950!important;
+  line-height:1.15!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  text-align:left!important;
+}
+
+.profileMenuArrow{
+  color:#64748b!important;
+  font-size:12px!important;
+  font-weight:950!important;
+  line-height:1!important;
+  transition:transform .18s ease!important;
+}
+
+.profileMenuBox.open .profileMenuArrow{
+  transform:rotate(180deg)!important;
+}
+
+.profileMenuDropdown{
+  position:absolute!important;
+  top:calc(100% + 8px)!important;
+  right:0!important;
+  z-index:2000!important;
+  width:210px!important;
+  display:none!important;
+  gap:7px!important;
+  padding:10px!important;
+  border-radius:18px!important;
+  background:#fff!important;
+  border:1px solid #e2e8f0!important;
+  box-shadow:0 20px 60px rgba(15,23,42,.18)!important;
+  box-sizing:border-box!important;
+}
+
+.profileMenuBox.open .profileMenuDropdown{
+  display:grid!important;
+}
+
+.profileMenuDropdown button{
+  width:100%!important;
+  min-height:38px!important;
+  margin:0!important;
+  justify-content:center!important;
+  text-align:center!important;
+  white-space:normal!important;
+  border-radius:12px!important;
+  font-size:12px!important;
+  line-height:1.15!important;
+  box-sizing:border-box!important;
+}
+
+.profileMenuDropdown .resetTestBtn{
+  opacity:.58!important;
+}
+
+.profileMenuDropdown .resetTestBtn:hover{
+  opacity:1!important;
+}
+
+/* Corrige regras antigas do mobile que abriam o topUserBox em grade */
+@media(max-width:760px){
+  .topUserBox.profileMenuBox{
+    width:100%!important;
+    max-width:100%!important;
+    display:flex!important;
+    justify-content:flex-end!important;
+    align-items:center!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    box-shadow:none!important;
+    overflow:visible!important;
+  }
+
+  .profileMenuTrigger{
+    width:100%!important;
+    max-width:100%!important;
+    min-height:44px!important;
+    padding:10px 13px!important;
+    justify-content:space-between!important;
+    border-radius:16px!important;
+  }
+
+  .profileMenuTrigger #loggedUserName{
+    max-width:calc(100vw - 105px)!important;
+    font-size:13px!important;
+    text-align:left!important;
+    white-space:nowrap!important;
+    overflow:hidden!important;
+    text-overflow:ellipsis!important;
+  }
+
+  .profileMenuDropdown{
+    left:0!important;
+    right:0!important;
+    width:100%!important;
+    top:calc(100% + 7px)!important;
+    border-radius:16px!important;
+  }
+
+  .profileMenuDropdown button{
+    min-height:42px!important;
+    font-size:13px!important;
+  }
+
+  .topUserBox.profileMenuBox .undoBtn,
+  .topUserBox.profileMenuBox .resetTestBtn{
+    order:initial!important;
+    grid-column:auto!important;
+  }
+}
+
+@media(max-width:430px){
+  .profileMenuTrigger{
+    min-height:42px!important;
+  }
+
+  .profileMenuTrigger #loggedUserName{
+    font-size:12.5px!important;
+    max-width:calc(100vw - 95px)!important;
+  }
+
+  .profileMenuDropdown button{
+    min-height:40px!important;
+    font-size:12.5px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -5353,11 +5532,17 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V87 MOBILE LOGIN OTIMIZADO</div></div><div class="topUserBox" id="topUserBox">
-      <span id="loggedUserName">Sem login</span>
-      <button type="button" class="secondary small undoBtn" data-undo-button onclick="undoLastChange()" disabled>Desfazer alteração</button>
-      <button type="button" class="secondary small resetTestBtn" onclick="resetTestData()">Resetar testes</button>
-      <button type="button" class="secondary small" onclick="logoutUser()">Sair</button>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V88 PERFIL MENU</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+      <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
+        <span id="loggedUserName">Sem login</span>
+        <span class="profileMenuArrow">▾</span>
+      </button>
+
+      <div class="profileMenuDropdown" id="profileMenuDropdown">
+        <button type="button" class="secondary small undoBtn" data-undo-button onclick="undoLastChange();closeProfileMenu();" disabled>Desfazer alteração</button>
+        <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Resetar testes</button>
+        <button type="button" class="secondary small" onclick="logoutUser();closeProfileMenu();">Sair</button>
+      </div>
     </div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
@@ -6450,6 +6635,28 @@ function setSessionUser(user){
   }catch(e){}
 }
 
+
+function toggleProfileMenu(event){
+  if(event)event.stopPropagation();
+  const box=$("topUserBox");
+  if(!box)return;
+  box.classList.toggle("open");
+}
+
+function closeProfileMenu(){
+  const box=$("topUserBox");
+  if(box)box.classList.remove("open");
+}
+
+document.addEventListener("click",e=>{
+  const box=$("topUserBox");
+  if(box&&!box.contains(e.target))closeProfileMenu();
+});
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")closeProfileMenu();
+});
+
 function updateAuthVisuals(){
   const logo=state.settings.systemLogo||state.settings.logo||"";
   const loginLogo=$("loginLogo");
@@ -6458,7 +6665,7 @@ function updateAuthVisuals(){
   }
 
   const logged=$("loggedUserName");
-  if(logged)logged.textContent=currentUser?`👤 ${currentUser.name}`:"Sem login";
+  if(logged)logged.textContent=currentUser?currentUser.name:"Sem login";
 }
 
 function showLoginScreen(msg="",isError=false){
@@ -6793,7 +7000,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V87 MOBILE LOGIN OTIMIZADO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V88 PERFIL MENU carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
