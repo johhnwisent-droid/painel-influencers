@@ -4111,6 +4111,177 @@ canvas{
   #wholesaleRetail th:nth-child(14), #wholesaleRetail td:nth-child(14){width:132px!important}
 }
 
+
+/* ===== V78 CLIENTE DESTACADO + ROLAGEM MOBILE OTIMIZADA ===== */
+/* Formulário: cliente vem antes e fica visualmente mais importante */
+.wholesaleFormPro .clientFieldFeatured{
+  background:linear-gradient(135deg,#eff6ff,#ffffff);
+  border:1px solid #bfdbfe;
+  border-radius:18px;
+  padding:13px;
+  box-shadow:0 10px 26px rgba(37,99,235,.08);
+}
+
+.wholesaleFormPro .clientFieldFeatured input{
+  font-weight:950;
+  color:#0f172a;
+  border-color:#93c5fd;
+  background:#fff;
+}
+
+.wholesaleFormPro .clientFieldFeatured input::placeholder{
+  color:#64748b;
+  font-weight:800;
+}
+
+/* Desktop: ordem visual e alinhamento do topo */
+.wholesaleFormPro .fieldDate{grid-column:span 3!important}
+.wholesaleFormPro .fieldClient{grid-column:span 3!important}
+.wholesaleFormPro .fieldType{grid-column:span 3!important}
+.wholesaleFormPro .fieldOrigin{grid-column:span 3!important}
+
+/* Tabela: cliente ao lado do tipo e mais destacado */
+#wholesaleRetail th:nth-child(2),
+#wholesaleRetail td:nth-child(2){
+  width:170px!important;
+}
+
+#wholesaleRetail th:nth-child(3),
+#wholesaleRetail td:nth-child(3){
+  width:96px!important;
+}
+
+#wholesaleRetail th:nth-child(4),
+#wholesaleRetail td:nth-child(4){
+  width:110px!important;
+}
+
+#wholesaleRetail td[data-label="Cliente"],
+#wholesaleRetail td:nth-child(2){
+  background:linear-gradient(135deg,#eff6ff,#ffffff)!important;
+}
+
+#wholesaleRetail .mobileInfluencerName{
+  display:block!important;
+  color:#0f172a!important;
+  font-size:15px!important;
+  font-weight:1000!important;
+  line-height:1.18!important;
+  letter-spacing:-.02em!important;
+}
+
+/* Desktop/geral: reduz confusão visual e mantém cada informação no lugar */
+#wholesaleRetail .tableWrap{
+  scrollbar-width:thin;
+  scrollbar-color:#94a3b8 #f1f5f9;
+}
+
+#wholesaleRetail .tableWrap::-webkit-scrollbar{
+  height:11px;
+}
+
+#wholesaleRetail .tableWrap::-webkit-scrollbar-track{
+  background:#f1f5f9;
+  border-radius:999px;
+}
+
+#wholesaleRetail .tableWrap::-webkit-scrollbar-thumb{
+  background:#94a3b8;
+  border-radius:999px;
+  border:2px solid #f1f5f9;
+}
+
+#wholesaleRetail .tableWrap::-webkit-scrollbar-thumb:hover{
+  background:#64748b;
+}
+
+/* Mobile: rolagem lateral real, fácil de arrastar, sem cortar ou dividir */
+@media(max-width:760px){
+  #wholesaleRetail .tableWrap{
+    position:relative!important;
+    overflow-x:scroll!important;
+    overflow-y:visible!important;
+    padding-bottom:4px!important;
+    touch-action:pan-x pan-y!important;
+    cursor:grab;
+  }
+
+  #wholesaleRetail .tableWrap:active{
+    cursor:grabbing;
+  }
+
+  #wholesaleRetail table{
+    width:1480px!important;
+    min-width:1480px!important;
+  }
+
+  /* Larguras mobile depois da nova ordem: Data, Cliente, Tipo, Origem */
+  #wholesaleRetail th:nth-child(1),  #wholesaleRetail td:nth-child(1){width:78px!important}
+  #wholesaleRetail th:nth-child(2),  #wholesaleRetail td:nth-child(2){width:150px!important}
+  #wholesaleRetail th:nth-child(3),  #wholesaleRetail td:nth-child(3){width:84px!important}
+  #wholesaleRetail th:nth-child(4),  #wholesaleRetail td:nth-child(4){width:96px!important}
+  #wholesaleRetail th:nth-child(5),  #wholesaleRetail td:nth-child(5){width:170px!important}
+  #wholesaleRetail th:nth-child(6),  #wholesaleRetail td:nth-child(6){width:102px!important}
+  #wholesaleRetail th:nth-child(7),  #wholesaleRetail td:nth-child(7){width:90px!important}
+  #wholesaleRetail th:nth-child(8),  #wholesaleRetail td:nth-child(8){width:104px!important}
+  #wholesaleRetail th:nth-child(9),  #wholesaleRetail td:nth-child(9){width:98px!important}
+  #wholesaleRetail th:nth-child(10), #wholesaleRetail td:nth-child(10){width:108px!important}
+  #wholesaleRetail th:nth-child(11), #wholesaleRetail td:nth-child(11){width:124px!important}
+  #wholesaleRetail th:nth-child(12), #wholesaleRetail td:nth-child(12){width:148px!important}
+  #wholesaleRetail th:nth-child(13), #wholesaleRetail td:nth-child(13){width:126px!important}
+  #wholesaleRetail th:nth-child(14), #wholesaleRetail td:nth-child(14){width:138px!important}
+  #wholesaleRetail th:nth-child(15), #wholesaleRetail td:nth-child(15){width:112px!important}
+
+  #wholesaleRetail th:nth-child(2),
+  #wholesaleRetail td:nth-child(2){
+    position:sticky!important;
+    left:78px!important;
+    z-index:2!important;
+    background:#eff6ff!important;
+    box-shadow:6px 0 14px rgba(15,23,42,.07)!important;
+  }
+
+  #wholesaleRetail th:nth-child(2){
+    z-index:5!important;
+  }
+
+  #wholesaleRetail .mobileInfluencerName{
+    font-size:12.5px!important;
+    line-height:1.2!important;
+  }
+
+  .wholesaleFormPro .clientFieldFeatured{
+    padding:12px;
+  }
+}
+
+/* Notebook/tablet: mantém cliente destacado, mas sem apertar */
+@media(max-width:1200px) and (min-width:761px){
+  .wholesaleFormPro .fieldDate{grid-column:span 2!important}
+  .wholesaleFormPro .fieldClient{grid-column:span 4!important}
+  .wholesaleFormPro .fieldType{grid-column:span 2!important}
+  .wholesaleFormPro .fieldOrigin{grid-column:span 2!important}
+
+  #wholesaleRetail th:nth-child(2),
+  #wholesaleRetail td:nth-child(2){
+    width:160px!important;
+  }
+}
+
+@media(max-width:430px){
+  #wholesaleRetail table{
+    width:1400px!important;
+    min-width:1400px!important;
+  }
+
+  #wholesaleRetail th:nth-child(1),  #wholesaleRetail td:nth-child(1){width:74px!important}
+  #wholesaleRetail th:nth-child(2),  #wholesaleRetail td:nth-child(2){width:142px!important}
+  #wholesaleRetail th:nth-child(2),
+  #wholesaleRetail td:nth-child(2){
+    left:74px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -4164,7 +4335,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V77 TABELA MOBILE DESKTOP</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V78 CLIENTE DESTACADO</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -4204,6 +4375,10 @@ canvas{
             <input type="date" id="wholesaleDate" required>
           </label>
 
+          <label class="fieldClient clientFieldFeatured">Nome do cliente
+            <input id="wholesaleClient" placeholder="Ex.: Matheus Silva" required>
+          </label>
+
           <div class="wholesaleTypeBox fieldType">
             <label>Tipo de venda
               <select id="wholesaleSaleType" required>
@@ -4221,10 +4396,6 @@ canvas{
               </select>
             </label>
           </div>
-
-          <label class="fieldClient">Nome do cliente
-            <input id="wholesaleClient" placeholder="Ex.: Matheus Silva" required>
-          </label>
 
           <label class="two fieldProducts">Produto
             <textarea id="wholesaleProduct" class="productMultiLine" rows="4" placeholder="Ex.: Camiseta Oversized&#10;Boné Wisent&#10;Regata Premium" required></textarea>
@@ -4336,9 +4507,9 @@ canvas{
             <thead>
               <tr>
                 <th>Data</th>
+                <th>Cliente</th>
                 <th>Tipo</th>
                 <th>Origem</th>
-                <th>Cliente</th>
                 <th>Produto</th>
                 <th>Preço produto</th>
                 <th>Frete</th>
@@ -4986,7 +5157,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V77 TABELA MOBILE DESKTOP carregada. Conectando ao Supabase...");
+  updateCloudStatus("V78 CLIENTE DESTACADO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -5814,9 +5985,9 @@ function renderWholesaleRetail(){
 
   $("wholesaleRows").innerHTML=rows.length?rows.map(w=>`<tr class="wholesaleOrderRow" onclick="openWholesaleRetailOrder('${w.id}')" title="Clique para abrir o comprovante do pedido">
     <td data-label="Data">${dateBR(w.date)}</td>
+    <td data-label="Cliente"><span class="mobileKeyText mobileInfluencerName">${esc(w.clientName||"-")}</span></td>
     <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
     <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
-    <td data-label="Cliente"><span class="mobileKeyText mobileInfluencerName">${esc(w.clientName||"-")}</span></td>
     <td data-label="Produto"><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
     <td data-label="Frete"><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
