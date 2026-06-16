@@ -4943,6 +4943,336 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V87 MOBILE LOGIN E TOPO OTIMIZADOS ===== */
+
+/* Topo geral mais flexível */
+.top{
+  gap:14px!important;
+}
+
+.topUserBox{
+  max-width:100%!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-end!important;
+}
+
+.topUserBox span#loggedUserName{
+  min-width:0!important;
+  max-width:220px!important;
+}
+
+/* Login inicial mais confortável em telas pequenas */
+.loginScreen{
+  padding:14px!important;
+  overflow-y:auto!important;
+  align-items:flex-start!important;
+}
+
+.loginCard{
+  margin:18px auto!important;
+  width:min(100%,430px)!important;
+  max-width:430px!important;
+  padding:22px!important;
+  border-radius:24px!important;
+}
+
+.loginBrand{
+  align-items:center!important;
+}
+
+.loginBrand h1{
+  font-size:22px!important;
+  line-height:1.15!important;
+}
+
+.loginForm label{
+  font-size:13px!important;
+  font-weight:900!important;
+}
+
+.loginForm input{
+  width:100%!important;
+  min-height:48px!important;
+  font-size:16px!important; /* evita zoom no iPhone */
+  box-sizing:border-box!important;
+}
+
+.loginForm button{
+  width:100%!important;
+  min-height:48px!important;
+}
+
+/* Colaboradores/login interno em mobile */
+#collaborators .authUserForm input,
+#collaborators .authUserForm select,
+.authUserForm input,
+.authUserForm select{
+  font-size:16px!important; /* evita zoom no iPhone */
+}
+
+.authUserForm{
+  align-items:stretch!important;
+}
+
+.authActions button{
+  min-height:42px!important;
+}
+
+/* Ajuste forte para celular */
+@media(max-width:760px){
+  .main{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:hidden!important;
+  }
+
+  .top{
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:10px!important;
+    padding:12px!important;
+  }
+
+  .top > div:first-child{
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  .top h2{
+    font-size:20px!important;
+    line-height:1.15!important;
+    margin-bottom:3px!important;
+  }
+
+  .top p{
+    font-size:12px!important;
+    line-height:1.25!important;
+  }
+
+  .topUserBox{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    padding:10px!important;
+    border-radius:18px!important;
+    box-sizing:border-box!important;
+    justify-content:stretch!important;
+    align-items:stretch!important;
+    overflow:hidden!important;
+  }
+
+  .topUserBox span#loggedUserName{
+    grid-column:1/-1!important;
+    width:100%!important;
+    max-width:100%!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    min-height:38px!important;
+    padding:8px 10px!important;
+    border-radius:14px!important;
+    background:#f8fafc!important;
+    border:1px solid #e2e8f0!important;
+    text-align:center!important;
+    white-space:normal!important;
+    overflow:visible!important;
+    text-overflow:clip!important;
+    line-height:1.2!important;
+    font-size:13px!important;
+    box-sizing:border-box!important;
+  }
+
+  .topUserBox button{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    min-height:38px!important;
+    padding:8px 7px!important;
+    margin:0!important;
+    font-size:11px!important;
+    line-height:1.1!important;
+    white-space:normal!important;
+    text-align:center!important;
+    border-radius:13px!important;
+    box-sizing:border-box!important;
+  }
+
+  .topUserBox .undoBtn{
+    order:0!important;
+    grid-column:1/-1!important;
+    font-size:12px!important;
+  }
+
+  .topUserBox .resetTestBtn{
+    order:0!important;
+    grid-column:auto!important;
+    opacity:.48!important;
+  }
+
+  .topMonthBox{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+
+  .topMonthBox input,
+  .topMonthBox select,
+  .topMonthBox button{
+    width:100%!important;
+    min-height:42px!important;
+    font-size:16px!important;
+    box-sizing:border-box!important;
+  }
+
+  .loginScreen{
+    align-items:flex-start!important;
+    justify-content:center!important;
+    padding:12px!important;
+  }
+
+  .loginCard{
+    margin:12px auto!important;
+    padding:18px!important;
+    border-radius:22px!important;
+  }
+
+  .loginBrand{
+    gap:10px!important;
+  }
+
+  .loginLogo{
+    width:48px!important;
+    height:48px!important;
+    border-radius:16px!important;
+    flex:0 0 auto!important;
+  }
+
+  .loginBrand h1{
+    font-size:20px!important;
+  }
+
+  .loginBrand p{
+    font-size:12px!important;
+  }
+
+  .loginHint,
+  .loginMsg{
+    font-size:11.5px!important;
+    line-height:1.35!important;
+  }
+
+  #collaborators .panelHead,
+  #settings .panelHead,
+  .panelHead{
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:10px!important;
+  }
+
+  #collaborators .authManagerHead,
+  .authManagerHead{
+    flex-direction:column!important;
+    gap:8px!important;
+  }
+
+  .authUserForm{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+
+  .authUserForm .authActions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+
+  .authUserItem{
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    overflow:hidden!important;
+  }
+
+  .collabUserTitle,
+  .collabMeta{
+    min-width:0!important;
+  }
+
+  .collabUserTitle strong,
+  .collabUserTitle span,
+  .collabMeta strong,
+  .collabMeta small{
+    overflow-wrap:anywhere!important;
+  }
+}
+
+/* iPhone menor */
+@media(max-width:430px){
+  .top{
+    padding:10px!important;
+  }
+
+  .top h2{
+    font-size:18px!important;
+  }
+
+  .topUserBox{
+    grid-template-columns:1fr!important;
+    gap:7px!important;
+    padding:9px!important;
+  }
+
+  .topUserBox span#loggedUserName{
+    font-size:12.5px!important;
+    min-height:36px!important;
+  }
+
+  .topUserBox button{
+    min-height:38px!important;
+    font-size:11.5px!important;
+  }
+
+  .topUserBox .undoBtn,
+  .topUserBox .resetTestBtn{
+    grid-column:1!important;
+  }
+
+  .loginCard{
+    padding:16px!important;
+    border-radius:20px!important;
+  }
+
+  .loginBrand{
+    align-items:flex-start!important;
+  }
+
+  .loginLogo{
+    width:44px!important;
+    height:44px!important;
+  }
+
+  .loginBrand h1{
+    font-size:19px!important;
+  }
+}
+
+/* Telas muito estreitas */
+@media(max-width:360px){
+  .topUserBox button{
+    font-size:10.8px!important;
+    padding:7px 6px!important;
+  }
+
+  .loginCard{
+    padding:14px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -5023,7 +5353,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V86 RESET TESTES</div></div><div class="topUserBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V87 MOBILE LOGIN OTIMIZADO</div></div><div class="topUserBox" id="topUserBox">
       <span id="loggedUserName">Sem login</span>
       <button type="button" class="secondary small undoBtn" data-undo-button onclick="undoLastChange()" disabled>Desfazer alteração</button>
       <button type="button" class="secondary small resetTestBtn" onclick="resetTestData()">Resetar testes</button>
@@ -6463,7 +6793,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V86 RESET TESTES carregada. Conectando ao Supabase...");
+  updateCloudStatus("V87 MOBILE LOGIN OTIMIZADO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
