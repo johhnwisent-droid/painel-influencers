@@ -4282,6 +4282,151 @@ canvas{
   }
 }
 
+
+/* ===== V79 MOBILE TABELA ALINHADA - CLIENTE SEM FIXAR ===== */
+/* Cliente destacado como os outros campos, mas sem acompanhar a rolagem lateral */
+.clientNamePill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  min-width:0;
+  border-radius:999px;
+  padding:8px 11px;
+  font-weight:1000;
+  font-size:13px;
+  line-height:1.18;
+  text-align:center;
+  color:#1d4ed8;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  box-sizing:border-box;
+  white-space:normal;
+  word-break:normal;
+  overflow-wrap:break-word;
+}
+
+/* Volta a coluna Cliente para comportamento normal da tabela */
+#wholesaleRetail th:nth-child(2),
+#wholesaleRetail td:nth-child(2){
+  position:static!important;
+  left:auto!important;
+  z-index:auto!important;
+  box-shadow:none!important;
+}
+
+/* Mantém o cliente destacado, sem criar bloco flutuante */
+#wholesaleRetail td[data-label="Cliente"],
+#wholesaleRetail td:nth-child(2){
+  background:#fff!important;
+}
+
+/* Produto alinhado exatamente com a coluna Produto */
+#wholesaleRetail th:nth-child(5),
+#wholesaleRetail td:nth-child(5){
+  text-align:left!important;
+  vertical-align:top!important;
+}
+
+#wholesaleRetail td[data-label="Produto"]{
+  overflow:hidden!important;
+}
+
+#wholesaleRetail td[data-label="Produto"] .wholesaleProductList,
+#wholesaleRetail td:nth-child(5) .wholesaleProductList{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+  white-space:pre-line!important;
+  text-align:left!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+  hyphens:none!important;
+}
+
+/* Mobile: tabela tradicional, sem coluna fixa e sem desalinhamento */
+@media(max-width:760px){
+  #wholesaleRetail .tableWrap{
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    touch-action:auto!important;
+  }
+
+  #wholesaleRetail table{
+    width:1480px!important;
+    min-width:1480px!important;
+    table-layout:fixed!important;
+  }
+
+  #wholesaleRetail th,
+  #wholesaleRetail td{
+    position:static!important;
+    display:table-cell!important;
+    vertical-align:middle!important;
+    box-sizing:border-box!important;
+  }
+
+  /* Ordem real: Data | Cliente | Tipo | Origem | Produto */
+  #wholesaleRetail th:nth-child(1),  #wholesaleRetail td:nth-child(1){width:78px!important}
+  #wholesaleRetail th:nth-child(2),  #wholesaleRetail td:nth-child(2){width:150px!important}
+  #wholesaleRetail th:nth-child(3),  #wholesaleRetail td:nth-child(3){width:84px!important}
+  #wholesaleRetail th:nth-child(4),  #wholesaleRetail td:nth-child(4){width:96px!important}
+  #wholesaleRetail th:nth-child(5),  #wholesaleRetail td:nth-child(5){width:170px!important}
+
+  #wholesaleRetail th:nth-child(2),
+  #wholesaleRetail td:nth-child(2){
+    position:static!important;
+    left:auto!important;
+    z-index:auto!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+
+  #wholesaleRetail .clientNamePill{
+    font-size:11.5px!important;
+    padding:7px 7px!important;
+    line-height:1.16!important;
+  }
+
+  #wholesaleRetail td:nth-child(5),
+  #wholesaleRetail td[data-label="Produto"]{
+    vertical-align:top!important;
+    text-align:left!important;
+    overflow:hidden!important;
+  }
+
+  #wholesaleRetail td:nth-child(5) .wholesaleProductList,
+  #wholesaleRetail td[data-label="Produto"] .wholesaleProductList{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    margin:0!important;
+    padding:0!important;
+    background:transparent!important;
+    border:0!important;
+    text-align:left!important;
+    white-space:pre-line!important;
+    word-break:normal!important;
+    overflow-wrap:break-word!important;
+    line-height:1.24!important;
+    font-size:11px!important;
+  }
+}
+
+@media(max-width:430px){
+  #wholesaleRetail table{
+    width:1400px!important;
+    min-width:1400px!important;
+  }
+
+  #wholesaleRetail th:nth-child(1),  #wholesaleRetail td:nth-child(1){width:74px!important}
+  #wholesaleRetail th:nth-child(2),  #wholesaleRetail td:nth-child(2){width:142px!important}
+  #wholesaleRetail th:nth-child(5),  #wholesaleRetail td:nth-child(5){width:160px!important}
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -4335,7 +4480,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V78 CLIENTE DESTACADO</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V79 MOBILE TABELA ALINHADA</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -5157,7 +5302,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V78 CLIENTE DESTACADO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V79 MOBILE TABELA ALINHADA carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -5985,7 +6130,7 @@ function renderWholesaleRetail(){
 
   $("wholesaleRows").innerHTML=rows.length?rows.map(w=>`<tr class="wholesaleOrderRow" onclick="openWholesaleRetailOrder('${w.id}')" title="Clique para abrir o comprovante do pedido">
     <td data-label="Data">${dateBR(w.date)}</td>
-    <td data-label="Cliente"><span class="mobileKeyText mobileInfluencerName">${esc(w.clientName||"-")}</span></td>
+    <td data-label="Cliente"><span class="clientNamePill">${esc(w.clientName||"-")}</span></td>
     <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
     <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
     <td data-label="Produto"><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
