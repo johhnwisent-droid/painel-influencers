@@ -992,7 +992,7 @@ button{
 }
 
 
-/* ===== V55 MOBILE MENU SANDUÍCHE ESQUERDO ===== */
+/* ===== V56 MOBILE MENU SANDUÍCHE ESQUERDO ===== */
 .mobileMenuToggle,
 .mobileMenuOverlay,
 .mobileBottomNav,
@@ -1257,9 +1257,89 @@ button{
   }
 }
 
+
+/* ===== V56 DATAS E MENU CORRIGIDOS ===== */
+.topMonthBox{
+  transition:.18s ease;
+}
+body:not(.page-dashboard) .topMonthBox{
+  display:none!important;
+}
+body.page-dashboard .topMonthBox{
+  display:flex;
+}
+.dateMini{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  font-weight:900!important;
+  color:#64748b!important;
+  white-space:nowrap;
+}
+.dateMini input,
+input[type="date"],
+input[type="month"]{
+  position:relative;
+  color:#111827;
+  font-weight:800;
+  letter-spacing:-.01em;
+  background:#f8fafc;
+  border:1px solid #dbe3ef;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75);
+}
+.dateMini input{
+  min-width:158px;
+  height:44px;
+}
+input[type="date"]:focus,
+input[type="month"]:focus{
+  background:#fff;
+  border-color:var(--primary);
+  box-shadow:0 0 0 4px rgba(37,99,235,.10);
+}
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator{
+  cursor:pointer;
+  opacity:.72;
+  padding:5px;
+  border-radius:10px;
+}
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="month"]::-webkit-calendar-picker-indicator:hover{
+  background:#eaf1ff;
+  opacity:1;
+}
+body.mobileMenuOpen .mobileMenuToggle{
+  opacity:0;
+  pointer-events:none;
+  transform:scale(.92);
+}
+@media(max-width:760px){
+  .dateMini{
+    width:100%;
+    display:grid!important;
+    grid-template-columns:1fr;
+    align-items:start!important;
+    gap:6px!important;
+  }
+  .dateMini input{
+    width:100%;
+    min-width:0;
+  }
+  .topMonthBox{
+    border-radius:18px;
+  }
+  body:not(.page-dashboard) .top{
+    grid-template-columns:1fr;
+  }
+  body:not(.page-dashboard) .top h2{
+    margin-top:2px;
+  }
+}
+
 </style>
 </head>
-<body>
+<body class="page-dashboard">
 <div class="app">
     <button id="mobileMenuToggle" class="mobileMenuToggle noPrint" type="button" aria-label="Abrir menu" onclick="toggleMobileMenu()">
       <span></span><span></span><span></span>
@@ -1286,7 +1366,7 @@ button{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V55 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V56 ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -1297,7 +1377,7 @@ button{
       <div class="panel"><div class="panelHead"><h3>Novo lançamento</h3><span class="muted">Marque Acumular para jogar o saldo na carteira do influencer.</span></div>
         <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="resetLaunchForm()">Cancelar</button></div></form>
       </div>
-      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><label class="dateMini">Mês<input id="launchMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
       <div class="panel"><div class="panelHead"><h3>Resumo por influencer no mês</h3><span class="muted">Comissão em produtos e comissão em dinheiro ficam separadas.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
 
     </section>
@@ -1422,7 +1502,7 @@ button{
         <div class="panelHead">
           <h3>Exportar PDF do influencer</h3>
           <div class="filters">
-            <select id="reportInfluencer" onchange="renderReport()"></select>
+            <label class="dateMini">Mês<input id="reportMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="reportInfluencer" onchange="renderReport()"></select>
             <button class="primary" onclick="printReport()">Exportar PDF</button>
             <button class="secondary" onclick="exportReportCSV()">Exportar CSV</button>
             <button class="secondary" onclick="markReportSent()">Marcar como enviado</button>
@@ -1545,7 +1625,7 @@ button{
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v55_currentpage_corrigido";
+const KEY = "painel_influencers_limpo_v56_datas_menu_corrigido";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -1595,6 +1675,8 @@ let tempWatermarkLogo=null;
 let cloudBooting=true;
 let cloudSaveTimer=null;
 let cloudLastSavedAt=null;
+window.currentPage=window.currentPage||"dashboard";
+var currentPage=window.currentPage;
 window.addEventListener("error",e=>{
   const el=document.getElementById("cloudStatus");
   const dbg=document.getElementById("cloudDebug");
@@ -1661,7 +1743,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V55 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V56 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -1751,6 +1833,9 @@ function scheduleCloudSave(){
 }
 
 async function startApp(){
+  window.currentPage=window.currentPage||"dashboard";
+  currentPage=window.currentPage;
+  setPageClass(currentPage);
   normalize();
   $("globalMonth").value=currentMonth();
   populate();
@@ -2371,8 +2456,25 @@ function removeLogo(){removeSystemLogo();}
 function removePdfWatermark(){state.settings.pdfWatermarkLogo="";tempWatermarkLogo=null;save();render();}
 
 
-var currentPage=window.currentPage||"dashboard";
-window.currentPage=currentPage;
+
+function setPageClass(id){
+  document.body.classList.toggle("page-dashboard",id==="dashboard");
+  document.body.dataset.page=id;
+}
+function syncMonthInputs(){
+  const month=selectedMonth();
+  ["launchMonthPanel","reportMonthPanel"].forEach(id=>{
+    const el=$(id);
+    if(el&&el.value!==month)el.value=month;
+  });
+  if($("paidMonth")&&!$("paidMonth").value)$("paidMonth").value=month;
+}
+function syncPanelMonth(value){
+  if(value&&$("globalMonth"))$("globalMonth").value=value;
+  syncMonthInputs();
+  render();
+}
+
 function toggleMobileMenu(){
   document.body.classList.toggle("mobileMenuOpen");
 }
@@ -2417,25 +2519,26 @@ function initMobileEnhancements(){
 }
 
 function showPage(id){
-  currentPage=id;
-  window.currentPage=id;
+  currentPage=id||"dashboard";
+  window.currentPage=currentPage;
+  setPageClass(currentPage);
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
 
-  const view=$(id);
+  const view=$(currentPage);
   if(view)view.classList.add("active");
 
-  const btn=document.querySelector(`.menu button[data-page="${id}"]`);
+  const btn=document.querySelector(`.menu button[data-page="${currentPage}"]`);
   if(btn){
     btn.classList.add("active");
     $("pageTitle").textContent=btn.textContent;
   }
 
-  syncMobileBottomNav(id);
+  syncMobileBottomNav(currentPage);
   closeMobileMenu();
   render();
 }
-function render(){normalize();applyTheme();populate();syncMobileBottomNav((typeof currentPage!=="undefined"&&currentPage)||window.currentPage||"dashboard");renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
+function render(){normalize();applyTheme();populate();currentPage=window.currentPage||currentPage||"dashboard";setPageClass(currentPage);syncMobileBottomNav(currentPage);syncMonthInputs();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
 function exportAccumulationsCSV(){rowsCSV([["Influencer","Cupom","Produto acumulado","Dinheiro acumulado"],...accumulationByInfluencer().map(r=>[r.i.name,r.i.coupon,r.product,r.cash])],"acumulos.csv");}
@@ -2531,7 +2634,7 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Escape")closeMobileMenu();
 });
 
-document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",render);
+document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",()=>{syncMonthInputs();render();});
 setTimeout(()=>{
   const el=$("cloudStatus");
   if(el&&el.textContent==="Conectando à nuvem..."){
@@ -2541,7 +2644,8 @@ setTimeout(()=>{
 },6000);
 
 window.currentPage=window.currentPage||"dashboard";
-if(typeof currentPage==="undefined"){var currentPage=window.currentPage;}
+currentPage=window.currentPage;
+setPageClass(currentPage);
 startApp().catch(e=>{
   console.error("Erro no startApp:",e);
   updateCloudStatus("Erro ao iniciar o painel.",true);
