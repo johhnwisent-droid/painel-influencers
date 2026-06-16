@@ -4729,6 +4729,73 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V82 PÁGINA COLABORADORES ===== */
+#collaborators .authManagerBox{
+  grid-column:1/-1;
+  margin:0;
+}
+.collaboratorsManager{
+  background:linear-gradient(135deg,#eff6ff,#ffffff);
+  border-color:#bfdbfe;
+}
+.collaboratorsHistory{
+  display:grid;
+  gap:10px;
+}
+.collaboratorsHistory .authUserItem{
+  grid-template-columns:1.2fr .8fr .75fr 1fr 1fr auto;
+}
+.collabMeta{
+  display:grid;
+  gap:2px;
+}
+.collabMeta small{
+  color:#64748b;
+  font-weight:850;
+  font-size:11px;
+}
+.collabMeta strong{
+  color:#0f172a;
+  font-size:13px;
+}
+.collabUserTitle{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+}
+.collabUserTitle strong{
+  font-size:15px;
+  color:#0f172a;
+}
+.collabUserTitle span{
+  color:#64748b;
+  font-size:12px;
+  font-weight:850;
+}
+@media(max-width:1100px){
+  .collaboratorsHistory .authUserItem{
+    grid-template-columns:1fr 1fr;
+  }
+}
+@media(max-width:650px){
+  #collaborators .grid{
+    grid-template-columns:1fr 1fr;
+  }
+  .collaboratorsHistory .authUserItem{
+    grid-template-columns:1fr;
+  }
+  .collaboratorsHistory .authUserItem button{
+    width:100%;
+    margin-top:4px;
+  }
+}
+@media(max-width:430px){
+  #collaborators .grid{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -4803,11 +4870,12 @@ body:not(.authLocked) .loginScreen{
       <button data-page="accumulations">Acumular</button>
       <button data-page="pix">Chaves PIX</button>
       <button data-page="reports">Relatório PDF</button>
+      <button data-page="collaborators">Colaboradores</button>
       <button data-page="settings">Personalizar</button>
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V81 LOGIN INTERNO</div></div><div class="topUserBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V82 COLABORADORES</div></div><div class="topUserBox" id="topUserBox">
       <span id="loggedUserName">Sem login</span>
       <button type="button" class="secondary small" onclick="logoutUser()">Sair</button>
     </div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
@@ -5284,7 +5352,79 @@ body:not(.authLocked) .loginScreen{
     </section>
 
     
-    <section id="settings" class="view">
+    
+    <section id="collaborators" class="view">
+      <div class="grid">
+        <div class="card"><small>Colaboradores ativos</small><strong id="collabActiveCount">0</strong></div>
+        <div class="card"><small>Colaboradores cadastrados</small><strong id="collabTotalCount">0</strong></div>
+        <div class="card"><small>Admins</small><strong id="collabAdminCount">0</strong></div>
+        <div class="card"><small>Último cadastro</small><strong id="collabLastCreated">-</strong></div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHead">
+          <div>
+            <h3>Colaboradores</h3>
+            <span class="muted">Cadastre quem pode acessar o painel e acompanhe o histórico de usuários internos.</span>
+          </div>
+          <span class="badge blue">Login interno</span>
+        </div>
+
+        <div class="authManagerBox collaboratorsManager">
+          <div class="authManagerHead">
+            <div>
+              <h4>Cadastro de colaborador</h4>
+              <p>Cada lançamento de Atacado e Varejo salva automaticamente o colaborador logado como responsável.</p>
+            </div>
+            <span class="badge">Rastreamento</span>
+          </div>
+
+          <input type="hidden" id="authUserId">
+
+          <div class="authUserForm">
+            <label>Nome
+              <input id="authName" placeholder="Ex.: Matheus Silva">
+            </label>
+            <label>Usuário
+              <input id="authUsername" placeholder="Ex.: matheus">
+            </label>
+            <label>Senha
+              <input id="authPassword" placeholder="Ex.: 1234">
+            </label>
+            <label>Perfil
+              <select id="authRole">
+                <option value="Admin">Admin</option>
+                <option value="Equipe">Equipe</option>
+              </select>
+            </label>
+            <label>Status
+              <select id="authActive">
+                <option value="true">Ativo</option>
+                <option value="false">Inativo</option>
+              </select>
+            </label>
+            <div class="authActions">
+              <button type="button" class="primary" onclick="saveAuthUser()">Salvar colaborador</button>
+              <button type="button" class="secondary" onclick="resetAuthUserForm()">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHead">
+          <div>
+            <h3>Histórico de colaboradores cadastrados</h3>
+            <span class="muted">Lista completa dos colaboradores criados no painel, com status, perfil e data de cadastro.</span>
+          </div>
+          <button type="button" class="secondary" onclick="exportCollaboratorsCSV()">Exportar CSV</button>
+        </div>
+
+        <div id="authUsersRows" class="authUsersList collaboratorsHistory"></div>
+      </div>
+    </section>
+
+<section id="settings" class="view">
       <div class="panel">
         <div class="panelHead">
           <h3>Personalizar sistema</h3>
@@ -5299,47 +5439,8 @@ body:not(.authLocked) .loginScreen{
           </div>
 
 
-          <div class="authManagerBox">
-            <div class="authManagerHead">
-              <div>
-                <h4>Login interno</h4>
-                <p>Cadastre os usuários da equipe. Cada lançamento de Atacado e Varejo registra automaticamente quem fez.</p>
-              </div>
-              <span class="badge blue">Rastreamento interno</span>
-            </div>
+          
 
-            <input type="hidden" id="authUserId">
-
-            <div class="authUserForm">
-              <label>Nome
-                <input id="authName" placeholder="Ex.: Matheus Silva">
-              </label>
-              <label>Usuário
-                <input id="authUsername" placeholder="Ex.: matheus">
-              </label>
-              <label>Senha
-                <input id="authPassword" placeholder="Ex.: 1234">
-              </label>
-              <label>Perfil
-                <select id="authRole">
-                  <option value="Admin">Admin</option>
-                  <option value="Equipe">Equipe</option>
-                </select>
-              </label>
-              <label>Status
-                <select id="authActive">
-                  <option value="true">Ativo</option>
-                  <option value="false">Inativo</option>
-                </select>
-              </label>
-              <div class="authActions">
-                <button type="button" class="primary" onclick="saveAuthUser()">Salvar usuário</button>
-                <button type="button" class="secondary" onclick="resetAuthUserForm()">Cancelar</button>
-              </div>
-            </div>
-
-            <div id="authUsersRows" class="authUsersList"></div>
-          </div>
 
 
           <label>Nome do sistema<input id="setName"></label>
@@ -5593,7 +5694,11 @@ function normalizeAuthUsers(){
     username:(u.username||u.name||`usuario${idx+1}`).trim(),
     password:String(u.password||"1234"),
     role:u.role||"Equipe",
-    active:u.active!==false
+    active:u.active!==false,
+    createdAt:u.createdAt||"",
+    createdByName:u.createdByName||"Sistema",
+    updatedAt:u.updatedAt||"",
+    updatedByName:u.updatedByName||""
   }));
   if(!state.settings.authUsers.some(u=>u.username==="admin")){
     state.settings.authUsers.unshift(defaultAuthUsers()[0]);
@@ -5716,16 +5821,66 @@ function resetAuthUserForm(){
 function renderAuthUsers(){
   if(!$("authUsersRows"))return;
   normalizeAuthUsers();
-  $("authUsersRows").innerHTML=(state.settings.authUsers||[]).map(u=>`<div class="authUserItem">
-    <div><strong>${esc(u.name)}</strong><br><small>Usuário: ${esc(u.username)}</small></div>
-    <div><small>Perfil</small><br><strong>${esc(u.role||"Equipe")}</strong></div>
-    <span class="badgeAuth ${u.active===false?"off":""}">${u.active===false?"Inativo":"Ativo"}</span>
+
+  const users=(state.settings.authUsers||[]).slice().sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+  const active=users.filter(u=>u.active!==false).length;
+  const admins=users.filter(u=>(u.role||"Equipe")==="Admin").length;
+  const last=users.find(u=>u.createdAt);
+
+  if($("collabActiveCount"))$("collabActiveCount").textContent=active;
+  if($("collabTotalCount"))$("collabTotalCount").textContent=users.length;
+  if($("collabAdminCount"))$("collabAdminCount").textContent=admins;
+  if($("collabLastCreated"))$("collabLastCreated").textContent=last?dateBR(String(last.createdAt).slice(0,10)):"-";
+
+  $("authUsersRows").innerHTML=users.map(u=>`<div class="authUserItem">
+    <div class="collabUserTitle">
+      <strong>${esc(u.name)}</strong>
+      <span>Usuário: ${esc(u.username)}</span>
+    </div>
+
+    <div class="collabMeta">
+      <small>Perfil</small>
+      <strong>${esc(u.role||"Equipe")}</strong>
+    </div>
+
+    <div class="collabMeta">
+      <small>Status</small>
+      <span class="badgeAuth ${u.active===false?"off":""}">${u.active===false?"Inativo":"Ativo"}</span>
+    </div>
+
+    <div class="collabMeta">
+      <small>Cadastrado em</small>
+      <strong>${dateTimeBR(u.createdAt)}</strong>
+    </div>
+
+    <div class="collabMeta">
+      <small>Cadastrado por</small>
+      <strong>${esc(u.createdByName||"Sistema")}</strong>
+    </div>
+
     <div>
       <button type="button" class="small secondary" onclick="editAuthUser('${u.id}')">Editar</button>
       <button type="button" class="small danger" onclick="deleteAuthUser('${u.id}')">Excluir</button>
     </div>
   </div>`).join("");
 }
+
+
+function exportCollaboratorsCSV(){
+  normalizeAuthUsers();
+  const users=(state.settings.authUsers||[]).slice().sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
+  rowsCSV([["Nome","Usuário","Perfil","Status","Cadastrado em","Cadastrado por","Atualizado em","Atualizado por"],...users.map(u=>[
+    u.name||"",
+    u.username||"",
+    u.role||"Equipe",
+    u.active===false?"Inativo":"Ativo",
+    dateTimeBR(u.createdAt),
+    u.createdByName||"Sistema",
+    dateTimeBR(u.updatedAt),
+    u.updatedByName||""
+  ])],"colaboradores.csv");
+}
+
 
 function editAuthUser(id){
   const u=(state.settings.authUsers||[]).find(x=>x.id===id);
@@ -5758,8 +5913,22 @@ function saveAuthUser(){
     return;
   }
 
-  const item={id,name,username,password,role,active};
   const idx=state.settings.authUsers.findIndex(u=>u.id===id);
+  const existing=idx>=0?state.settings.authUsers[idx]:null;
+  const audit=currentAuditInfo();
+  const item={
+    id,
+    name,
+    username,
+    password,
+    role,
+    active,
+    createdAt:existing?.createdAt||new Date().toISOString(),
+    createdByName:existing?.createdByName||audit.name||"Sistema",
+    updatedAt:existing?new Date().toISOString():"",
+    updatedByName:existing?(audit.name||"Sistema"):""
+  };
+
   if(idx>=0)state.settings.authUsers[idx]=item;
   else state.settings.authUsers.push(item);
 
@@ -5903,7 +6072,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V81 LOGIN INTERNO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V82 COLABORADORES carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -7173,7 +7342,7 @@ function showPage(id){
   closeMobileMenu();
   render();
 }
-function render(){normalize();applyTheme();populate();currentPage=window.currentPage||currentPage||"dashboard";setPageClass(currentPage);syncMobileBottomNav(currentPage);syncMonthInputs();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderWholesaleRetail();renderWholesaleOrder();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
+function render(){normalize();applyTheme();populate();currentPage=window.currentPage||currentPage||"dashboard";setPageClass(currentPage);syncMobileBottomNav(currentPage);syncMonthInputs();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderWholesaleRetail();renderWholesaleOrder();renderAuthUsers();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
 function exportAccumulationsCSV(){rowsCSV([["Influencer","Cupom","Produto acumulado","Dinheiro acumulado"],...accumulationByInfluencer().map(r=>[r.i.name,r.i.coupon,r.product,r.cash])],"acumulos.csv");}
