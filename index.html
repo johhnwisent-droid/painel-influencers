@@ -1337,6 +1337,300 @@ body.mobileMenuOpen .mobileMenuToggle{
   }
 }
 
+
+/* ===== V57 ACABAMENTO PROFISSIONAL DE LAYOUT ===== */
+html,
+body{
+  max-width:100%;
+  overflow-x:hidden;
+}
+.app,
+.main,
+.view,
+.panel,
+.card,
+.tableWrap,
+.top{
+  max-width:100%;
+}
+.main{
+  min-width:0;
+}
+.grid,
+.form,
+.settingsGrid,
+.filters,
+.panelHead{
+  min-width:0;
+}
+.card,
+.panel,
+.top,
+.monthbox,
+input,
+select,
+textarea,
+button{
+  min-width:0;
+}
+td,
+th,
+.card strong,
+.card small,
+.panelHead h3,
+.muted,
+.cloudDebug{
+  overflow-wrap:anywhere;
+}
+.tableWrap{
+  width:100%;
+}
+.tableWrap table{
+  width:100%;
+}
+img,
+svg,
+canvas{
+  max-width:100%;
+}
+.reportWatermark,
+.printLogo{
+  max-width:100%;
+}
+
+@media(max-width:760px){
+  body{
+    width:100%;
+    overflow-x:hidden;
+  }
+
+  .main{
+    width:100%;
+    padding-left:12px;
+    padding-right:12px;
+    overflow-x:hidden;
+  }
+
+  .top{
+    margin:0 0 12px 0!important;
+    width:100%;
+    border-radius:22px;
+    border:1px solid rgba(226,232,240,.9);
+    box-shadow:0 10px 26px rgba(15,23,42,.055);
+  }
+
+  body.page-dashboard .top{
+    padding-left:14px;
+    padding-right:68px;
+  }
+
+  body:not(.page-dashboard) .top{
+    padding-left:68px;
+    padding-right:14px;
+  }
+
+  .top h2,
+  .top > div:first-child{
+    min-width:0;
+  }
+
+  .monthbox,
+  .topMonthBox{
+    width:100%;
+    max-width:100%;
+  }
+
+  .grid{
+    width:100%;
+    gap:10px;
+  }
+
+  .card{
+    width:100%;
+    overflow:hidden;
+  }
+
+  .panel{
+    width:100%;
+    overflow:hidden;
+  }
+
+  .panelHead{
+    width:100%;
+  }
+
+  .filters{
+    width:100%;
+  }
+
+  .filters > *,
+  .filters label{
+    max-width:100%;
+  }
+
+  .form{
+    width:100%;
+  }
+
+  .actions{
+    width:100%;
+  }
+
+  .tableWrap{
+    width:100%;
+    max-width:100%;
+    overflow:visible;
+  }
+
+  .tableWrap tbody,
+  .tableWrap tr{
+    width:100%;
+    max-width:100%;
+  }
+
+  .tableWrap tr{
+    box-sizing:border-box;
+    overflow:hidden;
+    margin-left:0;
+    margin-right:0;
+  }
+
+  .tableWrap td{
+    width:100%;
+    min-width:0;
+  }
+
+  .tableWrap td > *{
+    min-width:0;
+    max-width:100%;
+  }
+
+  .tableWrap td:before{
+    min-width:0;
+    overflow-wrap:break-word;
+  }
+
+  .tableWrap td:last-child{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    align-items:center;
+    gap:6px;
+  }
+
+  .tableWrap td:last-child:before{
+    width:100%;
+    flex:0 0 100%;
+    text-align:left;
+  }
+
+  .tableWrap td .small{
+    margin:0;
+    max-width:100%;
+  }
+
+  .badge,
+  .paidBadge,
+  .productPaidBadge,
+  .moneyHighlight{
+    max-width:100%;
+    white-space:normal;
+    text-align:right;
+  }
+
+  .mobileMenuToggle{
+    box-sizing:border-box;
+  }
+
+  .side{
+    box-sizing:border-box;
+    max-width:calc(100vw - 28px);
+  }
+
+  .mobileBottomNav{
+    box-sizing:border-box;
+  }
+
+  .printArea{
+    width:100%;
+    max-width:100%;
+    overflow:hidden;
+  }
+}
+
+@media(max-width:430px){
+  .main{
+    padding-left:10px;
+    padding-right:10px;
+  }
+
+  body.page-dashboard .top{
+    padding-left:12px;
+    padding-right:62px;
+  }
+
+  body:not(.page-dashboard) .top{
+    padding-left:62px;
+    padding-right:12px;
+  }
+
+  .panel,
+  .card{
+    border-radius:20px;
+  }
+
+  .tableWrap tr{
+    padding:10px;
+    border-radius:18px;
+  }
+
+  .tableWrap td{
+    grid-template-columns:minmax(86px,34%) minmax(0,1fr);
+  }
+
+  .mobileBottomNav{
+    left:8px;
+    right:8px;
+    max-width:calc(100vw - 16px);
+  }
+}
+
+@media(max-width:360px){
+  .main{
+    padding-left:8px;
+    padding-right:8px;
+  }
+
+  body.page-dashboard .top{
+    padding-left:10px;
+    padding-right:58px;
+  }
+
+  body:not(.page-dashboard) .top{
+    padding-left:58px;
+    padding-right:10px;
+  }
+
+  .tableWrap td{
+    grid-template-columns:1fr;
+    text-align:left;
+    gap:4px;
+  }
+
+  .badge,
+  .paidBadge,
+  .productPaidBadge,
+  .moneyHighlight{
+    justify-self:start;
+    text-align:left;
+  }
+
+  .tableWrap td input[type="checkbox"],
+  .tableWrap td .checkboxWrap{
+    justify-self:start;
+  }
+}
+
 </style>
 </head>
 <body class="page-dashboard">
@@ -1366,7 +1660,7 @@ body.mobileMenuOpen .mobileMenuToggle{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V56 ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V57 ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -1625,7 +1919,7 @@ body.mobileMenuOpen .mobileMenuToggle{
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v56_datas_menu_corrigido";
+const KEY = "painel_influencers_limpo_v57_layout_profissional";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -1743,7 +2037,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V56 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V57 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
