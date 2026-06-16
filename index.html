@@ -3329,6 +3329,301 @@ canvas{
   }
 }
 
+
+/* ===== V75 TABELA TRADICIONAL OTIMIZADA - ATACADO E VAREJO ===== */
+/* Mantém a tabela no formato tradicional, sem virar cartões */
+#wholesaleRetail .tableWrap{
+  width:100%;
+  max-width:100%;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+  border:1px solid #e5e7eb!important;
+  border-radius:20px!important;
+  background:#fff!important;
+  -webkit-overflow-scrolling:touch;
+}
+
+#wholesaleRetail table{
+  display:table!important;
+  width:100%!important;
+  min-width:1580px!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+  table-layout:fixed!important;
+  background:#fff!important;
+}
+
+#wholesaleRetail thead{
+  display:table-header-group!important;
+}
+
+#wholesaleRetail tbody{
+  display:table-row-group!important;
+}
+
+#wholesaleRetail tr{
+  display:table-row!important;
+}
+
+#wholesaleRetail th,
+#wholesaleRetail td{
+  display:table-cell!important;
+  vertical-align:middle!important;
+  border-bottom:1px solid #edf2f7!important;
+  padding:12px 10px!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+  hyphens:none!important;
+  line-height:1.28!important;
+}
+
+#wholesaleRetail th{
+  position:sticky;
+  top:0;
+  z-index:3;
+  background:#f8fafc!important;
+  color:#475569!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  text-transform:uppercase!important;
+  letter-spacing:.035em!important;
+  white-space:nowrap!important;
+}
+
+#wholesaleRetail td:before{
+  display:none!important;
+  content:none!important;
+}
+
+#wholesaleRetail tr.wholesaleOrderRow{
+  cursor:pointer;
+  transition:background .15s ease;
+}
+
+#wholesaleRetail tr.wholesaleOrderRow:hover{
+  background:#f8fafc!important;
+}
+
+/* Larguras estratégicas das colunas */
+#wholesaleRetail th:nth-child(1),
+#wholesaleRetail td:nth-child(1){width:92px!important}
+
+#wholesaleRetail th:nth-child(2),
+#wholesaleRetail td:nth-child(2){width:96px!important}
+
+#wholesaleRetail th:nth-child(3),
+#wholesaleRetail td:nth-child(3){width:110px!important}
+
+#wholesaleRetail th:nth-child(4),
+#wholesaleRetail td:nth-child(4){width:150px!important}
+
+#wholesaleRetail th:nth-child(5),
+#wholesaleRetail td:nth-child(5){width:230px!important}
+
+#wholesaleRetail th:nth-child(6),
+#wholesaleRetail td:nth-child(6){width:120px!important}
+
+#wholesaleRetail th:nth-child(7),
+#wholesaleRetail td:nth-child(7){width:110px!important}
+
+#wholesaleRetail th:nth-child(8),
+#wholesaleRetail td:nth-child(8){width:130px!important}
+
+#wholesaleRetail th:nth-child(9),
+#wholesaleRetail td:nth-child(9){width:120px!important}
+
+#wholesaleRetail th:nth-child(10),
+#wholesaleRetail td:nth-child(10){width:130px!important}
+
+#wholesaleRetail th:nth-child(11),
+#wholesaleRetail td:nth-child(11){width:150px!important}
+
+#wholesaleRetail th:nth-child(12),
+#wholesaleRetail td:nth-child(12){width:190px!important}
+
+#wholesaleRetail th:nth-child(13),
+#wholesaleRetail td:nth-child(13){width:150px!important}
+
+#wholesaleRetail th:nth-child(14),
+#wholesaleRetail td:nth-child(14){width:190px!important}
+
+#wholesaleRetail th:nth-child(15),
+#wholesaleRetail td:nth-child(15){width:180px!important}
+
+/* Evita letras separadas e melhora leitura */
+#wholesaleRetail .mobileInfluencerName{
+  display:block!important;
+  font-size:14px!important;
+  font-weight:950!important;
+  line-height:1.25!important;
+  color:#0f172a!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+}
+
+#wholesaleRetail .wholesaleProductList{
+  display:block!important;
+  width:100%!important;
+  background:transparent!important;
+  border:0!important;
+  padding:0!important;
+  white-space:pre-line!important;
+  line-height:1.34!important;
+  font-size:13px!important;
+  font-weight:850!important;
+  color:#0f172a!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+}
+
+#wholesaleRetail .wholesaleNoteMini{
+  width:100%!important;
+  max-width:100%!important;
+  white-space:normal!important;
+  line-height:1.3!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+}
+
+#wholesaleRetail .wholesaleMoneyPill,
+#wholesaleRetail .paymentMethodPill,
+#wholesaleRetail .saleTypePill,
+#wholesaleRetail .originPill,
+#wholesaleRetail .feePill,
+#wholesaleRetail .receivedPill,
+#wholesaleRetail .wholesaleCouponPill{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  text-align:center!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+  line-height:1.18!important;
+  padding:8px 9px!important;
+  box-sizing:border-box!important;
+}
+
+#wholesaleRetail .feePill{
+  font-size:11px!important;
+}
+
+#wholesaleRetail .receivedPill,
+#wholesaleRetail .wholesaleMoneyPill.total{
+  font-size:13px!important;
+  font-weight:950!important;
+}
+
+#wholesaleRetail td:nth-child(15){
+  white-space:normal!important;
+}
+
+#wholesaleRetail td:nth-child(15) button{
+  width:100%!important;
+  margin:2px 0!important;
+  min-height:34px!important;
+}
+
+/* Visual de ajuda para indicar rolagem lateral */
+#wholesaleRetail .tableWrap::after{
+  content:"Arraste para o lado para ver todas as colunas";
+  display:none;
+  padding:8px 10px;
+  font-size:11px;
+  color:#64748b;
+  background:#f8fafc;
+  border-top:1px solid #e5e7eb;
+  text-align:center;
+  font-weight:800;
+}
+
+/* Desktop menor / notebook */
+@media(max-width:1280px){
+  #wholesaleRetail table{
+    min-width:1500px!important;
+  }
+
+  #wholesaleRetail th,
+  #wholesaleRetail td{
+    padding:10px 8px!important;
+  }
+}
+
+/* Mobile: continua tabela, com rolagem lateral, sem virar bagunça */
+@media(max-width:760px){
+  #wholesaleRetail .panel{
+    overflow:hidden!important;
+  }
+
+  #wholesaleRetail .tableWrap{
+    border-radius:18px!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    margin-left:-2px;
+    margin-right:-2px;
+  }
+
+  #wholesaleRetail .tableWrap::after{
+    display:block;
+  }
+
+  #wholesaleRetail table{
+    min-width:1420px!important;
+    table-layout:fixed!important;
+  }
+
+  #wholesaleRetail th,
+  #wholesaleRetail td{
+    padding:9px 7px!important;
+    font-size:12px!important;
+  }
+
+  #wholesaleRetail th{
+    font-size:10px!important;
+  }
+
+  #wholesaleRetail .mobileInfluencerName{
+    font-size:13px!important;
+  }
+
+  #wholesaleRetail .wholesaleProductList{
+    font-size:12px!important;
+    line-height:1.3!important;
+  }
+
+  #wholesaleRetail .wholesaleMoneyPill,
+  #wholesaleRetail .paymentMethodPill,
+  #wholesaleRetail .saleTypePill,
+  #wholesaleRetail .originPill,
+  #wholesaleRetail .feePill,
+  #wholesaleRetail .receivedPill,
+  #wholesaleRetail .wholesaleCouponPill{
+    font-size:11px!important;
+    padding:7px 7px!important;
+  }
+
+  #wholesaleRetail td:nth-child(15) button{
+    min-height:32px!important;
+    font-size:11px!important;
+  }
+}
+
+/* Celular pequeno */
+@media(max-width:430px){
+  #wholesaleRetail table{
+    min-width:1360px!important;
+  }
+
+  #wholesaleRetail th,
+  #wholesaleRetail td{
+    padding:8px 6px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -3382,7 +3677,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V73 TAXAS E LAYOUT OTIMIZADO</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V75 TABELA TRADICIONAL OTIMIZADA</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -4204,7 +4499,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V73 TAXAS E LAYOUT OTIMIZADO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V75 TABELA TRADICIONAL OTIMIZADA carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
