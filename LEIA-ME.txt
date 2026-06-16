@@ -1,0 +1,29 @@
+V64 - APP LIMPO + ÍCONE SAFARI
+
+Base: V60 estável.
+Correções:
+- PWA refeito limpo, sem scripts duplicados.
+- Corrige erro "Script error" vindo de versão cacheada/duplicada.
+- Ícone iPhone corrigido com apple-touch-icon.png sem query string.
+- Adicionado apple-touch-icon-precomposed.png.
+- Ícones também na raiz e na pasta icons.
+- Fundo do ícone preto.
+- Mantida Supabase e mesma chave painel_state.
+
+Suba TODOS estes itens na raiz do GitHub:
+index.html
+manifest.json
+service-worker.js
+apple-touch-icon.png
+apple-touch-icon-precomposed.png
+icon-192.png
+icon-512.png
+maskable-512.png
+icons
+
+Depois no iPhone:
+1. Apague o atalho antigo da tela inicial.
+2. Feche o Safari.
+3. Abra no Safari: https://johhnwisent-droid.github.io/painel-influencers/apple-touch-icon.png
+4. Depois abra: https://johhnwisent-droid.github.io/painel-influencers/index.html?v=64
+5. Compartilhar > Adicionar à Tela de Início.

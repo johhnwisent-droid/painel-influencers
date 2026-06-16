@@ -1892,7 +1892,7 @@ canvas{
 }
 
 
-/* ===== V61 PWA / APP INSTALÁVEL ===== */
+/* ===== V64 PWA LIMPO ===== */
 .pwaUpdateToast{
   position:fixed;
   left:50%;
@@ -1903,56 +1903,33 @@ canvas{
   width:min(92vw,460px);
   padding:12px;
   border-radius:20px;
-  background:#0b0f19;
+  background:#000;
   color:#fff;
   box-shadow:0 18px 50px rgba(15,23,42,.32);
   border:1px solid rgba(255,255,255,.12);
 }
-.pwaUpdateToast.show{
-  display:block;
-}
-.pwaUpdateToast strong{
-  display:block;
-  font-size:14px;
-  margin-bottom:4px;
-}
-.pwaUpdateToast p{
-  margin:0 0 10px;
-  font-size:12px;
-  line-height:1.35;
-  opacity:.82;
-}
-.pwaUpdateToast .toastActions{
-  display:flex;
-  gap:8px;
-}
-.pwaUpdateToast button{
-  min-height:38px;
-  border-radius:14px;
-  padding:8px 12px;
-  font-size:12px;
-}
-.pwaUpdateToast .ghostBtn{
-  background:rgba(255,255,255,.1);
-  color:#fff;
-}
-@media(min-width:761px){
-  .pwaUpdateToast{
-    bottom:24px;
-  }
-}
+.pwaUpdateToast.show{display:block}
+.pwaUpdateToast strong{display:block;font-size:14px;margin-bottom:4px}
+.pwaUpdateToast p{margin:0 0 10px;font-size:12px;line-height:1.35;opacity:.82}
+.pwaUpdateToast .toastActions{display:flex;gap:8px}
+.pwaUpdateToast button{min-height:38px;border-radius:14px;padding:8px 12px;font-size:12px}
+.pwaUpdateToast .ghostBtn{background:rgba(255,255,255,.1);color:#fff}
+@media(min-width:761px){.pwaUpdateToast{bottom:24px}}
 
 </style>
 
-<meta name="theme-color" content="#0b0f19">
+<meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Painel Influencers">
+<meta name="apple-mobile-web-app-title" content="Wisent">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link rel="apple-touch-icon-precomposed" href="apple-touch-icon-precomposed.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="shortcut icon" href="apple-touch-icon.png">
 
 </head>
 <body class="page-dashboard">
@@ -1991,7 +1968,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V61 APP ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V64 APP LIMPO ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -2184,9 +2161,8 @@ canvas{
         <div class="settingsGrid">
 
           <div class="notice full">
-            <b>App instalável:</b> esta versão pode ser adicionada à tela inicial do celular. 
-            No Android, abra no Chrome e toque em “Instalar app” ou “Adicionar à tela inicial”. 
-            No iPhone, abra no Safari, toque em compartilhar e depois “Adicionar à Tela de Início”.
+            <b>App instalável:</b> no iPhone, abra no Safari e use Compartilhar > Adicionar à Tela de Início.
+            No Android, abra no Chrome e use Instalar app ou Adicionar à tela inicial.
           </div>
 
 
@@ -2373,10 +2349,9 @@ function reloadAppNow(){
 }
 function registerPwa(){
   if(!("serviceWorker" in navigator))return;
-
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=64");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -2395,7 +2370,6 @@ function registerPwa(){
         }
       });
 
-      // Força verificação de atualização quando abrir o app.
       setTimeout(()=>reg.update().catch(()=>{}),1200);
     }catch(e){
       console.warn("PWA não registrado:",e);
@@ -2532,7 +2506,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V61 APP carregada. Conectando ao Supabase...");
+  updateCloudStatus("V64 APP LIMPO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -2623,56 +2597,7 @@ function scheduleCloudSave(){
 }
 
 async function startApp(){
-  
-function showPwaUpdateToast(){
-  const el=$("pwaUpdateToast");
-  if(el)el.classList.add("show");
-}
-function dismissPwaUpdate(){
-  const el=$("pwaUpdateToast");
-  if(el)el.classList.remove("show");
-}
-function reloadAppNow(){
-  if(navigator.serviceWorker&&navigator.serviceWorker.controller){
-    navigator.serviceWorker.controller.postMessage({type:"SKIP_WAITING"});
-  }
-  window.location.reload();
-}
-function registerPwa(){
-  if(!("serviceWorker" in navigator))return;
-
-  window.addEventListener("load",async()=>{
-    try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js");
-
-      reg.addEventListener("updatefound",()=>{
-        const worker=reg.installing;
-        if(!worker)return;
-        worker.addEventListener("statechange",()=>{
-          if(worker.state==="installed"&&navigator.serviceWorker.controller){
-            showPwaUpdateToast();
-          }
-        });
-      });
-
-      navigator.serviceWorker.addEventListener("controllerchange",()=>{
-        if(!window.__pwaReloading){
-          window.__pwaReloading=true;
-          window.location.reload();
-        }
-      });
-
-      // Força verificação de atualização quando abrir o app.
-      setTimeout(()=>reg.update().catch(()=>{}),1200);
-    }catch(e){
-      console.warn("PWA não registrado:",e);
-    }
-  });
-}
-registerPwa();
-
-
-window.currentPage=window.currentPage||"dashboard";
+  window.currentPage=window.currentPage||"dashboard";
   currentPage=window.currentPage;
   setPageClass(currentPage);
   preserveMediaFromLegacy(state);
@@ -3548,55 +3473,6 @@ setTimeout(()=>{
     updateCloudDebug("isso indica cache do GitHub ou erro antes do startApp");
   }
 },6000);
-
-
-function showPwaUpdateToast(){
-  const el=$("pwaUpdateToast");
-  if(el)el.classList.add("show");
-}
-function dismissPwaUpdate(){
-  const el=$("pwaUpdateToast");
-  if(el)el.classList.remove("show");
-}
-function reloadAppNow(){
-  if(navigator.serviceWorker&&navigator.serviceWorker.controller){
-    navigator.serviceWorker.controller.postMessage({type:"SKIP_WAITING"});
-  }
-  window.location.reload();
-}
-function registerPwa(){
-  if(!("serviceWorker" in navigator))return;
-
-  window.addEventListener("load",async()=>{
-    try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js");
-
-      reg.addEventListener("updatefound",()=>{
-        const worker=reg.installing;
-        if(!worker)return;
-        worker.addEventListener("statechange",()=>{
-          if(worker.state==="installed"&&navigator.serviceWorker.controller){
-            showPwaUpdateToast();
-          }
-        });
-      });
-
-      navigator.serviceWorker.addEventListener("controllerchange",()=>{
-        if(!window.__pwaReloading){
-          window.__pwaReloading=true;
-          window.location.reload();
-        }
-      });
-
-      // Força verificação de atualização quando abrir o app.
-      setTimeout(()=>reg.update().catch(()=>{}),1200);
-    }catch(e){
-      console.warn("PWA não registrado:",e);
-    }
-  });
-}
-registerPwa();
-
 
 window.currentPage=window.currentPage||"dashboard";
 currentPage=window.currentPage;
