@@ -1916,6 +1916,33 @@ canvas{
 .pwaUpdateToast .ghostBtn{background:rgba(255,255,255,.1);color:#fff}
 @media(min-width:761px){.pwaUpdateToast{bottom:24px}}
 
+
+/* ===== V65 MENU ESQUERDO FIXO NO DESKTOP ===== */
+@media screen and (min-width:1001px){
+  .app{
+    display:block;
+    min-height:100dvh;
+  }
+
+  .side{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:280px;
+    height:100dvh;
+    z-index:70;
+    overflow-y:auto;
+    overflow-x:hidden;
+  }
+
+  .main{
+    margin-left:280px;
+    width:calc(100% - 280px);
+    min-height:100dvh;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -1968,7 +1995,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V64 APP LIMPO ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V65 MENU DESKTOP FIXO</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -2506,7 +2533,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V64 APP LIMPO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V65 MENU DESKTOP FIXO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
