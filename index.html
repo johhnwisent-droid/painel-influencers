@@ -5452,6 +5452,73 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V89 LOGIN INTERNO CENTRALIZADO E RESPONSIVO ===== */
+.loginScreen{
+  align-items:center!important;
+  justify-content:center!important;
+  overflow-y:auto!important;
+  min-height:100dvh!important;
+  padding:18px!important;
+}
+
+.loginCard{
+  margin:auto!important;
+  width:min(100%,430px)!important;
+  max-width:430px!important;
+  max-height:calc(100dvh - 36px)!important;
+  overflow-y:auto!important;
+  box-sizing:border-box!important;
+}
+
+/* Mantém centralizado no celular também */
+@media(max-width:760px){
+  .loginScreen{
+    align-items:center!important;
+    justify-content:center!important;
+    padding:14px!important;
+    min-height:100dvh!important;
+  }
+
+  .loginCard{
+    margin:auto!important;
+    width:100%!important;
+    max-width:430px!important;
+    max-height:calc(100dvh - 28px)!important;
+    padding:18px!important;
+    border-radius:22px!important;
+  }
+}
+
+@media(max-width:430px){
+  .loginScreen{
+    padding:12px!important;
+  }
+
+  .loginCard{
+    margin:auto!important;
+    max-height:calc(100dvh - 24px)!important;
+    padding:16px!important;
+    border-radius:20px!important;
+  }
+
+  .loginBrand{
+    align-items:center!important;
+  }
+}
+
+/* Caso o iPhone tenha tela muito baixa, permite rolar sem jogar o card para fora */
+@media(max-height:620px){
+  .loginScreen{
+    align-items:flex-start!important;
+    justify-content:center!important;
+  }
+
+  .loginCard{
+    margin:12px auto!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -5532,7 +5599,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V88 PERFIL MENU</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V89 LOGIN CENTRALIZADO</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -7000,7 +7067,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V88 PERFIL MENU carregada. Conectando ao Supabase...");
+  updateCloudStatus("V89 LOGIN CENTRALIZADO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
