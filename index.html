@@ -2883,6 +2883,452 @@ canvas{
   }
 }
 
+
+/* ===== V73 LAYOUT FINAL RESPONSIVO - ATACADO E VAREJO ===== */
+#wholesaleRetail{
+  --wr-gap:14px;
+}
+
+#wholesaleRetail .grid{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+#wholesaleRetail .panel{
+  max-width:100%;
+}
+
+#wholesaleRetail .panelHead{
+  gap:14px;
+}
+
+.wholesaleFormPro{
+  display:grid!important;
+  grid-template-columns:repeat(12,minmax(0,1fr))!important;
+  gap:14px!important;
+  align-items:end!important;
+}
+
+.wholesaleFormPro > *{
+  min-width:0!important;
+}
+
+.wholesaleFormPro label,
+.wholesaleFormPro .wholesaleTypeBox,
+.wholesaleFormPro .originBox,
+.wholesaleFormPro .wholesaleCalcBox,
+.wholesaleFormPro .realReceivedBox,
+.wholesaleFormPro .taxFormulaBox,
+.wholesaleFormPro .wholesaleFormula{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.wholesaleFormPro input,
+.wholesaleFormPro select,
+.wholesaleFormPro textarea{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+}
+
+.wholesaleFormPro .fieldDate{grid-column:span 3!important}
+.wholesaleFormPro .fieldType{grid-column:span 3!important}
+.wholesaleFormPro .fieldOrigin{grid-column:span 3!important}
+.wholesaleFormPro .fieldClient{grid-column:span 3!important}
+
+.wholesaleFormPro .fieldProducts{grid-column:span 6!important}
+.wholesaleFormPro .fieldPrice{grid-column:span 3!important}
+.wholesaleFormPro .fieldFreight{grid-column:span 3!important}
+
+.wholesaleFormPro .fieldCoupon{grid-column:span 3!important}
+.wholesaleFormPro .fieldDiscount{grid-column:span 3!important}
+.wholesaleFormPro .fieldPayment{grid-column:span 6!important}
+
+.wholesaleFormPro .fieldCalc{grid-column:span 3!important}
+.wholesaleFormPro .fieldTotal{grid-column:span 3!important}
+.wholesaleFormPro .fieldRealReceived{grid-column:span 3!important}
+.wholesaleFormPro .fieldTaxFormula{grid-column:span 3!important}
+
+.wholesaleFormPro .fieldFormula{grid-column:span 6!important}
+.wholesaleFormPro .fieldNotes{grid-column:span 6!important}
+.wholesaleFormPro .fieldActions{grid-column:1/-1!important}
+
+.wholesaleFormPro .fieldPayment{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) minmax(118px,150px)!important;
+  gap:12px!important;
+}
+
+.wholesaleFormPro .fieldPayment label{
+  min-width:0!important;
+}
+
+.wholesaleFormPro .fieldProducts textarea{
+  min-height:124px;
+}
+
+.wholesaleFormPro .wholesaleTypeBox,
+.wholesaleFormPro .originBox{
+  min-height:86px;
+  align-content:end;
+}
+
+.wholesaleFormPro .wholesaleCalcBox,
+.wholesaleFormPro .realReceivedBox{
+  min-height:88px;
+}
+
+.wholesaleFormPro .taxFormulaBox,
+.wholesaleFormPro .wholesaleFormula{
+  min-height:88px;
+  display:flex;
+  align-items:center;
+  overflow-wrap:anywhere;
+}
+
+#wholesaleRetail .filters{
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+#wholesaleRetail .filters label{
+  min-width:138px;
+  flex:0 1 150px;
+}
+
+#wholesaleRetail .filters button{
+  flex:0 0 auto;
+}
+
+#wholesaleRetail .tableWrap{
+  width:100%;
+  max-width:100%;
+  overflow-x:auto!important;
+  overflow-y:visible;
+  border-radius:20px;
+}
+
+#wholesaleRetail table{
+  min-width:1720px!important;
+  table-layout:auto;
+}
+
+#wholesaleRetail th{
+  white-space:nowrap;
+  font-size:11px;
+}
+
+#wholesaleRetail td{
+  vertical-align:top;
+  white-space:normal!important;
+}
+
+#wholesaleRetail td[data-label="Cliente"]{
+  min-width:150px;
+}
+
+#wholesaleRetail td[data-label="Produto"]{
+  min-width:220px;
+  max-width:280px;
+}
+
+#wholesaleRetail td[data-label="Taxa"]{
+  min-width:210px;
+  max-width:260px;
+}
+
+#wholesaleRetail td[data-label="Observação"]{
+  min-width:210px;
+  max-width:280px;
+}
+
+#wholesaleRetail td[data-label="Ações"]{
+  min-width:190px;
+}
+
+#wholesaleRetail td[data-label="Ações"] button{
+  margin:2px;
+}
+
+#wholesaleRetail .feePill{
+  white-space:normal;
+  line-height:1.25;
+  text-align:center;
+}
+
+#wholesaleRetail .wholesaleProductList,
+#wholesaleRetail .wholesaleNoteMini{
+  overflow-wrap:anywhere;
+}
+
+#wholesaleOrder .wholesaleReceiptGrid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+#wholesaleOrder .wholesaleReceiptInfo strong,
+#wholesaleOrder .pdfBox strong{
+  overflow-wrap:anywhere;
+}
+
+@media(max-width:1200px){
+  #wholesaleRetail .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .wholesaleFormPro{
+    grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  }
+
+  .wholesaleFormPro .fieldDate{grid-column:span 2!important}
+  .wholesaleFormPro .fieldType{grid-column:span 2!important}
+  .wholesaleFormPro .fieldOrigin{grid-column:span 2!important}
+  .wholesaleFormPro .fieldClient{grid-column:1/-1!important}
+
+  .wholesaleFormPro .fieldProducts{grid-column:1/-1!important}
+  .wholesaleFormPro .fieldPrice{grid-column:span 2!important}
+  .wholesaleFormPro .fieldFreight{grid-column:span 2!important}
+  .wholesaleFormPro .fieldCoupon{grid-column:span 2!important}
+
+  .wholesaleFormPro .fieldDiscount{grid-column:span 2!important}
+  .wholesaleFormPro .fieldPayment{grid-column:span 4!important}
+
+  .wholesaleFormPro .fieldCalc{grid-column:span 2!important}
+  .wholesaleFormPro .fieldTotal{grid-column:span 2!important}
+  .wholesaleFormPro .fieldRealReceived{grid-column:span 2!important}
+  .wholesaleFormPro .fieldTaxFormula{grid-column:1/-1!important}
+
+  .wholesaleFormPro .fieldFormula{grid-column:1/-1!important}
+  .wholesaleFormPro .fieldNotes{grid-column:1/-1!important}
+}
+
+@media(max-width:760px){
+  #wholesaleRetail .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+  }
+
+  #wholesaleRetail .card{
+    padding:13px;
+    min-width:0;
+  }
+
+  #wholesaleRetail .card small{
+    font-size:11px;
+  }
+
+  #wholesaleRetail .card strong{
+    font-size:18px;
+    overflow-wrap:anywhere;
+  }
+
+  #wholesaleRetail .panel{
+    overflow:hidden;
+    border-radius:20px;
+  }
+
+  #wholesaleRetail .panelHead{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    align-items:start!important;
+  }
+
+  #wholesaleRetail .filters{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    width:100%;
+  }
+
+  #wholesaleRetail .filters label,
+  #wholesaleRetail .filters button{
+    width:100%!important;
+    min-width:0!important;
+    flex:none!important;
+  }
+
+  .wholesaleFormPro{
+    grid-template-columns:1fr!important;
+    gap:12px!important;
+  }
+
+  .wholesaleFormPro .fieldDate,
+  .wholesaleFormPro .fieldType,
+  .wholesaleFormPro .fieldOrigin,
+  .wholesaleFormPro .fieldClient,
+  .wholesaleFormPro .fieldProducts,
+  .wholesaleFormPro .fieldPrice,
+  .wholesaleFormPro .fieldFreight,
+  .wholesaleFormPro .fieldCoupon,
+  .wholesaleFormPro .fieldDiscount,
+  .wholesaleFormPro .fieldPayment,
+  .wholesaleFormPro .fieldCalc,
+  .wholesaleFormPro .fieldTotal,
+  .wholesaleFormPro .fieldRealReceived,
+  .wholesaleFormPro .fieldTaxFormula,
+  .wholesaleFormPro .fieldFormula,
+  .wholesaleFormPro .fieldNotes,
+  .wholesaleFormPro .fieldActions{
+    grid-column:1/-1!important;
+  }
+
+  .wholesaleFormPro .fieldPayment{
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleFormPro .fieldProducts textarea{
+    min-height:145px;
+  }
+
+  .wholesaleFormPro .wholesaleTypeBox,
+  .wholesaleFormPro .originBox,
+  .wholesaleFormPro .wholesaleCalcBox,
+  .wholesaleFormPro .realReceivedBox{
+    min-height:auto;
+  }
+
+  .wholesaleFormPro .fieldActions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+
+  .wholesaleFormPro .fieldActions button{
+    width:100%;
+  }
+
+  #wholesaleRetail .tableWrap{
+    overflow:visible!important;
+    border:0!important;
+    background:transparent!important;
+  }
+
+  #wholesaleRetail table,
+  #wholesaleRetail thead,
+  #wholesaleRetail tbody,
+  #wholesaleRetail tr,
+  #wholesaleRetail td{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+
+  #wholesaleRetail table{
+    min-width:0!important;
+    background:transparent!important;
+  }
+
+  #wholesaleRetail thead{
+    display:none!important;
+  }
+
+  #wholesaleRetail tbody{
+    display:grid!important;
+    gap:12px!important;
+  }
+
+  #wholesaleRetail tr.wholesaleOrderRow{
+    display:grid!important;
+    gap:0!important;
+    background:#fff!important;
+    border:1px solid #e2e8f0!important;
+    border-radius:20px!important;
+    box-shadow:0 10px 26px rgba(15,23,42,.08)!important;
+    padding:10px!important;
+    overflow:hidden!important;
+  }
+
+  #wholesaleRetail td{
+    display:grid!important;
+    grid-template-columns:108px minmax(0,1fr)!important;
+    align-items:center!important;
+    gap:10px!important;
+    border-bottom:0!important;
+    padding:8px!important;
+    white-space:normal!important;
+  }
+
+  #wholesaleRetail td:before{
+    content:attr(data-label);
+    min-width:0;
+    font-size:10px;
+    line-height:1.2;
+    font-weight:950;
+    color:#64748b;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+  }
+
+  #wholesaleRetail td[data-label="Cliente"],
+  #wholesaleRetail td[data-label="Produto"],
+  #wholesaleRetail td[data-label="Taxa"],
+  #wholesaleRetail td[data-label="Observação"],
+  #wholesaleRetail td[data-label="Ações"]{
+    grid-template-columns:1fr!important;
+    align-items:start!important;
+  }
+
+  #wholesaleRetail td[data-label="Cliente"]{
+    background:linear-gradient(90deg,rgba(37,99,235,.08),rgba(37,99,235,0));
+    border-radius:14px;
+  }
+
+  #wholesaleRetail td[data-label="Ações"]{
+    gap:8px!important;
+  }
+
+  #wholesaleRetail td[data-label="Ações"] button{
+    width:100%!important;
+    margin:0!important;
+  }
+
+  #wholesaleRetail .wholesaleMoneyPill,
+  #wholesaleRetail .paymentMethodPill,
+  #wholesaleRetail .saleTypePill,
+  #wholesaleRetail .originPill,
+  #wholesaleRetail .feePill,
+  #wholesaleRetail .receivedPill,
+  #wholesaleRetail .wholesaleCouponPill{
+    width:100%!important;
+    min-width:0!important;
+    justify-self:stretch!important;
+    white-space:normal!important;
+  }
+
+  #wholesaleOrder .pdfCleanHeader,
+  #wholesaleOrder .pdfThreeCards,
+  #wholesaleOrder .wholesaleReceiptGrid,
+  #wholesaleOrder .wholesaleReceiptActions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleOrder .wholesaleReceiptActions .leftActions,
+  #wholesaleOrder .wholesaleReceiptActions .rightActions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    width:100%!important;
+  }
+
+  #wholesaleOrder .wholesaleReceiptActions button{
+    width:100%!important;
+  }
+}
+
+@media(max-width:430px){
+  #wholesaleRetail .grid,
+  #wholesaleRetail .filters{
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleRetail td{
+    grid-template-columns:92px minmax(0,1fr)!important;
+    gap:8px!important;
+    padding:7px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -2936,7 +3382,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V72 ORIGEM E TAXAS</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V73 TAXAS E LAYOUT OTIMIZADO</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -3758,7 +4204,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V72 ORIGEM E TAXAS carregada. Conectando ao Supabase...");
+  updateCloudStatus("V73 TAXAS E LAYOUT OTIMIZADO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -3940,6 +4386,7 @@ function normalize(){
     w.feePercent=Number(calc.feePercent||0);
     w.feeValue=Number(calc.feeValue||0);
     w.realReceived=Number(calc.realReceived||0);
+    w.feeRule=calc.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments);
     w.notes=w.notes||"";
   });
 
@@ -4424,20 +4871,41 @@ function feePercentForWholesale(origin,paymentMethod,installments){
   if(paymentMethod==="PIX")return 5;
 
   if(paymentMethod==="Cartão de Crédito"){
-    const lojaRates={1:2.75,2:4.89,3:5.69,4:6.49,5:7.29,6:8.09,7:10.19,8:11.09,9:11.39,10:12.29,11:12.59,12:13.39};
-    const siteRates={1:2.75,2:6.89,3:7.69,4:8.49,5:9.29,6:10.09,7:12.19,8:13.09,9:13.39,10:14.29,11:14.59,12:15.39};
-    const rates=origin==="Site"?siteRates:lojaRates;
+    // Loja Física usa a tabela "CREDITO"
+    const lojaFisicaCredito={1:2.75,2:4.89,3:5.69,4:6.49,5:7.29,6:8.09,7:10.19,8:11.09,9:11.39,10:12.29,11:12.59,12:13.39};
+
+    // Site usa a tabela "SITE CREDITO"
+    // Como não foi enviada taxa específica de SITE CREDITO 1x, 1x usa a taxa base de crédito 1x: 2,75%.
+    const siteCredito={1:2.75,2:6.89,3:7.69,4:8.49,5:9.29,6:10.09,7:12.19,8:13.09,9:13.39,10:14.29,11:14.59,12:15.39};
+
+    const rates=origin==="Site"?siteCredito:lojaFisicaCredito;
     return Number(rates[installments]||rates[1]||0);
   }
 
   return 0;
 }
 
+function feeRuleLabel(origin,paymentMethod,installments){
+  origin=origin||"Site";
+  paymentMethod=paymentMethod||"PIX";
+  installments=Number(installments||1);
+
+  if(paymentMethod==="Boleto")return "Boleto sem taxa cadastrada";
+  if(paymentMethod==="Débito")return "DÉBITO";
+  if(paymentMethod==="PIX")return "PIX";
+  if(paymentMethod==="Cartão de Crédito"){
+    if(origin==="Site")return `SITE CRÉDITO X${installments}`;
+    return installments===1 ? "CRÉDITO 1X - Loja Física" : `CRÉDITO X${installments} - Loja Física`;
+  }
+  return paymentMethod;
+}
+
 function calcWholesaleFees(total,origin,paymentMethod,installments){
   const feePercent=feePercentForWholesale(origin,paymentMethod,installments);
   const feeValue=Number(total||0)*(feePercent/100);
   const realReceived=Math.max(0,Number(total||0)-feeValue);
-  return {feePercent,feeValue,realReceived};
+  const feeRule=feeRuleLabel(origin,paymentMethod,installments);
+  return {feePercent,feeValue,realReceived,feeRule};
 }
 
 function calcWholesaleRetailValues(productPrice,freightCost,discountPercent,origin,paymentMethod,installments){
@@ -4463,7 +4931,7 @@ function calcWholesaleRetail(){
   if($("wholesaleTotal"))$("wholesaleTotal").value=money(c.total);
   if($("wholesaleTotalPreview"))$("wholesaleTotalPreview").textContent=money(c.total);
   if($("wholesaleRealReceivedPreview"))$("wholesaleRealReceivedPreview").textContent=money(c.realReceived);
-  if($("wholesaleTaxPreview"))$("wholesaleTaxPreview").innerHTML=`<b>Taxa aplicada:</b> ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} descontado do total final`;
+  if($("wholesaleTaxPreview"))$("wholesaleTaxPreview").innerHTML=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} descontado do total final`;
 
   return c;
 }
@@ -4563,21 +5031,21 @@ function renderWholesaleRetail(){
   $("wholesaleDayDiscount").textContent=money(dayDiscount);
 
   $("wholesaleRows").innerHTML=rows.length?rows.map(w=>`<tr class="wholesaleOrderRow" onclick="openWholesaleRetailOrder('${w.id}')" title="Clique para abrir o comprovante do pedido">
-    <td>${dateBR(w.date)}</td>
-    <td><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
-    <td><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
-    <td><span class="mobileKeyText mobileInfluencerName">${esc(w.clientName||"-")}</span></td>
-    <td><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
-    <td><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
-    <td><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
-    <td>${w.couponName?`<span class="wholesaleCouponPill">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
-    <td><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span></td>
-    <td><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
-    <td><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabel(w.paymentMethod,w.installments))}</span></td>
-    <td><span class="feePill">${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}</span></td>
-    <td><span class="receivedPill">${money(w.realReceived)}</span></td>
-    <td>${w.notes?`<div class="wholesaleNoteMini">${esc(w.notes)}</div>`:"<span class='wholesaleNoNote'>Sem observação</span>"}</td>
-    <td>
+    <td data-label="Data">${dateBR(w.date)}</td>
+    <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
+    <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
+    <td data-label="Cliente"><span class="mobileKeyText mobileInfluencerName">${esc(w.clientName||"-")}</span></td>
+    <td data-label="Produto"><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
+    <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
+    <td data-label="Frete"><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
+    <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
+    <td data-label="Desconto"><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span></td>
+    <td data-label="Total"><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
+    <td data-label="Pagamento"><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabel(w.paymentMethod,w.installments))}</span></td>
+    <td data-label="Taxa"><span class="feePill">${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments))} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}</span></td>
+    <td data-label="Valor real"><span class="receivedPill">${money(w.realReceived)}</span></td>
+    <td data-label="Observação">${w.notes?`<div class="wholesaleNoteMini">${esc(w.notes)}</div>`:"<span class='wholesaleNoNote'>Sem observação</span>"}</td>
+    <td data-label="Ações">
       <button class="small primary" type="button" onclick="event.stopPropagation();openWholesaleRetailOrder('${w.id}')">Abrir</button>
       <button class="small secondary" type="button" onclick="event.stopPropagation();editWholesaleRetail('${w.id}')">Editar</button>
       <button class="small danger" type="button" onclick="event.stopPropagation();deleteWholesaleRetail('${w.id}')">Excluir</button>
@@ -4658,7 +5126,7 @@ function renderWholesaleOrder(){
   if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent=paymentLabel(w.paymentMethod,w.installments);
   $("wholesaleReceiptSubtotal").textContent=money(w.subtotal);
   $("wholesaleReceiptDiscountPercent").textContent=`${Number(w.discountPercent||0)}%`;
-  if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent=`${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}`;
+  if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent=`${w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments)} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}`;
   if($("wholesaleReceiptFeeBase"))$("wholesaleReceiptFeeBase").textContent=money(w.total);
   $("wholesaleReceiptNotes").textContent=(w.notes||"").trim()||"Nenhuma observação adicionada.";
   $("wholesaleReceiptTotal").textContent=money(w.total);
@@ -4728,7 +5196,7 @@ function clearWholesaleDateFilter(){
 
 function exportWholesaleRetailCSV(){
   const rows=wholesaleRetailRows();
-  rowsCSV([["Data","Tipo","Origem","Cliente","Produto","Preço produto","Frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
+  rowsCSV([["Data","Tipo","Origem","Cliente","Produto","Preço produto","Frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
     dateBR(w.date),
     w.saleType||"Varejo",
     w.origin||"Site",
@@ -4742,6 +5210,7 @@ function exportWholesaleRetailCSV(){
     w.total||0,
     w.paymentMethod||"PIX",
     w.paymentMethod==="Cartão de Crédito" ? Number(w.installments||1) : "",
+    w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments),
     w.feePercent||0,
     w.feeValue||0,
     w.realReceived||0,
@@ -5107,6 +5576,7 @@ if($("wholesaleForm")){
       feePercent:c.feePercent,
       feeValue:c.feeValue,
       realReceived:c.realReceived,
+      feeRule:c.feeRule,
       notes:$("wholesaleNotes").value||""
     };
 
@@ -5115,6 +5585,7 @@ if($("wholesaleForm")){
     item.feePercent=finalCalc.feePercent;
     item.feeValue=finalCalc.feeValue;
     item.realReceived=finalCalc.realReceived;
+    item.feeRule=finalCalc.feeRule;
 
     if(!item.clientName){
       alert("Informe o nome do cliente.");
