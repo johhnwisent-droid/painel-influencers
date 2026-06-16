@@ -1631,6 +1631,174 @@ canvas{
   }
 }
 
+
+/* ===== V58 BUSCA E DESTAQUE MOBILE ===== */
+.searchMini{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  font-weight:900!important;
+  color:#64748b!important;
+}
+.searchMini input{
+  min-width:260px;
+  max-width:360px;
+  height:44px;
+  padding-left:40px;
+  background:
+    linear-gradient(transparent,transparent),
+    #f8fafc;
+  border:1px solid #dbe3ef;
+  font-weight:800;
+}
+.searchMini{
+  position:relative;
+}
+.searchMini:after{
+  content:"⌕";
+  position:absolute;
+  left:58px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#64748b;
+  font-size:17px;
+  pointer-events:none;
+}
+.mobileKeyText,
+.mobileCouponText,
+.mobileValueText{
+  display:inline-flex;
+  align-items:center;
+  width:max-content;
+  max-width:100%;
+}
+@media(max-width:760px){
+  .searchMini{
+    width:100%;
+    display:grid!important;
+    grid-template-columns:1fr;
+    align-items:start!important;
+    gap:6px!important;
+  }
+  .searchMini:after{
+    left:13px;
+    top:auto;
+    bottom:12px;
+    transform:none;
+  }
+  .searchMini input{
+    width:100%;
+    max-width:none;
+    min-width:0;
+    padding-left:40px;
+    border-radius:16px;
+    background:#fff;
+    box-shadow:0 8px 20px rgba(15,23,42,.055);
+  }
+
+  .tableWrap td[data-label="Influencer"],
+  .tableWrap td[data-label="Nome"]{
+    background:linear-gradient(90deg,rgba(37,99,235,.08),rgba(37,99,235,0));
+    margin:0 -2px;
+    padding:11px 8px;
+    border-radius:14px;
+    border-bottom:0;
+  }
+
+  .tableWrap td[data-label="Cupom"]{
+    background:linear-gradient(90deg,rgba(15,23,42,.06),rgba(15,23,42,0));
+    margin:2px -2px 0;
+    padding:10px 8px;
+    border-radius:14px;
+    border-bottom:0;
+  }
+
+  .tableWrap td[data-label="Vendido"],
+  .tableWrap td[data-label="Vendido no mês"],
+  .tableWrap td[data-label="Produto"],
+  .tableWrap td[data-label="Dinheiro"],
+  .tableWrap td[data-label="Comissão em dinheiro paga"],
+  .tableWrap td[data-label="Comissão em produtos separada"],
+  .tableWrap td[data-label="Valor produto"],
+  .tableWrap td[data-label="Usado da comissão"],
+  .tableWrap td[data-label="Diferença"],
+  .tableWrap td[data-label="% Produto"],
+  .tableWrap td[data-label="% Dinheiro"]{
+    background:#f8fafc;
+    margin:2px -2px 0;
+    padding:10px 8px;
+    border-radius:14px;
+    border-bottom:0;
+  }
+
+  .mobileKeyText{
+    font-size:16px;
+    font-weight:950;
+    color:#0f172a;
+    letter-spacing:-.02em;
+    line-height:1.15;
+    text-align:right;
+  }
+
+  .mobileCouponText{
+    padding:7px 10px;
+    border-radius:999px;
+    background:#111827;
+    color:#fff;
+    font-weight:950;
+    font-size:13px;
+    letter-spacing:.035em;
+    text-transform:uppercase;
+    box-shadow:0 8px 18px rgba(15,23,42,.12);
+  }
+
+  .mobileValueText{
+    padding:7px 10px;
+    border-radius:12px;
+    background:#fff;
+    border:1px solid #e2e8f0;
+    color:#0f172a;
+    font-weight:950;
+    font-size:14px;
+    box-shadow:0 8px 18px rgba(15,23,42,.055);
+  }
+
+  .tableWrap td[data-label="Influencer"] .mobileKeyText,
+  .tableWrap td[data-label="Nome"] .mobileKeyText,
+  .tableWrap td[data-label="Cupom"] .mobileCouponText,
+  .tableWrap td[data-label="Vendido"] .mobileValueText,
+  .tableWrap td[data-label="Vendido no mês"] .mobileValueText,
+  .tableWrap td[data-label="Produto"] .mobileValueText,
+  .tableWrap td[data-label="Dinheiro"] .mobileValueText,
+  .tableWrap td[data-label="% Produto"] .mobileValueText,
+  .tableWrap td[data-label="% Dinheiro"] .mobileValueText{
+    justify-self:end;
+  }
+
+  .tableWrap td[data-label="Comissão em dinheiro paga"] .moneyHighlight,
+  .tableWrap td[data-label="Comissão em produtos separada"] .moneyHighlight{
+    transform:scale(1.03);
+    transform-origin:right center;
+    font-size:14px;
+    font-weight:950;
+  }
+}
+
+@media(max-width:360px){
+  .tableWrap td[data-label="Influencer"] .mobileKeyText,
+  .tableWrap td[data-label="Nome"] .mobileKeyText,
+  .tableWrap td[data-label="Cupom"] .mobileCouponText,
+  .tableWrap td[data-label="Vendido"] .mobileValueText,
+  .tableWrap td[data-label="Vendido no mês"] .mobileValueText,
+  .tableWrap td[data-label="Produto"] .mobileValueText,
+  .tableWrap td[data-label="Dinheiro"] .mobileValueText,
+  .tableWrap td[data-label="% Produto"] .mobileValueText,
+  .tableWrap td[data-label="% Dinheiro"] .mobileValueText{
+    justify-self:start;
+    text-align:left;
+  }
+}
+
 </style>
 </head>
 <body class="page-dashboard">
@@ -1660,7 +1828,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V57 ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V58 ONLINE</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -1678,7 +1846,7 @@ canvas{
 
     <section id="influencers" class="view">
       <div class="panel"><div class="panelHead"><h3>Cadastro de influencer</h3></div><form id="infForm" class="form"><input type="hidden" id="infId"><label>Nome<input id="infName" required></label><label>Cupom<input id="infCoupon" required></label><label>% comissão produto<input type="number" id="infProductRate" step="0.01"></label><label>% comissão dinheiro<input type="number" id="infCashRate" step="0.01"></label><label>Instagram<input id="infInstagram"></label><label>WhatsApp<input id="infWhatsapp"></label><div class="actions two"><button class="primary" type="submit">Salvar influencer</button><button class="secondary" type="button" onclick="resetInfForm()">Cancelar</button></div></form></div>
-      <div class="panel"><div class="panelHead"><h3>Influencers cadastrados</h3></div><div class="tableWrap"><table><thead><tr><th>Nome</th><th>Cupom</th><th>% Produto</th><th>% Dinheiro</th><th>Instagram</th><th>WhatsApp</th><th>Ações</th></tr></thead><tbody id="infRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Influencers cadastrados</h3><div class="filters"><label class="searchMini">Buscar<input id="infSearch" placeholder="Nome ou cupom do influencer" oninput="renderInfluencers()"></label></div></div><div class="tableWrap"><table><thead><tr><th>Nome</th><th>Cupom</th><th>% Produto</th><th>% Dinheiro</th><th>Instagram</th><th>WhatsApp</th><th>Ações</th></tr></thead><tbody id="infRows"></tbody></table></div></div>
     </section>
 
 
@@ -1919,7 +2087,7 @@ canvas{
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v57_layout_profissional";
+const KEY = "painel_influencers_limpo_v58_busca_destaque_mobile";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -2037,7 +2205,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V57 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V58 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -2219,9 +2387,9 @@ function renderDashboard(){
 
   $("rankingRows").innerHTML=ranking.length?ranking.map((r,idx)=>`<tr>
     <td><b>${idx+1}</b></td>
-    <td>${esc(r.i.name)}</td>
-    <td>${esc(r.i.coupon)}</td>
-    <td>${money(r.sold)}</td>
+    <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
+    <td><span class="mobileCouponText">${esc(r.i.coupon)}</span></td>
+    <td><span class="mobileValueText">${money(r.sold)}</span></td>
     <td>
 <span class="moneyHighlight product">${money(r.product)}</span>
     </td>
@@ -2238,11 +2406,11 @@ function renderLaunches(){
     return `<tr>
       <td>${dateBR(l.date)}</td>
       <td>${esc(l.origin)}</td>
-      <td>${esc(i.coupon||"-")}</td>
-      <td>${esc(i.name||"-")}</td>
-      <td>${money(l.sold)}</td>
-      <td>${money(l.productCommission)}</td>
-      <td>${money(l.cashCommission)}</td>
+      <td><span class="mobileCouponText">${esc(i.coupon||"-")}</span></td>
+      <td><span class="mobileKeyText mobileInfluencerName">${esc(i.name||"-")}</span></td>
+      <td><span class="mobileValueText">${money(l.sold)}</span></td>
+      <td><span class="mobileValueText">${money(l.productCommission)}</span></td>
+      <td><span class="mobileValueText">${money(l.cashCommission)}</span></td>
       <td><span class="badge ${l.status==="Enviado"?"blue":l.status==="Pago"?"green":l.status==="Cancelado"?"red":"yellow"}">${esc(l.status)}</span></td>
       <td><input class="checkbox" type="checkbox" ${l.pdfSent?"checked":""} onchange="togglePdfSent('${l.id}',this.checked)"></td>
       <td><input class="checkbox" type="checkbox" ${l.accumulate?"checked":""} onchange="toggleAccumulate('${l.id}',this.checked)"></td>
@@ -2265,9 +2433,9 @@ function renderLaunchTotals(){
   }).filter(r=>r.count).sort((a,b)=>b.sold-a.sold||b.product-a.product||b.cash-a.cash);
 
   $("launchTotalsRows").innerHTML=rows.length?rows.map(r=>`<tr>
-    <td>${esc(r.i.name)}</td>
-    <td>${esc(r.i.coupon)}</td>
-    <td>${money(r.sold)}</td>
+    <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
+    <td><span class="mobileCouponText">${esc(r.i.coupon)}</span></td>
+    <td><span class="mobileValueText">${money(r.sold)}</span></td>
     <td>${money(r.product)}</td>
     <td>${money(r.cash)}</td>
     <td>${r.count}</td>
@@ -2358,8 +2526,8 @@ function renderPaidPage(){
   $("paidMonthLabel").textContent=monthLabel(month);
 
   $("paidPageRows").innerHTML=rows.length?rows.map(r=>`<tr>
-    <td>${esc(r.i.name||"-")}</td>
-    <td>${esc(r.i.coupon||"-")}</td>
+    <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name||"-")}</span></td>
+    <td><span class="mobileCouponText">${esc(r.i.coupon||"-")}</span></td>
     <td><span class="moneyHighlight cash">${money(r.cash)}</span></td>
     <td><span class="moneyHighlight product">${money(r.product)}</span></td>
     <td>${esc(r.sourcesText||"-")}</td>
@@ -2453,10 +2621,10 @@ function renderAccumulations(){
   $("accRows").innerHTML=groups.length?groups.map(r=>{
     const productPaid=productAccumulationPaid(r.i.id);
     return `<tr>
-      <td>${esc(r.i.name)}</td>
-      <td>${esc(r.i.coupon)}</td>
-      <td>${money(r.product)}</td>
-      <td>${money(r.cash)}</td>
+      <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
+      <td><span class="mobileCouponText">${esc(r.i.coupon)}</span></td>
+      <td><span class="mobileValueText">${money(r.product)}</span></td>
+      <td><span class="mobileValueText">${money(r.cash)}</span></td>
       <td>
         ${r.product>0?`<button class="small secondary" onclick="payAccumulatedProduct('${r.i.id}')">Pago em produto</button> `:productPaid?`<span class="productPaidBadge">Produto pago</span> `:""}
         ${r.cash>0?`<button class="small primary" ${productPaid?"disabled title='Bloqueado porque o produto já foi marcado como pago.'":""} onclick="${productPaid?"return false;":`payAccumulatedCash('${r.i.id}')`}">Pagar dinheiro</button> `:""}
@@ -2611,14 +2779,30 @@ function printAccumulationReport(){
 
 function stopAccumulatingInfluencer(infId){if(confirm("Zerar o acúmulo deste influencer? Os lançamentos sairão da carteira de acúmulo.")){state.launches.forEach(l=>{if(l.influencerId===infId)l.accumulate=false});save();render();}}
 function resetInfForm(){$("infForm").reset();$("infId").value="";$("infProductRate").value=20;$("infCashRate").value=10;}
-function renderInfluencers(){$("infRows").innerHTML=state.influencers.length?state.influencers.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.coupon)}</td><td>${Number(i.productRate||0)}%</td><td>${Number(i.cashRate||0)}%</td><td>${esc(i.instagram||"")}</td><td>${esc(i.whatsapp||"")}</td><td><button class="small secondary" onclick="editInf('${i.id}')">Editar</button> <button class="small danger" onclick="deleteInf('${i.id}')">Excluir</button></td></tr>`).join(""):`<tr><td colspan="7">Nenhum influencer cadastrado.</td></tr>`;}
+function renderInfluencers(){
+  const term=($("infSearch")?.value||"").trim().toLowerCase();
+  const rows=state.influencers.filter(i=>{
+    if(!term)return true;
+    return String(i.name||"").toLowerCase().includes(term) || String(i.coupon||"").toLowerCase().includes(term);
+  });
+
+  $("infRows").innerHTML=rows.length?rows.map(i=>`<tr>
+    <td><span class="mobileKeyText mobileInfluencerName">${esc(i.name)}</span></td>
+    <td><span class="mobileCouponText">${esc(i.coupon)}</span></td>
+    <td><span class="mobileValueText">${Number(i.productRate||0)}%</span></td>
+    <td><span class="mobileValueText">${Number(i.cashRate||0)}%</span></td>
+    <td>${esc(i.instagram||"")}</td>
+    <td>${esc(i.whatsapp||"")}</td>
+    <td><button class="small secondary" onclick="editInf('${i.id}')">Editar</button> <button class="small danger" onclick="deleteInf('${i.id}')">Excluir</button></td>
+  </tr>`).join(""):`<tr><td colspan="7">${term?"Nenhum influencer encontrado para essa busca.":"Nenhum influencer cadastrado."}</td></tr>`;
+}
 function editInf(id){const i=infById(id);if(!i)return;showPage("influencers");$("infId").value=i.id;$("infName").value=i.name;$("infCoupon").value=i.coupon;$("infProductRate").value=i.productRate;$("infCashRate").value=i.cashRate;$("infInstagram").value=i.instagram||"";$("infWhatsapp").value=i.whatsapp||"";}
 function deleteInf(id){if(confirm("Excluir influencer? Os lançamentos antigos continuarão no histórico.")){state.influencers=state.influencers.filter(i=>i.id!==id);save();render();}}
 function productUsed(infId){return state.redemptions.filter(r=>r.influencerId===infId&&r.status!=="Cancelado").reduce((a,r)=>a+Number(r.used||0),0);}
 function productAvailable(infId){const earned=accumulatedRows().filter(l=>l.influencerId===infId).reduce((a,l)=>a+Number(l.productCommission||0),0);return Math.max(0,earned-productUsed(infId));}
 function renderProductCalc(){const infId=$("productInfluencer").value;const available=productAvailable(infId);$("productAvailable").value=money(available);const value=Number($("productValue").value||0);if(!$("productId").value){$("productUsed").value=Math.min(available,value||available).toFixed(2)}const used=Number($("productUsed").value||0);$("productDifference").value=money(Math.max(0,value-used));}
 function resetProductForm(){$("productForm").reset();$("productId").value="";$("productDate").value=today();if(state.influencers[0])$("productInfluencer").value=state.influencers[0].id;$("productStatus").value="Pendente";renderProductCalc();}
-function renderProducts(){renderProductCalc();$("productRows").innerHTML=state.redemptions.length?state.redemptions.map(r=>{const i=infById(r.influencerId)||{};return `<tr><td>${dateBR(r.date)}</td><td>${esc(i.name||"-")}</td><td>${esc(i.coupon||"-")}</td><td>${esc(r.name)}</td><td>${money(r.value)}</td><td>${money(r.used)}</td><td>${money(r.difference)}</td><td><span class="badge ${r.status==="Pago"||r.status==="Resgatado"?"green":r.status==="Cancelado"?"red":"yellow"}">${esc(r.status)}</span></td><td><button class="small secondary" onclick="editProduct('${r.id}')">Editar</button> <button class="small danger" onclick="deleteProduct('${r.id}')">Excluir</button></td></tr>`}).join(""):`<tr><td colspan="9">Nenhum produto registrado.</td></tr>`;}
+function renderProducts(){renderProductCalc();$("productRows").innerHTML=state.redemptions.length?state.redemptions.map(r=>{const i=infById(r.influencerId)||{};return `<tr><td>${dateBR(r.date)}</td><td><span class="mobileKeyText mobileInfluencerName">${esc(i.name||"-")}</span></td><td><span class="mobileCouponText">${esc(i.coupon||"-")}</span></td><td>${esc(r.name)}</td><td><span class="mobileValueText">${money(r.value)}</span></td><td><span class="mobileValueText">${money(r.used)}</span></td><td><span class="mobileValueText">${money(r.difference)}</span></td><td><span class="badge ${r.status==="Pago"||r.status==="Resgatado"?"green":r.status==="Cancelado"?"red":"yellow"}">${esc(r.status)}</span></td><td><button class="small secondary" onclick="editProduct('${r.id}')">Editar</button> <button class="small danger" onclick="deleteProduct('${r.id}')">Excluir</button></td></tr>`}).join(""):`<tr><td colspan="9">Nenhum produto registrado.</td></tr>`;}
 function editProduct(id){const r=state.redemptions.find(x=>x.id===id);if(!r)return;showPage("products");$("productId").value=r.id;$("productDate").value=r.date;$("productInfluencer").value=r.influencerId;$("productName").value=r.name;$("productValue").value=r.value;$("productUsed").value=r.used;$("productStatus").value=r.status;$("productNotes").value=r.notes||"";renderProductCalc();}
 function deleteProduct(id){if(confirm("Excluir produto registrado?")){state.redemptions=state.redemptions.filter(r=>r.id!==id);save();render();}}
 function renderPix(){$("pixRows").innerHTML=state.influencers.length?state.influencers.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.coupon)}</td><td><input value="${esc(i.pix||"")}" onchange="updatePix('${i.id}',this.value)" placeholder="Digite a chave PIX"></td><td><button class="small secondary" onclick="copyPix('${i.id}')">Copiar</button></td></tr>`).join(""):`<tr><td colspan="4">Nenhum influencer cadastrado.</td></tr>`;}
