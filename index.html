@@ -991,10 +991,282 @@ button{
   }
 }
 
+
+/* ===== V53 MOBILE MENU SANDUÍCHE ===== */
+.mobileMenuToggle,
+.mobileMenuOverlay,
+.mobileBottomNav,
+.mobileDrawerHead{
+  display:none;
+}
+
+@media(max-width:760px){
+  body.mobileMenuOpen{
+    overflow:hidden;
+  }
+
+  .mobileMenuToggle{
+    display:flex;
+    position:fixed;
+    top:calc(12px + env(safe-area-inset-top));
+    right:12px;
+    z-index:180;
+    width:46px;
+    height:46px;
+    border-radius:16px;
+    border:1px solid rgba(226,232,240,.95);
+    background:rgba(255,255,255,.96);
+    box-shadow:0 12px 30px rgba(15,23,42,.14);
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:5px;
+    padding:0;
+  }
+
+  .mobileMenuToggle span{
+    display:block;
+    width:19px;
+    height:2px;
+    border-radius:99px;
+    background:#111827;
+    transition:.18s ease;
+  }
+
+  body.mobileMenuOpen .mobileMenuToggle span:nth-child(1){
+    transform:translateY(7px) rotate(45deg);
+  }
+
+  body.mobileMenuOpen .mobileMenuToggle span:nth-child(2){
+    opacity:0;
+  }
+
+  body.mobileMenuOpen .mobileMenuToggle span:nth-child(3){
+    transform:translateY(-7px) rotate(-45deg);
+  }
+
+  .mobileMenuOverlay{
+    display:block;
+    position:fixed;
+    inset:0;
+    z-index:145;
+    background:rgba(15,23,42,.42);
+    backdrop-filter:blur(3px);
+    -webkit-backdrop-filter:blur(3px);
+    opacity:0;
+    pointer-events:none;
+    transition:.18s ease;
+  }
+
+  body.mobileMenuOpen .mobileMenuOverlay{
+    opacity:1;
+    pointer-events:auto;
+  }
+
+  .mobileDrawerHead{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:12px;
+    padding-bottom:12px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+  }
+
+  .mobileDrawerHead strong{
+    font-size:18px;
+    color:#fff;
+    letter-spacing:-.02em;
+  }
+
+  .mobileDrawerHead button{
+    width:38px;
+    height:38px;
+    min-height:38px;
+    border-radius:14px;
+    padding:0;
+    background:rgba(255,255,255,.1);
+    color:#fff;
+    font-size:24px;
+    line-height:1;
+  }
+
+  .side{
+    position:fixed;
+    top:0;
+    right:0;
+    left:auto;
+    bottom:0;
+    z-index:160;
+    width:min(86vw,340px);
+    height:100dvh;
+    max-height:100dvh;
+    padding:calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));
+    border-radius:24px 0 0 24px;
+    background:#0f172a;
+    box-shadow:-22px 0 60px rgba(15,23,42,.32);
+    transform:translateX(105%);
+    transition:transform .22s ease;
+    overflow:auto;
+  }
+
+  body.mobileMenuOpen .side{
+    transform:translateX(0);
+  }
+
+  .side .brand{
+    display:flex;
+    margin-bottom:14px;
+  }
+
+  .side .brand h1,
+  .side .brand p{
+    color:#fff;
+  }
+
+  .side .brand p{
+    opacity:.72;
+  }
+
+  .side .logo{
+    width:42px;
+    height:42px;
+    border-radius:15px;
+  }
+
+  .menu{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:8px;
+    overflow:visible;
+    padding:0;
+    margin:0;
+  }
+
+  .menu button{
+    width:100%;
+    justify-content:flex-start;
+    min-height:46px;
+    padding:12px 14px;
+    border-radius:16px;
+    font-size:14px;
+    color:rgba(255,255,255,.84);
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+  }
+
+  .menu button.active{
+    background:#fff;
+    color:#111827;
+    box-shadow:0 10px 26px rgba(0,0,0,.18);
+  }
+
+  .mobileBottomNav{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:calc(10px + env(safe-area-inset-bottom));
+    z-index:120;
+    padding:8px;
+    border-radius:24px;
+    background:rgba(255,255,255,.94);
+    border:1px solid rgba(226,232,240,.9);
+    box-shadow:0 16px 40px rgba(15,23,42,.16);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+
+  .mobileBottomNav button{
+    min-height:48px;
+    border-radius:18px;
+    padding:6px 5px;
+    background:transparent;
+    color:#64748b;
+    box-shadow:none;
+    font-size:11px;
+    font-weight:950;
+  }
+
+  .mobileBottomNav button:before{
+    display:block;
+    margin:0 auto 3px;
+    font-size:18px;
+    line-height:1;
+  }
+
+  .mobileBottomNav button[data-quick-page="dashboard"]:before{content:"⌂";}
+  .mobileBottomNav button[data-quick-page="launches"]:before{content:"＋";}
+  .mobileBottomNav button[data-quick-page="accumulations"]:before{content:"⇄";}
+  .mobileBottomNav button[data-quick-page="paid"]:before{content:"✓";}
+
+  .mobileBottomNav button.active{
+    background:#111827;
+    color:#fff;
+  }
+
+  .main{
+    padding-bottom:calc(104px + env(safe-area-inset-bottom));
+  }
+
+  .top{
+    padding-right:68px;
+  }
+
+  .top h2{
+    max-width:calc(100vw - 100px);
+  }
+}
+
+@media(max-width:430px){
+  .mobileMenuToggle{
+    right:10px;
+    top:calc(10px + env(safe-area-inset-top));
+    width:44px;
+    height:44px;
+    border-radius:15px;
+  }
+
+  .side{
+    width:min(88vw,330px);
+    border-radius:22px 0 0 22px;
+  }
+
+  .mobileBottomNav{
+    left:8px;
+    right:8px;
+    bottom:calc(8px + env(safe-area-inset-bottom));
+    border-radius:22px;
+    gap:5px;
+  }
+
+  .mobileBottomNav button{
+    min-height:46px;
+    border-radius:16px;
+    font-size:10.5px;
+  }
+
+  .top{
+    padding-right:62px;
+  }
+}
+
 </style>
 </head>
 <body>
 <div class="app">
+    <button id="mobileMenuToggle" class="mobileMenuToggle noPrint" type="button" aria-label="Abrir menu" onclick="toggleMobileMenu()">
+      <span></span><span></span><span></span>
+    </button>
+    <div id="mobileMenuOverlay" class="mobileMenuOverlay noPrint" onclick="closeMobileMenu()"></div>
+    <div class="mobileBottomNav noPrint">
+      <button data-quick-page="dashboard" onclick="showPage('dashboard')"><span>Início</span></button>
+      <button data-quick-page="launches" onclick="showPage('launches')"><span>Lançar</span></button>
+      <button data-quick-page="accumulations" onclick="showPage('accumulations')"><span>Acumular</span></button>
+      <button data-quick-page="paid" onclick="showPage('paid')"><span>Pagos</span></button>
+    </div>
   <aside class="side">
     <div class="brand"><div class="logo" id="sideLogo">JS</div><div><h1 id="sideTitle">Painel</h1><p id="sideSub">Controle de comissões</p></div></div>
     <nav class="menu">
@@ -1010,7 +1282,7 @@ button{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V52 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V53 ONLINE</div></div><div class="monthbox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -1269,7 +1541,7 @@ button{
 </div>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
-const KEY = "painel_influencers_limpo_v52_mobile_app";
+const KEY = "painel_influencers_limpo_v53_mobile_sanduiche";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
@@ -1385,7 +1657,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V52 carregada. Conectando ao Supabase...");
+  updateCloudStatus("V53 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -2094,6 +2366,19 @@ function removePdfLogo(){state.settings.pdfLogo="";tempPdfLogo=null;save();rende
 function removeLogo(){removeSystemLogo();}
 function removePdfWatermark(){state.settings.pdfWatermarkLogo="";tempWatermarkLogo=null;save();render();}
 
+
+function toggleMobileMenu(){
+  document.body.classList.toggle("mobileMenuOpen");
+}
+function closeMobileMenu(){
+  document.body.classList.remove("mobileMenuOpen");
+}
+function syncMobileBottomNav(id){
+  document.querySelectorAll("[data-quick-page]").forEach(btn=>{
+    btn.classList.toggle("active",btn.dataset.quickPage===id);
+  });
+}
+
 function enhanceMobileTables(){
   document.querySelectorAll(".tableWrap table").forEach(table=>{
     const heads=[...table.querySelectorAll("thead th")].map(th=>th.textContent.trim());
@@ -2125,8 +2410,25 @@ function initMobileEnhancements(){
   mobileTableObserver.observe(main,{childList:true,subtree:true});
 }
 
-function showPage(id){document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));$(id).classList.add("active");const btn=document.querySelector(`[data-page="${id}"]`);if(btn){btn.classList.add("active");$("pageTitle").textContent=btn.textContent;}}
-function render(){normalize();applyTheme();populate();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
+function showPage(id){
+  currentPage=id;
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
+
+  const view=$(id);
+  if(view)view.classList.add("active");
+
+  const btn=document.querySelector(`.menu button[data-page="${id}"]`);
+  if(btn){
+    btn.classList.add("active");
+    $("pageTitle").textContent=btn.textContent;
+  }
+
+  syncMobileBottomNav(id);
+  closeMobileMenu();
+  render();
+}
+function render(){normalize();applyTheme();populate();syncMobileBottomNav(currentPage);renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
 function exportAccumulationsCSV(){rowsCSV([["Influencer","Cupom","Produto acumulado","Dinheiro acumulado"],...accumulationByInfluencer().map(r=>[r.i.name,r.i.coupon,r.product,r.cash])],"acumulos.csv");}
@@ -2217,6 +2519,11 @@ $("productForm").addEventListener("submit",e=>{e.preventDefault();const id=$("pr
     renderAccumulationReport();
   });
 });
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape")closeMobileMenu();
+});
+
 document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",render);
 setTimeout(()=>{
   const el=$("cloudStatus");
