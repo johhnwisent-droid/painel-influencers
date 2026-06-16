@@ -1943,6 +1943,349 @@ canvas{
   }
 }
 
+
+/* ===== V67 ATACADO E VAREJO - DESTAQUES E COMPROVANTE ===== */
+.wholesaleOrderRow{
+  cursor:pointer;
+  transition:background .18s ease, transform .18s ease;
+}
+.wholesaleOrderRow:hover{
+  background:#f8fafc;
+}
+.wholesaleMoneyPill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:96px;
+  border-radius:999px;
+  padding:7px 11px;
+  font-weight:950;
+  letter-spacing:-.02em;
+  border:1px solid transparent;
+}
+.wholesaleMoneyPill.product{
+  background:#eff6ff;
+  color:#1d4ed8;
+  border-color:#bfdbfe;
+}
+.wholesaleMoneyPill.freight{
+  background:#fff7ed;
+  color:#c2410c;
+  border-color:#fed7aa;
+}
+.wholesaleMoneyPill.discount{
+  background:#fef2f2;
+  color:#b91c1c;
+  border-color:#fecaca;
+}
+.wholesaleMoneyPill.total{
+  background:#ecfdf5;
+  color:#047857;
+  border-color:#bbf7d0;
+  font-size:15px;
+}
+.wholesaleCouponPill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:999px;
+  background:#111827;
+  color:#fff;
+  font-weight:950;
+  font-size:12px;
+  padding:7px 11px;
+  box-shadow:0 8px 20px rgba(17,24,39,.12);
+}
+.wholesaleCouponPill small{
+  color:rgba(255,255,255,.72);
+  font-weight:900;
+}
+.wholesaleNoteMini{
+  max-width:280px;
+  white-space:normal;
+  line-height:1.35;
+  background:#fffbeb;
+  color:#78350f;
+  border:1px solid #fde68a;
+  border-radius:13px;
+  padding:9px 11px;
+  font-size:12px;
+  font-weight:750;
+}
+.wholesaleNoNote{
+  color:#94a3b8;
+  font-weight:800;
+}
+.wholesaleReceiptPanel{
+  overflow:hidden;
+}
+.wholesaleReceipt{
+  min-height:760px;
+}
+.wholesaleReceiptGrid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(220px,1fr));
+  gap:12px;
+  margin-top:18px;
+}
+.wholesaleReceiptInfo{
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  background:#fff;
+  padding:16px;
+}
+.wholesaleReceiptInfo small{
+  display:block;
+  color:#6b7280;
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  margin-bottom:7px;
+}
+.wholesaleReceiptInfo strong{
+  display:block;
+  font-size:18px;
+  color:#111827;
+  line-height:1.25;
+}
+.wholesaleReceiptInfo.obs{
+  grid-column:1/-1;
+  background:#fffbeb;
+  border-color:#fde68a;
+}
+.wholesaleReceiptInfo.obs strong{
+  white-space:pre-wrap;
+  color:#78350f;
+  font-size:15px;
+}
+.wholesaleReceiptTotal{
+  background:linear-gradient(135deg,#064e3b,#047857);
+  color:white;
+  border-radius:22px;
+  padding:20px;
+  margin-top:18px;
+}
+.wholesaleReceiptTotal small{
+  display:block;
+  color:rgba(255,255,255,.76);
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+  margin-bottom:8px;
+}
+.wholesaleReceiptTotal strong{
+  display:block;
+  font-size:34px;
+  line-height:1;
+}
+.wholesaleReceiptActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+}
+.wholesaleReceiptActions .leftActions,
+.wholesaleReceiptActions .rightActions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+@media(max-width:760px){
+  .wholesaleReceiptGrid{
+    grid-template-columns:1fr;
+  }
+  .wholesaleMoneyPill{
+    min-width:118px;
+    font-size:15px;
+    padding:9px 12px;
+  }
+  .wholesaleCouponPill{
+    font-size:13px;
+    padding:8px 12px;
+  }
+  .wholesaleNoteMini{
+    max-width:none;
+    width:100%;
+    font-size:13px;
+  }
+  .tableWrap td[data-label="Preço produto"] .wholesaleMoneyPill,
+  .tableWrap td[data-label="Frete"] .wholesaleMoneyPill,
+  .tableWrap td[data-label="Desconto"] .wholesaleMoneyPill,
+  .tableWrap td[data-label="Total"] .wholesaleMoneyPill{
+    width:100%;
+  }
+}
+
+@media print{
+  body.print-wholesale .side,
+  body.print-wholesale .top,
+  body.print-wholesale .noPrint,
+  body.print-wholesale .menu,
+  body.print-wholesale .view{
+    display:none!important;
+  }
+  body.print-wholesale .app,
+  body.print-wholesale .main,
+  body.print-wholesale{
+    display:block!important;
+    background:white!important;
+    padding:0!important;
+    margin:0!important;
+  }
+  body.print-wholesale #wholesaleOrder{
+    display:block!important;
+  }
+  body.print-wholesale #wholesaleOrder .printPanel{
+    display:block!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+    margin:0!important;
+  }
+  body.print-wholesale #wholesaleOrder .printArea{
+    border:0!important;
+    box-shadow:none!important;
+    border-radius:0!important;
+  }
+}
+
+
+/* ===== V68 FORMA DE PAGAMENTO - ATACADO E VAREJO ===== */
+.paymentInlineGroup{
+  display:grid;
+  grid-template-columns:1fr minmax(130px,.55fr);
+  gap:12px;
+}
+.paymentMethodPill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  padding:7px 11px;
+  font-weight:950;
+  font-size:12px;
+  letter-spacing:.01em;
+  border:1px solid #dbeafe;
+  background:#eff6ff;
+  color:#1d4ed8;
+  white-space:nowrap;
+}
+.paymentMethodPill.pix{
+  background:#ecfdf5;
+  border-color:#bbf7d0;
+  color:#047857;
+}
+.paymentMethodPill.card{
+  background:#eef2ff;
+  border-color:#c7d2fe;
+  color:#4338ca;
+}
+.paymentMethodPill.boleto{
+  background:#f8fafc;
+  border-color:#cbd5e1;
+  color:#334155;
+}
+.paymentInstallmentsWrap.isHidden{
+  display:none!important;
+}
+@media(max-width:760px){
+  .paymentInlineGroup{
+    grid-template-columns:1fr;
+  }
+  .paymentMethodPill{
+    width:100%;
+    font-size:13px;
+    padding:9px 12px;
+  }
+}
+
+
+/* ===== V69 TIPO DE VENDA - VAREJO / ATACADO ===== */
+.wholesaleTypeBox{
+  grid-column:1/-1;
+  border:1px solid #dbeafe;
+  background:linear-gradient(135deg,#eff6ff,#f8fafc);
+  border-radius:18px;
+  padding:14px;
+}
+.wholesaleTypeBox label{
+  margin:0;
+}
+.wholesaleTypeBox select{
+  font-weight:950;
+  color:#0f172a;
+  border-color:#bfdbfe;
+  background:white;
+}
+.saleTypePill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:88px;
+  border-radius:999px;
+  padding:7px 11px;
+  font-weight:950;
+  font-size:12px;
+  border:1px solid transparent;
+  white-space:nowrap;
+}
+.saleTypePill.varejo{
+  background:#ecfeff;
+  color:#0e7490;
+  border-color:#a5f3fc;
+}
+.saleTypePill.atacado{
+  background:#fef3c7;
+  color:#92400e;
+  border-color:#fde68a;
+}
+@media(max-width:760px){
+  .saleTypePill{
+    width:100%;
+    font-size:13px;
+    padding:9px 12px;
+  }
+}
+
+
+/* ===== V70 PRODUTOS EM MÚLTIPLAS LINHAS ===== */
+.productMultiLine{
+  min-height:112px;
+  resize:vertical;
+  line-height:1.42;
+}
+.productHint{
+  display:block;
+  margin-top:6px;
+  color:#64748b;
+  font-size:12px;
+  font-weight:750;
+}
+.wholesaleProductList{
+  white-space:pre-line;
+  line-height:1.42;
+  display:block;
+  font-weight:900;
+  color:#0f172a;
+}
+.wholesaleProductList.receipt{
+  font-size:17px;
+}
+@media(max-width:760px){
+  .productMultiLine{
+    min-height:132px;
+  }
+  .wholesaleProductList{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:10px 12px;
+    width:100%;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -1985,6 +2328,7 @@ canvas{
     <nav class="menu">
       <button class="active" data-page="dashboard">Visão geral</button>
       <button data-page="launches">Lançamentos</button>
+      <button data-page="wholesaleRetail">Atacado e Varejo</button>
       <button data-page="influencers">Influencers</button>
       <button data-page="paid">Pagos</button>
       <button data-page="products">Produto escolhido</button>
@@ -1995,7 +2339,7 @@ canvas{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V65 MENU DESKTOP FIXO</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V70 PRODUTOS MULTILINHA</div></div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
 
     <section id="dashboard" class="view active">
       <div class="grid"><div class="card"><small>Total vendido no mês</small><strong id="dashSold">R$ 0,00</strong></div><div class="card"><small>Comissão em produtos</small><strong id="dashProduct">R$ 0,00</strong></div><div class="card"><small>Comissão em dinheiro</small><strong id="dashCash">R$ 0,00</strong></div><div class="card"><small>PDFs enviados</small><strong id="dashSent">0</strong></div></div>
@@ -2009,6 +2353,250 @@ canvas{
       <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><label class="dateMini">Mês<input id="launchMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
       <div class="panel"><div class="panelHead"><h3>Resumo por influencer no mês</h3><span class="muted">Comissão em produtos e comissão em dinheiro ficam separadas.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
 
+    </section>
+
+
+    <section id="wholesaleRetail" class="view">
+      <div class="grid">
+        <div class="card"><small>Total vendido no dia</small><strong id="wholesaleDayTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Pedidos no dia</small><strong id="wholesaleDayCount">0</strong></div>
+        <div class="card"><small>Frete somado</small><strong id="wholesaleDayFreight">R$ 0,00</strong></div>
+        <div class="card"><small>Descontos aplicados</small><strong id="wholesaleDayDiscount">R$ 0,00</strong></div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHead">
+          <div>
+            <h3>Atacado e Varejo</h3>
+            <span class="muted">Controle separado para vendas do setor, com cálculo automático de cupom e frete.</span>
+          </div>
+        </div>
+
+        <form id="wholesaleForm" class="form">
+          <input type="hidden" id="wholesaleId">
+
+          <label>Data / calendário
+            <input type="date" id="wholesaleDate" required>
+          </label>
+
+          <div class="wholesaleTypeBox">
+            <label>Tipo de venda
+              <select id="wholesaleSaleType" required>
+                <option value="Varejo">Varejo</option>
+                <option value="Atacado">Atacado</option>
+              </select>
+            </label>
+          </div>
+
+          <label>Nome do cliente
+            <input id="wholesaleClient" placeholder="Ex.: Matheus Silva" required>
+          </label>
+
+          <label class="two">Produto
+            <textarea id="wholesaleProduct" class="productMultiLine" rows="4" placeholder="Ex.: Camiseta Oversized&#10;Boné Wisent&#10;Regata Premium" required></textarea>
+            <span class="productHint">Adicione 1 produto por linha. Aperte Enter para ir para a próxima linha.</span>
+          </label>
+
+          <label>Preço do produto
+            <input type="number" id="wholesaleProductPrice" step="0.01" min="0" placeholder="0,00" required>
+          </label>
+
+          <label>Custo do frete
+            <input type="number" id="wholesaleFreightCost" step="0.01" min="0" placeholder="0,00">
+          </label>
+
+          <label>Cupom usado
+            <input id="wholesaleCouponName" placeholder="Ex.:cupom10">
+          </label>
+
+          <label>Desconto do cupom (%)
+            <input type="number" id="wholesaleDiscountPercent" step="0.01" min="0" max="100" placeholder="0">
+          </label>
+
+          <div class="paymentInlineGroup two">
+            <label>Forma de pagamento
+              <select id="wholesalePaymentMethod">
+                <option value="PIX">PIX</option>
+                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                <option value="Boleto">Boleto</option>
+              </select>
+            </label>
+
+            <label id="wholesaleInstallmentsWrap" class="paymentInstallmentsWrap isHidden">Parcelas
+              <select id="wholesaleInstallments">
+                <option value="1">1x</option>
+                <option value="2">2x</option>
+                <option value="3">3x</option>
+                <option value="4">4x</option>
+                <option value="5">5x</option>
+                <option value="6">6x</option>
+                <option value="7">7x</option>
+                <option value="8">8x</option>
+                <option value="9">9x</option>
+                <option value="10">10x</option>
+                <option value="11">11x</option>
+                <option value="12">12x</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="wholesaleCalcBox">
+            <small>Total automático</small>
+            <strong id="wholesaleTotalPreview">R$ 0,00</strong>
+          </div>
+
+          <label class="two">Total
+            <input id="wholesaleTotal" readonly>
+          </label>
+
+          <div class="wholesaleFormula">
+            <b>Fórmula:</b> total = (preço do produto + frete) - desconto do cupom em %.  
+            O valor atualiza automaticamente enquanto você digita.
+          </div>
+
+          <label class="full">Observação
+            <input id="wholesaleNotes" placeholder="Informações internas, forma de contato, detalhes do pedido...">
+          </label>
+
+          <div class="actions two">
+            <button class="primary" type="submit">Salvar lançamento</button>
+            <button class="secondary" type="button" onclick="resetWholesaleRetailForm()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panelHead">
+          <div>
+            <h3>Lançamentos de Atacado e Varejo</h3>
+            <span class="muted">Use o calendário para consultar cada dia separadamente.</span>
+          </div>
+          <div class="filters">
+            <label class="dateMini">Data
+              <input id="wholesaleFilterDate" type="date" onchange="renderWholesaleRetail()">
+            </label>
+            <label class="dateMini">Tipo
+              <select id="wholesaleFilterType" onchange="renderWholesaleRetail()">
+                <option value="">Todos</option>
+                <option value="Varejo">Varejo</option>
+                <option value="Atacado">Atacado</option>
+              </select>
+            </label>
+            <button class="secondary" onclick="clearWholesaleDateFilter()">Ver todos</button>
+            <button class="secondary" onclick="exportWholesaleRetailCSV()">Exportar CSV</button>
+          </div>
+        </div>
+
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Preço produto</th>
+                <th>Frete</th>
+                <th>Cupom</th>
+                <th>Desconto</th>
+                <th>Total</th>
+                <th>Pagamento</th>
+                <th>Observação</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="wholesaleRows"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+
+    <section id="wholesaleOrder" class="view">
+      <div class="panel noPrint">
+        <div class="wholesaleReceiptActions">
+          <div class="leftActions">
+            <button class="secondary" type="button" onclick="backToWholesaleRetail()">Voltar para Atacado e Varejo</button>
+          </div>
+          <div class="rightActions">
+            <button class="secondary" type="button" onclick="editCurrentWholesaleRetail()">Editar pedido</button>
+            <button class="primary" type="button" onclick="printWholesaleRetailOrder()">Exportar PDF</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel printPanel wholesaleReceiptPanel">
+        <div id="wholesaleReceiptPrint" class="printArea wholesaleReceipt">
+          <img id="wholesaleReceiptWatermark" class="reportWatermark" style="display:none">
+
+          <div class="pdfCleanHeader">
+            <div>
+              <h1>Comprovante - Atacado e Varejo</h1>
+              <p id="wholesaleReceiptMsg" class="muted">Resumo completo do pedido registrado no painel.</p>
+            </div>
+            <img id="wholesaleReceiptLogo" class="printLogo" style="display:none">
+          </div>
+
+          <div class="pdfIdentity">
+            <h2 id="wholesaleReceiptClient">Cliente</h2>
+            <p id="wholesaleReceiptDate" class="muted">Data: -</p>
+            <p id="wholesaleReceiptCode" class="muted">Pedido: -</p>
+          </div>
+
+          <div class="pdfThreeCards">
+            <div class="pdfBox">
+              <small>Preço do produto</small>
+              <strong id="wholesaleReceiptProductPrice">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Frete</small>
+              <strong id="wholesaleReceiptFreight">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Desconto</small>
+              <strong id="wholesaleReceiptDiscount">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <div class="wholesaleReceiptGrid">
+            <div class="wholesaleReceiptInfo">
+              <small>Produto</small>
+              <strong id="wholesaleReceiptProduct" class="wholesaleProductList receipt">-</strong>
+            </div>
+            <div class="wholesaleReceiptInfo">
+              <small>Tipo de venda</small>
+              <strong id="wholesaleReceiptSaleType">-</strong>
+            </div>
+            <div class="wholesaleReceiptInfo">
+              <small>Cupom usado</small>
+              <strong id="wholesaleReceiptCoupon">-</strong>
+            </div>
+            <div class="wholesaleReceiptInfo">
+              <small>Forma de pagamento</small>
+              <strong id="wholesaleReceiptPayment">-</strong>
+            </div>
+            <div class="wholesaleReceiptInfo">
+              <small>Subtotal antes do desconto</small>
+              <strong id="wholesaleReceiptSubtotal">R$ 0,00</strong>
+            </div>
+            <div class="wholesaleReceiptInfo">
+              <small>Percentual do desconto</small>
+              <strong id="wholesaleReceiptDiscountPercent">0%</strong>
+            </div>
+            <div class="wholesaleReceiptInfo obs">
+              <small>Observações</small>
+              <strong id="wholesaleReceiptNotes">Nenhuma observação adicionada.</strong>
+            </div>
+          </div>
+
+          <div class="wholesaleReceiptTotal">
+            <small>Total final do pedido</small>
+            <strong id="wholesaleReceiptTotal">R$ 0,00</strong>
+          </div>
+
+          <p id="wholesaleReceiptFooter" class="pdfFooterClean">Comprovante gerado automaticamente pelo painel.</p>
+        </div>
+      </div>
     </section>
 
     <section id="influencers" class="view">
@@ -2279,7 +2867,7 @@ canvas{
 </main>
 </div>
 <script>
-const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827"}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": []};
+const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827"}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": [], "wholesaleRetail": []};
 const KEY = "painel_influencers_backup_estavel_v60";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
@@ -2408,6 +2996,7 @@ registerPwa();
 
 window.currentPage=window.currentPage||"dashboard";
 var currentPage=window.currentPage;
+var currentWholesaleOrderId=null;
 window.addEventListener("error",e=>{
   const el=document.getElementById("cloudStatus");
   const dbg=document.getElementById("cloudDebug");
@@ -2533,7 +3122,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V65 MENU DESKTOP FIXO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V70 PRODUTOS MULTILINHA carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -2634,6 +3223,7 @@ async function startApp(){
   resetLaunchForm();
   resetInfForm();
   resetProductForm();
+  resetWholesaleRetailForm();
   render();
   initMobileEnhancements();
 
@@ -2646,6 +3236,7 @@ async function startApp(){
     resetLaunchForm();
     resetInfForm();
     resetProductForm();
+    resetWholesaleRetailForm();
     render();
   }
 
@@ -2669,6 +3260,7 @@ function normalize(){
     state.influencers=state.influencers||[];
   state.launches=state.launches||[];
   state.redemptions=state.redemptions||[];
+  state.wholesaleRetail=state.wholesaleRetail||[];
   state.cashPayments=state.cashPayments||[];
 
   state.launches.forEach(l=>{
@@ -2685,6 +3277,29 @@ function normalize(){
       l.paidAt="";
       l.paidMonth="";
     }
+  });
+
+
+  state.wholesaleRetail.forEach(w=>{
+    w.id=w.id||uid();
+    w.date=w.date||today();
+    w.month=w.month||(w.date||today()).slice(0,7);
+    w.clientName=w.clientName||"";
+    w.saleType=w.saleType||"Varejo";
+    if(!["Varejo","Atacado"].includes(w.saleType))w.saleType="Varejo";
+    w.product=w.product||"";
+    w.productPrice=Number(w.productPrice||0);
+    w.freightCost=Number(w.freightCost||0);
+    w.couponName=w.couponName||"";
+    w.discountPercent=Number(w.discountPercent||0);
+    const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.discountPercent);
+    w.subtotal=Number(w.subtotal||calc.subtotal);
+    w.discountValue=Number(w.discountValue||calc.discountValue);
+    w.total=Number(w.total||calc.total);
+    w.paymentMethod=w.paymentMethod||"PIX";
+    w.installments=Number(w.installments||1);
+    if(w.paymentMethod!=="Cartão de Crédito")w.installments=1;
+    w.notes=w.notes||"";
   });
 
   state.cashPayments.forEach(p=>{
@@ -3157,6 +3772,286 @@ function renderInfluencers(){
 }
 function editInf(id){const i=infById(id);if(!i)return;showPage("influencers");$("infId").value=i.id;$("infName").value=i.name;$("infCoupon").value=i.coupon;$("infProductRate").value=i.productRate;$("infCashRate").value=i.cashRate;$("infInstagram").value=i.instagram||"";$("infWhatsapp").value=i.whatsapp||"";}
 function deleteInf(id){if(confirm("Excluir influencer? Os lançamentos antigos continuarão no histórico.")){state.influencers=state.influencers.filter(i=>i.id!==id);save();render();}}
+
+function calcWholesaleRetailValues(productPrice,freightCost,discountPercent){
+  const price=Number(productPrice||0);
+  const freight=Number(freightCost||0);
+  const pct=Math.min(100,Math.max(0,Number(discountPercent||0)));
+  const subtotal=price+freight;
+  const discountValue=subtotal*(pct/100);
+  const total=Math.max(0,subtotal-discountValue);
+  return {price,freight,pct,subtotal,discountValue,total};
+}
+
+function calcWholesaleRetail(){
+  const price=Number($("wholesaleProductPrice")?.value||0);
+  const freight=Number($("wholesaleFreightCost")?.value||0);
+  const pct=Number($("wholesaleDiscountPercent")?.value||0);
+  const c=calcWholesaleRetailValues(price,freight,pct);
+
+  if($("wholesaleTotal"))$("wholesaleTotal").value=money(c.total);
+  if($("wholesaleTotalPreview"))$("wholesaleTotalPreview").textContent=money(c.total);
+
+  return c;
+}
+
+
+function toggleWholesaleInstallments(){
+  const method=$("wholesalePaymentMethod")?.value||"PIX";
+  const wrap=$("wholesaleInstallmentsWrap");
+  if(wrap)wrap.classList.toggle("isHidden",method!=="Cartão de Crédito");
+  if(method!=="Cartão de Crédito"&&$("wholesaleInstallments"))$("wholesaleInstallments").value="1";
+}
+
+function paymentLabel(method,installments){
+  method=method||"PIX";
+  installments=Number(installments||1);
+  if(method==="Cartão de Crédito")return `Cartão de Crédito em ${installments}x`;
+  return method;
+}
+
+function paymentPillClass(method){
+  if(method==="PIX")return "pix";
+  if(method==="Cartão de Crédito")return "card";
+  if(method==="Boleto")return "boleto";
+  return "";
+}
+
+
+
+
+function cleanProductLines(value){
+  return String(value||"")
+    .split(/\r?\n/)
+    .map(x=>x.trim())
+    .filter(Boolean)
+    .join("\n");
+}
+
+
+function saleTypePillClass(type){
+  return type==="Atacado" ? "atacado" : "varejo";
+}
+
+
+function resetWholesaleRetailForm(){
+  if(!$("wholesaleForm"))return;
+  $("wholesaleForm").reset();
+  $("wholesaleId").value="";
+  $("wholesaleDate").value=today();
+  if($("wholesaleSaleType"))$("wholesaleSaleType").value="Varejo";
+  if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value="PIX";
+  if($("wholesaleInstallments"))$("wholesaleInstallments").value="1";
+  toggleWholesaleInstallments();
+  calcWholesaleRetail();
+}
+
+function selectedWholesaleDate(){
+  const el=$("wholesaleFilterDate");
+  return el?.value||today();
+}
+
+function wholesaleRetailRows(){
+  const date=$("wholesaleFilterDate")?.value||"";
+  const type=$("wholesaleFilterType")?.value||"";
+  let rows=(state.wholesaleRetail||[]).slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+  if(date)rows=rows.filter(w=>w.date===date);
+  if(type)rows=rows.filter(w=>(w.saleType||"Varejo")===type);
+  return rows;
+}
+
+function renderWholesaleRetail(){
+  if(!$("wholesaleRows"))return;
+
+  calcWholesaleRetail();
+
+  const selectedDate=selectedWholesaleDate();
+  const rows=wholesaleRetailRows();
+
+  const selectedType=$("wholesaleFilterType")?.value||"";
+  let dayRows=(state.wholesaleRetail||[]).filter(w=>w.date===selectedDate);
+  if(selectedType)dayRows=dayRows.filter(w=>(w.saleType||"Varejo")===selectedType);
+  const dayTotal=dayRows.reduce((a,w)=>a+Number(w.total||0),0);
+  const dayFreight=dayRows.reduce((a,w)=>a+Number(w.freightCost||0),0);
+  const dayDiscount=dayRows.reduce((a,w)=>a+Number(w.discountValue||0),0);
+
+  $("wholesaleDayTotal").textContent=money(dayTotal);
+  $("wholesaleDayCount").textContent=dayRows.length;
+  $("wholesaleDayFreight").textContent=money(dayFreight);
+  $("wholesaleDayDiscount").textContent=money(dayDiscount);
+
+  $("wholesaleRows").innerHTML=rows.length?rows.map(w=>`<tr class="wholesaleOrderRow" onclick="openWholesaleRetailOrder('${w.id}')" title="Clique para abrir o comprovante do pedido">
+    <td>${dateBR(w.date)}</td>
+    <td><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
+    <td><span class="mobileKeyText mobileInfluencerName">${esc(w.clientName||"-")}</span></td>
+    <td><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
+    <td><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
+    <td><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
+    <td>${w.couponName?`<span class="wholesaleCouponPill">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
+    <td><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span></td>
+    <td><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
+    <td><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabel(w.paymentMethod,w.installments))}</span></td>
+    <td>${w.notes?`<div class="wholesaleNoteMini">${esc(w.notes)}</div>`:"<span class='wholesaleNoNote'>Sem observação</span>"}</td>
+    <td>
+      <button class="small primary" type="button" onclick="event.stopPropagation();openWholesaleRetailOrder('${w.id}')">Abrir</button>
+      <button class="small secondary" type="button" onclick="event.stopPropagation();editWholesaleRetail('${w.id}')">Editar</button>
+      <button class="small danger" type="button" onclick="event.stopPropagation();deleteWholesaleRetail('${w.id}')">Excluir</button>
+    </td>
+  </tr>`).join(""):`<tr><td colspan="12">Nenhum lançamento de Atacado e Varejo nesta data.</td></tr>`;
+}
+
+
+function wholesaleRetailById(id){
+  return (state.wholesaleRetail||[]).find(w=>w.id===id);
+}
+
+function openWholesaleRetailOrder(id){
+  currentWholesaleOrderId=id;
+  showPage("wholesaleOrder");
+  if($("pageTitle"))$("pageTitle").textContent="Comprovante - Atacado e Varejo";
+  renderWholesaleOrder();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function backToWholesaleRetail(){
+  showPage("wholesaleRetail");
+}
+
+function editCurrentWholesaleRetail(){
+  if(!currentWholesaleOrderId){
+    alert("Nenhum pedido selecionado.");
+    return;
+  }
+  editWholesaleRetail(currentWholesaleOrderId);
+}
+
+function renderWholesaleOrder(){
+  if(!$("wholesaleReceiptClient"))return;
+
+  const w=wholesaleRetailById(currentWholesaleOrderId);
+  const pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
+
+  if($("wholesaleReceiptLogo")){
+    $("wholesaleReceiptLogo").style.display=pdfLogo?"block":"none";
+    if(pdfLogo)$("wholesaleReceiptLogo").src=pdfLogo;
+  }
+
+  applyPdfWatermark("wholesaleReceiptWatermark");
+
+  if(!w){
+    $("wholesaleReceiptClient").textContent="Selecione um pedido";
+    $("wholesaleReceiptDate").textContent="Data: -";
+    $("wholesaleReceiptCode").textContent="Pedido: -";
+    $("wholesaleReceiptProductPrice").textContent=money(0);
+    $("wholesaleReceiptFreight").textContent=money(0);
+    $("wholesaleReceiptDiscount").textContent=money(0);
+    $("wholesaleReceiptProduct").textContent="-";
+    if($("wholesaleReceiptSaleType"))$("wholesaleReceiptSaleType").textContent="-";
+    $("wholesaleReceiptCoupon").textContent="-";
+    if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent="-";
+    $("wholesaleReceiptSubtotal").textContent=money(0);
+    $("wholesaleReceiptDiscountPercent").textContent="0%";
+    $("wholesaleReceiptNotes").textContent="Nenhuma observação adicionada.";
+    $("wholesaleReceiptTotal").textContent=money(0);
+    return;
+  }
+
+  $("wholesaleReceiptClient").textContent=w.clientName||"Cliente não informado";
+  $("wholesaleReceiptDate").textContent=`Data: ${dateBR(w.date)}`;
+  $("wholesaleReceiptCode").textContent=`Pedido: ${String(w.id||"").slice(0,8).toUpperCase()}`;
+  $("wholesaleReceiptProductPrice").textContent=money(w.productPrice);
+  $("wholesaleReceiptFreight").textContent=money(w.freightCost);
+  $("wholesaleReceiptDiscount").textContent=`-${money(w.discountValue)}`;
+  $("wholesaleReceiptProduct").textContent=w.product||"-";
+  if($("wholesaleReceiptSaleType"))$("wholesaleReceiptSaleType").textContent=w.saleType||"Varejo";
+  $("wholesaleReceiptCoupon").textContent=w.couponName?`${w.couponName} • ${Number(w.discountPercent||0)}%`:"Sem cupom";
+  if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent=paymentLabel(w.paymentMethod,w.installments);
+  $("wholesaleReceiptSubtotal").textContent=money(w.subtotal);
+  $("wholesaleReceiptDiscountPercent").textContent=`${Number(w.discountPercent||0)}%`;
+  $("wholesaleReceiptNotes").textContent=(w.notes||"").trim()||"Nenhuma observação adicionada.";
+  $("wholesaleReceiptTotal").textContent=money(w.total);
+  $("wholesaleReceiptFooter").textContent=state.settings.pdfFooter||"Comprovante gerado automaticamente pelo painel.";
+}
+
+function printWholesaleRetailOrder(){
+  const w=wholesaleRetailById(currentWholesaleOrderId);
+  if(!w){
+    alert("Abra um pedido antes de exportar o PDF.");
+    return;
+  }
+
+  renderWholesaleOrder();
+
+  const oldTitle=document.title;
+  document.title=`Comprovante Atacado e Varejo - ${w.clientName||"pedido"}`;
+
+  document.body.classList.remove("print-report","print-accumulation");
+  document.body.classList.add("print-wholesale");
+  window.print();
+
+  setTimeout(()=>{
+    document.body.classList.remove("print-wholesale");
+    document.title=oldTitle;
+  },700);
+}
+
+
+function editWholesaleRetail(id){
+  const w=(state.wholesaleRetail||[]).find(x=>x.id===id);
+  if(!w)return;
+  showPage("wholesaleRetail");
+  $("wholesaleId").value=w.id;
+  $("wholesaleDate").value=w.date||today();
+  if($("wholesaleSaleType"))$("wholesaleSaleType").value=w.saleType||"Varejo";
+  $("wholesaleClient").value=w.clientName||"";
+  $("wholesaleProduct").value=w.product||"";
+  $("wholesaleProductPrice").value=Number(w.productPrice||0);
+  $("wholesaleFreightCost").value=Number(w.freightCost||0);
+  $("wholesaleCouponName").value=w.couponName||"";
+  $("wholesaleDiscountPercent").value=Number(w.discountPercent||0);
+  if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value=w.paymentMethod||"PIX";
+  if($("wholesaleInstallments"))$("wholesaleInstallments").value=Number(w.installments||1);
+  toggleWholesaleInstallments();
+  $("wholesaleNotes").value=w.notes||"";
+  calcWholesaleRetail();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function deleteWholesaleRetail(id){
+  if(confirm("Excluir este lançamento de atacado e varejo?")){
+    state.wholesaleRetail=(state.wholesaleRetail||[]).filter(w=>w.id!==id);
+    if(currentWholesaleOrderId===id)currentWholesaleOrderId=null;
+    save();
+    render();
+  }
+}
+
+function clearWholesaleDateFilter(){
+  if($("wholesaleFilterDate"))$("wholesaleFilterDate").value="";
+  if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
+  renderWholesaleRetail();
+}
+
+function exportWholesaleRetailCSV(){
+  const rows=wholesaleRetailRows();
+  rowsCSV([["Data","Tipo","Cliente","Produto","Preço produto","Frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Observação"],...rows.map(w=>[
+    dateBR(w.date),
+    w.saleType||"Varejo",
+    w.clientName||"",
+    String(w.product||"").replace(/\r?\n/g," | "),
+    w.productPrice||0,
+    w.freightCost||0,
+    w.couponName||"",
+    w.discountPercent||0,
+    w.discountValue||0,
+    w.total||0,
+    w.paymentMethod||"PIX",
+    w.paymentMethod==="Cartão de Crédito" ? Number(w.installments||1) : "",
+    w.notes||""
+  ])],"atacado-e-varejo.csv");
+}
+
+
 function productUsed(infId){return state.redemptions.filter(r=>r.influencerId===infId&&r.status!=="Cancelado").reduce((a,r)=>a+Number(r.used||0),0);}
 function productAvailable(infId){const earned=accumulatedRows().filter(l=>l.influencerId===infId).reduce((a,l)=>a+Number(l.productCommission||0),0);return Math.max(0,earned-productUsed(infId));}
 function renderProductCalc(){const infId=$("productInfluencer").value;const available=productAvailable(infId);$("productAvailable").value=money(available);const value=Number($("productValue").value||0);if(!$("productId").value){$("productUsed").value=Math.min(available,value||available).toFixed(2)}const used=Number($("productUsed").value||0);$("productDifference").value=money(Math.max(0,value-used));}
@@ -3396,7 +4291,7 @@ function showPage(id){
   closeMobileMenu();
   render();
 }
-function render(){normalize();applyTheme();populate();currentPage=window.currentPage||currentPage||"dashboard";setPageClass(currentPage);syncMobileBottomNav(currentPage);syncMonthInputs();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
+function render(){normalize();applyTheme();populate();currentPage=window.currentPage||currentPage||"dashboard";setPageClass(currentPage);syncMobileBottomNav(currentPage);syncMonthInputs();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderWholesaleRetail();renderWholesaleOrder();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
 function exportAccumulationsCSV(){rowsCSV([["Influencer","Cupom","Produto acumulado","Dinheiro acumulado"],...accumulationByInfluencer().map(r=>[r.i.name,r.i.coupon,r.product,r.cash])],"acumulos.csv");}
@@ -3471,6 +4366,72 @@ $("launchForm").addEventListener("submit",e=>{
   showPage("launches");
 });
 $("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId").value||uid();const item={id,name:$("infName").value.trim(),coupon:$("infCoupon").value.trim(),productRate:Number($("infProductRate").value||0),cashRate:Number($("infCashRate").value||0),instagram:$("infInstagram").value,whatsapp:$("infWhatsapp").value,pix:(infById(id)||{}).pix||""};if(!item.name||!item.coupon){alert("Informe nome e cupom.");return}const idx=state.influencers.findIndex(i=>i.id===id);if(idx>=0)state.influencers[idx]=item;else state.influencers.push(item);save();resetInfForm();render();});
+
+["wholesaleProductPrice","wholesaleFreightCost","wholesaleDiscountPercent"].forEach(id=>{
+  const el=$(id);
+  if(el)el.addEventListener("input",calcWholesaleRetail);
+});
+
+if($("wholesalePaymentMethod")){
+  $("wholesalePaymentMethod").addEventListener("change",toggleWholesaleInstallments);
+}
+
+if($("wholesaleForm")){
+  $("wholesaleForm").addEventListener("submit",e=>{
+    e.preventDefault();
+
+    const c=calcWholesaleRetail();
+    const id=$("wholesaleId").value||uid();
+    const date=$("wholesaleDate").value||today();
+
+    const item={
+      id,
+      date,
+      month:date.slice(0,7),
+      clientName:($("wholesaleClient").value||"").trim(),
+      saleType:$("wholesaleSaleType")?.value||"Varejo",
+      product:cleanProductLines($("wholesaleProduct").value),
+      productPrice:c.price,
+      freightCost:c.freight,
+      couponName:($("wholesaleCouponName").value||"").trim(),
+      discountPercent:c.pct,
+      subtotal:c.subtotal,
+      discountValue:c.discountValue,
+      total:c.total,
+      paymentMethod:$("wholesalePaymentMethod")?.value||"PIX",
+      installments:Number($("wholesaleInstallments")?.value||1),
+      notes:$("wholesaleNotes").value||""
+    };
+
+    if(item.paymentMethod!=="Cartão de Crédito")item.installments=1;
+
+    if(!item.clientName){
+      alert("Informe o nome do cliente.");
+      return;
+    }
+    if(!item.product){
+      alert("Informe o produto.");
+      return;
+    }
+    if(item.productPrice<=0){
+      alert("Informe o preço do produto.");
+      return;
+    }
+
+    const idx=(state.wholesaleRetail||[]).findIndex(w=>w.id===id);
+    if(idx>=0)state.wholesaleRetail[idx]=item;
+    else state.wholesaleRetail.push(item);
+
+    if($("wholesaleFilterDate"))$("wholesaleFilterDate").value=date;
+
+    save();
+    resetWholesaleRetailForm();
+    render();
+    showPage("wholesaleRetail");
+  });
+}
+
+
 $("productInfluencer").addEventListener("change",renderProductCalc);$("productValue").addEventListener("input",renderProductCalc);$("productUsed").addEventListener("input",renderProductCalc);
 $("productForm").addEventListener("submit",e=>{e.preventDefault();const id=$("productId").value||uid();const infId=$("productInfluencer").value;if(!infId){alert("Selecione um influencer.");return}const value=Number($("productValue").value||0),used=Number($("productUsed").value||0);const item={id,date:$("productDate").value||today(),influencerId:infId,name:$("productName").value||"Produto",value,used,difference:Math.max(0,value-used),status:$("productStatus").value,notes:$("productNotes").value||""};const idx=state.redemptions.findIndex(r=>r.id===id);if(idx>=0)state.redemptions[idx]=item;else state.redemptions.push(item);save();resetProductForm();render();});
 
