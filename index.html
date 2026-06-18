@@ -5738,6 +5738,366 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V91 ATACADO E VAREJO ORGANIZADO ===== */
+#wholesaleRetail .panel:first-of-type{
+  border:1px solid #e2e8f0;
+  background:linear-gradient(180deg,#ffffff,#f8fafc);
+}
+
+.wholesaleFormV91{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:16px!important;
+  margin-top:16px!important;
+}
+
+.wholesaleFormV91 > *{
+  min-width:0!important;
+}
+
+.wholesaleFormSection{
+  display:grid;
+  gap:13px;
+  padding:16px;
+  border:1px solid #e2e8f0;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 12px 34px rgba(15,23,42,.045);
+}
+
+.wholesaleFormSection.sectionIdentity{
+  background:linear-gradient(135deg,#eff6ff,#ffffff 62%);
+  border-color:#bfdbfe;
+}
+
+.wholesaleFormSection.sectionPayment{
+  background:linear-gradient(135deg,#f8fafc,#ffffff 62%);
+}
+
+.sectionTitle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding-bottom:10px;
+  border-bottom:1px solid #edf2f7;
+}
+
+.sectionTitle > span{
+  width:32px;
+  height:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  border-radius:12px;
+  background:#0f172a;
+  color:#fff;
+  font-size:13px;
+  font-weight:1000;
+  box-shadow:0 8px 18px rgba(15,23,42,.16);
+}
+
+.sectionTitle strong{
+  display:block;
+  color:#0f172a;
+  font-size:15px;
+  line-height:1.15;
+}
+
+.sectionTitle small{
+  display:block;
+  color:#64748b;
+  font-size:12px;
+  margin-top:2px;
+  line-height:1.25;
+  font-weight:750;
+}
+
+.sectionGrid{
+  display:grid;
+  gap:12px;
+  align-items:end;
+}
+
+/* Etapa 1: mais rápida para preencher */
+.identityGrid{
+  grid-template-columns:1.05fr 1.7fr .9fr .9fr;
+}
+
+.identityGrid .clientFieldFeatured{
+  padding:12px!important;
+  border-radius:18px!important;
+  background:#fff!important;
+  box-shadow:0 10px 24px rgba(37,99,235,.08)!important;
+}
+
+.identityGrid .clientFieldFeatured input{
+  font-size:16px!important;
+  min-height:46px!important;
+}
+
+/* Etapa 2: produto grande à esquerda, valores à direita */
+.productsGrid{
+  grid-template-columns:minmax(0,1.45fr) minmax(320px,.9fr);
+  align-items:stretch;
+}
+
+.productsGrid .fieldProducts{
+  height:100%;
+  display:flex!important;
+  flex-direction:column!important;
+}
+
+.productsGrid .fieldProducts textarea{
+  flex:1!important;
+  min-height:188px!important;
+}
+
+.valueSideGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  align-content:start;
+}
+
+.valueSideGrid label{
+  min-width:0;
+}
+
+.valueSideGrid input{
+  min-height:44px!important;
+}
+
+/* Etapa 3: pagamento e resultado visualmente separados */
+.paymentGrid{
+  grid-template-columns:minmax(260px,1fr) minmax(300px,1.1fr) minmax(180px,.7fr);
+}
+
+.paymentGrid .paymentInlineGroup{
+  display:grid!important;
+  grid-template-columns:1fr 130px!important;
+  gap:10px!important;
+  align-items:end!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+}
+
+.resultCards{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.resultCards .wholesaleCalcBox,
+.resultCards .realReceivedBox{
+  min-height:76px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  border-radius:18px;
+}
+
+.compactTotal{
+  align-self:stretch;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-end!important;
+}
+
+.compactTotal input{
+  min-height:46px!important;
+  font-weight:1000!important;
+  text-align:center!important;
+}
+
+.paymentGrid .fieldTaxFormula,
+.paymentGrid .fieldFormula{
+  grid-column:1/-1!important;
+}
+
+/* Etapa 4: observação e botões lado a lado */
+.finishGrid{
+  grid-template-columns:minmax(0,1fr) 320px;
+  align-items:end;
+}
+
+.finishGrid .fieldNotes input{
+  min-height:44px!important;
+}
+
+.finishGrid .fieldActions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+  align-items:stretch!important;
+  justify-content:stretch!important;
+}
+
+.finishGrid .fieldActions button{
+  width:100%!important;
+  min-height:44px!important;
+}
+
+/* Limpa conflitos antigos do formulário */
+.wholesaleFormV91 .fieldDate,
+.wholesaleFormV91 .fieldClient,
+.wholesaleFormV91 .fieldType,
+.wholesaleFormV91 .fieldOrigin,
+.wholesaleFormV91 .fieldProducts,
+.wholesaleFormV91 .fieldPrice,
+.wholesaleFormV91 .fieldFreight,
+.wholesaleFormV91 .fieldCoupon,
+.wholesaleFormV91 .fieldDiscount,
+.wholesaleFormV91 .fieldPayment,
+.wholesaleFormV91 .fieldCalc,
+.wholesaleFormV91 .fieldTotal,
+.wholesaleFormV91 .fieldRealReceived,
+.wholesaleFormV91 .fieldTaxFormula,
+.wholesaleFormV91 .fieldFormula,
+.wholesaleFormV91 .fieldNotes,
+.wholesaleFormV91 .fieldActions{
+  grid-column:auto!important;
+}
+
+/* Desktop médio / notebook */
+@media(max-width:1180px){
+  .identityGrid{
+    grid-template-columns:1fr 1.4fr 1fr 1fr;
+  }
+
+  .productsGrid{
+    grid-template-columns:1fr;
+  }
+
+  .valueSideGrid{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+
+  .productsGrid .fieldProducts textarea{
+    min-height:150px!important;
+  }
+
+  .paymentGrid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .paymentGrid .compactTotal{
+    grid-column:1/-1!important;
+  }
+
+  .finishGrid{
+    grid-template-columns:1fr;
+  }
+}
+
+/* Tablet e mobile geral */
+@media(max-width:820px){
+  #wholesaleRetail .panel:first-of-type{
+    padding:14px!important;
+  }
+
+  .wholesaleFormV91{
+    gap:12px!important;
+  }
+
+  .wholesaleFormSection{
+    padding:13px;
+    border-radius:18px;
+    gap:11px;
+  }
+
+  .sectionTitle{
+    align-items:flex-start;
+  }
+
+  .sectionTitle > span{
+    width:29px;
+    height:29px;
+    border-radius:10px;
+  }
+
+  .identityGrid,
+  .productsGrid,
+  .paymentGrid,
+  .finishGrid,
+  .valueSideGrid,
+  .resultCards{
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+
+  .paymentGrid .paymentInlineGroup{
+    grid-template-columns:1fr!important;
+  }
+
+  .paymentInstallmentsWrap.isHidden{
+    display:none!important;
+  }
+
+  .productsGrid .fieldProducts textarea{
+    min-height:135px!important;
+  }
+
+  .resultCards .wholesaleCalcBox,
+  .resultCards .realReceivedBox{
+    min-height:68px;
+  }
+
+  .finishGrid .fieldActions{
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleFormula{
+    font-size:12px!important;
+    line-height:1.35!important;
+  }
+}
+
+/* Android/iPhone pequenos: campos rápidos e confortáveis */
+@media(max-width:520px){
+  .wholesaleFormSection{
+    padding:12px;
+    border-radius:16px;
+  }
+
+  .sectionTitle strong{
+    font-size:14px;
+  }
+
+  .sectionTitle small{
+    font-size:11.5px;
+  }
+
+  .wholesaleFormV91 label,
+  .wholesaleFormV91 .wholesaleTypeBox label,
+  .wholesaleFormV91 .originBox label{
+    font-size:12px!important;
+    font-weight:900!important;
+  }
+
+  .wholesaleFormV91 input,
+  .wholesaleFormV91 select,
+  .wholesaleFormV91 textarea{
+    min-height:46px!important;
+    font-size:16px!important;
+  }
+
+  .wholesaleFormV91 textarea{
+    min-height:128px!important;
+  }
+
+  .productHint{
+    font-size:11px!important;
+  }
+
+  .taxFormulaBox{
+    font-size:12px!important;
+    line-height:1.35!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -5818,7 +6178,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V90 PDF MOBILE ANDROID</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V91 ATACADO ORGANIZADO</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -5862,114 +6222,166 @@ body:not(.authLocked) .loginScreen{
           </div>
         </div>
 
-        <form id="wholesaleForm" class="form wholesaleFormPro">
+                <form id="wholesaleForm" class="form wholesaleFormPro wholesaleFormV91">
           <input type="hidden" id="wholesaleId">
 
-          <label class="fieldDate">Data / calendário
-            <input type="date" id="wholesaleDate" required>
-          </label>
+          <div class="wholesaleFormSection sectionIdentity">
+            <div class="sectionTitle">
+              <span>1</span>
+              <div>
+                <strong>Identificação da venda</strong>
+                <small>Cliente, data, tipo e origem do pedido.</small>
+              </div>
+            </div>
 
-          <label class="fieldClient clientFieldFeatured">Nome do cliente
-            <input id="wholesaleClient" placeholder="Ex.: Matheus Silva" required>
-          </label>
+            <div class="sectionGrid identityGrid">
+              <label class="fieldDate">Data / calendário
+                <input type="date" id="wholesaleDate" required>
+              </label>
 
-          <div class="wholesaleTypeBox fieldType">
-            <label>Tipo de venda
-              <select id="wholesaleSaleType" required>
-                <option value="Varejo">Varejo</option>
-                <option value="Atacado">Atacado</option>
-              </select>
-            </label>
+              <label class="fieldClient clientFieldFeatured">Nome do cliente
+                <input id="wholesaleClient" placeholder="Ex.: Matheus Silva" required>
+              </label>
+
+              <div class="wholesaleTypeBox fieldType">
+                <label>Tipo de venda
+                  <select id="wholesaleSaleType" required>
+                    <option value="Varejo">Varejo</option>
+                    <option value="Atacado">Atacado</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="originBox fieldOrigin">
+                <label>Origem
+                  <select id="wholesaleOrigin" required>
+                    <option value="Site">Site</option>
+                    <option value="Loja Física">Loja Física</option>
+                  </select>
+                </label>
+              </div>
+            </div>
           </div>
 
-          <div class="originBox fieldOrigin">
-            <label>Origem
-              <select id="wholesaleOrigin" required>
-                <option value="Site">Site</option>
-                <option value="Loja Física">Loja Física</option>
-              </select>
-            </label>
+          <div class="wholesaleFormSection sectionProducts">
+            <div class="sectionTitle">
+              <span>2</span>
+              <div>
+                <strong>Produtos e valores</strong>
+                <small>Informe os produtos, preço, frete, cupom e desconto.</small>
+              </div>
+            </div>
+
+            <div class="sectionGrid productsGrid">
+              <label class="fieldProducts">Produto
+                <textarea id="wholesaleProduct" class="productMultiLine" rows="5" placeholder="Ex.: Camiseta Oversized&#10;Boné Wisent&#10;Regata Premium" required></textarea>
+                <span class="productHint">Adicione 1 produto por linha. Aperte Enter para ir para a próxima linha.</span>
+              </label>
+
+              <div class="valueSideGrid">
+                <label class="fieldPrice">Preço do produto
+                  <input type="number" id="wholesaleProductPrice" step="0.01" min="0" placeholder="0,00" required>
+                </label>
+
+                <label class="fieldFreight">Custo do frete
+                  <input type="number" id="wholesaleFreightCost" step="0.01" min="0" placeholder="0,00">
+                </label>
+
+                <label class="fieldCoupon">Cupom usado
+                  <input id="wholesaleCouponName" placeholder="Ex.:cupom10">
+                </label>
+
+                <label class="fieldDiscount">Desconto do cupom (%)
+                  <input type="number" id="wholesaleDiscountPercent" step="0.01" min="0" max="100" placeholder="0">
+                </label>
+              </div>
+            </div>
           </div>
 
-          <label class="two fieldProducts">Produto
-            <textarea id="wholesaleProduct" class="productMultiLine" rows="4" placeholder="Ex.: Camiseta Oversized&#10;Boné Wisent&#10;Regata Premium" required></textarea>
-            <span class="productHint">Adicione 1 produto por linha. Aperte Enter para ir para a próxima linha.</span>
-          </label>
+          <div class="wholesaleFormSection sectionPayment">
+            <div class="sectionTitle">
+              <span>3</span>
+              <div>
+                <strong>Pagamento e conferência</strong>
+                <small>Confira total, taxa aplicada e valor real recebido.</small>
+              </div>
+            </div>
 
-          <label class="fieldPrice">Preço do produto
-            <input type="number" id="wholesaleProductPrice" step="0.01" min="0" placeholder="0,00" required>
-          </label>
+            <div class="sectionGrid paymentGrid">
+              <div class="paymentInlineGroup fieldPayment">
+                <label>Forma de pagamento
+                  <select id="wholesalePaymentMethod">
+                    <option value="PIX">PIX</option>
+                    <option value="Débito">Débito</option>
+                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                    <option value="Boleto">Boleto</option>
+                  </select>
+                </label>
 
-          <label class="fieldFreight">Custo do frete
-            <input type="number" id="wholesaleFreightCost" step="0.01" min="0" placeholder="0,00">
-          </label>
+                <label id="wholesaleInstallmentsWrap" class="paymentInstallmentsWrap isHidden">Parcelas
+                  <select id="wholesaleInstallments">
+                    <option value="1">1x</option>
+                    <option value="2">2x</option>
+                    <option value="3">3x</option>
+                    <option value="4">4x</option>
+                    <option value="5">5x</option>
+                    <option value="6">6x</option>
+                    <option value="7">7x</option>
+                    <option value="8">8x</option>
+                    <option value="9">9x</option>
+                    <option value="10">10x</option>
+                    <option value="11">11x</option>
+                    <option value="12">12x</option>
+                  </select>
+                </label>
+              </div>
 
-          <label class="fieldCoupon">Cupom usado
-            <input id="wholesaleCouponName" placeholder="Ex.:cupom10">
-          </label>
+              <div class="resultCards">
+                <div class="wholesaleCalcBox fieldCalc">
+                  <small>Total automático</small>
+                  <strong id="wholesaleTotalPreview">R$ 0,00</strong>
+                </div>
 
-          <label class="fieldDiscount">Desconto do cupom (%)
-            <input type="number" id="wholesaleDiscountPercent" step="0.01" min="0" max="100" placeholder="0">
-          </label>
+                <div class="realReceivedBox fieldRealReceived">
+                  <small>Valor real recebido</small>
+                  <strong id="wholesaleRealReceivedPreview">R$ 0,00</strong>
+                </div>
+              </div>
 
-          <div class="paymentInlineGroup two fieldPayment">
-            <label>Forma de pagamento
-              <select id="wholesalePaymentMethod">
-                <option value="PIX">PIX</option>
-                <option value="Débito">Débito</option>
-                <option value="Cartão de Crédito">Cartão de Crédito</option>
-                <option value="Boleto">Boleto</option>
-              </select>
-            </label>
+              <label class="fieldTotal compactTotal">Total
+                <input id="wholesaleTotal" readonly>
+              </label>
 
-            <label id="wholesaleInstallmentsWrap" class="paymentInstallmentsWrap isHidden">Parcelas
-              <select id="wholesaleInstallments">
-                <option value="1">1x</option>
-                <option value="2">2x</option>
-                <option value="3">3x</option>
-                <option value="4">4x</option>
-                <option value="5">5x</option>
-                <option value="6">6x</option>
-                <option value="7">7x</option>
-                <option value="8">8x</option>
-                <option value="9">9x</option>
-                <option value="10">10x</option>
-                <option value="11">11x</option>
-                <option value="12">12x</option>
-              </select>
-            </label>
+              <div class="taxFormulaBox fieldTaxFormula" id="wholesaleTaxPreview">
+                <b>Taxa aplicada:</b> R$ 0,00 • 0%
+              </div>
+
+              <div class="wholesaleFormula fieldFormula">
+                <b>Fórmula:</b> total = (preço do produto + frete) - desconto do cupom em %.  
+                O valor atualiza automaticamente enquanto você digita.
+              </div>
+            </div>
           </div>
 
-          <div class="wholesaleCalcBox fieldCalc">
-            <small>Total automático</small>
-            <strong id="wholesaleTotalPreview">R$ 0,00</strong>
-          </div>
+          <div class="wholesaleFormSection sectionNotes">
+            <div class="sectionTitle">
+              <span>4</span>
+              <div>
+                <strong>Finalização</strong>
+                <small>Observação interna e ação do lançamento.</small>
+              </div>
+            </div>
 
-          <label class="two fieldTotal">Total
-            <input id="wholesaleTotal" readonly>
-          </label>
+            <div class="sectionGrid finishGrid">
+              <label class="fieldNotes">Observação
+                <input id="wholesaleNotes" placeholder="Informações internas, forma de contato, detalhes do pedido...">
+              </label>
 
-          <div class="realReceivedBox fieldRealReceived">
-            <small>Valor real recebido</small>
-            <strong id="wholesaleRealReceivedPreview">R$ 0,00</strong>
-          </div>
-
-          <div class="taxFormulaBox fieldTaxFormula" id="wholesaleTaxPreview">
-            <b>Taxa aplicada:</b> R$ 0,00 • 0%
-          </div>
-
-          <div class="wholesaleFormula fieldFormula">
-            <b>Fórmula:</b> total = (preço do produto + frete) - desconto do cupom em %.  
-            O valor atualiza automaticamente enquanto você digita.
-          </div>
-
-          <label class="full fieldNotes">Observação
-            <input id="wholesaleNotes" placeholder="Informações internas, forma de contato, detalhes do pedido...">
-          </label>
-
-          <div class="actions two fieldActions">
-            <button class="primary" type="submit">Salvar lançamento</button>
-            <button class="secondary" type="button" onclick="resetWholesaleRetailForm()">Cancelar</button>
+              <div class="actions fieldActions">
+                <button class="primary" type="submit">Salvar lançamento</button>
+                <button class="secondary" type="button" onclick="resetWholesaleRetailForm()">Cancelar</button>
+              </div>
+            </div>
           </div>
         </form>
       </div>
@@ -7334,7 +7746,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V90 PDF MOBILE ANDROID carregada. Conectando ao Supabase...");
+  updateCloudStatus("V91 ATACADO ORGANIZADO carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
