@@ -6098,6 +6098,115 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V92 PDF LANÇAMENTOS + BACKUP COMPLETO ===== */
+.backupBtn{
+  border-color:#bfdbfe!important;
+  background:#eff6ff!important;
+  color:#1d4ed8!important;
+  font-weight:950!important;
+}
+.backupBtn:hover{
+  background:#dbeafe!important;
+  color:#1e40af!important;
+}
+.backupRestoreBtn{
+  border-color:#c7d2fe!important;
+  background:#eef2ff!important;
+  color:#3730a3!important;
+  font-weight:950!important;
+}
+.backupRestoreBtn:hover{
+  background:#e0e7ff!important;
+  color:#312e81!important;
+}
+.profileMenuDropdown{
+  width:230px!important;
+}
+.pdfLaunchTable{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:16px;
+  background:#fff;
+}
+.pdfLaunchTable th,
+.pdfLaunchTable td{
+  border:1px solid #e5e7eb;
+  padding:8px 7px;
+  font-size:10.5px;
+  white-space:normal;
+  vertical-align:top;
+  line-height:1.25;
+}
+.pdfLaunchTable th{
+  background:#f8fafc;
+  color:#475569;
+  text-transform:uppercase;
+  font-weight:950;
+  letter-spacing:.03em;
+}
+.pdfLaunchTable .pdfName{
+  font-weight:950;
+  color:#0f172a;
+}
+.pdfLaunchTable .pdfMoney{
+  font-weight:950;
+  color:#0f172a;
+}
+@media(max-width:760px){
+  .profileMenuDropdown{
+    width:100%!important;
+  }
+}
+@media print{
+  body.print-launches-list .side,
+  body.print-launches-list .top,
+  body.print-launches-list .noPrint,
+  body.print-launches-list .menu,
+  body.print-launches-list .view{
+    display:none!important;
+  }
+
+  body.print-launches-list,
+  body.print-launches-list .app,
+  body.print-launches-list .main{
+    display:block!important;
+    background:white!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.print-launches-list #launches{
+    display:block!important;
+  }
+
+  body.print-launches-list #launches > .panel:not(.launchListPrintPanel),
+  body.print-launches-list #launches > .grid{
+    display:none!important;
+  }
+
+  body.print-launches-list .launchListPrintPanel.printOnly{
+    display:block!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.print-launches-list .launchListPdf{
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    padding:20px!important;
+  }
+
+  body.print-launches-list .pdfLaunchTable th,
+  body.print-launches-list .pdfLaunchTable td{
+    font-size:9.5px!important;
+    padding:6px 5px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -6117,6 +6226,7 @@ body:not(.authLocked) .loginScreen{
 <body class="page-dashboard authLocked">
 
 <div id="undoToast" class="undoToast noPrint"></div>
+<input id="backupImportInput" class="noPrint" type="file" accept="application/json,.json" style="display:none" onchange="handleBackupImport(event)">
 <div id="loginScreen" class="loginScreen noPrint">
   <div class="loginCard">
     <div class="loginBrand">
@@ -6178,7 +6288,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V91 ATACADO ORGANIZADO</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V92 BACKUP PDF LANCAMENTOS</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -6186,6 +6296,8 @@ body:not(.authLocked) .loginScreen{
 
       <div class="profileMenuDropdown" id="profileMenuDropdown">
         <button type="button" class="secondary small undoBtn" data-undo-button onclick="undoLastChange();closeProfileMenu();" disabled>Desfazer alteração</button>
+        <button type="button" class="secondary small backupBtn" onclick="exportFullBackup();closeProfileMenu();">Baixar backup</button>
+        <button type="button" class="secondary small backupRestoreBtn" onclick="triggerBackupImport();closeProfileMenu();">Restaurar backup</button>
         <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Resetar testes</button>
         <button type="button" class="secondary small" onclick="logoutUser();closeProfileMenu();">Sair</button>
       </div>
@@ -6200,7 +6312,56 @@ body:not(.authLocked) .loginScreen{
       <div class="panel"><div class="panelHead"><h3>Novo lançamento</h3><span class="muted">Marque Acumular para jogar o saldo na carteira do influencer.</span></div>
         <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="resetLaunchForm()">Cancelar</button></div></form>
       </div>
-      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><label class="dateMini">Mês<input id="launchMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="secondary" onclick="exportLaunchesCSV()">Exportar CSV</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><label class="dateMini">Mês<input id="launchMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="primary" onclick="exportLaunchesPDF()">Exportar para PDF</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
+
+      <div class="panel printPanel launchListPrintPanel printOnly">
+        <div id="launchListPrintArea" class="printArea launchListPdf">
+          <img id="launchListWatermark" class="reportWatermark" style="display:none">
+
+          <div class="pdfCleanHeader">
+            <div>
+              <h1>Relatório de Lançamentos</h1>
+              <p id="launchListPdfSubtitle" class="muted">Lançamentos do período selecionado.</p>
+            </div>
+            <img id="launchListPdfLogo" class="printLogo" style="display:none">
+          </div>
+
+          <div class="pdfThreeCards">
+            <div class="pdfBox">
+              <small>Total vendido</small>
+              <strong id="launchListPdfSold">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Comissão em produtos</small>
+              <strong id="launchListPdfProduct">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Comissão em dinheiro</small>
+              <strong id="launchListPdfCash">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <table class="pdfLaunchTable">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Origem</th>
+                <th>Cupom</th>
+                <th>Influencer</th>
+                <th>Vendido</th>
+                <th>Produto</th>
+                <th>Dinheiro</th>
+                <th>Status</th>
+                <th>Controle</th>
+              </tr>
+            </thead>
+            <tbody id="launchListPdfRows"></tbody>
+          </table>
+
+          <p id="launchListPdfFooter" class="pdfFooterClean">Relatório gerado automaticamente pelo painel.</p>
+        </div>
+      </div>
+
       <div class="panel"><div class="panelHead"><h3>Resumo por influencer no mês</h3><span class="muted">Comissão em produtos e comissão em dinheiro ficam separadas.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
 
     </section>
@@ -7219,6 +7380,118 @@ function handleUndoCommit(currentData){
 }
 
 
+
+function backupFileName(){
+  const d=new Date();
+  const pad=n=>String(n).padStart(2,"0");
+  return `backup-painel-wisent-${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}_${pad(d.getHours())}-${pad(d.getMinutes())}.json`;
+}
+
+function exportFullBackup(){
+  try{
+    const payload={
+      type:"wisent-painel-backup",
+      version:"V92",
+      exportedAt:new Date().toISOString(),
+      exportedBy:currentUser?.name||"Não registrado",
+      state:state
+    };
+
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=backupFileName();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    showUndoToast("Backup completo baixado com sucesso.");
+  }catch(e){
+    console.error("Erro ao gerar backup:",e);
+    alert("Não foi possível gerar o backup.");
+  }
+}
+
+function triggerBackupImport(){
+  const input=$("backupImportInput");
+  if(!input){
+    alert("Campo de upload de backup não encontrado.");
+    return;
+  }
+  input.value="";
+  input.click();
+}
+
+function validateBackupState(importedState){
+  if(!importedState||typeof importedState!=="object")return false;
+  if(!importedState.settings||typeof importedState.settings!=="object")return false;
+  if(!Array.isArray(importedState.influencers))return false;
+  return true;
+}
+
+function handleBackupImport(event){
+  const file=event?.target?.files?.[0];
+  if(!file)return;
+
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const parsed=JSON.parse(String(reader.result||""));
+      const importedState=parsed.state||parsed;
+
+      if(!validateBackupState(importedState)){
+        alert("Este arquivo não parece ser um backup válido do painel.");
+        return;
+      }
+
+      const exportedAt=parsed.exportedAt?dateTimeBR(parsed.exportedAt):"data não informada";
+      const exportedBy=parsed.exportedBy||"não informado";
+
+      const confirmText=[
+        "Restaurar este backup completo?",
+        "",
+        `Arquivo: ${file.name}`,
+        `Gerado em: ${exportedAt}`,
+        `Gerado por: ${exportedBy}`,
+        "",
+        "Isso substituirá os dados atuais do painel pelos dados do backup.",
+        "Antes de restaurar, o sistema salva o estado atual no Desfazer alteração."
+      ].join("\n");
+
+      if(!confirm(confirmText))return;
+
+      const stack=readUndoStack();
+      stack.push({
+        id:uid(),
+        at:new Date().toISOString(),
+        page:currentPage||"dashboard",
+        pageLabel:"Restaurar backup",
+        user:currentUser?.name||"Não registrado",
+        state:JSON.stringify(state)
+      });
+      writeUndoStack(stack);
+
+      state=importedState;
+      normalize();
+      lastUndoSnapshot=JSON.stringify(state);
+      save();
+      render();
+      updateUndoButtons();
+      showUndoToast("Backup restaurado com sucesso. Todas as informações foram carregadas.");
+      alert("Backup restaurado com sucesso.");
+    }catch(e){
+      console.error("Erro ao restaurar backup:",e);
+      alert("Não foi possível restaurar o backup. Verifique se o arquivo é um .json válido.");
+    }finally{
+      if(event?.target)event.target.value="";
+    }
+  };
+  reader.readAsText(file);
+}
+
+
 function resetTestData(){
   const msg1=[
     "Resetar todos os dados de teste?",
@@ -7746,7 +8019,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V91 ATACADO ORGANIZADO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V92 BACKUP PDF LANCAMENTOS carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -8057,6 +8330,7 @@ function renderLaunches(){
   }).join(""):`<tr><td colspan="12">Nenhum lançamento neste mês.</td></tr>`;
   renderLaunchTotals();
   renderPaidPage();
+  renderLaunchesPDF();
 }
 function renderLaunchTotals(){
   const rows=state.influencers.map(i=>{
@@ -9299,6 +9573,80 @@ function showPage(id){
 }
 function render(){normalize();applyTheme();populate();currentPage=window.currentPage||currentPage||"dashboard";setPageClass(currentPage);syncMobileBottomNav(currentPage);syncMonthInputs();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderWholesaleRetail();renderWholesaleOrder();renderAuthUsers();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
+
+function renderLaunchesPDF(){
+  if(!$("launchListPdfRows"))return;
+
+  const rows=filteredLaunches();
+  const s=stats(rows);
+  const pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
+
+  if($("launchListPdfLogo")){
+    $("launchListPdfLogo").style.display=pdfLogo?"block":"none";
+    if(pdfLogo)$("launchListPdfLogo").src=pdfLogo;
+  }
+
+  applyPdfWatermark("launchListWatermark");
+
+  const monthText=monthLabel(selectedMonth());
+  const infFilter=$("filterInfluencer")?.value||"";
+  const originFilter=$("filterOrigin")?.value||"";
+  const inf=infFilter?infById(infFilter):null;
+  const parts=[monthText];
+  if(inf)parts.push(`Influencer: ${inf.name}`);
+  if(originFilter)parts.push(`Origem: ${originFilter}`);
+
+  if($("launchListPdfSubtitle"))$("launchListPdfSubtitle").textContent=parts.join(" • ");
+  if($("launchListPdfSold"))$("launchListPdfSold").textContent=money(s.sold);
+  if($("launchListPdfProduct"))$("launchListPdfProduct").textContent=money(s.product);
+  if($("launchListPdfCash"))$("launchListPdfCash").textContent=money(s.cash);
+  if($("launchListPdfFooter"))$("launchListPdfFooter").textContent=state.settings.pdfFooter||"Relatório gerado automaticamente pelo painel.";
+
+  $("launchListPdfRows").innerHTML=rows.length?rows.map(l=>{
+    const i=infById(l.influencerId)||{};
+    const control=[
+      l.pdfSent?"PDF enviado":"PDF pendente",
+      l.accumulate?"Acumulado":"",
+      l.paid?"Pago":""
+    ].filter(Boolean).join(" • ")||"-";
+
+    return `<tr>
+      <td>${dateBR(l.date)}</td>
+      <td>${esc(l.origin||"-")}</td>
+      <td>${esc(i.coupon||"-")}</td>
+      <td><span class="pdfName">${esc(i.name||"-")}</span></td>
+      <td><span class="pdfMoney">${money(l.sold)}</span></td>
+      <td><span class="pdfMoney">${money(l.productCommission)}</span></td>
+      <td><span class="pdfMoney">${money(l.cashCommission)}</span></td>
+      <td>${esc(l.status||"-")}</td>
+      <td>${esc(control)}</td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="9">Nenhum lançamento encontrado.</td></tr>`;
+}
+
+function exportLaunchesPDF(){
+  const rows=filteredLaunches();
+  if(!rows.length){
+    alert("Não há lançamentos para exportar no mês/filtro atual.");
+    return;
+  }
+
+  renderLaunchesPDF();
+
+  const oldTitle=document.title;
+  document.title="Relatório de Lançamentos";
+
+  document.body.classList.remove("print-report","print-accumulation","print-wholesale","print-wholesale-list");
+  document.body.classList.add("print-launches-list");
+  window.print();
+
+  setTimeout(()=>{
+    document.body.classList.remove("print-launches-list");
+    document.title=oldTitle;
+  },700);
+}
+
+
 function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
 
 function exportAccumulationHistoryCSV(){
