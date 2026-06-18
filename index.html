@@ -5519,6 +5519,225 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V90 PDF ATACADO + MOBILE ANDROID OTIMIZADO ===== */
+.pdfWholesaleTable{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:16px;
+  background:#fff;
+}
+.pdfWholesaleTable th,
+.pdfWholesaleTable td{
+  border:1px solid #e5e7eb;
+  padding:9px 8px;
+  font-size:11px;
+  white-space:normal;
+  vertical-align:top;
+  line-height:1.25;
+}
+.pdfWholesaleTable th{
+  background:#f8fafc;
+  color:#475569;
+  text-transform:uppercase;
+  font-weight:950;
+  letter-spacing:.03em;
+}
+.pdfWholesaleTable .pdfClient{
+  font-weight:950;
+  color:#0f172a;
+}
+.pdfWholesaleTable .pdfProduct{
+  white-space:pre-line;
+  color:#334155;
+  font-weight:800;
+}
+.pdfWholesaleTable .pdfMoney{
+  font-weight:950;
+  color:#0f172a;
+}
+.wholesaleListPdf .pdfThreeCards .pdfBox strong{
+  font-size:20px;
+}
+
+/* Mobile geral / Android: evita estouro lateral e melhora toque */
+@media(max-width:900px){
+  html,body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
+  .app,
+  .main,
+  .view,
+  .panel,
+  .card{
+    max-width:100%;
+  }
+
+  input,
+  select,
+  textarea,
+  button{
+    font-size:16px!important; /* evita zoom no Android/iPhone */
+  }
+
+  button{
+    min-height:42px;
+    touch-action:manipulation;
+  }
+
+  .filters{
+    width:100%;
+    display:grid!important;
+    grid-template-columns:1fr 1fr;
+    gap:8px!important;
+    align-items:stretch!important;
+  }
+
+  .filters label,
+  .filters button,
+  .filters select,
+  .filters input{
+    width:100%!important;
+    min-width:0!important;
+    box-sizing:border-box!important;
+  }
+
+  .tableWrap{
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    -webkit-overflow-scrolling:touch!important;
+    touch-action:pan-x pan-y!important;
+    overscroll-behavior-x:contain!important;
+  }
+
+  #wholesaleRetail .panelHead{
+    align-items:stretch!important;
+  }
+
+  #wholesaleRetail .filters{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  #wholesaleRetail .filters .dateMini{
+    min-width:0!important;
+  }
+}
+
+/* Mobile menor: filtros em uma coluna para não esmagar */
+@media(max-width:520px){
+  .filters,
+  #wholesaleRetail .filters{
+    grid-template-columns:1fr!important;
+  }
+
+  .panel{
+    padding:14px!important;
+    border-radius:16px!important;
+  }
+
+  .card{
+    padding:14px!important;
+    border-radius:16px!important;
+  }
+
+  .card strong{
+    font-size:20px!important;
+  }
+
+  #wholesaleRetail .grid{
+    gap:10px!important;
+  }
+
+  #wholesaleRetail .wholesaleFormPro{
+    gap:10px!important;
+  }
+
+  #wholesaleRetail .wholesaleFormPro label,
+  #wholesaleRetail .wholesaleFormPro .wholesaleTypeBox,
+  #wholesaleRetail .wholesaleFormPro .originBox,
+  #wholesaleRetail .wholesaleFormPro .paymentInlineGroup,
+  #wholesaleRetail .wholesaleFormPro .wholesaleCalcBox,
+  #wholesaleRetail .wholesaleFormPro .realReceivedBox,
+  #wholesaleRetail .wholesaleFormPro .taxFormulaBox,
+  #wholesaleRetail .wholesaleFormPro .wholesaleFormula,
+  #wholesaleRetail .wholesaleFormPro .actions{
+    grid-column:1/-1!important;
+  }
+
+  #wholesaleRetail textarea{
+    min-height:110px!important;
+  }
+
+  #wholesaleRetail .actions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleRetail .actions button{
+    width:100%!important;
+  }
+}
+
+/* Android Chrome: rolagem mais fluida nas tabelas */
+@supports (-webkit-touch-callout:none) or (touch-action:pan-x){
+  .tableWrap{
+    scroll-behavior:smooth;
+  }
+}
+
+@media print{
+  body.print-wholesale-list .side,
+  body.print-wholesale-list .top,
+  body.print-wholesale-list .noPrint,
+  body.print-wholesale-list .menu,
+  body.print-wholesale-list .view{
+    display:none!important;
+  }
+
+  body.print-wholesale-list,
+  body.print-wholesale-list .app,
+  body.print-wholesale-list .main{
+    display:block!important;
+    background:white!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.print-wholesale-list #wholesaleRetail{
+    display:block!important;
+  }
+
+  body.print-wholesale-list #wholesaleRetail > .grid,
+  body.print-wholesale-list #wholesaleRetail > .panel:not(.wholesaleListPrintPanel){
+    display:none!important;
+  }
+
+  body.print-wholesale-list .wholesaleListPrintPanel.printOnly{
+    display:block!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.print-wholesale-list .wholesaleListPdf{
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    padding:20px!important;
+  }
+
+  body.print-wholesale-list .pdfWholesaleTable th,
+  body.print-wholesale-list .pdfWholesaleTable td{
+    font-size:10px!important;
+    padding:7px 6px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -5599,7 +5818,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V89 LOGIN CENTRALIZADO</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V90 PDF MOBILE ANDROID</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -5773,7 +5992,7 @@ body:not(.authLocked) .loginScreen{
               </select>
             </label>
             <button class="secondary" onclick="clearWholesaleDateFilter()">Ver todos</button>
-            <button class="secondary" onclick="exportWholesaleRetailCSV()">Exportar CSV</button>
+            <button class="primary" onclick="exportWholesaleRetailPDF()">Exportar PDF</button>
           </div>
         </div>
 
@@ -5802,6 +6021,54 @@ body:not(.authLocked) .loginScreen{
           </table>
         </div>
       </div>
+
+      <div class="panel printPanel wholesaleListPrintPanel printOnly">
+        <div id="wholesaleListPrintArea" class="printArea wholesaleListPdf">
+          <img id="wholesaleListWatermark" class="reportWatermark" style="display:none">
+
+          <div class="pdfCleanHeader">
+            <div>
+              <h1>Relatório - Atacado e Varejo</h1>
+              <p id="wholesaleListPdfSubtitle" class="muted">Listagem filtrada de lançamentos.</p>
+            </div>
+            <img id="wholesaleListPdfLogo" class="printLogo" style="display:none">
+          </div>
+
+          <div class="pdfThreeCards">
+            <div class="pdfBox">
+              <small>Total vendido</small>
+              <strong id="wholesaleListPdfTotal">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Pedidos</small>
+              <strong id="wholesaleListPdfCount">0</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Valor real recebido</small>
+              <strong id="wholesaleListPdfReceived">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <table class="pdfWholesaleTable">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Cliente</th>
+                <th>Tipo</th>
+                <th>Produto</th>
+                <th>Total</th>
+                <th>Valor real</th>
+                <th>Pagamento</th>
+                <th>Responsável</th>
+              </tr>
+            </thead>
+            <tbody id="wholesaleListPdfRows"></tbody>
+          </table>
+
+          <p id="wholesaleListPdfFooter" class="pdfFooterClean">Relatório gerado automaticamente pelo painel.</p>
+        </div>
+      </div>
+
     </section>
 
 
@@ -7067,7 +7334,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V89 LOGIN CENTRALIZADO carregada. Conectando ao Supabase...");
+  updateCloudStatus("V90 PDF MOBILE ANDROID carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -8083,8 +8350,9 @@ function renderWholesaleRetail(){
       <button class="small danger" type="button" onclick="event.stopPropagation();deleteWholesaleRetail('${w.id}')">Excluir</button>
     </td>
   </tr>`).join(""):`<tr><td colspan="15">Nenhum lançamento de Atacado e Varejo nesta data.</td></tr>`;
-}
 
+  renderWholesaleRetailPDF();
+}
 
 function wholesaleRetailById(id){
   return (state.wholesaleRetail||[]).find(w=>w.id===id);
@@ -8229,6 +8497,72 @@ function clearWholesaleDateFilter(){
   if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
   renderWholesaleRetail();
 }
+
+
+function renderWholesaleRetailPDF(){
+  if(!$("wholesaleListPdfRows"))return;
+
+  const rows=wholesaleRetailRows();
+  const pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
+
+  if($("wholesaleListPdfLogo")){
+    $("wholesaleListPdfLogo").style.display=pdfLogo?"block":"none";
+    if(pdfLogo)$("wholesaleListPdfLogo").src=pdfLogo;
+  }
+
+  applyPdfWatermark("wholesaleListWatermark");
+
+  const dateFilter=$("wholesaleFilterDate")?.value||"";
+  const typeFilter=$("wholesaleFilterType")?.value||"";
+  const dateText=dateFilter?dateBR(dateFilter):"Todas as datas";
+  const typeText=typeFilter||"Todos os tipos";
+
+  if($("wholesaleListPdfSubtitle")){
+    $("wholesaleListPdfSubtitle").textContent=`Filtro: ${dateText} • ${typeText}`;
+  }
+
+  const total=rows.reduce((a,w)=>a+Number(w.total||0),0);
+  const received=rows.reduce((a,w)=>a+Number(w.realReceived||0),0);
+
+  if($("wholesaleListPdfTotal"))$("wholesaleListPdfTotal").textContent=money(total);
+  if($("wholesaleListPdfCount"))$("wholesaleListPdfCount").textContent=rows.length;
+  if($("wholesaleListPdfReceived"))$("wholesaleListPdfReceived").textContent=money(received);
+  if($("wholesaleListPdfFooter"))$("wholesaleListPdfFooter").textContent=state.settings.pdfFooter||"Relatório gerado automaticamente pelo painel.";
+
+  $("wholesaleListPdfRows").innerHTML=rows.length?rows.map(w=>`<tr>
+    <td>${dateBR(w.date)}</td>
+    <td><span class="pdfClient">${esc(w.clientName||"-")}</span></td>
+    <td>${esc(w.saleType||"Varejo")}<br><small>${esc(w.origin||"Site")}</small></td>
+    <td><span class="pdfProduct">${esc(w.product||"-")}</span></td>
+    <td><span class="pdfMoney">${money(w.total)}</span></td>
+    <td><span class="pdfMoney">${money(w.realReceived)}</span></td>
+    <td>${esc(paymentLabel(w.paymentMethod,w.installments))}<br><small>${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments))}</small></td>
+    <td>${esc(w.createdByName||"Não registrado")}<br><small>${dateTimeBR(w.createdAt)}</small></td>
+  </tr>`).join(""):`<tr><td colspan="8">Nenhum lançamento encontrado para o filtro selecionado.</td></tr>`;
+}
+
+function exportWholesaleRetailPDF(){
+  const rows=wholesaleRetailRows();
+  if(!rows.length){
+    alert("Não há lançamentos de Atacado e Varejo para exportar com o filtro atual.");
+    return;
+  }
+
+  renderWholesaleRetailPDF();
+
+  const oldTitle=document.title;
+  document.title="Relatório Atacado e Varejo";
+
+  document.body.classList.remove("print-report","print-accumulation","print-wholesale");
+  document.body.classList.add("print-wholesale-list");
+  window.print();
+
+  setTimeout(()=>{
+    document.body.classList.remove("print-wholesale-list");
+    document.title=oldTitle;
+  },700);
+}
+
 
 function exportWholesaleRetailCSV(){
   const rows=wholesaleRetailRows();
