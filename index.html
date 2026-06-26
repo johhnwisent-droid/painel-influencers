@@ -5876,7 +5876,7 @@ body:not(.authLocked) .loginScreen{
 
 .paymentGrid .paymentInlineGroup{
   display:grid!important;
-  grid-template-columns:1fr 130px!important;
+  grid-template-columns:minmax(180px,1fr) 130px minmax(210px,.95fr)!important;
   gap:10px!important;
   align-items:end!important;
   padding:0!important;
@@ -6207,6 +6207,48 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+
+/* ===== V93 ATACADO E VAREJO - JUROS E FRETE ===== */
+.wholesalePayerPill,
+.wholesaleInterestPill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:999px;
+  padding:7px 11px;
+  font-weight:950;
+  font-size:12px;
+  border:1px solid #e2e8f0;
+  background:#f8fafc;
+  color:#334155;
+  white-space:normal;
+  text-align:center;
+}
+.wholesalePayerPill.customer,
+.wholesaleInterestPill.customer{
+  background:#ecfdf5;
+  border-color:#bbf7d0;
+  color:#047857;
+}
+.wholesalePayerPill.merchant,
+.wholesaleInterestPill.merchant{
+  background:#fff7ed;
+  border-color:#fed7aa;
+  color:#c2410c;
+}
+.installmentFeeModeWrap.isHidden{
+  display:none!important;
+}
+@media(max-width:760px){
+  .wholesalePayerPill,
+  .wholesaleInterestPill{
+    width:100%;
+    font-size:13px;
+    padding:9px 12px;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -6288,7 +6330,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V92 BACKUP PDF LANCAMENTOS</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V92</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -6448,6 +6490,13 @@ body:not(.authLocked) .loginScreen{
                   <input type="number" id="wholesaleFreightCost" step="0.01" min="0" placeholder="0,00">
                 </label>
 
+                <label class="fieldFreightPayer">Frete pago por
+                  <select id="wholesaleFreightPayer">
+                    <option value="Cliente">Cliente</option>
+                    <option value="Nós">Nós</option>
+                  </select>
+                </label>
+
                 <label class="fieldCoupon">Cupom usado
                   <input id="wholesaleCouponName" placeholder="Ex.:cupom10">
                 </label>
@@ -6495,6 +6544,13 @@ body:not(.authLocked) .loginScreen{
                     <option value="12">12x</option>
                   </select>
                 </label>
+
+                <label id="wholesaleInstallmentFeeModeWrap" class="installmentFeeModeWrap isHidden fieldInstallmentFeeMode">Juros da parcela
+                  <select id="wholesaleInstallmentFeeMode">
+                    <option value="merchant">Sem juros para o cliente — taxa por nós</option>
+                    <option value="customer">Com juros para o cliente — cliente paga</option>
+                  </select>
+                </label>
               </div>
 
               <div class="resultCards">
@@ -6518,8 +6574,8 @@ body:not(.authLocked) .loginScreen{
               </div>
 
               <div class="wholesaleFormula fieldFormula">
-                <b>Fórmula:</b> total = (preço do produto + frete) - desconto do cupom em %.  
-                O valor atualiza automaticamente enquanto você digita.
+                <b>Fórmula:</b> total = preço do produto + frete quando pago pelo cliente - desconto do cupom.  
+                Valor real recebido = total - taxa absorvida por nós - frete pago por nós.
               </div>
             </div>
           </div>
@@ -6580,10 +6636,12 @@ body:not(.authLocked) .loginScreen{
                 <th>Produto</th>
                 <th>Preço produto</th>
                 <th>Frete</th>
+                <th>Frete pago por</th>
                 <th>Cupom</th>
                 <th>Desconto</th>
                 <th>Total</th>
                 <th>Pagamento</th>
+                <th>Juros da parcela</th>
                 <th>Taxa</th>
                 <th>Valor real recebido</th>
                 <th>Observação</th>
@@ -6632,6 +6690,8 @@ body:not(.authLocked) .loginScreen{
                 <th>Total</th>
                 <th>Valor real</th>
                 <th>Pagamento</th>
+                <th>Frete</th>
+                <th>Juros/Taxa</th>
                 <th>Responsável</th>
               </tr>
             </thead>
@@ -6711,6 +6771,14 @@ body:not(.authLocked) .loginScreen{
             <div class="wholesaleReceiptInfo">
               <small>Forma de pagamento</small>
               <strong id="wholesaleReceiptPayment">-</strong>
+            </div>
+            <div class="wholesaleReceiptInfo">
+              <small>Juros da parcela</small>
+              <strong id="wholesaleReceiptInstallmentFeeMode">-</strong>
+            </div>
+            <div class="wholesaleReceiptInfo">
+              <small>Frete pago por</small>
+              <strong id="wholesaleReceiptFreightPayer">-</strong>
             </div>
             <div class="wholesaleReceiptInfo">
               <small>Subtotal antes do desconto</small>
@@ -8019,7 +8087,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("V92 BACKUP PDF LANCAMENTOS carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V92 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -8191,14 +8259,19 @@ function normalize(){
     w.product=w.product||"";
     w.productPrice=Number(w.productPrice||0);
     w.freightCost=Number(w.freightCost||0);
+    w.freightPayer=normalizeWholesaleFreightPayer(w.freightPayer);
     w.couponName=w.couponName||"";
     w.discountPercent=Number(w.discountPercent||0);
     w.origin=w.origin||"Site";
     if(!["Site","Loja Física"].includes(w.origin))w.origin="Site";
     w.paymentMethod=w.paymentMethod||"PIX";
     w.installments=Number(w.installments||1);
-    if(w.paymentMethod!=="Cartão de Crédito")w.installments=1;
-    const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.discountPercent,w.origin,w.paymentMethod,w.installments);
+    w.installmentFeeMode=normalizeWholesaleInstallmentFeeMode(w.installmentFeeMode);
+    if(w.paymentMethod!=="Cartão de Crédito"){
+      w.installments=1;
+      w.installmentFeeMode="merchant";
+    }
+    const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.discountPercent,w.origin,w.paymentMethod,w.installments,w.freightPayer,w.installmentFeeMode);
     w.subtotal=Number(w.subtotal||calc.subtotal);
     w.discountValue=Number(w.discountValue||calc.discountValue);
     w.total=Number(w.total||calc.total);
@@ -8885,23 +8958,63 @@ function feeRuleLabel(origin,paymentMethod,installments){
   return paymentMethod;
 }
 
-function calcWholesaleFees(total,origin,paymentMethod,installments){
-  const feePercent=feePercentForWholesale(origin,paymentMethod,installments);
-  const feeValue=Number(total||0)*(feePercent/100);
-  const realReceived=Math.max(0,Number(total||0)-feeValue);
-  const feeRule=feeRuleLabel(origin,paymentMethod,installments);
-  return {feePercent,feeValue,realReceived,feeRule};
+function normalizeWholesaleFreightPayer(value){
+  value=String(value||"").trim();
+  return value==="Nós" ? "Nós" : "Cliente";
 }
 
-function calcWholesaleRetailValues(productPrice,freightCost,discountPercent,origin,paymentMethod,installments){
+function freightPayerLabel(value){
+  return normalizeWholesaleFreightPayer(value)==="Nós" ? "Pago por nós" : "Pago pelo cliente";
+}
+
+function freightPayerPillClass(value){
+  return normalizeWholesaleFreightPayer(value)==="Nós" ? "merchant" : "customer";
+}
+
+function normalizeWholesaleInstallmentFeeMode(value){
+  value=String(value||"").trim();
+  return value==="customer" ? "customer" : "merchant";
+}
+
+function installmentFeeModeLabel(value,paymentMethod){
+  if(paymentMethod!=="Cartão de Crédito")return "Não se aplica";
+  return normalizeWholesaleInstallmentFeeMode(value)==="customer" ? "Com juros para o cliente" : "Sem juros para o cliente";
+}
+
+function installmentFeeModeDescription(value,paymentMethod){
+  if(paymentMethod!=="Cartão de Crédito")return "Não se aplica";
+  return normalizeWholesaleInstallmentFeeMode(value)==="customer" ? "Cliente paga os juros; não reduz o valor real recebido" : "Taxa fica para nós; reduz o valor real recebido";
+}
+
+function installmentFeeModePillClass(value,paymentMethod){
+  if(paymentMethod!=="Cartão de Crédito")return "customer";
+  return normalizeWholesaleInstallmentFeeMode(value)==="customer" ? "customer" : "merchant";
+}
+
+function calcWholesaleFees(total,origin,paymentMethod,installments,installmentFeeMode){
+  const feePercent=feePercentForWholesale(origin,paymentMethod,installments);
+  const feeBase=Number(total||0);
+  const rawFeeValue=feeBase*(feePercent/100);
+  const mode=normalizeWholesaleInstallmentFeeMode(installmentFeeMode);
+  const customerPaysCardInterest=paymentMethod==="Cartão de Crédito"&&mode==="customer";
+  const feeValue=customerPaysCardInterest?0:rawFeeValue;
+  const feeRule=feeRuleLabel(origin,paymentMethod,installments);
+  return {feePercent,feeValue,rawFeeValue,feeRule,installmentFeeMode:mode,customerPaysCardInterest};
+}
+
+function calcWholesaleRetailValues(productPrice,freightCost,discountPercent,origin,paymentMethod,installments,freightPayer,installmentFeeMode){
   const price=Number(productPrice||0);
   const freight=Number(freightCost||0);
   const pct=Math.min(100,Math.max(0,Number(discountPercent||0)));
-  const subtotal=price+freight;
+  const payer=normalizeWholesaleFreightPayer(freightPayer);
+  const freightCharged=payer==="Cliente"?freight:0;
+  const freightImpact=payer==="Nós"?freight:0;
+  const subtotal=price+freightCharged;
   const discountValue=subtotal*(pct/100);
   const total=Math.max(0,subtotal-discountValue);
-  const fee=calcWholesaleFees(total,origin,paymentMethod,installments);
-  return {price,freight,pct,subtotal,discountValue,total,...fee};
+  const fee=calcWholesaleFees(total,origin,paymentMethod,installments,installmentFeeMode);
+  const realReceived=Math.max(0,total-Number(fee.feeValue||0)-freightImpact);
+  return {price,freight,pct,freightPayer:payer,freightCharged,freightImpact,subtotal,discountValue,total,...fee,realReceived};
 }
 
 function calcWholesaleRetail(){
@@ -8911,12 +9024,22 @@ function calcWholesaleRetail(){
   const origin=$("wholesaleOrigin")?.value||"Site";
   const paymentMethod=$("wholesalePaymentMethod")?.value||"PIX";
   const installments=Number($("wholesaleInstallments")?.value||1);
-  const c=calcWholesaleRetailValues(price,freight,pct,origin,paymentMethod,installments);
+  const freightPayer=$("wholesaleFreightPayer")?.value||"Cliente";
+  const installmentFeeMode=$("wholesaleInstallmentFeeMode")?.value||"merchant";
+  const c=calcWholesaleRetailValues(price,freight,pct,origin,paymentMethod,installments,freightPayer,installmentFeeMode);
 
   if($("wholesaleTotal"))$("wholesaleTotal").value=money(c.total);
   if($("wholesaleTotalPreview"))$("wholesaleTotalPreview").textContent=money(c.total);
   if($("wholesaleRealReceivedPreview"))$("wholesaleRealReceivedPreview").textContent=money(c.realReceived);
-  if($("wholesaleTaxPreview"))$("wholesaleTaxPreview").innerHTML=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} descontado do total final`;
+  if($("wholesaleTaxPreview")){
+    const feeText=c.customerPaysCardInterest
+      ? `${esc(c.feeRule||"")} • cliente paga os juros • sem desconto no valor real recebido`
+      : `${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} descontado do total final`;
+    const freightText=c.freightPayer==="Nós"
+      ? `Frete pago por nós: ${money(c.freightImpact)} descontado do valor real`
+      : `Frete pago pelo cliente: sem desconto no valor real`;
+    $("wholesaleTaxPreview").innerHTML=`<b>Impacto no valor real:</b> ${feeText} • ${freightText}`;
+  }
 
   return c;
 }
@@ -8924,9 +9047,15 @@ function calcWholesaleRetail(){
 
 function toggleWholesaleInstallments(){
   const method=$("wholesalePaymentMethod")?.value||"PIX";
+  const showCard=method==="Cartão de Crédito";
   const wrap=$("wholesaleInstallmentsWrap");
-  if(wrap)wrap.classList.toggle("isHidden",method!=="Cartão de Crédito");
-  if(method!=="Cartão de Crédito"&&$("wholesaleInstallments"))$("wholesaleInstallments").value="1";
+  const feeWrap=$("wholesaleInstallmentFeeModeWrap");
+  if(wrap)wrap.classList.toggle("isHidden",!showCard);
+  if(feeWrap)feeWrap.classList.toggle("isHidden",!showCard);
+  if(!showCard){
+    if($("wholesaleInstallments"))$("wholesaleInstallments").value="1";
+    if($("wholesaleInstallmentFeeMode"))$("wholesaleInstallmentFeeMode").value="merchant";
+  }
   calcWholesaleRetail();
 }
 
@@ -8975,8 +9104,10 @@ function resetWholesaleRetailForm(){
   $("wholesaleDate").value=today();
   if($("wholesaleSaleType"))$("wholesaleSaleType").value="Varejo";
   if($("wholesaleOrigin"))$("wholesaleOrigin").value="Site";
+  if($("wholesaleFreightPayer"))$("wholesaleFreightPayer").value="Cliente";
   if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value="PIX";
   if($("wholesaleInstallments"))$("wholesaleInstallments").value="1";
+  if($("wholesaleInstallmentFeeMode"))$("wholesaleInstallmentFeeMode").value="merchant";
   toggleWholesaleInstallments();
   calcWholesaleRetail();
 }
@@ -9023,11 +9154,13 @@ function renderWholesaleRetail(){
     <td data-label="Produto"><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
     <td data-label="Frete"><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
+    <td data-label="Frete pago por"><span class="wholesalePayerPill ${freightPayerPillClass(w.freightPayer)}">${esc(freightPayerLabel(w.freightPayer))}</span></td>
     <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
     <td data-label="Desconto"><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span></td>
     <td data-label="Total"><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
     <td data-label="Pagamento"><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabel(w.paymentMethod,w.installments))}</span></td>
-    <td data-label="Taxa"><span class="feePill">${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments))} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}</span></td>
+    <td data-label="Juros da parcela"><span class="wholesaleInterestPill ${installmentFeeModePillClass(w.installmentFeeMode,w.paymentMethod)}">${esc(installmentFeeModeLabel(w.installmentFeeMode,w.paymentMethod))}</span></td>
+    <td data-label="Taxa"><span class="feePill">${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments))} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • ${Number(w.feeValue||0)>0?`-${money(w.feeValue)}`:"sem desconto"}</span></td>
     <td data-label="Valor real"><span class="receivedPill">${money(w.realReceived)}</span></td>
     <td data-label="Observação">${w.notes?`<div class="wholesaleNoteMini">${esc(w.notes)}</div>`:"<span class='wholesaleNoNote'>Sem observação</span>"}</td>
     <td data-label="Ações">
@@ -9035,7 +9168,7 @@ function renderWholesaleRetail(){
       <button class="small secondary" type="button" onclick="event.stopPropagation();editWholesaleRetail('${w.id}')">Editar</button>
       <button class="small danger" type="button" onclick="event.stopPropagation();deleteWholesaleRetail('${w.id}')">Excluir</button>
     </td>
-  </tr>`).join(""):`<tr><td colspan="15">Nenhum lançamento de Atacado e Varejo nesta data.</td></tr>`;
+  </tr>`).join(""):`<tr><td colspan="17">Nenhum lançamento de Atacado e Varejo nesta data.</td></tr>`;
 
   renderWholesaleRetailPDF();
 }
@@ -9089,6 +9222,8 @@ function renderWholesaleOrder(){
     if($("wholesaleReceiptOrigin"))$("wholesaleReceiptOrigin").textContent="-";
     $("wholesaleReceiptCoupon").textContent="-";
     if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent="-";
+    if($("wholesaleReceiptInstallmentFeeMode"))$("wholesaleReceiptInstallmentFeeMode").textContent="-";
+    if($("wholesaleReceiptFreightPayer"))$("wholesaleReceiptFreightPayer").textContent="-";
     $("wholesaleReceiptSubtotal").textContent=money(0);
     $("wholesaleReceiptDiscountPercent").textContent="0%";
     $("wholesaleReceiptNotes").textContent="Nenhuma observação adicionada.";
@@ -9112,9 +9247,11 @@ function renderWholesaleOrder(){
   if($("wholesaleReceiptOrigin"))$("wholesaleReceiptOrigin").textContent=w.origin||"Site";
   $("wholesaleReceiptCoupon").textContent=w.couponName?`${w.couponName} • ${Number(w.discountPercent||0)}%`:"Sem cupom";
   if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent=paymentLabel(w.paymentMethod,w.installments);
+  if($("wholesaleReceiptInstallmentFeeMode"))$("wholesaleReceiptInstallmentFeeMode").textContent=installmentFeeModeDescription(w.installmentFeeMode,w.paymentMethod);
+  if($("wholesaleReceiptFreightPayer"))$("wholesaleReceiptFreightPayer").textContent=freightPayerLabel(w.freightPayer);
   $("wholesaleReceiptSubtotal").textContent=money(w.subtotal);
   $("wholesaleReceiptDiscountPercent").textContent=`${Number(w.discountPercent||0)}%`;
-  if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent=`${w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments)} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}`;
+  if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent=`${w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments)} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • ${Number(w.feeValue||0)>0?`-${money(w.feeValue)}`:"sem desconto"}`;
   if($("wholesaleReceiptFeeBase"))$("wholesaleReceiptFeeBase").textContent=money(w.total);
   $("wholesaleReceiptNotes").textContent=(w.notes||"").trim()||"Nenhuma observação adicionada.";
   $("wholesaleReceiptTotal").textContent=money(w.total);
@@ -9159,10 +9296,12 @@ function editWholesaleRetail(id){
   $("wholesaleProduct").value=w.product||"";
   $("wholesaleProductPrice").value=Number(w.productPrice||0);
   $("wholesaleFreightCost").value=Number(w.freightCost||0);
+  if($("wholesaleFreightPayer"))$("wholesaleFreightPayer").value=normalizeWholesaleFreightPayer(w.freightPayer);
   $("wholesaleCouponName").value=w.couponName||"";
   $("wholesaleDiscountPercent").value=Number(w.discountPercent||0);
   if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value=w.paymentMethod||"PIX";
   if($("wholesaleInstallments"))$("wholesaleInstallments").value=Number(w.installments||1);
+  if($("wholesaleInstallmentFeeMode"))$("wholesaleInstallmentFeeMode").value=normalizeWholesaleInstallmentFeeMode(w.installmentFeeMode);
   toggleWholesaleInstallments();
   $("wholesaleNotes").value=w.notes||"";
   calcWholesaleRetail();
@@ -9222,9 +9361,11 @@ function renderWholesaleRetailPDF(){
     <td><span class="pdfProduct">${esc(w.product||"-")}</span></td>
     <td><span class="pdfMoney">${money(w.total)}</span></td>
     <td><span class="pdfMoney">${money(w.realReceived)}</span></td>
-    <td>${esc(paymentLabel(w.paymentMethod,w.installments))}<br><small>${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments))}</small></td>
+    <td>${esc(paymentLabel(w.paymentMethod,w.installments))}<br><small>${esc(installmentFeeModeLabel(w.installmentFeeMode,w.paymentMethod))}</small></td>
+    <td>${money(w.freightCost)}<br><small>${esc(freightPayerLabel(w.freightPayer))}</small></td>
+    <td>${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments))}<br><small>${Number(w.feeValue||0)>0?`-${money(w.feeValue)}`:"sem desconto"}</small></td>
     <td>${esc(w.createdByName||"Não registrado")}<br><small>${dateTimeBR(w.createdAt)}</small></td>
-  </tr>`).join(""):`<tr><td colspan="8">Nenhum lançamento encontrado para o filtro selecionado.</td></tr>`;
+  </tr>`).join(""):`<tr><td colspan="10">Nenhum lançamento encontrado para o filtro selecionado.</td></tr>`;
 }
 
 function exportWholesaleRetailPDF(){
@@ -9252,7 +9393,7 @@ function exportWholesaleRetailPDF(){
 
 function exportWholesaleRetailCSV(){
   const rows=wholesaleRetailRows();
-  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
+  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Frete pago por","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Juros da parcela","Regra da taxa","Taxa %","Taxa valor descontado","Valor real recebido","Observação"],...rows.map(w=>[
     dateBR(w.date),
     w.saleType||"Varejo",
     w.origin||"Site",
@@ -9262,12 +9403,14 @@ function exportWholesaleRetailCSV(){
     String(w.product||"").replace(/\r?\n/g," | "),
     w.productPrice||0,
     w.freightCost||0,
+    freightPayerLabel(w.freightPayer),
     w.couponName||"",
     w.discountPercent||0,
     w.discountValue||0,
     w.total||0,
     w.paymentMethod||"PIX",
     w.paymentMethod==="Cartão de Crédito" ? Number(w.installments||1) : "",
+    installmentFeeModeLabel(w.installmentFeeMode,w.paymentMethod),
     w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments),
     w.feePercent||0,
     w.feeValue||0,
@@ -9750,7 +9893,7 @@ $("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId"
   if(el)el.addEventListener("input",calcWholesaleRetail);
 });
 
-["wholesaleOrigin","wholesaleInstallments"].forEach(id=>{
+["wholesaleOrigin","wholesaleInstallments","wholesaleFreightPayer","wholesaleInstallmentFeeMode"].forEach(id=>{
   const el=$(id);
   if(el)el.addEventListener("change",calcWholesaleRetail);
 });
@@ -9783,6 +9926,7 @@ if($("wholesaleForm")){
       product:cleanProductLines($("wholesaleProduct").value),
       productPrice:c.price,
       freightCost:c.freight,
+      freightPayer:c.freightPayer,
       couponName:($("wholesaleCouponName").value||"").trim(),
       discountPercent:c.pct,
       subtotal:c.subtotal,
@@ -9790,6 +9934,7 @@ if($("wholesaleForm")){
       total:c.total,
       paymentMethod:$("wholesalePaymentMethod")?.value||"PIX",
       installments:Number($("wholesaleInstallments")?.value||1),
+      installmentFeeMode:c.installmentFeeMode,
       feePercent:c.feePercent,
       feeValue:c.feeValue,
       realReceived:c.realReceived,
@@ -9805,8 +9950,16 @@ if($("wholesaleForm")){
       notes:$("wholesaleNotes").value||""
     };
 
-    if(item.paymentMethod!=="Cartão de Crédito")item.installments=1;
-    const finalCalc=calcWholesaleRetailValues(item.productPrice,item.freightCost,item.discountPercent,item.origin,item.paymentMethod,item.installments);
+    if(item.paymentMethod!=="Cartão de Crédito"){
+      item.installments=1;
+      item.installmentFeeMode="merchant";
+    }
+    const finalCalc=calcWholesaleRetailValues(item.productPrice,item.freightCost,item.discountPercent,item.origin,item.paymentMethod,item.installments,item.freightPayer,item.installmentFeeMode);
+    item.freightPayer=finalCalc.freightPayer;
+    item.installmentFeeMode=finalCalc.installmentFeeMode;
+    item.subtotal=finalCalc.subtotal;
+    item.discountValue=finalCalc.discountValue;
+    item.total=finalCalc.total;
     item.feePercent=finalCalc.feePercent;
     item.feeValue=finalCalc.feeValue;
     item.realReceived=finalCalc.realReceived;
