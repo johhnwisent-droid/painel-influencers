@@ -6249,6 +6249,517 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+
+/* ===== V94 ATACADO E VAREJO - RESPONSIVO E TEXTO CORRIGIDO ===== */
+/* Correção final aplicada somente no módulo Atacado e Varejo.
+   Objetivo: evitar texto espremido, letras quebradas fora do lugar e desalinhamento em mobile/desktop. */
+
+#wholesaleRetail,
+#wholesaleRetail *{
+  box-sizing:border-box!important;
+}
+
+#wholesaleRetail{
+  max-width:100%!important;
+  overflow-x:hidden!important;
+  font-family:Inter, Arial, Helvetica, sans-serif!important;
+}
+
+#wholesaleRetail h3,
+#wholesaleRetail small,
+#wholesaleRetail span,
+#wholesaleRetail label,
+#wholesaleRetail input,
+#wholesaleRetail select,
+#wholesaleRetail textarea,
+#wholesaleRetail button,
+#wholesaleRetail th,
+#wholesaleRetail td,
+#wholesaleRetail strong,
+#wholesaleRetail b,
+#wholesaleRetail .sectionTitle strong,
+#wholesaleRetail .sectionTitle small{
+  font-family:Inter, Arial, Helvetica, sans-serif!important;
+  letter-spacing:normal!important;
+  word-break:normal!important;
+  hyphens:none!important;
+}
+
+#wholesaleRetail input,
+#wholesaleRetail select,
+#wholesaleRetail textarea{
+  min-width:0!important;
+  max-width:100%!important;
+  line-height:1.25!important;
+}
+
+#wholesaleRetail textarea{
+  resize:vertical!important;
+}
+
+/* Cards superiores */
+#wholesaleRetail .grid{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:14px!important;
+}
+
+#wholesaleRetail .card{
+  min-width:0!important;
+  overflow:hidden!important;
+}
+
+#wholesaleRetail .card small{
+  white-space:normal!important;
+  line-height:1.25!important;
+}
+
+#wholesaleRetail .card strong{
+  display:block!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  line-height:1.15!important;
+}
+
+/* Formulário organizado */
+#wholesaleRetail .wholesaleFormV91{
+  width:100%!important;
+  max-width:100%!important;
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:16px!important;
+}
+
+#wholesaleRetail .wholesaleFormSection{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  overflow:hidden!important;
+}
+
+#wholesaleRetail .sectionTitle{
+  min-width:0!important;
+}
+
+#wholesaleRetail .sectionTitle > div{
+  min-width:0!important;
+}
+
+#wholesaleRetail .sectionTitle strong,
+#wholesaleRetail .sectionTitle small{
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+}
+
+#wholesaleRetail .sectionGrid{
+  min-width:0!important;
+}
+
+#wholesaleRetail .identityGrid{
+  grid-template-columns:minmax(160px,.85fr) minmax(230px,1.45fr) minmax(150px,.85fr) minmax(150px,.85fr)!important;
+}
+
+#wholesaleRetail .productsGrid{
+  grid-template-columns:minmax(320px,1.25fr) minmax(360px,.95fr)!important;
+}
+
+#wholesaleRetail .valueSideGrid{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+#wholesaleRetail .paymentGrid{
+  grid-template-columns:minmax(430px,1.35fr) minmax(310px,1fr) minmax(170px,.55fr)!important;
+  gap:12px!important;
+}
+
+#wholesaleRetail .paymentGrid .paymentInlineGroup{
+  width:100%!important;
+  max-width:100%!important;
+  display:grid!important;
+  grid-template-columns:minmax(150px,1fr) minmax(105px,.55fr) minmax(230px,1fr)!important;
+  gap:10px!important;
+}
+
+#wholesaleRetail .resultCards{
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+}
+
+#wholesaleRetail .finishGrid{
+  grid-template-columns:minmax(0,1fr) minmax(280px,.42fr)!important;
+}
+
+#wholesaleRetail .finishGrid .fieldActions{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+
+/* Evita que caixas informativas estourem */
+#wholesaleRetail .wholesaleFormula,
+#wholesaleRetail .taxFormulaBox,
+#wholesaleRetail .realReceivedBox,
+#wholesaleRetail .wholesaleCalcBox{
+  min-width:0!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+  line-height:1.35!important;
+}
+
+/* Tabela: largura real para 17 colunas, sem espremer letras */
+#wholesaleRetail .tableWrap{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+  background:#fff!important;
+  border:1px solid #e5e7eb!important;
+  border-radius:20px!important;
+  -webkit-overflow-scrolling:touch!important;
+  touch-action:pan-x pan-y!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:#94a3b8 #f1f5f9!important;
+}
+
+#wholesaleRetail .tableWrap::-webkit-scrollbar{
+  height:12px!important;
+}
+
+#wholesaleRetail .tableWrap::-webkit-scrollbar-track{
+  background:#f1f5f9!important;
+  border-radius:999px!important;
+}
+
+#wholesaleRetail .tableWrap::-webkit-scrollbar-thumb{
+  background:#94a3b8!important;
+  border-radius:999px!important;
+  border:2px solid #f1f5f9!important;
+}
+
+#wholesaleRetail table{
+  display:table!important;
+  width:2440px!important;
+  min-width:2440px!important;
+  max-width:none!important;
+  table-layout:fixed!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+  background:#fff!important;
+}
+
+#wholesaleRetail thead{
+  display:table-header-group!important;
+}
+
+#wholesaleRetail tbody{
+  display:table-row-group!important;
+}
+
+#wholesaleRetail tr,
+#wholesaleRetail tr.wholesaleOrderRow{
+  display:table-row!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  transform:none!important;
+  background:#fff!important;
+  overflow:visible!important;
+}
+
+#wholesaleRetail th,
+#wholesaleRetail td,
+#wholesaleRetail td[data-label]{
+  display:table-cell!important;
+  grid-template-columns:none!important;
+  width:auto!important;
+  min-width:0!important;
+  max-width:none!important;
+  padding:11px 9px!important;
+  vertical-align:middle!important;
+  border:0!important;
+  border-bottom:1px solid #edf2f7!important;
+  border-radius:0!important;
+  background:transparent!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+  hyphens:none!important;
+  line-height:1.28!important;
+  font-size:12px!important;
+  text-align:left!important;
+}
+
+#wholesaleRetail td:before,
+#wholesaleRetail td[data-label]:before{
+  display:none!important;
+  content:none!important;
+}
+
+#wholesaleRetail th{
+  position:sticky!important;
+  top:0!important;
+  z-index:5!important;
+  background:#f8fafc!important;
+  color:#475569!important;
+  font-size:10.5px!important;
+  font-weight:900!important;
+  text-transform:uppercase!important;
+  white-space:normal!important;
+  overflow-wrap:normal!important;
+  line-height:1.18!important;
+}
+
+/* Larguras corrigidas para as 17 colunas atuais */
+#wholesaleRetail th:nth-child(1),  #wholesaleRetail td:nth-child(1){width:86px!important}
+#wholesaleRetail th:nth-child(2),  #wholesaleRetail td:nth-child(2){width:160px!important}
+#wholesaleRetail th:nth-child(3),  #wholesaleRetail td:nth-child(3){width:92px!important}
+#wholesaleRetail th:nth-child(4),  #wholesaleRetail td:nth-child(4){width:105px!important}
+#wholesaleRetail th:nth-child(5),  #wholesaleRetail td:nth-child(5){width:220px!important}
+#wholesaleRetail th:nth-child(6),  #wholesaleRetail td:nth-child(6){width:120px!important}
+#wholesaleRetail th:nth-child(7),  #wholesaleRetail td:nth-child(7){width:110px!important}
+#wholesaleRetail th:nth-child(8),  #wholesaleRetail td:nth-child(8){width:135px!important}
+#wholesaleRetail th:nth-child(9),  #wholesaleRetail td:nth-child(9){width:115px!important}
+#wholesaleRetail th:nth-child(10), #wholesaleRetail td:nth-child(10){width:120px!important}
+#wholesaleRetail th:nth-child(11), #wholesaleRetail td:nth-child(11){width:125px!important}
+#wholesaleRetail th:nth-child(12), #wholesaleRetail td:nth-child(12){width:155px!important}
+#wholesaleRetail th:nth-child(13), #wholesaleRetail td:nth-child(13){width:180px!important}
+#wholesaleRetail th:nth-child(14), #wholesaleRetail td:nth-child(14){width:165px!important}
+#wholesaleRetail th:nth-child(15), #wholesaleRetail td:nth-child(15){width:165px!important}
+#wholesaleRetail th:nth-child(16), #wholesaleRetail td:nth-child(16){width:220px!important}
+#wholesaleRetail th:nth-child(17), #wholesaleRetail td:nth-child(17){width:160px!important}
+
+/* Pílulas e textos internos sem quebra letra por letra */
+#wholesaleRetail .clientNamePill,
+#wholesaleRetail .wholesaleMoneyPill,
+#wholesaleRetail .paymentMethodPill,
+#wholesaleRetail .saleTypePill,
+#wholesaleRetail .originPill,
+#wholesaleRetail .feePill,
+#wholesaleRetail .receivedPill,
+#wholesaleRetail .wholesaleCouponPill,
+#wholesaleRetail .wholesalePayerPill,
+#wholesaleRetail .wholesaleInterestPill{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  display:inline-flex!important;
+  justify-content:center!important;
+  align-items:center!important;
+  text-align:center!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+  hyphens:none!important;
+  line-height:1.18!important;
+  font-size:11.5px!important;
+  padding:7px 8px!important;
+}
+
+#wholesaleRetail .wholesaleProductList,
+#wholesaleRetail .wholesaleNoteMini,
+#wholesaleRetail .mobileInfluencerName{
+  width:100%!important;
+  max-width:100%!important;
+  white-space:pre-line!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+  hyphens:none!important;
+  line-height:1.28!important;
+}
+
+#wholesaleRetail .wholesaleProductList{
+  display:block!important;
+  margin:0!important;
+  padding:8px 9px!important;
+  border-radius:12px!important;
+  background:#f8fafc!important;
+  border:1px solid #e2e8f0!important;
+  color:#0f172a!important;
+  font-size:12px!important;
+  font-weight:800!important;
+}
+
+#wholesaleRetail .wholesaleNoteMini{
+  background:#fffbeb!important;
+  border:1px solid #fde68a!important;
+  color:#78350f!important;
+  font-size:11.5px!important;
+  padding:8px 9px!important;
+}
+
+#wholesaleRetail td:nth-child(17) button{
+  display:block!important;
+  width:100%!important;
+  margin:3px 0!important;
+  min-height:34px!important;
+  font-size:11px!important;
+  padding:7px 8px!important;
+}
+
+/* Tablet */
+@media(max-width:1180px){
+  #wholesaleRetail .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  #wholesaleRetail .identityGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  #wholesaleRetail .productsGrid{
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleRetail .valueSideGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  #wholesaleRetail .paymentGrid{
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleRetail .paymentGrid .paymentInlineGroup{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  }
+
+  #wholesaleRetail .finishGrid{
+    grid-template-columns:1fr!important;
+  }
+}
+
+/* Mobile */
+@media(max-width:760px){
+  #wholesaleRetail .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+
+  #wholesaleRetail .panel{
+    padding:13px!important;
+    border-radius:18px!important;
+    overflow:hidden!important;
+  }
+
+  #wholesaleRetail .panelHead{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+
+  #wholesaleRetail .filters{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    width:100%!important;
+  }
+
+  #wholesaleRetail .filters label,
+  #wholesaleRetail .filters button,
+  #wholesaleRetail .filters input,
+  #wholesaleRetail .filters select{
+    width:100%!important;
+    min-width:0!important;
+  }
+
+  #wholesaleRetail .wholesaleFormV91{
+    gap:12px!important;
+  }
+
+  #wholesaleRetail .wholesaleFormSection{
+    padding:12px!important;
+    border-radius:16px!important;
+  }
+
+  #wholesaleRetail .sectionTitle{
+    align-items:flex-start!important;
+  }
+
+  #wholesaleRetail .identityGrid,
+  #wholesaleRetail .productsGrid,
+  #wholesaleRetail .valueSideGrid,
+  #wholesaleRetail .paymentGrid,
+  #wholesaleRetail .paymentGrid .paymentInlineGroup,
+  #wholesaleRetail .resultCards,
+  #wholesaleRetail .finishGrid,
+  #wholesaleRetail .finishGrid .fieldActions{
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+
+  #wholesaleRetail .productMultiLine{
+    min-height:128px!important;
+  }
+
+  #wholesaleRetail .tableWrap{
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:auto!important;
+    overflow-y:visible!important;
+    border-radius:18px!important;
+  }
+
+  #wholesaleRetail table{
+    width:2440px!important;
+    min-width:2440px!important;
+    table-layout:fixed!important;
+  }
+
+  #wholesaleRetail th,
+  #wholesaleRetail td,
+  #wholesaleRetail td[data-label]{
+    padding:9px 7px!important;
+    font-size:11px!important;
+    line-height:1.22!important;
+  }
+
+  #wholesaleRetail th{
+    font-size:9.5px!important;
+  }
+
+  #wholesaleRetail .tableWrap::after{
+    content:"Arraste para o lado para ver todas as colunas";
+    display:block!important;
+    position:sticky!important;
+    left:0!important;
+    width:100%!important;
+    padding:8px 10px!important;
+    font-size:11px!important;
+    color:#64748b!important;
+    background:#f8fafc!important;
+    border-top:1px solid #e5e7eb!important;
+    text-align:center!important;
+    font-weight:800!important;
+    box-sizing:border-box!important;
+  }
+}
+
+@media(max-width:520px){
+  #wholesaleRetail .grid,
+  #wholesaleRetail .filters{
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleRetail .card strong{
+    font-size:20px!important;
+  }
+
+  #wholesaleRetail input,
+  #wholesaleRetail select,
+  #wholesaleRetail textarea,
+  #wholesaleRetail button{
+    font-size:16px!important;
+  }
+}
+
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -6330,7 +6841,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V92</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V94</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8087,7 +8598,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V92 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V94 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
