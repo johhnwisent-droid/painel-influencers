@@ -6760,6 +6760,236 @@ body:not(.authLocked) .loginScreen{
 }
 
 
+
+
+/* ===== V95 ATACADO E VAREJO - LISTA COMPACTA, PRODUTOS AGRUPADOS E DATA DESTACADA ===== */
+/* A tabela continua com todos os dados, mas o produto fica resumido para não gerar uma coluna gigante.
+   O pedido completo segue disponível ao clicar em Abrir/Comprovante. */
+
+#wholesaleRetail .tableWrap{
+  position:relative!important;
+}
+
+/* Data destacada e fixa na lateral esquerda */
+#wholesaleRetail th:nth-child(1),
+#wholesaleRetail td:nth-child(1){
+  width:112px!important;
+  min-width:112px!important;
+  position:sticky!important;
+  left:0!important;
+  z-index:8!important;
+  background:#ffffff!important;
+  box-shadow:8px 0 14px rgba(15,23,42,.045)!important;
+}
+
+#wholesaleRetail th:nth-child(1){
+  z-index:12!important;
+  background:#f8fafc!important;
+}
+
+#wholesaleRetail .wholesaleDateBadge{
+  display:grid!important;
+  justify-items:center!important;
+  align-items:center!important;
+  width:76px!important;
+  min-height:58px!important;
+  padding:8px 6px!important;
+  border-radius:18px!important;
+  background:linear-gradient(135deg,#111827,#334155)!important;
+  color:white!important;
+  box-shadow:0 10px 22px rgba(15,23,42,.18)!important;
+  text-align:center!important;
+  line-height:1!important;
+}
+
+#wholesaleRetail .wholesaleDateBadge strong{
+  display:block!important;
+  font-size:24px!important;
+  font-weight:1000!important;
+  letter-spacing:-.04em!important;
+  color:white!important;
+  line-height:.95!important;
+}
+
+#wholesaleRetail .wholesaleDateBadge small{
+  display:block!important;
+  margin-top:4px!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  text-transform:uppercase!important;
+  letter-spacing:.02em!important;
+  color:rgba(255,255,255,.82)!important;
+  line-height:1.05!important;
+  white-space:normal!important;
+}
+
+#wholesaleRetail .wholesaleDateBadge.simple{
+  width:auto!important;
+  min-height:42px!important;
+  padding:9px 10px!important;
+}
+
+#wholesaleRetail .wholesaleDateBadge.simple strong{
+  font-size:13px!important;
+  letter-spacing:normal!important;
+}
+
+/* Produto compacto: mostra o primeiro item e a quantidade total do pedido */
+#wholesaleRetail .wholesaleProductCompact{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:center!important;
+  gap:8px!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-height:42px!important;
+  padding:8px 9px!important;
+  border-radius:15px!important;
+  background:#f8fafc!important;
+  border:1px solid #e2e8f0!important;
+  box-shadow:0 8px 18px rgba(15,23,42,.035)!important;
+}
+
+#wholesaleRetail .wholesaleProductCompact strong{
+  display:block!important;
+  min-width:0!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  white-space:nowrap!important;
+  color:#0f172a!important;
+  font-size:12.5px!important;
+  font-weight:950!important;
+  line-height:1.15!important;
+}
+
+#wholesaleRetail .wholesaleProductCompact span{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:max-content!important;
+  padding:6px 8px!important;
+  border-radius:999px!important;
+  background:#111827!important;
+  color:#fff!important;
+  font-size:10.5px!important;
+  font-weight:950!important;
+  line-height:1!important;
+  white-space:nowrap!important;
+}
+
+#wholesaleRetail .wholesaleProductCompact.empty{
+  display:flex!important;
+  justify-content:center!important;
+  color:#94a3b8!important;
+  font-weight:850!important;
+}
+
+/* Produto não precisa mais de coluna muito alta/larga */
+#wholesaleRetail th:nth-child(5),
+#wholesaleRetail td:nth-child(5){
+  width:230px!important;
+  min-width:230px!important;
+  max-width:230px!important;
+}
+
+/* Ajuste geral da tabela para leitura mais limpa */
+#wholesaleRetail table{
+  width:2360px!important;
+  min-width:2360px!important;
+}
+
+#wholesaleRetail td{
+  height:76px!important;
+}
+
+#wholesaleRetail .wholesaleOrderRow:hover td{
+  background:#f8fafc!important;
+}
+
+#wholesaleRetail .wholesaleOrderRow:hover td:nth-child(1){
+  background:#ffffff!important;
+}
+
+/* Evita pílulas gigantes nas células */
+#wholesaleRetail .wholesaleMoneyPill,
+#wholesaleRetail .paymentMethodPill,
+#wholesaleRetail .saleTypePill,
+#wholesaleRetail .originPill,
+#wholesaleRetail .feePill,
+#wholesaleRetail .receivedPill,
+#wholesaleRetail .wholesaleCouponPill,
+#wholesaleRetail .wholesalePayerPill,
+#wholesaleRetail .wholesaleInterestPill{
+  min-height:34px!important;
+}
+
+/* No celular: mantém data destacada e produto em uma linha compacta */
+@media(max-width:760px){
+  #wholesaleRetail table{
+    width:2260px!important;
+    min-width:2260px!important;
+  }
+
+  #wholesaleRetail th:nth-child(1),
+  #wholesaleRetail td:nth-child(1){
+    width:100px!important;
+    min-width:100px!important;
+  }
+
+  #wholesaleRetail .wholesaleDateBadge{
+    width:68px!important;
+    min-height:54px!important;
+    border-radius:16px!important;
+  }
+
+  #wholesaleRetail .wholesaleDateBadge strong{
+    font-size:22px!important;
+  }
+
+  #wholesaleRetail .wholesaleDateBadge small{
+    font-size:9.5px!important;
+  }
+
+  #wholesaleRetail th:nth-child(5),
+  #wholesaleRetail td:nth-child(5){
+    width:205px!important;
+    min-width:205px!important;
+    max-width:205px!important;
+  }
+
+  #wholesaleRetail .wholesaleProductCompact{
+    grid-template-columns:minmax(0,1fr)!important;
+    gap:6px!important;
+    min-height:58px!important;
+    align-content:center!important;
+  }
+
+  #wholesaleRetail .wholesaleProductCompact strong{
+    font-size:12px!important;
+  }
+
+  #wholesaleRetail .wholesaleProductCompact span{
+    width:max-content!important;
+    font-size:10px!important;
+    padding:5px 7px!important;
+  }
+
+  #wholesaleRetail td{
+    height:74px!important;
+  }
+}
+
+@media(max-width:430px){
+  #wholesaleRetail .wholesaleDateBadge{
+    width:64px!important;
+  }
+
+  #wholesaleRetail .wholesaleDateBadge strong{
+    font-size:21px!important;
+  }
+}
+
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -6841,7 +7071,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V94</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V95</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8598,7 +8828,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V94 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V95 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -9637,6 +9867,45 @@ function wholesaleRetailRows(){
   return rows;
 }
 
+
+function wholesaleProductItems(product){
+  return String(product||"")
+    .split(/\r?\n/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+}
+
+function wholesaleProductSummary(product){
+  const items=wholesaleProductItems(product);
+  if(!items.length){
+    return `<span class="wholesaleProductCompact empty">Sem produto</span>`;
+  }
+
+  const first=items[0];
+  const extra=items.length-1;
+  const full=esc(items.join("\n"));
+
+  return `<div class="wholesaleProductCompact" title="${full}">
+    <strong>${esc(first)}</strong>
+    ${extra>0?`<span>+${extra} ${extra===1?"produto":"produtos"}</span>`:`<span>1 produto</span>`}
+  </div>`;
+}
+
+function wholesaleDateBadge(date){
+  const raw=String(date||"");
+  const p=raw.split("-");
+  const months=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+
+  if(p.length===3){
+    const year=p[0];
+    const month=months[Math.max(0,Math.min(11,Number(p[1]||1)-1))]||p[1];
+    const day=String(p[2]||"").padStart(2,"0");
+    return `<span class="wholesaleDateBadge"><strong>${esc(day)}</strong><small>${esc(month)} ${esc(year)}</small></span>`;
+  }
+
+  return `<span class="wholesaleDateBadge simple"><strong>${esc(dateBR(date))}</strong></span>`;
+}
+
 function renderWholesaleRetail(){
   if(!$("wholesaleRows"))return;
 
@@ -9658,11 +9927,11 @@ function renderWholesaleRetail(){
   $("wholesaleDayDiscount").textContent=money(dayDiscount);
 
   $("wholesaleRows").innerHTML=rows.length?rows.map(w=>`<tr class="wholesaleOrderRow" onclick="openWholesaleRetailOrder('${w.id}')" title="Clique para abrir o comprovante do pedido">
-    <td data-label="Data">${dateBR(w.date)}</td>
+    <td data-label="Data">${wholesaleDateBadge(w.date)}</td>
     <td data-label="Cliente"><span class="clientNamePill">${esc(w.clientName||"-")}</span><span class="createdByMini">Por: ${esc(w.createdByName||"Não registrado")}</span></td>
     <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
     <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
-    <td data-label="Produto"><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
+    <td data-label="Produto">${wholesaleProductSummary(w.product)}</td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
     <td data-label="Frete"><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
     <td data-label="Frete pago por"><span class="wholesalePayerPill ${freightPayerPillClass(w.freightPayer)}">${esc(freightPayerLabel(w.freightPayer))}</span></td>
