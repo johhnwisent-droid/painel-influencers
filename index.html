@@ -7441,6 +7441,402 @@ body:not(.authLocked) .loginScreen{
   max-width:100%!important;
 }
 
+
+/* ===== V103 VENDAS POR COLABORADOR SIMPLES, MODERNO E RESPONSIVO ===== */
+.wholesaleCollabPanel{
+  overflow:hidden!important;
+  border-radius:22px!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+.wholesaleCollabPanel .panelHead{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:12px!important;
+  margin-bottom:12px!important;
+}
+
+.wholesaleCollabPanel .panelHead h3{
+  margin:0!important;
+  font-size:22px!important;
+  line-height:1.15!important;
+}
+
+.wholesaleCollabPanel .panelHead .muted{
+  display:block!important;
+  margin-top:4px!important;
+  line-height:1.35!important;
+}
+
+/* Filtros de Vendas por colaborador */
+.wholesaleCollabPanel .collabFilterBox,
+.wholesaleCollabPanel .collabFilterBoxV96{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:minmax(220px,1.2fr) minmax(145px,.72fr) minmax(145px,.72fr) minmax(160px,.8fr) minmax(210px,.85fr)!important;
+  gap:10px!important;
+  align-items:end!important;
+  background:#f8fafc!important;
+  border:1px solid #e2e8f0!important;
+  border-radius:18px!important;
+  padding:10px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+
+.wholesaleCollabPanel .collabFilterBox label,
+.wholesaleCollabPanel .collabFilterBoxV96 label{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  margin:0!important;
+  display:grid!important;
+  gap:5px!important;
+  font-size:12px!important;
+  font-weight:950!important;
+  color:#334155!important;
+  box-sizing:border-box!important;
+}
+
+.wholesaleCollabPanel .collabFilterBox input,
+.wholesaleCollabPanel .collabFilterBox select,
+.wholesaleCollabPanel .collabFilterBoxV96 input,
+.wholesaleCollabPanel .collabFilterBoxV96 select{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:46px!important;
+  box-sizing:border-box!important;
+  border-radius:14px!important;
+  font-size:14px!important;
+  font-weight:850!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.wholesaleCollabPanel .collabFilterActions,
+.wholesaleCollabPanel .collabFilterActionsV971{
+  width:100%!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  box-sizing:border-box!important;
+}
+
+.wholesaleCollabPanel .collabFilterActions button,
+.wholesaleCollabPanel .collabFilterActionsV971 button{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:46px!important;
+  padding:8px 10px!important;
+  border-radius:14px!important;
+  font-size:12px!important;
+  font-weight:950!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+
+/* Cards de resultado: corrige corte visual do print */
+.wholesaleCollabPanel .collabResultGrid{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px!important;
+  align-items:stretch!important;
+  margin-top:12px!important;
+  margin-bottom:10px!important;
+  overflow:visible!important;
+}
+
+.wholesaleCollabPanel .collabResultCard{
+  min-width:0!important;
+  width:100%!important;
+  height:auto!important;
+  min-height:88px!important;
+  max-height:none!important;
+  padding:14px!important;
+  border-radius:18px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  gap:7px!important;
+  background:#ffffff!important;
+  border:1px solid #e2e8f0!important;
+}
+
+.wholesaleCollabPanel .collabResultCard.main{
+  background:linear-gradient(135deg,#dbeafe 0%,#ffffff 78%)!important;
+  border-color:#bfdbfe!important;
+}
+
+.wholesaleCollabPanel .collabResultCard small{
+  display:block!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-size:11px!important;
+  line-height:1.1!important;
+  font-weight:950!important;
+  color:#64748b!important;
+  text-transform:uppercase!important;
+  letter-spacing:.02em!important;
+}
+
+.wholesaleCollabPanel .collabResultCard strong{
+  display:block!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  font-size:21px!important;
+  line-height:1.05!important;
+  font-weight:950!important;
+  color:#0f172a!important;
+}
+
+.wholesaleCollabPanel .collabResultCard.main strong{
+  color:#1d4ed8!important;
+}
+
+/* Resumo curto */
+.wholesaleCollabPanel .collabMiniSummary{
+  width:100%!important;
+  max-height:none!important;
+  overflow:visible!important;
+  white-space:normal!important;
+  line-height:1.35!important;
+  font-size:12px!important;
+  font-weight:850!important;
+  color:#475569!important;
+  background:#f8fafc!important;
+  border:1px solid #e2e8f0!important;
+  border-radius:16px!important;
+  padding:10px 12px!important;
+  box-sizing:border-box!important;
+}
+
+/* Tabela: cabeçalhos e valores alinhados */
+.wholesaleCollabPanel .collabBreakdownWrap{
+  width:100%!important;
+  max-width:100%!important;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+  -webkit-overflow-scrolling:touch!important;
+  border-radius:18px!important;
+  border:1px solid #e2e8f0!important;
+  background:#ffffff!important;
+  box-sizing:border-box!important;
+  margin-top:12px!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap table{
+  width:100%!important;
+  min-width:760px!important;
+  table-layout:fixed!important;
+  border-collapse:separate!important;
+  border-spacing:0!important;
+  margin:0!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap th,
+.wholesaleCollabPanel .collabBreakdownWrap td{
+  box-sizing:border-box!important;
+  vertical-align:middle!important;
+  padding:10px 9px!important;
+  border-bottom:1px solid #edf2f7!important;
+  line-height:1.2!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap th{
+  background:#f8fafc!important;
+  color:#475569!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  text-transform:uppercase!important;
+  letter-spacing:.03em!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap td{
+  font-size:12px!important;
+  color:#0f172a!important;
+  font-weight:850!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap th:nth-child(1),
+.wholesaleCollabPanel .collabBreakdownWrap td:nth-child(1){
+  width:210px!important;
+  text-align:left!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap th:nth-child(2),
+.wholesaleCollabPanel .collabBreakdownWrap td:nth-child(2){
+  width:95px!important;
+  text-align:center!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap th:nth-child(3),
+.wholesaleCollabPanel .collabBreakdownWrap td:nth-child(3){
+  width:78px!important;
+  text-align:center!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap th:nth-child(4),
+.wholesaleCollabPanel .collabBreakdownWrap td:nth-child(4),
+.wholesaleCollabPanel .collabBreakdownWrap th:nth-child(5),
+.wholesaleCollabPanel .collabBreakdownWrap td:nth-child(5),
+.wholesaleCollabPanel .collabBreakdownWrap th:nth-child(6),
+.wholesaleCollabPanel .collabBreakdownWrap td:nth-child(6),
+.wholesaleCollabPanel .collabBreakdownWrap th:nth-child(7),
+.wholesaleCollabPanel .collabBreakdownWrap td:nth-child(7){
+  width:120px!important;
+  text-align:right!important;
+}
+
+.wholesaleCollabPanel .collabPersonName,
+.wholesaleCollabPanel .collabPersonUser{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.wholesaleCollabPanel .collabPersonName{
+  font-weight:950!important;
+  color:#0f172a!important;
+}
+
+.wholesaleCollabPanel .collabPersonUser{
+  margin-top:2px!important;
+  font-size:10.5px!important;
+  color:#64748b!important;
+  font-weight:800!important;
+}
+
+.wholesaleCollabPanel .collabMoneyStrong{
+  color:#1d4ed8!important;
+  font-weight:950!important;
+  white-space:nowrap!important;
+}
+
+.wholesaleCollabPanel .collabTypeChip{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:28px!important;
+  border-radius:999px!important;
+  font-size:10.5px!important;
+  font-weight:950!important;
+  box-sizing:border-box!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* Desktop médio */
+@media(max-width:1180px){
+  .wholesaleCollabPanel .collabFilterBox,
+  .wholesaleCollabPanel .collabFilterBoxV96{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterActions,
+  .wholesaleCollabPanel .collabFilterActionsV971{
+    grid-column:1/-1!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+/* Celular: simplificado e sem corte */
+@media(max-width:640px){
+  .wholesaleCollabPanel{
+    padding:14px!important;
+    border-radius:18px!important;
+  }
+
+  .wholesaleCollabPanel .panelHead h3{
+    font-size:20px!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterBox,
+  .wholesaleCollabPanel .collabFilterBoxV96{
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+    padding:9px!important;
+    border-radius:16px!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterActions,
+  .wholesaleCollabPanel .collabFilterActionsV971{
+    grid-column:auto!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterBox input,
+  .wholesaleCollabPanel .collabFilterBox select,
+  .wholesaleCollabPanel .collabFilterBoxV96 input,
+  .wholesaleCollabPanel .collabFilterBoxV96 select,
+  .wholesaleCollabPanel .collabFilterActions button,
+  .wholesaleCollabPanel .collabFilterActionsV971 button{
+    height:46px!important;
+    font-size:15px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard{
+    min-height:82px!important;
+    padding:12px!important;
+    border-radius:16px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard small{
+    font-size:10px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard strong{
+    font-size:18px!important;
+  }
+
+  .wholesaleCollabPanel .collabBreakdownWrap table{
+    min-width:680px!important;
+  }
+}
+
+@media(max-width:420px){
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard{
+    min-height:76px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard strong{
+    font-size:19px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -7522,7 +7918,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V102</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V103</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -7847,9 +8243,8 @@ body:not(.authLocked) .loginScreen{
         <div class="panelHead">
           <div>
             <h3>Vendas por colaborador</h3>
-            <span class="muted">Filtre por colaborador, período e modalidade para ver o total vendido em Atacado ou Varejo.</span>
+            <span class="muted">Veja o total vendido por colaborador. Use os filtros apenas se precisar refinar.</span>
           </div>
-          <span class="badge blue">Análise rápida</span>
         </div>
 
         <div class="collabFilterBox collabFilterBoxV96">
@@ -8613,7 +9008,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=102");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=103");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -9465,7 +9860,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V102 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V103 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
