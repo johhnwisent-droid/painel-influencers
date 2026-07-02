@@ -6424,6 +6424,191 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V94 ATACADO ORGANIZAÇÃO FINAL ===== */
+/* Painel Vendas por colaborador abaixo da tabela, mais compacto */
+.wholesaleCollabPanel{
+  margin-top:16px!important;
+}
+
+.wholesaleCollabPanel .panelHead{
+  gap:10px!important;
+}
+
+.wholesaleCollabPanel .collabFilterBox{
+  grid-template-columns:1.25fr .9fr .9fr .9fr auto!important;
+  gap:9px!important;
+}
+
+.wholesaleCollabPanel .collabResultGrid{
+  grid-template-columns:1.2fr .8fr 1fr .8fr!important;
+  gap:9px!important;
+}
+
+.wholesaleCollabPanel .collabResultCard{
+  padding:12px!important;
+  border-radius:16px!important;
+}
+
+.wholesaleCollabPanel .collabResultCard strong{
+  font-size:19px!important;
+}
+
+.wholesaleCollabPanel .collabResultCard.main strong{
+  font-size:22px!important;
+}
+
+.wholesaleCollabPanel .collabMiniSummary{
+  padding:9px 11px!important;
+  font-size:11.8px!important;
+}
+
+.collabBreakdownWrap table{
+  min-width:760px!important;
+}
+
+.collabBreakdownWrap th,
+.collabBreakdownWrap td{
+  padding:8px 7px!important;
+  line-height:1.22!important;
+}
+
+.collabPersonName,
+.collabPersonUser{
+  max-width:170px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* Produto compacto na tabela de Atacado e Varejo */
+.compactProductCell{
+  background:transparent!important;
+  border:0!important;
+  padding:0!important;
+}
+
+.productCompactName{
+  display:block;
+  max-width:100%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-weight:950;
+  color:#0f172a;
+}
+
+.productCompactBtn{
+  display:grid!important;
+  width:100%!important;
+  gap:4px!important;
+  padding:7px 8px!important;
+  border-radius:12px!important;
+  border:1px solid #e2e8f0!important;
+  background:#f8fafc!important;
+  cursor:pointer!important;
+  text-align:left!important;
+  min-height:0!important;
+  box-sizing:border-box!important;
+}
+
+.productCompactBtn:hover{
+  background:#eef2ff!important;
+  border-color:#c7d2fe!important;
+}
+
+.productCompactMore{
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-start;
+  width:max-content;
+  max-width:100%;
+  border-radius:999px;
+  padding:3px 7px;
+  background:#e0e7ff;
+  color:#3730a3;
+  font-size:10px;
+  font-weight:950;
+  line-height:1;
+}
+
+#wholesaleRetail td[data-label="Produto"] .wholesaleProductList,
+#wholesaleRetail td:nth-child(5) .wholesaleProductList{
+  padding:0!important;
+  background:transparent!important;
+  border:0!important;
+  border-radius:0!important;
+}
+
+/* Evita linhas gigantes na lista de Atacado e Varejo */
+#wholesaleRetail .tableWrap table td{
+  max-height:72px;
+}
+
+#wholesaleRetail .wholesaleNoteMini{
+  max-height:58px;
+  overflow:hidden;
+}
+
+#wholesaleRetail .feePill,
+#wholesaleRetail .paymentMethodPill,
+#wholesaleRetail .originPill,
+#wholesaleRetail .saleTypePill,
+#wholesaleRetail .receivedPill,
+#wholesaleRetail .wholesaleMoneyPill{
+  line-height:1.15!important;
+}
+
+/* Responsivo */
+@media(max-width:1100px){
+  .wholesaleCollabPanel .collabFilterBox{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterBox button{
+    grid-column:1/-1!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+@media(max-width:620px){
+  .wholesaleCollabPanel{
+    margin-top:12px!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterBox,
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard{
+    padding:11px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard strong{
+    font-size:18px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard.main strong{
+    font-size:21px!important;
+  }
+
+  .productCompactBtn{
+    padding:6px 7px!important;
+  }
+
+  .productCompactName{
+    font-size:11px!important;
+  }
+
+  .productCompactMore{
+    font-size:9.5px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -6505,7 +6690,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V93</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V94</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -6593,79 +6778,7 @@ body:not(.authLocked) .loginScreen{
       </div>
 
 
-      <div class="panel wholesaleCollabPanel">
-        <div class="panelHead">
-          <div>
-            <h3>Vendas por colaborador</h3>
-            <span class="muted">Filtre por colaborador, período e modalidade para ver o total vendido em Atacado ou Varejo.</span>
-          </div>
-          <span class="badge blue">Análise rápida</span>
-        </div>
-
-        <div class="collabFilterBox">
-          <label>Colaborador
-            <select id="wholesaleCollabFilter" onchange="renderWholesaleCollaboratorPanel()">
-              <option value="">Todos os colaboradores</option>
-            </select>
-          </label>
-
-          <label>Data inicial
-            <input id="wholesaleCollabStart" type="date" onchange="renderWholesaleCollaboratorPanel()">
-          </label>
-
-          <label>Data final
-            <input id="wholesaleCollabEnd" type="date" onchange="renderWholesaleCollaboratorPanel()">
-          </label>
-
-          <label>Tipo de venda
-            <select id="wholesaleCollabSaleType" onchange="renderWholesaleCollaboratorPanel()">
-              <option value="">Atacado + Varejo</option>
-              <option value="Varejo">Varejo</option>
-              <option value="Atacado">Atacado</option>
-            </select>
-          </label>
-
-          <button type="button" class="secondary" onclick="clearWholesaleCollaboratorFilter()">Limpar filtro</button>
-        </div>
-
-        <div class="collabResultGrid">
-          <div class="collabResultCard main">
-            <small>Total vendido</small>
-            <strong id="wholesaleCollabTotal">R$ 0,00</strong>
-          </div>
-          <div class="collabResultCard">
-            <small>Pedidos</small>
-            <strong id="wholesaleCollabCount">0</strong>
-          </div>
-          <div class="collabResultCard">
-            <small>Valor real recebido</small>
-            <strong id="wholesaleCollabReal">R$ 0,00</strong>
-          </div>
-          <div class="collabResultCard">
-            <small>Ticket médio</small>
-            <strong id="wholesaleCollabTicket">R$ 0,00</strong>
-          </div>
-        </div>
-
-        <div class="collabMiniSummary" id="wholesaleCollabSummaryText">Selecione os filtros para visualizar o resultado.</div>
-
-        <div class="tableWrap collabBreakdownWrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Colaborador</th>
-                <th>Tipo</th>
-                <th>Pedidos</th>
-                <th>Total vendido</th>
-                <th>Valor real</th>
-                <th>Descontos</th>
-                <th>Frete</th>
-              </tr>
-            </thead>
-            <tbody id="wholesaleCollabRows"></tbody>
-          </table>
-        </div>
-      </div>
+      
 
       <div class="panel">
         <div class="panelHead">
@@ -6887,7 +7000,81 @@ body:not(.authLocked) .loginScreen{
         </div>
       </div>
 
-      <div class="panel printPanel wholesaleListPrintPanel printOnly">
+      <div class="panel wholesaleCollabPanel">
+        <div class="panelHead">
+          <div>
+            <h3>Vendas por colaborador</h3>
+            <span class="muted">Filtre por colaborador, período e modalidade para ver o total vendido em Atacado ou Varejo.</span>
+          </div>
+          <span class="badge blue">Análise rápida</span>
+        </div>
+
+        <div class="collabFilterBox">
+          <label>Colaborador
+            <select id="wholesaleCollabFilter" onchange="renderWholesaleCollaboratorPanel()">
+              <option value="">Todos os colaboradores</option>
+            </select>
+          </label>
+
+          <label>Data inicial
+            <input id="wholesaleCollabStart" type="date" onchange="renderWholesaleCollaboratorPanel()">
+          </label>
+
+          <label>Data final
+            <input id="wholesaleCollabEnd" type="date" onchange="renderWholesaleCollaboratorPanel()">
+          </label>
+
+          <label>Tipo de venda
+            <select id="wholesaleCollabSaleType" onchange="renderWholesaleCollaboratorPanel()">
+              <option value="">Atacado + Varejo</option>
+              <option value="Varejo">Varejo</option>
+              <option value="Atacado">Atacado</option>
+            </select>
+          </label>
+
+          <button type="button" class="secondary" onclick="clearWholesaleCollaboratorFilter()">Limpar filtro</button>
+        </div>
+
+        <div class="collabResultGrid">
+          <div class="collabResultCard main">
+            <small>Total vendido</small>
+            <strong id="wholesaleCollabTotal">R$ 0,00</strong>
+          </div>
+          <div class="collabResultCard">
+            <small>Pedidos</small>
+            <strong id="wholesaleCollabCount">0</strong>
+          </div>
+          <div class="collabResultCard">
+            <small>Valor real recebido</small>
+            <strong id="wholesaleCollabReal">R$ 0,00</strong>
+          </div>
+          <div class="collabResultCard">
+            <small>Ticket médio</small>
+            <strong id="wholesaleCollabTicket">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <div class="collabMiniSummary" id="wholesaleCollabSummaryText">Selecione os filtros para visualizar o resultado.</div>
+
+        <div class="tableWrap collabBreakdownWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Tipo</th>
+                <th>Pedidos</th>
+                <th>Total vendido</th>
+                <th>Valor real</th>
+                <th>Descontos</th>
+                <th>Frete</th>
+              </tr>
+            </thead>
+            <tbody id="wholesaleCollabRows"></tbody>
+          </table>
+        </div>
+      </div>
+
+<div class="panel printPanel wholesaleListPrintPanel printOnly">
         <div id="wholesaleListPrintArea" class="printArea wholesaleListPdf">
           <img id="wholesaleListWatermark" class="reportWatermark" style="display:none">
 
@@ -8311,7 +8498,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V93 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V94 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -9425,6 +9612,21 @@ function clearWholesaleCollaboratorFilter(){
 }
 
 
+
+function compactProductHtml(product){
+  const lines=cleanProductLines(product||"");
+  if(!lines.length)return "-";
+  const first=lines[0];
+  if(lines.length===1)return `<span class="productCompactName">${esc(first)}</span>`;
+
+  const full=lines.map((p,idx)=>`${idx+1}. ${p}`).join("\n");
+  return `<button type="button" class="productCompactBtn" title="${esc(full)}" onclick="event.stopPropagation();alert('${esc(full).replace(/&#039;/g,"\\'").replace(/&quot;/g,"\\&quot;").replace(/\n/g,"\\n")}')">
+    <span class="productCompactName">${esc(first)}</span>
+    <span class="productCompactMore">+${lines.length-1} • ver</span>
+  </button>`;
+}
+
+
 function wholesaleRetailRows(){
   const date=$("wholesaleFilterDate")?.value||"";
   const type=$("wholesaleFilterType")?.value||"";
@@ -9459,7 +9661,7 @@ function renderWholesaleRetail(){
     <td data-label="Cliente"><span class="clientNamePill">${esc(w.clientName||"-")}</span><span class="createdByMini">Por: ${esc(w.createdByName||"Não registrado")}</span></td>
     <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
     <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
-    <td data-label="Produto"><span class="wholesaleProductList">${esc(w.product||"-")}</span></td>
+    <td data-label="Produto"><span class="wholesaleProductList compactProductCell">${compactProductHtml(w.product||"-")}</span></td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
     <td data-label="Frete"><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
     <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
