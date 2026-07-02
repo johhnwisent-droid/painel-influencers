@@ -7423,6 +7423,24 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V102 CORREÇÃO RENDER ATACADO + COLABORADORES ===== */
+#wholesaleCollabFilter{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+}
+
+.wholesaleOrderRow.savedWholesaleHighlight td,
+.savedWholesaleHighlight td{
+  background:#dcfce7!important;
+}
+
+.productCompactSafe{
+  min-width:0!important;
+  max-width:100%!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -7504,7 +7522,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V101</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V102</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8595,7 +8613,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=101");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=102");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -9447,7 +9465,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V101 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V102 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -10488,55 +10506,97 @@ function selectedWholesaleDate(){
 
 
 
+
 function wholesaleCollaboratorKey(w){
-  const key=String(w.createdById||w.createdByUsername||w.createdByName||"nao-registrado").trim();
+  const key=String(w?.createdById||w?.createdByUsername||w?.createdByName||"nao-registrado").trim();
   return key||"nao-registrado";
+}
+
+function wholesaleCollaboratorRegistry(){
+  const map=new Map();
+
+  const addUser=(u)=>{
+    if(!u)return;
+    if(u.active===false)return;
+
+    const key=String(u.id||u.username||u.name||"").trim();
+    const name=String(u.name||u.username||"").trim();
+    const username=String(u.username||"").trim();
+
+    if(!key||!name)return;
+
+    if(!map.has(key)){
+      map.set(key,{key,name,username});
+    }
+  };
+
+  (state.settings?.authUsers||[]).forEach(addUser);
+  (state.authUsers||[]).forEach(addUser);
+  (state.collaborators||[]).forEach(addUser);
+  (state.users||[]).forEach(addUser);
+
+  if(currentUser){
+    addUser({
+      id:currentUser.id||currentUser.username||currentUser.name,
+      name:currentUser.name||currentUser.username,
+      username:currentUser.username||"",
+      active:true
+    });
+  }
+
+  (state.wholesaleRetail||[]).forEach(w=>{
+    const key=wholesaleCollaboratorKey(w);
+    if(!map.has(key)){
+      map.set(key,{
+        key,
+        name:w.createdByName||w.createdByUsername||"Não registrado",
+        username:w.createdByUsername||""
+      });
+    }
+  });
+
+  if(!map.size){
+    map.set("admin",{key:"admin",name:"Administrador",username:"admin"});
+  }
+
+  return map;
 }
 
 function wholesaleCollaboratorNameByKey(key){
   key=String(key||"").trim();
-  const users=state.settings?.authUsers||[];
-  const user=users.find(u=>String(u.id||"")===key||String(u.username||"")===key||String(u.name||"")===key);
+  const user=wholesaleCollaboratorRegistry().get(key);
   if(user)return user.name||user.username||"Colaborador";
+
   const row=(state.wholesaleRetail||[]).find(w=>wholesaleCollaboratorKey(w)===key);
   return row?.createdByName||"Não registrado";
 }
 
 function wholesaleCollaboratorUserByKey(key){
   key=String(key||"").trim();
-  const users=state.settings?.authUsers||[];
-  const user=users.find(u=>String(u.id||"")===key||String(u.username||"")===key||String(u.name||"")===key);
+  const user=wholesaleCollaboratorRegistry().get(key);
   if(user)return user.username||"";
+
   const row=(state.wholesaleRetail||[]).find(w=>wholesaleCollaboratorKey(w)===key);
   return row?.createdByUsername||"";
 }
 
 function renderWholesaleCollaboratorOptions(){
-  if(!$("wholesaleCollabFilter"))return;
+  const el=$("wholesaleCollabFilter");
+  if(!el)return;
 
-  const current=$("wholesaleCollabFilter").value||"";
-  const map=new Map();
-
-  (state.settings?.authUsers||[]).forEach(u=>{
-    if(u.active!==false){
-      const key=String(u.id||u.username||u.name||"").trim();
-      if(key)map.set(key,{key,name:u.name||u.username,username:u.username||""});
-    }
-  });
-
-  (state.wholesaleRetail||[]).forEach(w=>{
-    const key=wholesaleCollaboratorKey(w);
-    if(!map.has(key)){
-      map.set(key,{key,name:w.createdByName||"Não registrado",username:w.createdByUsername||""});
-    }
-  });
-
+  const current=el.value||"";
+  const map=wholesaleCollaboratorRegistry();
   const options=[...map.values()].sort((a,b)=>String(a.name).localeCompare(String(b.name),"pt-BR"));
-  $("wholesaleCollabFilter").innerHTML=`<option value="">Todos os colaboradores</option>`+options.map(u=>`<option value="${esc(u.key)}">${esc(u.name)}${u.username?` • ${esc(u.username)}`:""}</option>`).join("");
 
-  if(current&&[...map.keys()].includes(current))$("wholesaleCollabFilter").value=current;
-  else if(!current)$("wholesaleCollabFilter").value="";
+  el.innerHTML=`<option value="">Todos os colaboradores</option>`+options.map(u=>{
+    const label=`${u.name}${u.username?` • ${u.username}`:""}`;
+    return `<option value="${esc(u.key)}">${esc(label)}</option>`;
+  }).join("");
+
+  if(current&&map.has(current))el.value=current;
+  else el.value="";
 }
+
 
 function normalizeDateOnly(value){
   const s=String(value||"").trim();
@@ -10797,6 +10857,21 @@ function exportWholesaleCollaboratorSpreadsheet(){
   exportWholesaleCollaboratorPDF();
 }
 
+
+function productLinesArray(value){
+  return String(value||"")
+    .split(/\r?\n/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+}
+
+function compactProductText(product){
+  const lines=productLinesArray(product||"");
+  if(!lines.length)return "-";
+  if(lines.length===1)return lines[0];
+  return `${lines[0]} ... +${lines.length-1}`;
+}
+
 function wholesaleRetailRows(){
   const date=String($("wholesaleFilterDate")?.value||"").trim();
   const type=String($("wholesaleFilterType")?.value||"").trim();
@@ -10849,7 +10924,7 @@ function renderWholesaleRetail(){
     <td data-label="Cliente"><span class="clientNamePill">${esc(w.clientName||"-")}</span><span class="createdByMini">Por: ${esc(w.createdByName||"Não registrado")}</span></td>
     <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
     <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
-    <td data-label="Produto"><span class="wholesaleProductList productCompactSafe" title="${esc(w.product||"-")}">${esc(compactProductText(w.product||"-"))}</span></td>
+    <td data-label="Produto"><span class="wholesaleProductList productCompactSafe" title="${esc(String(w.product||"-"))}">${esc(compactProductText(w.product||"-"))}</span></td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
     <td data-label="Frete"><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
     <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
