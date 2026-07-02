@@ -6689,105 +6689,78 @@ body:not(.authLocked) .loginScreen{
 }
 
 
-/* ===== V97 VENDAS POR COLABORADOR RESPONSIVO + PDF ===== */
-/* Corrige estouro/altura excessiva no desktop */
-.wholesaleCollabPanel{
-  align-self:start!important;
-  overflow:hidden!important;
-}
-
-.wholesaleCollabPanel .panelHead{
-  align-items:flex-start!important;
-}
-
-.collabResultGrid{
-  align-items:start!important;
-  grid-auto-rows:auto!important;
-  height:auto!important;
-  min-height:0!important;
-}
-
-.collabResultCard{
-  height:auto!important;
-  min-height:86px!important;
-  max-height:112px!important;
-  align-self:start!important;
-  display:flex!important;
-  flex-direction:column!important;
-  justify-content:flex-start!important;
-  overflow:hidden!important;
-}
-
-.collabResultCard small{
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-}
-
-.collabResultCard strong{
-  display:block!important;
-  max-width:100%!important;
-  white-space:nowrap!important;
-  overflow:hidden!important;
-  text-overflow:ellipsis!important;
-}
-
-/* Filtro direto: colaborador + data inicial/final + tipo + ações */
+/* ===== V97.1 CORREÇÃO MOBILE + PDF COLABORADOR SEGURO ===== */
 .collabFilterBoxV96{
   grid-template-columns:minmax(210px,1.15fr) minmax(150px,.72fr) minmax(150px,.72fr) minmax(170px,.8fr) minmax(220px,.72fr)!important;
   gap:10px!important;
   align-items:end!important;
 }
 
-.collabFilterActionsV97{
+.collabFilterActionsV971{
   display:grid!important;
   grid-template-columns:1fr 1fr!important;
   gap:8px!important;
   align-items:end!important;
 }
 
-.collabFilterActionsV97 button{
+.collabFilterActionsV971 button{
+  width:100%!important;
   min-height:44px!important;
-  padding:8px 10px!important;
   font-size:12px!important;
   white-space:nowrap!important;
-  width:100%!important;
 }
 
-/* Cards mais modernos e compactos */
+.wholesaleCollabPanel{
+  overflow:hidden!important;
+}
+
 .wholesaleCollabPanel .collabResultGrid{
+  display:grid!important;
   grid-template-columns:repeat(4,minmax(0,1fr))!important;
   gap:10px!important;
+  align-items:start!important;
 }
 
 .wholesaleCollabPanel .collabResultCard{
-  padding:12px 13px!important;
+  height:auto!important;
+  min-height:82px!important;
+  max-height:105px!important;
+  overflow:hidden!important;
+  padding:12px!important;
   border-radius:16px!important;
 }
 
-.wholesaleCollabPanel .collabResultCard.main{
-  background:linear-gradient(135deg,#dbeafe,#ffffff 75%)!important;
+.wholesaleCollabPanel .collabResultCard small,
+.wholesaleCollabPanel .collabResultCard strong{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
 }
 
 .wholesaleCollabPanel .collabResultCard strong{
-  font-size:20px!important;
-  line-height:1.05!important;
+  font-size:19px!important;
 }
 
 .wholesaleCollabPanel .collabResultCard.main strong{
-  font-size:21px!important;
+  font-size:20px!important;
 }
 
-/* Tabela mais estável, sem linhas grandes */
+.collabMiniSummary{
+  max-height:48px!important;
+  overflow:hidden!important;
+  font-size:11.8px!important;
+  line-height:1.3!important;
+}
+
 .collabBreakdownWrap{
-  max-height:none!important;
   overflow-x:auto!important;
   overflow-y:visible!important;
+  -webkit-overflow-scrolling:touch!important;
 }
 
 .collabBreakdownWrap table{
   table-layout:fixed!important;
-  min-width:720px!important;
+  min-width:690px!important;
 }
 
 .collabBreakdownWrap th,
@@ -6800,21 +6773,6 @@ body:not(.authLocked) .loginScreen{
   overflow-wrap:break-word!important;
 }
 
-.collabBreakdownWrap th:nth-child(1),
-.collabBreakdownWrap td:nth-child(1){width:170px!important}
-.collabBreakdownWrap th:nth-child(2),
-.collabBreakdownWrap td:nth-child(2){width:88px!important}
-.collabBreakdownWrap th:nth-child(3),
-.collabBreakdownWrap td:nth-child(3){width:70px!important;text-align:center!important}
-.collabBreakdownWrap th:nth-child(4),
-.collabBreakdownWrap td:nth-child(4){width:118px!important}
-.collabBreakdownWrap th:nth-child(5),
-.collabBreakdownWrap td:nth-child(5){width:118px!important}
-.collabBreakdownWrap th:nth-child(6),
-.collabBreakdownWrap td:nth-child(6){width:98px!important}
-.collabBreakdownWrap th:nth-child(7),
-.collabBreakdownWrap td:nth-child(7){width:88px!important}
-
 .collabPersonName,
 .collabPersonUser{
   max-width:100%!important;
@@ -6823,21 +6781,6 @@ body:not(.authLocked) .loginScreen{
   text-overflow:ellipsis!important;
 }
 
-.collabTypeChip{
-  width:100%!important;
-  box-sizing:border-box!important;
-  min-width:0!important;
-}
-
-.collabMiniSummary{
-  font-size:11.8px!important;
-  line-height:1.3!important;
-  padding:9px 11px!important;
-  max-height:46px!important;
-  overflow:hidden!important;
-}
-
-/* PDF vendas por colaborador */
 .pdfCollabSalesTable{
   width:100%;
   border-collapse:collapse;
@@ -6863,25 +6806,13 @@ body:not(.authLocked) .loginScreen{
   letter-spacing:.03em;
 }
 
-.pdfCollabSalesTable .pdfStrong{
-  font-weight:950;
-  color:#0f172a;
-}
-
-.pdfCollabSalesTable .pdfProduct{
-  white-space:pre-line;
-  max-width:180px;
-}
-
-/* Responsivo desktop menor */
 @media(max-width:1180px){
   .collabFilterBoxV96{
     grid-template-columns:1fr 1fr!important;
   }
 
-  .collabFilterActionsV97{
+  .collabFilterActionsV971{
     grid-column:1/-1!important;
-    grid-template-columns:1fr 1fr!important;
   }
 
   .wholesaleCollabPanel .collabResultGrid{
@@ -6889,13 +6820,12 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
-/* Mobile geral */
 @media(max-width:760px){
   .collabFilterBoxV96{
     grid-template-columns:1fr!important;
   }
 
-  .collabFilterActionsV97{
+  .collabFilterActionsV971{
     grid-column:auto!important;
     grid-template-columns:1fr!important;
   }
@@ -6904,32 +6834,19 @@ body:not(.authLocked) .loginScreen{
     grid-template-columns:1fr 1fr!important;
   }
 
-  .collabResultCard{
-    min-height:78px!important;
-    max-height:96px!important;
-  }
-
-  .wholesaleCollabPanel .collabResultCard strong{
-    font-size:18px!important;
-  }
-
-  .wholesaleCollabPanel .collabResultCard.main strong{
-    font-size:19px!important;
+  .wholesaleCollabPanel .collabResultCard{
+    min-height:76px!important;
+    max-height:94px!important;
   }
 
   .collabBreakdownWrap table{
-    min-width:660px!important;
+    min-width:640px!important;
   }
 }
 
 @media(max-width:520px){
   .wholesaleCollabPanel .collabResultGrid{
     grid-template-columns:1fr!important;
-  }
-
-  .collabResultCard{
-    min-height:72px!important;
-    max-height:90px!important;
   }
 
   .collabMiniSummary{
@@ -7067,7 +6984,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V97</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V97.1</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -7409,7 +7326,7 @@ body:not(.authLocked) .loginScreen{
             </select>
           </label>
 
-          <div class="collabFilterActions collabFilterActionsV97">
+          <div class="collabFilterActions collabFilterActionsV971">
             <button type="button" class="secondary" onclick="clearWholesaleCollaboratorFilter()">Limpar</button>
             <button type="button" class="primary" onclick="exportWholesaleCollaboratorPDF()">Exportar PDF</button>
           </div>
@@ -8147,7 +8064,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=97");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=971");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -8998,7 +8915,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V97 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V97.1 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -10227,9 +10144,8 @@ function renderWholesaleCollaboratorPanel(){
       <td>${money(g.freight)}</td>
     </tr>`).join(""):`<tr><td colspan="7">Nenhuma venda encontrada com os filtros selecionados.</td></tr>`;
   }
-
-  renderWholesaleCollaboratorPDF();
 }
+
 function clearWholesaleCollaboratorFilter(){
   if($("wholesaleCollabFilter"))$("wholesaleCollabFilter").value="";
   if($("wholesaleCollabStart"))$("wholesaleCollabStart").value="";
@@ -10239,19 +10155,21 @@ function clearWholesaleCollaboratorFilter(){
 }
 
 function renderWholesaleCollaboratorPDF(){
-  if(!$("collabSalesPdfRows"))return;
+  const target=$("collabSalesPdfRows");
+  if(!target)return;
 
   const rows=wholesaleCollaboratorFilteredRows();
   const total=rows.reduce((a,w)=>a+Number(w.total||0),0);
   const real=rows.reduce((a,w)=>a+Number(w.realReceived||0),0);
 
   const pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
-  if($("collabSalesPdfLogo")){
-    $("collabSalesPdfLogo").style.display=pdfLogo?"block":"none";
-    if(pdfLogo)$("collabSalesPdfLogo").src=pdfLogo;
+  const logoEl=$("collabSalesPdfLogo");
+  if(logoEl){
+    logoEl.style.display=pdfLogo?"block":"none";
+    if(pdfLogo)logoEl.src=pdfLogo;
   }
 
-  applyPdfWatermark("collabSalesWatermark");
+  if(typeof applyPdfWatermark==="function")applyPdfWatermark("collabSalesWatermark");
 
   const collabKey=$("wholesaleCollabFilter")?.value||"";
   const collabName=collabKey?wholesaleCollaboratorNameByKey(collabKey):"Todos os colaboradores";
@@ -10269,15 +10187,15 @@ function renderWholesaleCollaboratorPDF(){
   if($("collabSalesPdfReal"))$("collabSalesPdfReal").textContent=money(real);
   if($("collabSalesPdfFooter"))$("collabSalesPdfFooter").textContent=state.settings.pdfFooter||"Relatório gerado automaticamente pelo painel.";
 
-  $("collabSalesPdfRows").innerHTML=rows.length?rows.map(w=>{
+  target.innerHTML=rows.length?rows.map(w=>{
     const key=wholesaleCollaboratorKey(w);
     return `<tr>
       <td>${dateBR(w.date)}</td>
-      <td><span class="pdfStrong">${esc(wholesaleCollaboratorNameByKey(key))}</span><br><small>${esc(wholesaleCollaboratorUserByKey(key))}</small></td>
+      <td><strong>${esc(wholesaleCollaboratorNameByKey(key))}</strong><br><small>${esc(wholesaleCollaboratorUserByKey(key))}</small></td>
       <td>${esc(w.saleType||"Varejo")}</td>
-      <td><span class="pdfStrong">${esc(w.clientName||"-")}</span></td>
-      <td><span class="pdfProduct">${esc(w.product||"-")}</span></td>
-      <td><span class="pdfStrong">${money(w.total)}</span></td>
+      <td><strong>${esc(w.clientName||"-")}</strong></td>
+      <td>${esc(w.product||"-")}</td>
+      <td><strong>${money(w.total)}</strong></td>
       <td>${money(w.realReceived)}</td>
       <td>${esc(paymentLabel(w.paymentMethod,w.installments))}</td>
     </tr>`;
@@ -10307,7 +10225,7 @@ function exportWholesaleCollaboratorPDF(){
   },700);
 }
 
-/* Compatibilidade: se algum cache antigo chamar a função de planilha, exporta PDF. */
+/* Compatibilidade com cache antigo */
 function exportWholesaleCollaboratorSpreadsheet(){
   exportWholesaleCollaboratorPDF();
 }
