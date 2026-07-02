@@ -6531,6 +6531,20 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V95 LOGIN PERSISTENTE + RECUPERAÇÃO DO APP ===== */
+.loginMsg{
+  min-height:18px;
+}
+.profileMenuTrigger #loggedUserName{
+  max-width:220px!important;
+}
+@media(max-width:760px){
+  .profileMenuTrigger #loggedUserName{
+    max-width:calc(100vw - 108px)!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -6612,7 +6626,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V94.1</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V95</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -7641,7 +7655,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=64");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=95");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -8035,23 +8049,94 @@ function dateTimeBR(v){
   return d.toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"});
 }
 
+const AUTH_COOKIE_NAME="painel_login_interno_v95";
+
+function readAuthCookie(){
+  try{
+    const parts=document.cookie.split(";").map(x=>x.trim());
+    const item=parts.find(x=>x.startsWith(AUTH_COOKIE_NAME+"="));
+    return item?decodeURIComponent(item.split("=").slice(1).join("=")):"";
+  }catch(e){
+    return "";
+  }
+}
+
+function writeAuthCookie(raw){
+  try{
+    document.cookie=AUTH_COOKIE_NAME+"="+encodeURIComponent(raw)+"; max-age="+(60*60*24*120)+"; path=/; SameSite=Lax";
+  }catch(e){}
+}
+
+function clearAuthCookie(){
+  try{
+    document.cookie=AUTH_COOKIE_NAME+"=; max-age=0; path=/; SameSite=Lax";
+  }catch(e){}
+}
+
+function readAuthSessionRaw(){
+  try{
+    const v=localStorage.getItem(AUTH_SESSION_KEY);
+    if(v)return v;
+  }catch(e){}
+  try{
+    const v=sessionStorage.getItem(AUTH_SESSION_KEY);
+    if(v)return v;
+  }catch(e){}
+  const c=readAuthCookie();
+  if(c)return c;
+  return "";
+}
+
+function writeAuthSessionRaw(raw){
+  try{localStorage.setItem(AUTH_SESSION_KEY,raw);}catch(e){}
+  try{sessionStorage.setItem(AUTH_SESSION_KEY,raw);}catch(e){}
+  writeAuthCookie(raw);
+}
+
+function clearAuthSessionRaw(){
+  try{localStorage.removeItem(AUTH_SESSION_KEY);}catch(e){}
+  try{sessionStorage.removeItem(AUTH_SESSION_KEY);}catch(e){}
+  clearAuthCookie();
+}
+
 function getSessionUser(){
   try{
-    const raw=localStorage.getItem(AUTH_SESSION_KEY);
+    const raw=readAuthSessionRaw();
     if(!raw)return null;
+
     const saved=JSON.parse(raw);
     const users=state.settings.authUsers||[];
-    return users.find(u=>u.active!==false && (u.id===saved.id || u.username===saved.username))||null;
+    const user=users.find(u=>u.active!==false && (u.id===saved.id || u.username===saved.username));
+
+    if(user)return user;
+
+    /*
+      Recuperação para app instalado:
+      se o celular abrir com cache/local temporário antes de carregar os colaboradores,
+      mantém o perfil salvo em vez de jogar o usuário de volta para a tela de login.
+    */
+    if(saved&&(saved.name||saved.username)){
+      return {
+        id:saved.id||"",
+        name:saved.name||saved.username,
+        username:saved.username||"",
+        role:saved.role||"Equipe",
+        active:true,
+        recoveredSession:true
+      };
+    }
+
+    return null;
   }catch(e){
     return null;
   }
 }
 
 function setSessionUser(user){
-  currentUser=user?{id:user.id,name:user.name,username:user.username,role:user.role}:null;
+  currentUser=user?{id:user.id||"",name:user.name||user.username||"Usuário",username:user.username||"",role:user.role||"Equipe"}:null;
   try{
-    if(user)localStorage.setItem(AUTH_SESSION_KEY,JSON.stringify(currentUser));
-    else localStorage.removeItem(AUTH_SESSION_KEY);
+    if(user)writeAuthSessionRaw(JSON.stringify(currentUser));
+    else clearAuthSessionRaw();
   }catch(e){}
 }
 
@@ -8132,6 +8217,7 @@ function handleLoginSubmit(e){
   setSessionUser(user);
   if($("loginPassword"))$("loginPassword").value="";
   hideLoginScreen();
+  showUndoToast("Login salvo neste aparelho.");
 }
 
 function logoutUser(){
@@ -8420,7 +8506,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V94.1 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V95 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -8511,37 +8597,74 @@ function scheduleCloudSave(){
 }
 
 async function startApp(){
-  window.currentPage=window.currentPage||"dashboard";
-  currentPage=window.currentPage;
-  setPageClass(currentPage);
-  preserveMediaFromLegacy(state);
-  normalize();
-  $("globalMonth").value=currentMonth();
-  populate();
-  resetLaunchForm();
-  resetInfForm();
-  resetProductForm();
-  resetWholesaleRetailForm();
-  render();
-  initMobileEnhancements();
+  let startupError=null;
 
-  const loaded=await cloudLoad();
-
-  if(loaded){
+  try{
+    window.currentPage=window.currentPage||"dashboard";
+    currentPage=window.currentPage;
+    setPageClass(currentPage);
+    preserveMediaFromLegacy(state);
     normalize();
-    $("globalMonth").value=$("globalMonth").value||currentMonth();
+
+    if($("globalMonth"))$("globalMonth").value=currentMonth();
+
     populate();
     resetLaunchForm();
     resetInfForm();
     resetProductForm();
     resetWholesaleRetailForm();
     render();
-  }
+    initMobileEnhancements();
 
-  cloudBooting=false;
-  initAuthUi();
-  save();
-  updateUndoButtons();
+    const loaded=await cloudLoad().catch(e=>{
+      console.error("Falha controlada no cloudLoad:",e);
+      updateCloudStatus("Painel aberto em modo local. A nuvem será sincronizada ao reconectar.",true);
+      updateCloudDebug(e.message||String(e));
+      return false;
+    });
+
+    if(loaded){
+      normalize();
+      if($("globalMonth"))$("globalMonth").value=$("globalMonth").value||currentMonth();
+      populate();
+      resetLaunchForm();
+      resetInfForm();
+      resetProductForm();
+      resetWholesaleRetailForm();
+      render();
+    }
+  }catch(e){
+    startupError=e;
+    console.error("Inicialização recuperada:",e);
+    updateCloudStatus("Painel aberto com recuperação automática.",true);
+    updateCloudDebug(e.message||String(e));
+  }finally{
+    cloudBooting=false;
+
+    try{
+      initAuthUi();
+    }catch(e){
+      console.error("Erro ao iniciar login interno:",e);
+      setSessionUser(null);
+      showLoginScreen("Use seu usuário interno para entrar.");
+    }
+
+    try{
+      save();
+    }catch(e){
+      console.warn("Salvamento inicial ignorado:",e);
+    }
+
+    try{
+      updateUndoButtons();
+    }catch(e){}
+
+    if(startupError){
+      setTimeout(()=>{
+        updateCloudStatus("Painel recuperado. Confira os dados e continue usando normalmente.",true);
+      },800);
+    }
+  }
 }
 
 
@@ -9535,8 +9658,15 @@ function clearWholesaleCollaboratorFilter(){
 
 
 
+function productLinesArray(value){
+  return String(value||"")
+    .split(/\r?\n/)
+    .map(x=>x.trim())
+    .filter(Boolean);
+}
+
 function compactProductText(product){
-  const lines=cleanProductLines(product||"");
+  const lines=productLinesArray(product||"");
   if(!lines.length)return "-";
   if(lines.length===1)return lines[0];
   return `${lines[0]} ... +${lines.length-1}`;
@@ -10463,9 +10593,13 @@ window.currentPage=window.currentPage||"dashboard";
 currentPage=window.currentPage;
 setPageClass(currentPage);
 startApp().catch(e=>{
-  console.error("Erro no startApp:",e);
-  updateCloudStatus("Erro ao iniciar o painel.",true);
+  console.error("Erro no startApp recuperado:",e);
+  updateCloudStatus("Painel recuperado em modo seguro.",true);
   updateCloudDebug(e.message||String(e));
+  try{
+    cloudBooting=false;
+    initAuthUi();
+  }catch(_){}
 });
 </script>
 </body></html>
