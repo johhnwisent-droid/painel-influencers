@@ -6545,6 +6545,149 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V96 FILTRO COLABORADOR CORRIGIDO + PLANILHA ===== */
+.collabFilterBoxV96{
+  grid-template-columns:1.2fr .82fr .82fr .9fr minmax(360px,auto)!important;
+  align-items:end!important;
+}
+
+.collabFilterActions{
+  display:grid;
+  grid-template-columns:repeat(5,auto);
+  gap:7px;
+  align-items:end;
+}
+
+.collabFilterActions button{
+  min-height:44px!important;
+  padding:8px 10px!important;
+  font-size:12px!important;
+  white-space:nowrap!important;
+}
+
+.wholesaleCollabPanel .collabResultGrid{
+  grid-template-columns:1.15fr .72fr 1fr .82fr!important;
+}
+
+.wholesaleCollabPanel .collabResultCard{
+  min-width:0!important;
+  overflow:hidden!important;
+}
+
+.wholesaleCollabPanel .collabResultCard strong{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.collabBreakdownWrap table{
+  table-layout:fixed!important;
+  min-width:720px!important;
+}
+
+.collabBreakdownWrap th:nth-child(1),
+.collabBreakdownWrap td:nth-child(1){width:170px!important}
+.collabBreakdownWrap th:nth-child(2),
+.collabBreakdownWrap td:nth-child(2){width:92px!important}
+.collabBreakdownWrap th:nth-child(3),
+.collabBreakdownWrap td:nth-child(3){width:72px!important;text-align:center!important}
+.collabBreakdownWrap th:nth-child(4),
+.collabBreakdownWrap td:nth-child(4){width:122px!important}
+.collabBreakdownWrap th:nth-child(5),
+.collabBreakdownWrap td:nth-child(5){width:122px!important}
+.collabBreakdownWrap th:nth-child(6),
+.collabBreakdownWrap td:nth-child(6){width:102px!important}
+.collabBreakdownWrap th:nth-child(7),
+.collabBreakdownWrap td:nth-child(7){width:92px!important}
+
+.collabBreakdownWrap th,
+.collabBreakdownWrap td{
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+  vertical-align:middle!important;
+}
+
+.collabPersonName{
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.collabPersonUser{
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.collabTypeChip{
+  width:100%!important;
+  min-width:0!important;
+  box-sizing:border-box!important;
+}
+
+.collabMiniSummary{
+  white-space:normal!important;
+  overflow-wrap:break-word!important;
+}
+
+@media(max-width:1180px){
+  .collabFilterBoxV96{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .collabFilterActions{
+    grid-column:1/-1!important;
+    grid-template-columns:repeat(5,1fr)!important;
+  }
+}
+
+@media(max-width:760px){
+  .collabFilterBoxV96{
+    grid-template-columns:1fr!important;
+  }
+
+  .collabFilterActions{
+    grid-column:auto!important;
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .collabFilterActions .primary{
+    grid-column:1/-1!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .collabBreakdownWrap table{
+    min-width:680px!important;
+  }
+}
+
+@media(max-width:520px){
+  .collabFilterActions{
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr!important;
+  }
+
+  .collabBreakdownWrap table{
+    min-width:640px!important;
+  }
+
+  .collabFilterActions button{
+    width:100%!important;
+    min-height:43px!important;
+    font-size:13px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -6626,7 +6769,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V95</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V96.1</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -6945,7 +7088,7 @@ body:not(.authLocked) .loginScreen{
           <span class="badge blue">Análise rápida</span>
         </div>
 
-        <div class="collabFilterBox">
+        <div class="collabFilterBox collabFilterBoxV96">
           <label>Colaborador
             <select id="wholesaleCollabFilter" onchange="renderWholesaleCollaboratorPanel()">
               <option value="">Todos os colaboradores</option>
@@ -6953,11 +7096,11 @@ body:not(.authLocked) .loginScreen{
           </label>
 
           <label>Data inicial
-            <input id="wholesaleCollabStart" type="date" onchange="renderWholesaleCollaboratorPanel()">
+            <input id="wholesaleCollabStart" type="date" onchange="syncWholesalePeriod('start')">
           </label>
 
           <label>Data final
-            <input id="wholesaleCollabEnd" type="date" onchange="renderWholesaleCollaboratorPanel()">
+            <input id="wholesaleCollabEnd" type="date" onchange="syncWholesalePeriod('end')">
           </label>
 
           <label>Tipo de venda
@@ -6968,7 +7111,13 @@ body:not(.authLocked) .loginScreen{
             </select>
           </label>
 
-          <button type="button" class="secondary" onclick="clearWholesaleCollaboratorFilter()">Limpar filtro</button>
+          <div class="collabFilterActions">
+            <button type="button" class="secondary" onclick="setWholesaleQuickPeriod('today')">Hoje</button>
+            <button type="button" class="secondary" onclick="setWholesaleQuickPeriod('7d')">7 dias</button>
+            <button type="button" class="secondary" onclick="setWholesaleQuickPeriod('month')">Mês</button>
+            <button type="button" class="secondary" onclick="clearWholesaleCollaboratorFilter()">Limpar</button>
+            <button type="button" class="primary" onclick="exportWholesaleCollaboratorSpreadsheet()">Exportar planilha</button>
+          </div>
         </div>
 
         <div class="collabResultGrid">
@@ -7655,7 +7804,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=95");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=961");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -8506,7 +8655,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V95 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V96.1 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -9511,21 +9660,25 @@ function selectedWholesaleDate(){
 }
 
 
+
 function wholesaleCollaboratorKey(w){
-  return w.createdById||w.createdByUsername||w.createdByName||"nao-registrado";
+  const key=String(w.createdById||w.createdByUsername||w.createdByName||"nao-registrado").trim();
+  return key||"nao-registrado";
 }
 
 function wholesaleCollaboratorNameByKey(key){
+  key=String(key||"").trim();
   const users=state.settings?.authUsers||[];
-  const user=users.find(u=>u.id===key||u.username===key||u.name===key);
+  const user=users.find(u=>String(u.id||"")===key||String(u.username||"")===key||String(u.name||"")===key);
   if(user)return user.name||user.username||"Colaborador";
   const row=(state.wholesaleRetail||[]).find(w=>wholesaleCollaboratorKey(w)===key);
   return row?.createdByName||"Não registrado";
 }
 
 function wholesaleCollaboratorUserByKey(key){
+  key=String(key||"").trim();
   const users=state.settings?.authUsers||[];
-  const user=users.find(u=>u.id===key||u.username===key||u.name===key);
+  const user=users.find(u=>String(u.id||"")===key||String(u.username||"")===key||String(u.name||"")===key);
   if(user)return user.username||"";
   const row=(state.wholesaleRetail||[]).find(w=>wholesaleCollaboratorKey(w)===key);
   return row?.createdByUsername||"";
@@ -9539,7 +9692,8 @@ function renderWholesaleCollaboratorOptions(){
 
   (state.settings?.authUsers||[]).forEach(u=>{
     if(u.active!==false){
-      map.set(u.id||u.username||u.name,{key:u.id||u.username||u.name,name:u.name||u.username,username:u.username||""});
+      const key=String(u.id||u.username||u.name||"").trim();
+      if(key)map.set(key,{key,name:u.name||u.username,username:u.username||""});
     }
   });
 
@@ -9553,21 +9707,99 @@ function renderWholesaleCollaboratorOptions(){
   const options=[...map.values()].sort((a,b)=>String(a.name).localeCompare(String(b.name),"pt-BR"));
   $("wholesaleCollabFilter").innerHTML=`<option value="">Todos os colaboradores</option>`+options.map(u=>`<option value="${esc(u.key)}">${esc(u.name)}${u.username?` • ${esc(u.username)}`:""}</option>`).join("");
 
-  if([...map.keys()].includes(current))$("wholesaleCollabFilter").value=current;
+  if(current&&[...map.keys()].includes(current))$("wholesaleCollabFilter").value=current;
+  else if(!current)$("wholesaleCollabFilter").value="";
+}
+
+function normalizeDateOnly(value){
+  const s=String(value||"").trim();
+  if(!s)return "";
+  return s.slice(0,10);
+}
+
+function syncWholesalePeriod(changed){
+  const start=$("wholesaleCollabStart");
+  const end=$("wholesaleCollabEnd");
+  if(!start||!end){
+    renderWholesaleCollaboratorPanel();
+    return;
+  }
+
+  if(changed==="start"&&start.value&&!end.value)end.value=start.value;
+  if(changed==="end"&&end.value&&!start.value)start.value=end.value;
+
+  if(start.value&&end.value&&start.value>end.value){
+    if(changed==="start")end.value=start.value;
+    else start.value=end.value;
+  }
+
+  renderWholesaleCollaboratorPanel();
+}
+
+function dateDaysAgo(days){
+  const d=new Date();
+  d.setDate(d.getDate()-days);
+  return d.toISOString().slice(0,10);
+}
+
+function setWholesaleQuickPeriod(type){
+  const start=$("wholesaleCollabStart");
+  const end=$("wholesaleCollabEnd");
+  if(!start||!end)return;
+  const now=new Date();
+  const todayStr=now.toISOString().slice(0,10);
+
+  if(type==="today"){
+    start.value=todayStr;
+    end.value=todayStr;
+  }
+
+  if(type==="7d"){
+    start.value=dateDaysAgo(6);
+    end.value=todayStr;
+  }
+
+  if(type==="month"){
+    start.value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-01`;
+    end.value=todayStr;
+  }
+
+  renderWholesaleCollaboratorPanel();
 }
 
 function wholesaleCollaboratorFilteredRows(){
   const collab=$("wholesaleCollabFilter")?.value||"";
-  const start=$("wholesaleCollabStart")?.value||"";
-  const end=$("wholesaleCollabEnd")?.value||"";
+  let start=normalizeDateOnly($("wholesaleCollabStart")?.value||"");
+  let end=normalizeDateOnly($("wholesaleCollabEnd")?.value||"");
   const type=$("wholesaleCollabSaleType")?.value||"";
+
+  /*
+    Se o usuário selecionar só uma data, o sistema entende como aquela data exata.
+    Se selecionar início e fim, vira período livre.
+  */
+  if(start&&!end)end=start;
+  if(end&&!start)start=end;
+  if(start&&end&&start>end){
+    const tmp=start;
+    start=end;
+    end=tmp;
+  }
 
   let rows=(state.wholesaleRetail||[]).slice();
 
   if(collab)rows=rows.filter(w=>wholesaleCollaboratorKey(w)===collab);
-  if(start)rows=rows.filter(w=>String(w.date||"")>=start);
-  if(end)rows=rows.filter(w=>String(w.date||"")<=end);
-  if(type)rows=rows.filter(w=>(w.saleType||"Varejo")===type);
+
+  if(start||end){
+    rows=rows.filter(w=>{
+      const d=normalizeDateOnly(w.date);
+      if(!d)return false;
+      if(start&&d<start)return false;
+      if(end&&d>end)return false;
+      return true;
+    });
+  }
+
+  if(type)rows=rows.filter(w=>String(w.saleType||"Varejo").trim()===type);
 
   return rows;
 }
@@ -9577,7 +9809,7 @@ function groupWholesaleCollaboratorRows(rows){
 
   rows.forEach(w=>{
     const key=wholesaleCollaboratorKey(w);
-    const type=w.saleType||"Varejo";
+    const type=String(w.saleType||"Varejo").trim()||"Varejo";
     const groupKey=`${key}__${type}`;
 
     if(!map.has(groupKey)){
@@ -9626,12 +9858,18 @@ function renderWholesaleCollaboratorPanel(){
   const collabKey=$("wholesaleCollabFilter")?.value||"";
   const collabName=collabKey?wholesaleCollaboratorNameByKey(collabKey):"todos os colaboradores";
   const type=$("wholesaleCollabSaleType")?.value||"Atacado + Varejo";
-  const start=$("wholesaleCollabStart")?.value;
-  const end=$("wholesaleCollabEnd")?.value;
-  const period=start&&end?`${dateBR(start)} até ${dateBR(end)}`:start?`a partir de ${dateBR(start)}`:end?`até ${dateBR(end)}`:"todo o período";
+
+  let start=normalizeDateOnly($("wholesaleCollabStart")?.value||"");
+  let end=normalizeDateOnly($("wholesaleCollabEnd")?.value||"");
+  if(start&&!end)end=start;
+  if(end&&!start)start=end;
+
+  const period=start&&end
+    ? (start===end?dateBR(start):`${dateBR(start)} até ${dateBR(end)}`)
+    : "todo o período";
 
   if($("wholesaleCollabSummaryText")){
-    $("wholesaleCollabSummaryText").textContent=`Resultado de ${collabName} • ${type} • ${period}. Total vendido: ${money(total)} em ${rows.length} pedido(s).`;
+    $("wholesaleCollabSummaryText").textContent=`${collabName} • ${type} • ${period} • ${rows.length} pedido(s) • Total vendido: ${money(total)}.`;
   }
 
   const grouped=groupWholesaleCollaboratorRows(rows);
@@ -9654,6 +9892,68 @@ function clearWholesaleCollaboratorFilter(){
   if($("wholesaleCollabEnd"))$("wholesaleCollabEnd").value="";
   if($("wholesaleCollabSaleType"))$("wholesaleCollabSaleType").value="";
   renderWholesaleCollaboratorPanel();
+}
+
+function exportWholesaleCollaboratorSpreadsheet(){
+  const rows=wholesaleCollaboratorFilteredRows();
+
+  if(!rows.length){
+    alert("Não há vendas para exportar com os filtros selecionados.");
+    return;
+  }
+
+  const collabKey=$("wholesaleCollabFilter")?.value||"";
+  const collabName=collabKey?wholesaleCollaboratorNameByKey(collabKey):"todos-colaboradores";
+  const type=$("wholesaleCollabSaleType")?.value||"atacado-varejo";
+
+  rowsCSV([[
+    "Data",
+    "Colaborador",
+    "Usuário",
+    "Tipo de venda",
+    "Origem",
+    "Cliente",
+    "Produto",
+    "Preço produto",
+    "Frete",
+    "Cupom usado",
+    "Desconto %",
+    "Desconto valor",
+    "Total vendido",
+    "Forma de pagamento",
+    "Parcelas",
+    "Regra da taxa",
+    "Taxa %",
+    "Taxa valor",
+    "Valor real recebido",
+    "Observação",
+    "Criado em"
+  ],...rows.map(w=>{
+    const key=wholesaleCollaboratorKey(w);
+    return [
+      dateBR(w.date),
+      wholesaleCollaboratorNameByKey(key),
+      wholesaleCollaboratorUserByKey(key),
+      w.saleType||"Varejo",
+      w.origin||"Site",
+      w.clientName||"",
+      String(w.product||"").replace(/\r?\n/g," | "),
+      Number(w.productPrice||0),
+      Number(w.freightCost||0),
+      w.couponName||"",
+      Number(w.discountPercent||0),
+      Number(w.discountValue||0),
+      Number(w.total||0),
+      w.paymentMethod||"",
+      w.installments||"",
+      w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments),
+      Number(w.feePercent||0),
+      Number(w.feeValue||0),
+      Number(w.realReceived||0),
+      w.notes||"",
+      dateTimeBR(w.createdAt)
+    ];
+  })],`vendas-${String(collabName).toLowerCase().replace(/[^a-z0-9]+/gi,"-")}-${String(type).toLowerCase().replace(/[^a-z0-9]+/gi,"-")}.csv`);
 }
 
 
