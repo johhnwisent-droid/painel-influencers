@@ -7202,6 +7202,227 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V100 SALVAR LANÇAMENTO + FILTROS ORGANIZADOS ===== */
+.wholesaleLaunchListPanel{
+  overflow:hidden!important;
+}
+
+.wholesaleLaunchListPanel .panelHead{
+  display:grid!important;
+  grid-template-columns:minmax(260px,1fr) minmax(420px,.95fr)!important;
+  align-items:end!important;
+  gap:14px!important;
+}
+
+.wholesaleListFilters{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:minmax(150px,1fr) minmax(130px,.8fr) minmax(210px,.9fr)!important;
+  gap:10px!important;
+  align-items:end!important;
+  justify-self:end!important;
+}
+
+.wholesaleListFilters label{
+  width:100%!important;
+  min-width:0!important;
+  margin:0!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  color:#334155!important;
+}
+
+.wholesaleListFilters input,
+.wholesaleListFilters select{
+  width:100%!important;
+  min-width:0!important;
+  height:42px!important;
+  font-size:14px!important;
+  box-sizing:border-box!important;
+}
+
+.wholesaleListFilterActions{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  align-items:end!important;
+}
+
+.wholesaleListFilterActions button{
+  width:100%!important;
+  min-width:0!important;
+  height:42px!important;
+  padding:8px 10px!important;
+  font-size:12px!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+
+.savedWholesaleHighlight{
+  animation:savedWholesaleFlash 2.2s ease-out;
+}
+
+@keyframes savedWholesaleFlash{
+  0%{background:#dcfce7;box-shadow:inset 0 0 0 2px #22c55e}
+  55%{background:#f0fdf4;box-shadow:inset 0 0 0 1px #86efac}
+  100%{background:transparent;box-shadow:none}
+}
+
+@media(max-width:1180px){
+  .wholesaleLaunchListPanel .panelHead{
+    grid-template-columns:1fr!important;
+    align-items:stretch!important;
+  }
+
+  .wholesaleListFilters{
+    justify-self:stretch!important;
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .wholesaleListFilterActions{
+    grid-column:1/-1!important;
+  }
+}
+
+@media(max-width:650px){
+  .wholesaleLaunchListPanel .panelHead{
+    gap:10px!important;
+  }
+
+  .wholesaleListFilters{
+    grid-template-columns:1fr!important;
+    gap:8px!important;
+  }
+
+  .wholesaleListFilterActions{
+    grid-column:auto!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleListFilters input,
+  .wholesaleListFilters select,
+  .wholesaleListFilterActions button{
+    height:44px!important;
+    font-size:16px!important;
+  }
+}
+
+
+/* ===== V101 SALVAMENTO DIRETO NA LISTA + FILTROS SEM SOBREPOR ===== */
+.wholesaleLaunchListPanel{
+  overflow:hidden!important;
+  border-radius:22px!important;
+}
+
+.wholesaleLaunchListPanel .panelHead{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:12px!important;
+}
+
+.wholesaleLaunchListPanel .panelHead > div:first-child{
+  width:100%!important;
+  min-width:0!important;
+}
+
+.wholesaleLaunchListPanel .panelHead h3{
+  margin-bottom:4px!important;
+}
+
+.wholesaleListFilters{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:minmax(160px,.7fr) minmax(130px,.55fr) minmax(260px,.9fr)!important;
+  gap:10px!important;
+  align-items:end!important;
+  justify-content:start!important;
+  background:#f8fafc!important;
+  border:1px solid #e2e8f0!important;
+  border-radius:18px!important;
+  padding:10px!important;
+  box-sizing:border-box!important;
+  overflow:hidden!important;
+}
+
+.wholesaleListFilters label{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  margin:0!important;
+  display:grid!important;
+  gap:5px!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  color:#334155!important;
+  box-sizing:border-box!important;
+}
+
+.wholesaleListFilters input,
+.wholesaleListFilters select{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:42px!important;
+  font-size:14px!important;
+  box-sizing:border-box!important;
+}
+
+.wholesaleListFilterActions{
+  width:100%!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  box-sizing:border-box!important;
+}
+
+.wholesaleListFilterActions button{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:42px!important;
+  padding:8px 9px!important;
+  font-size:12px!important;
+  white-space:nowrap!important;
+  box-sizing:border-box!important;
+}
+
+.savedWholesaleHighlight td{
+  background:#dcfce7!important;
+}
+
+@media(max-width:900px){
+  .wholesaleListFilters{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .wholesaleListFilterActions{
+    grid-column:1/-1!important;
+  }
+}
+
+@media(max-width:560px){
+  .wholesaleListFilters{
+    grid-template-columns:1fr!important;
+    padding:9px!important;
+    border-radius:16px!important;
+  }
+
+  .wholesaleListFilterActions{
+    grid-column:auto!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleListFilters input,
+  .wholesaleListFilters select,
+  .wholesaleListFilterActions button{
+    height:44px!important;
+    font-size:16px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -7283,7 +7504,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V99</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V101</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -7552,25 +7773,29 @@ body:not(.authLocked) .loginScreen{
         </form>
       </div>
 
-      <div class="panel">
+      <div class="panel wholesaleLaunchListPanel" id="wholesaleLaunchListPanel">
         <div class="panelHead">
           <div>
             <h3>Lançamentos de Atacado e Varejo</h3>
-            <span class="muted">Filtre por data se quiser. Sem filtro, todos os lançamentos aparecem.</span>
+            <span class="muted">Todos os lançamentos aparecem aqui. Use data ou tipo apenas se quiser filtrar.</span>
           </div>
-          <div class="filters">
-            <label class="dateMini">Filtrar por data
+          <div class="filters wholesaleListFilters">
+            <label>Data opcional
               <input id="wholesaleFilterDate" type="date" onchange="renderWholesaleRetail()">
             </label>
-            <label class="dateMini">Tipo
+
+            <label>Tipo
               <select id="wholesaleFilterType" onchange="renderWholesaleRetail()">
                 <option value="">Todos</option>
                 <option value="Varejo">Varejo</option>
                 <option value="Atacado">Atacado</option>
               </select>
             </label>
-            <button class="secondary" onclick="clearWholesaleDateFilter()">Ver todos</button>
-            <button class="primary" onclick="exportWholesaleRetailPDF()">Exportar PDF</button>
+
+            <div class="wholesaleListFilterActions">
+              <button class="secondary" type="button" onclick="clearWholesaleDateFilter()">Ver todos</button>
+              <button class="primary" type="button" onclick="exportWholesaleRetailPDF()">Exportar PDF</button>
+            </div>
           </div>
         </div>
 
@@ -8370,7 +8595,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=99");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=101");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -8401,6 +8626,7 @@ registerPwa();
 window.currentPage=window.currentPage||"dashboard";
 var currentPage=window.currentPage;
 var currentWholesaleOrderId=null;
+var lastSavedWholesaleId=null;
 window.addEventListener("error",e=>{
   const el=document.getElementById("cloudStatus");
   const dbg=document.getElementById("cloudDebug");
@@ -9221,7 +9447,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V99 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V101 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -10574,9 +10800,31 @@ function exportWholesaleCollaboratorSpreadsheet(){
 function wholesaleRetailRows(){
   const date=String($("wholesaleFilterDate")?.value||"").trim();
   const type=String($("wholesaleFilterType")?.value||"").trim();
-  let rows=(state.wholesaleRetail||[]).slice().sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
-  if(/^\d{4}-\d{2}-\d{2}$/.test(date))rows=rows.filter(w=>String(w.date||"").slice(0,10)===date);
-  if(type)rows=rows.filter(w=>(w.saleType||"Varejo")===type);
+
+  let rows=(state.wholesaleRetail||[]).slice();
+
+  if(/^\d{4}-\d{2}-\d{2}$/.test(date)){
+    rows=rows.filter(w=>String(w.date||"").slice(0,10)===date);
+  }
+
+  if(type){
+    rows=rows.filter(w=>(w.saleType||"Varejo")===type);
+  }
+
+  rows.sort((a,b)=>{
+    if(lastSavedWholesaleId){
+      if(a.id===lastSavedWholesaleId)return -1;
+      if(b.id===lastSavedWholesaleId)return 1;
+    }
+
+    const aTime=String(a.updatedAt||a.createdAt||a.date||"");
+    const bTime=String(b.updatedAt||b.createdAt||b.date||"");
+    const byTime=bTime.localeCompare(aTime);
+    if(byTime)return byTime;
+
+    return String(b.date||"").localeCompare(String(a.date||""));
+  });
+
   return rows;
 }
 
@@ -10596,7 +10844,7 @@ function renderWholesaleRetail(){
   $("wholesaleDayFreight").textContent=money(freightFiltered);
   $("wholesaleDayDiscount").textContent=money(discountFiltered);
 
-  $("wholesaleRows").innerHTML=rows.length?rows.map(w=>`<tr class="wholesaleOrderRow" onclick="openWholesaleRetailOrder('${w.id}')" title="Clique para abrir o comprovante do pedido">
+  $("wholesaleRows").innerHTML=rows.length?rows.map(w=>`<tr class="wholesaleOrderRow" data-id="${esc(w.id)}" onclick="openWholesaleRetailOrder('${w.id}')" title="Clique para abrir o comprovante do pedido">
     <td data-label="Data">${dateBR(w.date)}</td>
     <td data-label="Cliente"><span class="clientNamePill">${esc(w.clientName||"-")}</span><span class="createdByMini">Por: ${esc(w.createdByName||"Não registrado")}</span></td>
     <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
@@ -10620,6 +10868,32 @@ function renderWholesaleRetail(){
 
   renderWholesaleCollaboratorPanel();
   renderWholesaleRetailPDF();
+}
+
+
+function showSavedWholesaleLaunch(savedId){
+  lastSavedWholesaleId=savedId;
+
+  if($("wholesaleFilterDate"))$("wholesaleFilterDate").value="";
+  if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
+
+  renderWholesaleRetail();
+  renderWholesaleCollaboratorPanel();
+
+  setTimeout(()=>{
+    const panel=$("wholesaleLaunchListPanel");
+    const row=document.querySelector(`#wholesaleRows tr[data-id="${savedId}"]`);
+
+    if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});
+
+    if(row){
+      row.classList.add("savedWholesaleHighlight");
+      row.scrollIntoView({behavior:"smooth",block:"center"});
+      setTimeout(()=>row.classList.remove("savedWholesaleHighlight"),2400);
+    }else{
+      console.warn("Lançamento salvo, mas a linha ainda não foi encontrada na tabela:",savedId);
+    }
+  },120);
 }
 
 function wholesaleRetailById(id){
@@ -11416,20 +11690,29 @@ if($("wholesaleForm")){
       return;
     }
 
-    const idx=(state.wholesaleRetail||[]).findIndex(w=>w.id===id);
-    const isNewWholesaleRecord=idx<0;
-    if(idx>=0)state.wholesaleRetail[idx]=item;
-    else state.wholesaleRetail.push(item);
+    state.wholesaleRetail=state.wholesaleRetail||[];
+    const idx=state.wholesaleRetail.findIndex(w=>w.id===id);
 
-    if(isNewWholesaleRecord){
-      if($("wholesaleFilterDate"))$("wholesaleFilterDate").value="";
-      if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
-    }
+    item.updatedAt=new Date().toISOString();
+
+    if(idx>=0)state.wholesaleRetail[idx]=item;
+    else state.wholesaleRetail.unshift(item);
+
+    lastSavedWholesaleId=id;
+
+    if($("wholesaleFilterDate"))$("wholesaleFilterDate").value="";
+    if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
 
     save();
     resetWholesaleRetailForm();
+
+    currentPage="wholesaleRetail";
+    window.currentPage="wholesaleRetail";
+    setPageClass("wholesaleRetail");
+
     render();
     showPage("wholesaleRetail");
+    showSavedWholesaleLaunch(id);
   });
 }
 
