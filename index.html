@@ -6688,6 +6688,304 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V97 VENDAS POR COLABORADOR RESPONSIVO + PDF ===== */
+/* Corrige estouro/altura excessiva no desktop */
+.wholesaleCollabPanel{
+  align-self:start!important;
+  overflow:hidden!important;
+}
+
+.wholesaleCollabPanel .panelHead{
+  align-items:flex-start!important;
+}
+
+.collabResultGrid{
+  align-items:start!important;
+  grid-auto-rows:auto!important;
+  height:auto!important;
+  min-height:0!important;
+}
+
+.collabResultCard{
+  height:auto!important;
+  min-height:86px!important;
+  max-height:112px!important;
+  align-self:start!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  overflow:hidden!important;
+}
+
+.collabResultCard small{
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.collabResultCard strong{
+  display:block!important;
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+/* Filtro direto: colaborador + data inicial/final + tipo + ações */
+.collabFilterBoxV96{
+  grid-template-columns:minmax(210px,1.15fr) minmax(150px,.72fr) minmax(150px,.72fr) minmax(170px,.8fr) minmax(220px,.72fr)!important;
+  gap:10px!important;
+  align-items:end!important;
+}
+
+.collabFilterActionsV97{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  align-items:end!important;
+}
+
+.collabFilterActionsV97 button{
+  min-height:44px!important;
+  padding:8px 10px!important;
+  font-size:12px!important;
+  white-space:nowrap!important;
+  width:100%!important;
+}
+
+/* Cards mais modernos e compactos */
+.wholesaleCollabPanel .collabResultGrid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+
+.wholesaleCollabPanel .collabResultCard{
+  padding:12px 13px!important;
+  border-radius:16px!important;
+}
+
+.wholesaleCollabPanel .collabResultCard.main{
+  background:linear-gradient(135deg,#dbeafe,#ffffff 75%)!important;
+}
+
+.wholesaleCollabPanel .collabResultCard strong{
+  font-size:20px!important;
+  line-height:1.05!important;
+}
+
+.wholesaleCollabPanel .collabResultCard.main strong{
+  font-size:21px!important;
+}
+
+/* Tabela mais estável, sem linhas grandes */
+.collabBreakdownWrap{
+  max-height:none!important;
+  overflow-x:auto!important;
+  overflow-y:visible!important;
+}
+
+.collabBreakdownWrap table{
+  table-layout:fixed!important;
+  min-width:720px!important;
+}
+
+.collabBreakdownWrap th,
+.collabBreakdownWrap td{
+  padding:8px 7px!important;
+  line-height:1.18!important;
+  vertical-align:middle!important;
+  white-space:normal!important;
+  word-break:normal!important;
+  overflow-wrap:break-word!important;
+}
+
+.collabBreakdownWrap th:nth-child(1),
+.collabBreakdownWrap td:nth-child(1){width:170px!important}
+.collabBreakdownWrap th:nth-child(2),
+.collabBreakdownWrap td:nth-child(2){width:88px!important}
+.collabBreakdownWrap th:nth-child(3),
+.collabBreakdownWrap td:nth-child(3){width:70px!important;text-align:center!important}
+.collabBreakdownWrap th:nth-child(4),
+.collabBreakdownWrap td:nth-child(4){width:118px!important}
+.collabBreakdownWrap th:nth-child(5),
+.collabBreakdownWrap td:nth-child(5){width:118px!important}
+.collabBreakdownWrap th:nth-child(6),
+.collabBreakdownWrap td:nth-child(6){width:98px!important}
+.collabBreakdownWrap th:nth-child(7),
+.collabBreakdownWrap td:nth-child(7){width:88px!important}
+
+.collabPersonName,
+.collabPersonUser{
+  max-width:100%!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.collabTypeChip{
+  width:100%!important;
+  box-sizing:border-box!important;
+  min-width:0!important;
+}
+
+.collabMiniSummary{
+  font-size:11.8px!important;
+  line-height:1.3!important;
+  padding:9px 11px!important;
+  max-height:46px!important;
+  overflow:hidden!important;
+}
+
+/* PDF vendas por colaborador */
+.pdfCollabSalesTable{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:16px;
+  background:#fff;
+}
+
+.pdfCollabSalesTable th,
+.pdfCollabSalesTable td{
+  border:1px solid #e5e7eb;
+  padding:8px 7px;
+  font-size:10.3px;
+  white-space:normal;
+  vertical-align:top;
+  line-height:1.22;
+}
+
+.pdfCollabSalesTable th{
+  background:#f8fafc;
+  color:#475569;
+  text-transform:uppercase;
+  font-weight:950;
+  letter-spacing:.03em;
+}
+
+.pdfCollabSalesTable .pdfStrong{
+  font-weight:950;
+  color:#0f172a;
+}
+
+.pdfCollabSalesTable .pdfProduct{
+  white-space:pre-line;
+  max-width:180px;
+}
+
+/* Responsivo desktop menor */
+@media(max-width:1180px){
+  .collabFilterBoxV96{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .collabFilterActionsV97{
+    grid-column:1/-1!important;
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+/* Mobile geral */
+@media(max-width:760px){
+  .collabFilterBoxV96{
+    grid-template-columns:1fr!important;
+  }
+
+  .collabFilterActionsV97{
+    grid-column:auto!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .collabResultCard{
+    min-height:78px!important;
+    max-height:96px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard strong{
+    font-size:18px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard.main strong{
+    font-size:19px!important;
+  }
+
+  .collabBreakdownWrap table{
+    min-width:660px!important;
+  }
+}
+
+@media(max-width:520px){
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr!important;
+  }
+
+  .collabResultCard{
+    min-height:72px!important;
+    max-height:90px!important;
+  }
+
+  .collabMiniSummary{
+    max-height:none!important;
+  }
+}
+
+@media print{
+  body.print-collab-sales .side,
+  body.print-collab-sales .top,
+  body.print-collab-sales .noPrint,
+  body.print-collab-sales .menu,
+  body.print-collab-sales .view{
+    display:none!important;
+  }
+
+  body.print-collab-sales,
+  body.print-collab-sales .app,
+  body.print-collab-sales .main{
+    display:block!important;
+    background:white!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.print-collab-sales #wholesaleRetail{
+    display:block!important;
+  }
+
+  body.print-collab-sales #wholesaleRetail > .grid,
+  body.print-collab-sales #wholesaleRetail > .panel:not(.collabSalesPrintPanel){
+    display:none!important;
+  }
+
+  body.print-collab-sales .collabSalesPrintPanel.printOnly{
+    display:block!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.print-collab-sales .collabSalesPdf{
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    padding:20px!important;
+  }
+
+  body.print-collab-sales .pdfCollabSalesTable th,
+  body.print-collab-sales .pdfCollabSalesTable td{
+    font-size:9.3px!important;
+    padding:6px 5px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -6769,7 +7067,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V96.1</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V97</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -7111,12 +7409,9 @@ body:not(.authLocked) .loginScreen{
             </select>
           </label>
 
-          <div class="collabFilterActions">
-            <button type="button" class="secondary" onclick="setWholesaleQuickPeriod('today')">Hoje</button>
-            <button type="button" class="secondary" onclick="setWholesaleQuickPeriod('7d')">7 dias</button>
-            <button type="button" class="secondary" onclick="setWholesaleQuickPeriod('month')">Mês</button>
+          <div class="collabFilterActions collabFilterActionsV97">
             <button type="button" class="secondary" onclick="clearWholesaleCollaboratorFilter()">Limpar</button>
-            <button type="button" class="primary" onclick="exportWholesaleCollaboratorSpreadsheet()">Exportar planilha</button>
+            <button type="button" class="primary" onclick="exportWholesaleCollaboratorPDF()">Exportar PDF</button>
           </div>
         </div>
 
@@ -7156,6 +7451,54 @@ body:not(.authLocked) .loginScreen{
             </thead>
             <tbody id="wholesaleCollabRows"></tbody>
           </table>
+        </div>
+      </div>
+
+
+      <div class="panel printPanel collabSalesPrintPanel printOnly">
+        <div id="collabSalesPrintArea" class="printArea collabSalesPdf">
+          <img id="collabSalesWatermark" class="reportWatermark" style="display:none">
+
+          <div class="pdfCleanHeader">
+            <div>
+              <h1>Relatório - Vendas por colaborador</h1>
+              <p id="collabSalesPdfSubtitle" class="muted">Vendas filtradas por colaborador, período e tipo.</p>
+            </div>
+            <img id="collabSalesPdfLogo" class="printLogo" style="display:none">
+          </div>
+
+          <div class="pdfThreeCards">
+            <div class="pdfBox">
+              <small>Total vendido</small>
+              <strong id="collabSalesPdfTotal">R$ 0,00</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Pedidos</small>
+              <strong id="collabSalesPdfCount">0</strong>
+            </div>
+            <div class="pdfBox">
+              <small>Valor real recebido</small>
+              <strong id="collabSalesPdfReal">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <table class="pdfCollabSalesTable">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Colaborador</th>
+                <th>Tipo</th>
+                <th>Cliente</th>
+                <th>Produto</th>
+                <th>Total</th>
+                <th>Valor real</th>
+                <th>Pagamento</th>
+              </tr>
+            </thead>
+            <tbody id="collabSalesPdfRows"></tbody>
+          </table>
+
+          <p id="collabSalesPdfFooter" class="pdfFooterClean">Relatório gerado automaticamente pelo painel.</p>
         </div>
       </div>
 
@@ -7804,7 +8147,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=961");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=97");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -8655,7 +8998,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V96.1 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V97 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -9884,8 +10227,9 @@ function renderWholesaleCollaboratorPanel(){
       <td>${money(g.freight)}</td>
     </tr>`).join(""):`<tr><td colspan="7">Nenhuma venda encontrada com os filtros selecionados.</td></tr>`;
   }
-}
 
+  renderWholesaleCollaboratorPDF();
+}
 function clearWholesaleCollaboratorFilter(){
   if($("wholesaleCollabFilter"))$("wholesaleCollabFilter").value="";
   if($("wholesaleCollabStart"))$("wholesaleCollabStart").value="";
@@ -9894,7 +10238,53 @@ function clearWholesaleCollaboratorFilter(){
   renderWholesaleCollaboratorPanel();
 }
 
-function exportWholesaleCollaboratorSpreadsheet(){
+function renderWholesaleCollaboratorPDF(){
+  if(!$("collabSalesPdfRows"))return;
+
+  const rows=wholesaleCollaboratorFilteredRows();
+  const total=rows.reduce((a,w)=>a+Number(w.total||0),0);
+  const real=rows.reduce((a,w)=>a+Number(w.realReceived||0),0);
+
+  const pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
+  if($("collabSalesPdfLogo")){
+    $("collabSalesPdfLogo").style.display=pdfLogo?"block":"none";
+    if(pdfLogo)$("collabSalesPdfLogo").src=pdfLogo;
+  }
+
+  applyPdfWatermark("collabSalesWatermark");
+
+  const collabKey=$("wholesaleCollabFilter")?.value||"";
+  const collabName=collabKey?wholesaleCollaboratorNameByKey(collabKey):"Todos os colaboradores";
+  const type=$("wholesaleCollabSaleType")?.value||"Atacado + Varejo";
+
+  let start=normalizeDateOnly($("wholesaleCollabStart")?.value||"");
+  let end=normalizeDateOnly($("wholesaleCollabEnd")?.value||"");
+  if(start&&!end)end=start;
+  if(end&&!start)start=end;
+  const period=start&&end?(start===end?dateBR(start):`${dateBR(start)} até ${dateBR(end)}`):"Todo o período";
+
+  if($("collabSalesPdfSubtitle"))$("collabSalesPdfSubtitle").textContent=`${collabName} • ${type} • ${period}`;
+  if($("collabSalesPdfTotal"))$("collabSalesPdfTotal").textContent=money(total);
+  if($("collabSalesPdfCount"))$("collabSalesPdfCount").textContent=rows.length;
+  if($("collabSalesPdfReal"))$("collabSalesPdfReal").textContent=money(real);
+  if($("collabSalesPdfFooter"))$("collabSalesPdfFooter").textContent=state.settings.pdfFooter||"Relatório gerado automaticamente pelo painel.";
+
+  $("collabSalesPdfRows").innerHTML=rows.length?rows.map(w=>{
+    const key=wholesaleCollaboratorKey(w);
+    return `<tr>
+      <td>${dateBR(w.date)}</td>
+      <td><span class="pdfStrong">${esc(wholesaleCollaboratorNameByKey(key))}</span><br><small>${esc(wholesaleCollaboratorUserByKey(key))}</small></td>
+      <td>${esc(w.saleType||"Varejo")}</td>
+      <td><span class="pdfStrong">${esc(w.clientName||"-")}</span></td>
+      <td><span class="pdfProduct">${esc(w.product||"-")}</span></td>
+      <td><span class="pdfStrong">${money(w.total)}</span></td>
+      <td>${money(w.realReceived)}</td>
+      <td>${esc(paymentLabel(w.paymentMethod,w.installments))}</td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="8">Nenhuma venda encontrada com os filtros selecionados.</td></tr>`;
+}
+
+function exportWholesaleCollaboratorPDF(){
   const rows=wholesaleCollaboratorFilteredRows();
 
   if(!rows.length){
@@ -9902,74 +10292,24 @@ function exportWholesaleCollaboratorSpreadsheet(){
     return;
   }
 
-  const collabKey=$("wholesaleCollabFilter")?.value||"";
-  const collabName=collabKey?wholesaleCollaboratorNameByKey(collabKey):"todos-colaboradores";
-  const type=$("wholesaleCollabSaleType")?.value||"atacado-varejo";
+  renderWholesaleCollaboratorPDF();
 
-  rowsCSV([[
-    "Data",
-    "Colaborador",
-    "Usuário",
-    "Tipo de venda",
-    "Origem",
-    "Cliente",
-    "Produto",
-    "Preço produto",
-    "Frete",
-    "Cupom usado",
-    "Desconto %",
-    "Desconto valor",
-    "Total vendido",
-    "Forma de pagamento",
-    "Parcelas",
-    "Regra da taxa",
-    "Taxa %",
-    "Taxa valor",
-    "Valor real recebido",
-    "Observação",
-    "Criado em"
-  ],...rows.map(w=>{
-    const key=wholesaleCollaboratorKey(w);
-    return [
-      dateBR(w.date),
-      wholesaleCollaboratorNameByKey(key),
-      wholesaleCollaboratorUserByKey(key),
-      w.saleType||"Varejo",
-      w.origin||"Site",
-      w.clientName||"",
-      String(w.product||"").replace(/\r?\n/g," | "),
-      Number(w.productPrice||0),
-      Number(w.freightCost||0),
-      w.couponName||"",
-      Number(w.discountPercent||0),
-      Number(w.discountValue||0),
-      Number(w.total||0),
-      w.paymentMethod||"",
-      w.installments||"",
-      w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments),
-      Number(w.feePercent||0),
-      Number(w.feeValue||0),
-      Number(w.realReceived||0),
-      w.notes||"",
-      dateTimeBR(w.createdAt)
-    ];
-  })],`vendas-${String(collabName).toLowerCase().replace(/[^a-z0-9]+/gi,"-")}-${String(type).toLowerCase().replace(/[^a-z0-9]+/gi,"-")}.csv`);
+  const oldTitle=document.title;
+  document.title="Relatório Vendas por Colaborador";
+
+  document.body.classList.remove("print-report","print-accumulation","print-wholesale","print-wholesale-list","print-launches-list");
+  document.body.classList.add("print-collab-sales");
+  window.print();
+
+  setTimeout(()=>{
+    document.body.classList.remove("print-collab-sales");
+    document.title=oldTitle;
+  },700);
 }
 
-
-
-function productLinesArray(value){
-  return String(value||"")
-    .split(/\r?\n/)
-    .map(x=>x.trim())
-    .filter(Boolean);
-}
-
-function compactProductText(product){
-  const lines=productLinesArray(product||"");
-  if(!lines.length)return "-";
-  if(lines.length===1)return lines[0];
-  return `${lines[0]} ... +${lines.length-1}`;
+/* Compatibilidade: se algum cache antigo chamar a função de planilha, exporta PDF. */
+function exportWholesaleCollaboratorSpreadsheet(){
+  exportWholesaleCollaboratorPDF();
 }
 
 function wholesaleRetailRows(){
