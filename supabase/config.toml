@@ -1,0 +1,4 @@
+project_id = "zrlcisuuekudczkbapil"
+
+[functions.cartpanda-webhook]
+verify_jwt = false
