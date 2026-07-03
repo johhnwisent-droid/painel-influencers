@@ -8034,6 +8034,9 @@ body:not(.authLocked) .loginScreen{
   max-width:100%!important;
 }
 
+
+/* ===== V106 PIX SOMADO AO CUPOM ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8115,7 +8118,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V105</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V106</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9205,7 +9208,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=105");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=106");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10057,7 +10060,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V105 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V106 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -11000,20 +11003,18 @@ function calcWholesaleRetailValues(productPrice,freightCost,discountPercent,orig
   const subtotal=price+freight;
 
   const couponDiscountValue=subtotal*(pct/100);
-  const afterCoupon=Math.max(0,subtotal-couponDiscountValue);
 
   /*
-    PIX: os 5% são desconto comercial no valor da venda,
-    não taxa operacional. Portanto:
-    - Total final reduz 5%;
-    - Taxa PIX = 0%;
-    - Valor real recebido = total final.
+    PIX: os 5% são desconto comercial sobre o subtotal original,
+    somando com o cupom. Exemplo:
+    R$ 298 com cupom 30% e PIX 5% = 35% de desconto total.
+    298 - 89,40 - 14,90 = 193,70.
   */
   const pixDiscountPercent=paymentMethod==="PIX"?5:0;
-  const pixDiscountValue=afterCoupon*(pixDiscountPercent/100);
+  const pixDiscountValue=subtotal*(pixDiscountPercent/100);
 
-  const discountValue=couponDiscountValue+pixDiscountValue;
-  const baseTotal=Math.max(0,afterCoupon-pixDiscountValue);
+  const discountValue=Math.min(subtotal,couponDiscountValue+pixDiscountValue);
+  const baseTotal=Math.max(0,subtotal-discountValue);
 
   const fee=calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestPayer);
   return {
@@ -11047,7 +11048,7 @@ function calcWholesaleRetail(){
 
   let feeText="";
   if(paymentMethod==="PIX"){
-    feeText=`<b>Desconto PIX:</b> 5% aplicado como desconto no total • Taxa operacional: ${money(0)}`;
+    feeText=`<b>Desconto PIX:</b> 5% somado ao cupom sobre o valor original • Taxa operacional: ${money(0)}`;
   }else if(paymentMethod==="Cartão de Crédito"&&interestPayer==="cliente"){
     feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} cobrado do cliente`;
   }else{
