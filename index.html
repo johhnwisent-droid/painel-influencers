@@ -7837,6 +7837,197 @@ body:not(.authLocked) .loginScreen{
   }
 }
 
+
+/* ===== V104 CORREÇÃO FINAL SOBREPOSIÇÃO - VENDAS POR COLABORADOR ===== */
+.wholesaleCollabPanel,
+.wholesaleCollabPanel *{
+  box-sizing:border-box!important;
+}
+
+.wholesaleCollabPanel{
+  position:relative!important;
+  display:block!important;
+  overflow:hidden!important;
+  font-family:Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif!important;
+}
+
+.wholesaleCollabPanel .panelHead{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  margin:0 0 14px 0!important;
+}
+
+.wholesaleCollabPanel .panelHead h3{
+  font-weight:900!important;
+  letter-spacing:-.03em!important;
+}
+
+.wholesaleCollabPanel .panelHead .muted{
+  font-weight:650!important;
+  letter-spacing:-.01em!important;
+}
+
+/* Filtros: ocupam uma linha própria e nunca entram nos cards */
+.wholesaleCollabPanel .collabFilterBox,
+.wholesaleCollabPanel .collabFilterBoxV96{
+  position:relative!important;
+  z-index:1!important;
+  display:grid!important;
+  width:100%!important;
+  max-width:100%!important;
+  grid-template-columns:minmax(220px,1.2fr) minmax(150px,.75fr) minmax(150px,.75fr) minmax(160px,.8fr) minmax(210px,.85fr)!important;
+  gap:12px!important;
+  align-items:end!important;
+  margin:0 0 18px 0!important;
+  padding:12px!important;
+  overflow:hidden!important;
+  clear:both!important;
+}
+
+.wholesaleCollabPanel .collabFilterBox label,
+.wholesaleCollabPanel .collabFilterBoxV96 label{
+  min-width:0!important;
+}
+
+.wholesaleCollabPanel .collabFilterBox select,
+.wholesaleCollabPanel .collabFilterBox input,
+.wholesaleCollabPanel .collabFilterBoxV96 select,
+.wholesaleCollabPanel .collabFilterBoxV96 input{
+  min-width:0!important;
+  width:100%!important;
+  max-width:100%!important;
+}
+
+/* Cards: linha separada, sem sobrepor entre si */
+.wholesaleCollabPanel .collabResultGrid{
+  position:relative!important;
+  z-index:0!important;
+  clear:both!important;
+  display:grid!important;
+  width:100%!important;
+  max-width:100%!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px!important;
+  margin:0 0 12px 0!important;
+  padding:0!important;
+  align-items:stretch!important;
+  overflow:visible!important;
+}
+
+.wholesaleCollabPanel .collabResultCard{
+  position:relative!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:flex-start!important;
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:96px!important;
+  height:auto!important;
+  max-height:none!important;
+  padding:16px!important;
+  margin:0!important;
+  overflow:hidden!important;
+  transform:none!important;
+}
+
+.wholesaleCollabPanel .collabResultCard small,
+.wholesaleCollabPanel .collabResultCard strong{
+  position:relative!important;
+  z-index:1!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.wholesaleCollabPanel .collabResultCard small{
+  font-size:11px!important;
+  font-weight:900!important;
+  letter-spacing:.02em!important;
+}
+
+.wholesaleCollabPanel .collabResultCard strong{
+  font-size:22px!important;
+  font-weight:950!important;
+  letter-spacing:-.035em!important;
+}
+
+/* Resumo e tabela abaixo dos cards */
+.wholesaleCollabPanel .collabMiniSummary{
+  position:relative!important;
+  display:block!important;
+  width:100%!important;
+  clear:both!important;
+  margin:0 0 12px 0!important;
+}
+
+.wholesaleCollabPanel .collabBreakdownWrap{
+  position:relative!important;
+  clear:both!important;
+  width:100%!important;
+  max-width:100%!important;
+}
+
+/* Evita regras antigas deixarem cards grandes ou grudados */
+.wholesaleCollabPanel .collabResultGrid > *{
+  grid-column:auto!important;
+  grid-row:auto!important;
+}
+
+/* Tablet */
+@media(max-width:1180px){
+  .wholesaleCollabPanel .collabFilterBox,
+  .wholesaleCollabPanel .collabFilterBoxV96{
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterActions,
+  .wholesaleCollabPanel .collabFilterActionsV971{
+    grid-column:1/-1!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+/* Celular */
+@media(max-width:680px){
+  .wholesaleCollabPanel{
+    padding:14px!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterBox,
+  .wholesaleCollabPanel .collabFilterBoxV96{
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    margin-bottom:16px!important;
+  }
+
+  .wholesaleCollabPanel .collabFilterActions,
+  .wholesaleCollabPanel .collabFilterActionsV971{
+    grid-column:auto!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleCollabPanel .collabResultGrid{
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard{
+    min-height:82px!important;
+    padding:14px!important;
+  }
+
+  .wholesaleCollabPanel .collabResultCard strong{
+    font-size:21px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -7918,7 +8109,7 @@ body:not(.authLocked) .loginScreen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V103</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V104</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9008,7 +9199,7 @@ function registerPwa(){
   if(!("serviceWorker" in navigator))return;
   window.addEventListener("load",async()=>{
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=103");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=104");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -9860,7 +10051,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V103 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V104 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
