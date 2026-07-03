@@ -1,57 +1,52 @@
-# Atualização Admin Master - Coach Fit Pro
+# FIT COACH PRO - Correção Cloudflare /admin
 
-## Antes de subir no GitHub
+## O que foi corrigido
 
-1. No Supabase, abra o SQL Editor.
-2. Execute o arquivo `supabase_admin_master.sql` inteiro.
-3. Confirme que o login `sac@coachfitpro.com.br` existe no Auth do Supabase.
-4. Faça o deploy deste projeto atualizado no GitHub/Cloudflare.
+O deploy estava falhando por causa de regras inválidas em `public/_redirects`.
+A Cloudflare detectou loop nas regras que apontavam `/admin/*` para `/admin/index.html` e `/*` para `/index.html`.
 
-## Ordem recomendada
+Nesta versão, o arquivo `public/_redirects` foi esvaziado para não criar loop.
+A navegação `/admin` fica controlada pelo próprio React e pelo `wrangler.jsonc`, que já possui:
 
-1. Backup do repositório atual.
-2. Aplicar `supabase_admin_master.sql` no Supabase.
-3. Subir os arquivos atualizados no GitHub.
-4. Aguardar o deploy da Cloudflare.
-5. Entrar com `sac@coachfitpro.com.br`.
-6. Abrir `Admin Master`.
-7. Salvar uma alteração pequena de teste, por exemplo o aviso da página.
-8. Abrir a página de vendas em aba anônima para confirmar a alteração.
-
-## O que esta versão adiciona
-
-- Admin Master liberado apenas para `sac@coachfitpro.com.br`.
-- Edição dos textos principais da página de vendas.
-- Editor avançado da página principal por JSON.
-- Edição dos planos, preços, selos, descrições e links Cartpanda.
-- Configurações de suporte, aviso de manutenção e criação de conta.
-- Controle visual de cores.
-- Módulos editáveis no Admin.
-- Listagem administrativa de coaches e assinaturas.
-- Botões para ativar, deixar pendente ou bloquear assinatura manualmente.
-- SQL atualizado com policies RLS para proteger escrita administrativa.
-
-## Observação
-
-Depois desta atualização, mudanças comerciais e de conteúdo poderão ser feitas no Admin Master sem novo upload no GitHub. Ainda será necessário GitHub/Cloudflare quando a mudança for estrutural de código, nova tela complexa, nova integração ou alteração pesada de lógica.
-
-## Build
-
-Build validado com:
-
-```bash
-npm run build
+```json
+"not_found_handling": "single-page-application"
 ```
 
-## Correção 2026-07-03 - Admin Master invisível
+## Arquivos importantes alterados
 
-Foi reforçada a regra de identificação do Admin Master:
-- `sac@coachfitpro.com.br` sempre é considerado Master Admin no front-end;
-- se houver `VITE_FITCOACH_ADMIN_EMAILS` no Cloudflare, ele não substitui mais o e-mail principal;
-- a validação agora considera tanto o e-mail salvo em `users` quanto o e-mail real da sessão autenticada.
+- `public/_redirects` — limpo/sem regras para evitar erro de deploy.
+- `src/App.jsx` — detecta `/admin` pela URL e abre o login administrativo.
+- `admin/index.html` — entrada administrativa preservada.
+- `vite.config.js` — mantém build com entrada principal e admin.
+- `public/service-worker.js` — cache atualizado.
 
-Se a tela não aparecer após subir este ZIP:
-1. confirme que o deploy da Cloudflare terminou;
-2. faça logout e login novamente com `sac@coachfitpro.com.br`;
-3. limpe cache/abra em aba anônima;
-4. confirme que você subiu o conteúdo deste ZIP, não o ZIP anterior.
+## Atenção ao subir no GitHub
+
+Se no GitHub ainda existir um `_redirects` antigo com regras, substitua pelo arquivo vazio desta versão ou apague o conteúdo dele.
+
+O arquivo `public/_redirects` NÃO deve conter estas regras:
+
+```txt
+/admin /admin/index.html 200
+/admin/ /admin/index.html 200
+/admin/* /admin/index.html 200
+/* /index.html 200
+```
+
+Essas regras causam erro de deploy na Cloudflare.
+
+## Depois do deploy
+
+Acesse:
+
+```txt
+https://coachfitpro.com.br/admin
+```
+
+Login admin:
+
+```txt
+sac@coachfitpro.com.br
+```
+
+Não é necessário rodar outro SQL se o SQL anterior do Admin Master já foi executado.
