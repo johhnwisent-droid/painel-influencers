@@ -8060,6 +8060,9 @@ body.appRecovered #cloudStatus{
   color:#0f172a!important;
 }
 
+
+/* ===== V108 PIX SEM DESCONTO AUTOMÁTICO ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8141,7 +8144,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V107</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V108</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9227,8 +9230,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V107";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v107";
+const APP_BUILD_VERSION="V108";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v108";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9267,7 +9270,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=107");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=108");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10171,7 +10174,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V107 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V108 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -11079,7 +11082,7 @@ function feeRuleLabel(origin,paymentMethod,installments,interestPayer="loja"){
 
   if(paymentMethod==="Boleto")return "Boleto sem taxa cadastrada";
   if(paymentMethod==="Débito")return "DÉBITO";
-  if(paymentMethod==="PIX")return "PIX • 5% de desconto";
+  if(paymentMethod==="PIX")return "PIX sem taxa";
   if(paymentMethod==="Cartão de Crédito"){
     const baseRule=origin==="Site"
       ? `SITE CRÉDITO X${installments}`
@@ -11113,18 +11116,16 @@ function calcWholesaleRetailValues(productPrice,freightCost,discountPercent,orig
   const pct=Math.min(100,Math.max(0,Number(discountPercent||0)));
   const subtotal=price+freight;
 
-  const couponDiscountValue=subtotal*(pct/100);
-
   /*
-    PIX: os 5% são desconto comercial sobre o subtotal original,
-    somando com o cupom. Exemplo:
-    R$ 298 com cupom 30% e PIX 5% = 35% de desconto total.
-    298 - 89,40 - 14,90 = 193,70.
+    PIX não aplica desconto automático.
+    O desconto só entra quando o percentual de cupom/desconto for preenchido.
+    PIX também não tem taxa operacional.
   */
-  const pixDiscountPercent=paymentMethod==="PIX"?5:0;
-  const pixDiscountValue=subtotal*(pixDiscountPercent/100);
+  const couponDiscountValue=subtotal*(pct/100);
+  const pixDiscountPercent=0;
+  const pixDiscountValue=0;
 
-  const discountValue=Math.min(subtotal,couponDiscountValue+pixDiscountValue);
+  const discountValue=Math.min(subtotal,couponDiscountValue);
   const baseTotal=Math.max(0,subtotal-discountValue);
 
   const fee=calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestPayer);
@@ -11159,7 +11160,7 @@ function calcWholesaleRetail(){
 
   let feeText="";
   if(paymentMethod==="PIX"){
-    feeText=`<b>Desconto PIX:</b> 5% somado ao cupom sobre o valor original • Taxa operacional: ${money(0)}`;
+    feeText=`<b>PIX:</b> sem taxa operacional e sem desconto automático`;
   }else if(paymentMethod==="Cartão de Crédito"&&interestPayer==="cliente"){
     feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} cobrado do cliente`;
   }else{
@@ -11670,7 +11671,7 @@ function renderWholesaleRetail(){
     <td data-label="Desconto"><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span></td>
     <td data-label="Total"><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
     <td data-label="Pagamento"><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabel(w.paymentMethod,w.installments,w.interestPayer))}</span></td>
-    <td data-label="Taxa"><span class="feePill">${w.paymentMethod==="PIX"?"PIX sem taxa • 5% desconto":`${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer))} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}`}</span></td>
+    <td data-label="Taxa"><span class="feePill">${w.paymentMethod==="PIX"?"PIX sem taxa":`${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer))} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}`}</span></td>
     <td data-label="Valor real"><span class="receivedPill">${money(w.realReceived)}</span></td>
     <td data-label="Observação">${w.notes?`<div class="wholesaleNoteMini">${esc(w.notes)}</div>`:"<span class='wholesaleNoNote'>Sem observação</span>"}</td>
     <td data-label="Ações">
@@ -11785,7 +11786,7 @@ function renderWholesaleOrder(){
   $("wholesaleReceiptSubtotal").textContent=money(w.subtotal);
   $("wholesaleReceiptDiscountPercent").textContent=`${Number(w.discountPercent||0)}%`;
   if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent=w.paymentMethod==="PIX"
-    ? `PIX sem taxa • 5% de desconto • ${money(0)}`
+    ? `PIX sem taxa • ${money(0)}`
     : `${w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer)} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • ${w.interestPayer==="cliente"?"+":"-"}${money(w.feeValue)}`;
   if($("wholesaleReceiptFeeBase"))$("wholesaleReceiptFeeBase").textContent=money(w.baseTotal||Math.max(0,Number(w.subtotal||0)-Number(w.discountValue||0)));
   $("wholesaleReceiptNotes").textContent=(w.notes||"").trim()||"Nenhuma observação adicionada.";
