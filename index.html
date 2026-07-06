@@ -8063,6 +8063,18 @@ body.appRecovered #cloudStatus{
 
 /* ===== V108 PIX SEM DESCONTO AUTOMÁTICO ===== */
 
+
+/* ===== V109 FRETE SOMA OU SUBTRAI ===== */
+#wholesaleFreightPayer{
+  width:100%!important;
+}
+.fieldFreightPayer{
+  min-width:0!important;
+}
+
+
+/* ===== V110 FRETE CLIENTE FORA DO TOTAL ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8144,7 +8156,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V108</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V110</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8305,6 +8317,13 @@ body.appRecovered #cloudStatus{
 
                 <label class="fieldFreight">Custo do frete
                   <input type="number" id="wholesaleFreightCost" step="0.01" min="0" placeholder="0,00">
+                </label>
+
+                <label class="fieldFreightPayer">Quem pagou o frete
+                  <select id="wholesaleFreightPayer">
+                    <option value="cliente">Cliente pagou o frete — não entra no total</option>
+                    <option value="loja">Nós pagamos o frete</option>
+                  </select>
                 </label>
 
                 <label class="fieldCoupon">Cupom usado
@@ -9230,8 +9249,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V108";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v108";
+const APP_BUILD_VERSION="V110";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v110";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9270,7 +9289,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=108");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=110");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10174,7 +10193,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V108 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V110 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -10383,6 +10402,8 @@ function normalize(){
     w.product=w.product||"";
     w.productPrice=Number(w.productPrice||0);
     w.freightCost=Number(w.freightCost||0);
+    w.freightPayer=w.freightPayer||"cliente";
+    if(!["cliente","loja"].includes(w.freightPayer))w.freightPayer="cliente";
     w.couponName=w.couponName||"";
     w.discountPercent=Number(w.discountPercent||0);
     w.origin=w.origin||"Site";
@@ -10395,7 +10416,7 @@ function normalize(){
       w.installments=1;
       w.interestPayer="loja";
     }
-    const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.discountPercent,w.origin,w.paymentMethod,w.installments,w.interestPayer);
+    const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.freightPayer,w.discountPercent,w.origin,w.paymentMethod,w.installments,w.interestPayer);
     w.subtotal=Number(calc.subtotal||0);
     w.couponDiscountValue=Number(calc.couponDiscountValue||0);
     w.pixDiscountPercent=Number(calc.pixDiscountPercent||0);
@@ -11071,6 +11092,11 @@ function feePercentForWholesale(origin,paymentMethod,installments){
   return 0;
 }
 
+
+function freightPayerLabel(freightPayer){
+  return freightPayer==="loja" ? "Nós pagamos o frete" : "Cliente pagou o frete — fora do total";
+}
+
 function interestPayerLabel(interestPayer){
   return interestPayer==="cliente" ? "Cliente paga os juros" : "Nós pagamos os juros";
 }
@@ -11110,11 +11136,22 @@ function calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestP
   return {feePercent,feeValue,total,realReceived,feeRule,interestPayer};
 }
 
-function calcWholesaleRetailValues(productPrice,freightCost,discountPercent,origin,paymentMethod,installments,interestPayer="loja"){
+function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="cliente",discountPercent,origin,paymentMethod,installments,interestPayer="loja"){
   const price=Number(productPrice||0);
   const freight=Number(freightCost||0);
+  freightPayer=freightPayer==="loja" ? "loja" : "cliente";
+
   const pct=Math.min(100,Math.max(0,Number(discountPercent||0)));
-  const subtotal=price+freight;
+
+  /*
+    Frete:
+    - Cliente pagou: fica apenas registrado, não soma no total e não altera valor real recebido.
+    - Nós pagamos: entra como custo e subtrai do total.
+  */
+  const freightAdded=0;
+  const freightSubtracted=freightPayer==="loja" ? freight : 0;
+
+  const subtotal=price;
 
   /*
     PIX não aplica desconto automático.
@@ -11126,18 +11163,23 @@ function calcWholesaleRetailValues(productPrice,freightCost,discountPercent,orig
   const pixDiscountValue=0;
 
   const discountValue=Math.min(subtotal,couponDiscountValue);
-  const baseTotal=Math.max(0,subtotal-discountValue);
+  const baseBeforeFreightCost=Math.max(0,subtotal-discountValue);
+  const baseTotal=Math.max(0,baseBeforeFreightCost-freightSubtracted);
 
   const fee=calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestPayer);
   return {
     price,
     freight,
+    freightPayer,
+    freightAdded,
+    freightSubtracted,
     pct,
     subtotal,
     couponDiscountValue,
     pixDiscountPercent,
     pixDiscountValue,
     discountValue,
+    baseBeforeFreightCost,
     baseTotal,
     total:fee.total,
     ...fee
@@ -11147,24 +11189,29 @@ function calcWholesaleRetailValues(productPrice,freightCost,discountPercent,orig
 function calcWholesaleRetail(){
   const price=Number($("wholesaleProductPrice")?.value||0);
   const freight=Number($("wholesaleFreightCost")?.value||0);
+  const freightPayer=$("wholesaleFreightPayer")?.value||"cliente";
   const pct=Number($("wholesaleDiscountPercent")?.value||0);
   const origin=$("wholesaleOrigin")?.value||"Site";
   const paymentMethod=$("wholesalePaymentMethod")?.value||"PIX";
   const installments=Number($("wholesaleInstallments")?.value||1);
   const interestPayer=$("wholesaleInterestPayer")?.value||"loja";
-  const c=calcWholesaleRetailValues(price,freight,pct,origin,paymentMethod,installments,interestPayer);
+  const c=calcWholesaleRetailValues(price,freight,freightPayer,pct,origin,paymentMethod,installments,interestPayer);
 
   if($("wholesaleTotal"))$("wholesaleTotal").value=money(c.total);
   if($("wholesaleTotalPreview"))$("wholesaleTotalPreview").textContent=money(c.total);
   if($("wholesaleRealReceivedPreview"))$("wholesaleRealReceivedPreview").textContent=money(c.realReceived);
 
+  const freightInfo=c.freight>0
+    ? ` • Frete: ${c.freightPayer==="loja"?"-"+money(c.freightSubtracted)+" pago por nós":money(c.freight)+" pago pelo cliente, fora do total"}`
+    : "";
+
   let feeText="";
   if(paymentMethod==="PIX"){
-    feeText=`<b>PIX:</b> sem taxa operacional e sem desconto automático`;
+    feeText=`<b>PIX:</b> sem taxa operacional e sem desconto automático${freightInfo}`;
   }else if(paymentMethod==="Cartão de Crédito"&&interestPayer==="cliente"){
-    feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} cobrado do cliente`;
+    feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} cobrado do cliente${freightInfo}`;
   }else{
-    feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} descontado do total final`;
+    feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} descontado do total final${freightInfo}`;
   }
 
   if($("wholesaleTaxPreview"))$("wholesaleTaxPreview").innerHTML=feeText;
@@ -11230,6 +11277,7 @@ function resetWholesaleRetailForm(){
   $("wholesaleForm").reset();
   $("wholesaleId").value="";
   $("wholesaleDate").value=today();
+  if($("wholesaleFreightPayer"))$("wholesaleFreightPayer").value="cliente";
   if($("wholesaleSaleType"))$("wholesaleSaleType").value="Varejo";
   if($("wholesaleOrigin"))$("wholesaleOrigin").value="Site";
   if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value="PIX";
@@ -11666,7 +11714,7 @@ function renderWholesaleRetail(){
     <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
     <td data-label="Produto"><span class="wholesaleProductList productCompactSafe" title="${esc(String(w.product||"-"))}">${esc(compactProductText(w.product||"-"))}</span></td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
-    <td data-label="Frete"><span class="wholesaleMoneyPill freight">${money(w.freightCost)}</span></td>
+    <td data-label="Frete"><span class="wholesaleMoneyPill freight">${w.freightPayer==="loja"?"-":""}${money(w.freightCost)}</span><span class="createdByMini">${esc(freightPayerLabel(w.freightPayer))}</span></td>
     <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
     <td data-label="Desconto"><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span></td>
     <td data-label="Total"><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
@@ -11776,7 +11824,7 @@ function renderWholesaleOrder(){
   $("wholesaleReceiptDate").textContent=`Data: ${dateBR(w.date)}`;
   $("wholesaleReceiptCode").textContent=`Pedido: ${String(w.id||"").slice(0,8).toUpperCase()}`;
   $("wholesaleReceiptProductPrice").textContent=money(w.productPrice);
-  $("wholesaleReceiptFreight").textContent=money(w.freightCost);
+  $("wholesaleReceiptFreight").textContent=`${w.freightPayer==="loja"?"-":""}${money(w.freightCost)} • ${freightPayerLabel(w.freightPayer)}`;
   $("wholesaleReceiptDiscount").textContent=`-${money(w.discountValue)}`;
   $("wholesaleReceiptProduct").textContent=w.product||"-";
   if($("wholesaleReceiptSaleType"))$("wholesaleReceiptSaleType").textContent=w.saleType||"Varejo";
@@ -11832,6 +11880,7 @@ function editWholesaleRetail(id){
   $("wholesaleProduct").value=w.product||"";
   $("wholesaleProductPrice").value=Number(w.productPrice||0);
   $("wholesaleFreightCost").value=Number(w.freightCost||0);
+  if($("wholesaleFreightPayer"))$("wholesaleFreightPayer").value=w.freightPayer||"cliente";
   $("wholesaleCouponName").value=w.couponName||"";
   $("wholesaleDiscountPercent").value=Number(w.discountPercent||0);
   if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value=w.paymentMethod||"PIX";
@@ -11926,7 +11975,7 @@ function exportWholesaleRetailPDF(){
 
 function exportWholesaleRetailCSV(){
   const rows=wholesaleRetailRows();
-  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Juros do cartão","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
+  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Quem pagou o frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Juros do cartão","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
     dateBR(w.date),
     w.saleType||"Varejo",
     w.origin||"Site",
@@ -11936,6 +11985,7 @@ function exportWholesaleRetailCSV(){
     String(w.product||"").replace(/\r?\n/g," | "),
     w.productPrice||0,
     w.freightCost||0,
+    freightPayerLabel(w.freightPayer||"cliente"),
     w.couponName||"",
     w.discountPercent||0,
     w.discountValue||0,
@@ -12425,7 +12475,7 @@ $("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId"
   if(el)el.addEventListener("input",calcWholesaleRetail);
 });
 
-["wholesaleOrigin","wholesaleInstallments","wholesaleInterestPayer"].forEach(id=>{
+["wholesaleOrigin","wholesaleInstallments","wholesaleInterestPayer","wholesaleFreightPayer"].forEach(id=>{
   const el=$(id);
   if(el)el.addEventListener("change",calcWholesaleRetail);
 });
@@ -12458,6 +12508,9 @@ if($("wholesaleForm")){
       product:cleanProductLines($("wholesaleProduct").value),
       productPrice:c.price,
       freightCost:c.freight,
+      freightPayer:c.freightPayer,
+      freightAdded:c.freightAdded,
+      freightSubtracted:c.freightSubtracted,
       couponName:($("wholesaleCouponName").value||"").trim(),
       discountPercent:c.pct,
       subtotal:c.subtotal,
@@ -12489,7 +12542,10 @@ if($("wholesaleForm")){
       item.installments=1;
       item.interestPayer="loja";
     }
-    const finalCalc=calcWholesaleRetailValues(item.productPrice,item.freightCost,item.discountPercent,item.origin,item.paymentMethod,item.installments,item.interestPayer);
+    const finalCalc=calcWholesaleRetailValues(item.productPrice,item.freightCost,item.freightPayer,item.discountPercent,item.origin,item.paymentMethod,item.installments,item.interestPayer);
+    item.freightPayer=finalCalc.freightPayer;
+    item.freightAdded=finalCalc.freightAdded;
+    item.freightSubtracted=finalCalc.freightSubtracted;
     item.couponDiscountValue=finalCalc.couponDiscountValue;
     item.pixDiscountPercent=finalCalc.pixDiscountPercent;
     item.pixDiscountValue=finalCalc.pixDiscountValue;
