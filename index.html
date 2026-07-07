@@ -8075,6 +8075,9 @@ body.appRecovered #cloudStatus{
 
 /* ===== V110 FRETE CLIENTE FORA DO TOTAL ===== */
 
+
+/* ===== V111 DESCONTO EM CASCATA ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8156,7 +8159,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V110</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V111</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9249,8 +9252,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V110";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v110";
+const APP_BUILD_VERSION="V111";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v111";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9289,7 +9292,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=110");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=111");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10193,7 +10196,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V110 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V111 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -10419,6 +10422,12 @@ function normalize(){
     const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.freightPayer,w.discountPercent,w.origin,w.paymentMethod,w.installments,w.interestPayer);
     w.subtotal=Number(calc.subtotal||0);
     w.couponDiscountValue=Number(calc.couponDiscountValue||0);
+    w.couponEffectivePercent=Number(calc.couponEffectivePercent||0);
+    w.couponDiscountMode=calc.couponDiscountMode||"direct";
+    w.couponFirstPercent=Number(calc.couponFirstPercent||0);
+    w.couponSecondPercent=Number(calc.couponSecondPercent||0);
+    w.couponFirstDiscountValue=Number(calc.couponFirstDiscountValue||0);
+    w.couponSecondDiscountValue=Number(calc.couponSecondDiscountValue||0);
     w.pixDiscountPercent=Number(calc.pixDiscountPercent||0);
     w.pixDiscountValue=Number(calc.pixDiscountValue||0);
     w.discountValue=Number(calc.discountValue||0);
@@ -11136,6 +11145,72 @@ function calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestP
   return {feePercent,feeValue,total,realReceived,feeRule,interestPayer};
 }
 
+
+function calcCascadeDiscountValue(base,discountPercent){
+  base=Number(base||0);
+  const pct=Math.min(100,Math.max(0,Number(discountPercent||0)));
+
+  if(base<=0||pct<=0){
+    return {
+      requestedPercent:pct,
+      firstPercent:0,
+      secondPercent:0,
+      firstDiscountValue:0,
+      secondDiscountValue:0,
+      discountValue:0,
+      effectivePercent:0,
+      mode:"none"
+    };
+  }
+
+  /*
+    Estratégia de desconto em cascata:
+    - Até 10%: desconto direto.
+    - Acima de 10%: aplica 10% primeiro e o restante sobre o saldo.
+    Exemplo: 15% = 10% primeiro + 5% em cima do saldo.
+    R$100 -> -R$10 = R$90 -> -5% de R$90 = R$85,50.
+  */
+  if(pct<=10){
+    const directValue=base*(pct/100);
+    return {
+      requestedPercent:pct,
+      firstPercent:pct,
+      secondPercent:0,
+      firstDiscountValue:directValue,
+      secondDiscountValue:0,
+      discountValue:directValue,
+      effectivePercent:base?((directValue/base)*100):0,
+      mode:"direct"
+    };
+  }
+
+  const firstPercent=10;
+  const secondPercent=pct-10;
+  const firstDiscountValue=base*(firstPercent/100);
+  const afterFirst=Math.max(0,base-firstDiscountValue);
+  const secondDiscountValue=afterFirst*(secondPercent/100);
+  const discountValue=Math.min(base,firstDiscountValue+secondDiscountValue);
+
+  return {
+    requestedPercent:pct,
+    firstPercent,
+    secondPercent,
+    firstDiscountValue,
+    secondDiscountValue,
+    discountValue,
+    effectivePercent:base?((discountValue/base)*100):0,
+    mode:"cascade"
+  };
+}
+
+function cascadeDiscountLabel(c){
+  if(!c||!Number(c.requestedPercent||0))return "Sem desconto";
+  if(c.mode==="cascade"){
+    return `${Number(c.requestedPercent||0).toFixed(2).replace(".",",")}% em cascata: 10% + ${Number(c.secondPercent||0).toFixed(2).replace(".",",")}%`;
+  }
+  return `${Number(c.requestedPercent||0).toFixed(2).replace(".",",")}% direto`;
+}
+
 function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="cliente",discountPercent,origin,paymentMethod,installments,interestPayer="loja"){
   const price=Number(productPrice||0);
   const freight=Number(freightCost||0);
@@ -11158,7 +11233,14 @@ function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="client
     O desconto só entra quando o percentual de cupom/desconto for preenchido.
     PIX também não tem taxa operacional.
   */
-  const couponDiscountValue=subtotal*(pct/100);
+  const cascadeDiscount=calcCascadeDiscountValue(subtotal,pct);
+  const couponDiscountValue=cascadeDiscount.discountValue;
+  const couponEffectivePercent=cascadeDiscount.effectivePercent;
+  const couponDiscountMode=cascadeDiscount.mode;
+  const couponFirstPercent=cascadeDiscount.firstPercent;
+  const couponSecondPercent=cascadeDiscount.secondPercent;
+  const couponFirstDiscountValue=cascadeDiscount.firstDiscountValue;
+  const couponSecondDiscountValue=cascadeDiscount.secondDiscountValue;
   const pixDiscountPercent=0;
   const pixDiscountValue=0;
 
@@ -11176,6 +11258,12 @@ function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="client
     pct,
     subtotal,
     couponDiscountValue,
+    couponEffectivePercent,
+    couponDiscountMode,
+    couponFirstPercent,
+    couponSecondPercent,
+    couponFirstDiscountValue,
+    couponSecondDiscountValue,
     pixDiscountPercent,
     pixDiscountValue,
     discountValue,
@@ -11205,13 +11293,17 @@ function calcWholesaleRetail(){
     ? ` • Frete: ${c.freightPayer==="loja"?"-"+money(c.freightSubtracted)+" pago por nós":money(c.freight)+" pago pelo cliente, fora do total"}`
     : "";
 
+  const discountInfo=c.couponDiscountMode==="cascade"
+    ? ` • Desconto: ${Number(c.pct||0).toFixed(2).replace(".",",")}% em cascata, efetivo ${Number(c.couponEffectivePercent||0).toFixed(2).replace(".",",")}%`
+    : "";
+
   let feeText="";
   if(paymentMethod==="PIX"){
-    feeText=`<b>PIX:</b> sem taxa operacional e sem desconto automático${freightInfo}`;
+    feeText=`<b>PIX:</b> sem taxa operacional e sem desconto automático${freightInfo}${discountInfo}`;
   }else if(paymentMethod==="Cartão de Crédito"&&interestPayer==="cliente"){
-    feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} cobrado do cliente${freightInfo}`;
+    feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} cobrado do cliente${freightInfo}${discountInfo}`;
   }else{
-    feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} descontado do total final${freightInfo}`;
+    feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} descontado do total final${freightInfo}${discountInfo}`;
   }
 
   if($("wholesaleTaxPreview"))$("wholesaleTaxPreview").innerHTML=feeText;
@@ -11715,7 +11807,7 @@ function renderWholesaleRetail(){
     <td data-label="Produto"><span class="wholesaleProductList productCompactSafe" title="${esc(String(w.product||"-"))}">${esc(compactProductText(w.product||"-"))}</span></td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
     <td data-label="Frete"><span class="wholesaleMoneyPill freight">${w.freightPayer==="loja"?"-":""}${money(w.freightCost)}</span><span class="createdByMini">${esc(freightPayerLabel(w.freightPayer))}</span></td>
-    <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
+    <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill" title="${esc(cascadeDiscountLabel({requestedPercent:w.discountPercent,mode:w.couponDiscountMode,secondPercent:w.couponSecondPercent}))}">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>${w.couponDiscountMode==="cascade"?`<span class="createdByMini">cascata efetiva ${Number(w.couponEffectivePercent||0).toFixed(2).replace(".",",")}%</span>`:""}`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
     <td data-label="Desconto"><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span></td>
     <td data-label="Total"><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
     <td data-label="Pagamento"><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabel(w.paymentMethod,w.installments,w.interestPayer))}</span></td>
@@ -11829,10 +11921,10 @@ function renderWholesaleOrder(){
   $("wholesaleReceiptProduct").textContent=w.product||"-";
   if($("wholesaleReceiptSaleType"))$("wholesaleReceiptSaleType").textContent=w.saleType||"Varejo";
   if($("wholesaleReceiptOrigin"))$("wholesaleReceiptOrigin").textContent=w.origin||"Site";
-  $("wholesaleReceiptCoupon").textContent=w.couponName?`${w.couponName} • ${Number(w.discountPercent||0)}%`:"Sem cupom";
+  $("wholesaleReceiptCoupon").textContent=w.couponName?`${w.couponName} • ${cascadeDiscountLabel({requestedPercent:w.discountPercent,mode:w.couponDiscountMode,secondPercent:w.couponSecondPercent})}${w.couponDiscountMode==="cascade"?` • efetivo ${Number(w.couponEffectivePercent||0).toFixed(2).replace(".",",")}%`:""}`:"Sem cupom";
   if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent=paymentLabel(w.paymentMethod,w.installments,w.interestPayer);
   $("wholesaleReceiptSubtotal").textContent=money(w.subtotal);
-  $("wholesaleReceiptDiscountPercent").textContent=`${Number(w.discountPercent||0)}%`;
+  $("wholesaleReceiptDiscountPercent").textContent=w.couponDiscountMode==="cascade"?`${Number(w.discountPercent||0)}% solicitado • ${Number(w.couponEffectivePercent||0).toFixed(2).replace(".",",")}% efetivo`:`${Number(w.discountPercent||0)}%`;
   if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent=w.paymentMethod==="PIX"
     ? `PIX sem taxa • ${money(0)}`
     : `${w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer)} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • ${w.interestPayer==="cliente"?"+":"-"}${money(w.feeValue)}`;
@@ -11975,7 +12067,7 @@ function exportWholesaleRetailPDF(){
 
 function exportWholesaleRetailCSV(){
   const rows=wholesaleRetailRows();
-  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Quem pagou o frete","Cupom usado","Desconto %","Desconto valor","Total","Forma de pagamento","Parcelas","Juros do cartão","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
+  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Quem pagou o frete","Cupom usado","Desconto solicitado %","Desconto efetivo %","Modo desconto","Desconto valor","Total","Forma de pagamento","Parcelas","Juros do cartão","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
     dateBR(w.date),
     w.saleType||"Varejo",
     w.origin||"Site",
@@ -11988,6 +12080,8 @@ function exportWholesaleRetailCSV(){
     freightPayerLabel(w.freightPayer||"cliente"),
     w.couponName||"",
     w.discountPercent||0,
+    w.couponEffectivePercent||w.discountPercent||0,
+    w.couponDiscountMode==="cascade" ? "Cascata 10% + restante" : "Direto",
     w.discountValue||0,
     w.total||0,
     w.paymentMethod||"PIX",
@@ -12515,6 +12609,12 @@ if($("wholesaleForm")){
       discountPercent:c.pct,
       subtotal:c.subtotal,
       couponDiscountValue:c.couponDiscountValue,
+      couponEffectivePercent:c.couponEffectivePercent,
+      couponDiscountMode:c.couponDiscountMode,
+      couponFirstPercent:c.couponFirstPercent,
+      couponSecondPercent:c.couponSecondPercent,
+      couponFirstDiscountValue:c.couponFirstDiscountValue,
+      couponSecondDiscountValue:c.couponSecondDiscountValue,
       pixDiscountPercent:c.pixDiscountPercent,
       pixDiscountValue:c.pixDiscountValue,
       discountValue:c.discountValue,
@@ -12547,6 +12647,12 @@ if($("wholesaleForm")){
     item.freightAdded=finalCalc.freightAdded;
     item.freightSubtracted=finalCalc.freightSubtracted;
     item.couponDiscountValue=finalCalc.couponDiscountValue;
+    item.couponEffectivePercent=finalCalc.couponEffectivePercent;
+    item.couponDiscountMode=finalCalc.couponDiscountMode;
+    item.couponFirstPercent=finalCalc.couponFirstPercent;
+    item.couponSecondPercent=finalCalc.couponSecondPercent;
+    item.couponFirstDiscountValue=finalCalc.couponFirstDiscountValue;
+    item.couponSecondDiscountValue=finalCalc.couponSecondDiscountValue;
     item.pixDiscountPercent=finalCalc.pixDiscountPercent;
     item.pixDiscountValue=finalCalc.pixDiscountValue;
     item.discountValue=finalCalc.discountValue;
