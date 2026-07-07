@@ -8088,6 +8088,129 @@ body.appRecovered #cloudStatus{
   min-width:0!important;
 }
 
+
+/* ===== V114 LAYOUT VALORES E DESCONTOS MAIS LARGO ===== */
+#wholesaleRetail .sectionProducts{
+  overflow:visible!important;
+}
+
+#wholesaleRetail .sectionProducts .productsGrid{
+  grid-template-columns:minmax(320px,.95fr) minmax(520px,1.25fr)!important;
+  gap:18px!important;
+  align-items:start!important;
+}
+
+#wholesaleRetail .sectionProducts .fieldProducts textarea{
+  min-height:236px!important;
+}
+
+#wholesaleRetail .sectionProducts .valueSideGrid{
+  display:grid!important;
+  grid-template-columns:repeat(2,minmax(230px,1fr))!important;
+  gap:14px!important;
+  width:100%!important;
+  min-width:0!important;
+  align-content:start!important;
+}
+
+#wholesaleRetail .sectionProducts .valueSideGrid label{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:84px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-end!important;
+  gap:7px!important;
+  padding:12px!important;
+  border-radius:16px!important;
+  background:#ffffff!important;
+  border:1px solid #e2e8f0!important;
+  box-sizing:border-box!important;
+}
+
+#wholesaleRetail .sectionProducts .valueSideGrid label.fieldPrice,
+#wholesaleRetail .sectionProducts .valueSideGrid label.fieldDiscount,
+#wholesaleRetail .sectionProducts .valueSideGrid label.fieldCascadeDiscount{
+  background:linear-gradient(135deg,#f8fafc 0%,#ffffff 78%)!important;
+}
+
+#wholesaleRetail .sectionProducts .valueSideGrid label.fieldDiscount,
+#wholesaleRetail .sectionProducts .valueSideGrid label.fieldCascadeDiscount{
+  border-color:#bfdbfe!important;
+}
+
+#wholesaleRetail .sectionProducts .valueSideGrid input,
+#wholesaleRetail .sectionProducts .valueSideGrid select{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  height:48px!important;
+  min-height:48px!important;
+  font-size:15px!important;
+  font-weight:850!important;
+  border-radius:13px!important;
+  box-sizing:border-box!important;
+}
+
+#wholesaleRetail .sectionProducts .valueSideGrid label{
+  font-size:12px!important;
+  font-weight:950!important;
+  color:#334155!important;
+}
+
+#wholesaleRetail .sectionProducts #wholesaleProductPrice,
+#wholesaleRetail .sectionProducts #wholesaleDiscountPercent,
+#wholesaleRetail .sectionProducts #wholesaleCascadeDiscountPercent{
+  font-size:16px!important;
+  font-weight:950!important;
+}
+
+#wholesaleRetail .sectionProducts .fieldCoupon{
+  grid-column:1/-1!important;
+}
+
+#wholesaleRetail .sectionProducts .fieldCoupon input{
+  font-size:15px!important;
+}
+
+@media(max-width:1250px){
+  #wholesaleRetail .sectionProducts .productsGrid{
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleRetail .sectionProducts .fieldProducts textarea{
+    min-height:160px!important;
+  }
+
+  #wholesaleRetail .sectionProducts .valueSideGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+
+@media(max-width:680px){
+  #wholesaleRetail .sectionProducts .valueSideGrid{
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+
+  #wholesaleRetail .sectionProducts .valueSideGrid label{
+    min-height:78px!important;
+    padding:11px!important;
+  }
+
+  #wholesaleRetail .sectionProducts .valueSideGrid input,
+  #wholesaleRetail .sectionProducts .valueSideGrid select{
+    height:46px!important;
+    min-height:46px!important;
+    font-size:16px!important;
+  }
+
+  #wholesaleRetail .sectionProducts .fieldCoupon{
+    grid-column:auto!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8169,7 +8292,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V113</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V114</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9270,8 +9393,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V113";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v113";
+const APP_BUILD_VERSION="V114";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v114";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9310,7 +9433,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=113");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=114");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10214,7 +10337,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V113 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V114 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
