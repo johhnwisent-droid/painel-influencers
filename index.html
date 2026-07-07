@@ -2341,6 +2341,7 @@ canvas{
 .wholesaleFormPro .fieldFreight{grid-column:span 3}
 .wholesaleFormPro .fieldCoupon{grid-column:span 3}
 .wholesaleFormPro .fieldDiscount{grid-column:span 3}
+.wholesaleFormPro .fieldCascadeDiscount{grid-column:span 3}
 .wholesaleFormPro .fieldPayment{grid-column:span 6}
 .wholesaleFormPro .fieldCalc{grid-column:span 3}
 .wholesaleFormPro .fieldTotal{grid-column:span 3}
@@ -8076,7 +8077,16 @@ body.appRecovered #cloudStatus{
 /* ===== V110 FRETE CLIENTE FORA DO TOTAL ===== */
 
 
-/* ===== V111 DESCONTO EM CASCATA ===== */
+/* ===== V112 DESCONTO DIRETO CORRIGIDO ===== */
+
+
+/* ===== V113 DESCONTO CASCATA SEPARADO ===== */
+#wholesaleCascadeDiscountPercent{
+  width:100%!important;
+}
+.fieldCascadeDiscount{
+  min-width:0!important;
+}
 
 </style>
 
@@ -8159,7 +8169,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V111</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V113</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8335,6 +8345,10 @@ body.appRecovered #cloudStatus{
 
                 <label class="fieldDiscount">Desconto do cupom (%)
                   <input type="number" id="wholesaleDiscountPercent" step="0.01" min="0" max="100" placeholder="0">
+                </label>
+
+                <label class="fieldCascadeDiscount">Desconto Cascata (%)
+                  <input type="number" id="wholesaleCascadeDiscountPercent" step="0.01" min="0" max="100" placeholder="0">
                 </label>
               </div>
             </div>
@@ -8735,6 +8749,10 @@ body.appRecovered #cloudStatus{
             <div class="wholesaleReceiptInfo">
               <small>Percentual do desconto</small>
               <strong id="wholesaleReceiptDiscountPercent">0%</strong>
+            </div>
+            <div class="wholesaleReceiptInfo">
+              <small>Desconto Cascata</small>
+              <strong id="wholesaleReceiptCascadeDiscount">0%</strong>
             </div>
             <div class="wholesaleReceiptInfo">
               <small>Taxa da operação</small>
@@ -9252,8 +9270,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V111";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v111";
+const APP_BUILD_VERSION="V113";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v113";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9292,7 +9310,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=111");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=113");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10196,7 +10214,7 @@ async function fetchWithTimeout(url,options={},timeout=10000){
 }
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V111 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V113 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -10409,6 +10427,7 @@ function normalize(){
     if(!["cliente","loja"].includes(w.freightPayer))w.freightPayer="cliente";
     w.couponName=w.couponName||"";
     w.discountPercent=Number(w.discountPercent||0);
+    w.cascadeDiscountPercent=Number(w.cascadeDiscountPercent||0);
     w.origin=w.origin||"Site";
     if(!["Site","Loja Física"].includes(w.origin))w.origin="Site";
     w.paymentMethod=w.paymentMethod||"PIX";
@@ -10419,9 +10438,12 @@ function normalize(){
       w.installments=1;
       w.interestPayer="loja";
     }
-    const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.freightPayer,w.discountPercent,w.origin,w.paymentMethod,w.installments,w.interestPayer);
+    const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.freightPayer,w.discountPercent,w.cascadeDiscountPercent,w.origin,w.paymentMethod,w.installments,w.interestPayer);
     w.subtotal=Number(calc.subtotal||0);
     w.couponDiscountValue=Number(calc.couponDiscountValue||0);
+    w.cascadeDiscountValue=Number(calc.cascadeDiscountValue||0);
+    w.cascadeEffectivePercent=Number(calc.cascadeEffectivePercent||0);
+    w.totalEffectiveDiscountPercent=Number(calc.totalEffectiveDiscountPercent||0);
     w.couponEffectivePercent=Number(calc.couponEffectivePercent||0);
     w.couponDiscountMode=calc.couponDiscountMode||"direct";
     w.couponFirstPercent=Number(calc.couponFirstPercent||0);
@@ -11146,77 +11168,13 @@ function calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestP
 }
 
 
-function calcCascadeDiscountValue(base,discountPercent){
-  base=Number(base||0);
-  const pct=Math.min(100,Math.max(0,Number(discountPercent||0)));
-
-  if(base<=0||pct<=0){
-    return {
-      requestedPercent:pct,
-      firstPercent:0,
-      secondPercent:0,
-      firstDiscountValue:0,
-      secondDiscountValue:0,
-      discountValue:0,
-      effectivePercent:0,
-      mode:"none"
-    };
-  }
-
-  /*
-    Estratégia de desconto em cascata:
-    - Até 10%: desconto direto.
-    - Acima de 10%: aplica 10% primeiro e o restante sobre o saldo.
-    Exemplo: 15% = 10% primeiro + 5% em cima do saldo.
-    R$100 -> -R$10 = R$90 -> -5% de R$90 = R$85,50.
-  */
-  if(pct<=10){
-    const directValue=base*(pct/100);
-    return {
-      requestedPercent:pct,
-      firstPercent:pct,
-      secondPercent:0,
-      firstDiscountValue:directValue,
-      secondDiscountValue:0,
-      discountValue:directValue,
-      effectivePercent:base?((directValue/base)*100):0,
-      mode:"direct"
-    };
-  }
-
-  const firstPercent=10;
-  const secondPercent=pct-10;
-  const firstDiscountValue=base*(firstPercent/100);
-  const afterFirst=Math.max(0,base-firstDiscountValue);
-  const secondDiscountValue=afterFirst*(secondPercent/100);
-  const discountValue=Math.min(base,firstDiscountValue+secondDiscountValue);
-
-  return {
-    requestedPercent:pct,
-    firstPercent,
-    secondPercent,
-    firstDiscountValue,
-    secondDiscountValue,
-    discountValue,
-    effectivePercent:base?((discountValue/base)*100):0,
-    mode:"cascade"
-  };
-}
-
-function cascadeDiscountLabel(c){
-  if(!c||!Number(c.requestedPercent||0))return "Sem desconto";
-  if(c.mode==="cascade"){
-    return `${Number(c.requestedPercent||0).toFixed(2).replace(".",",")}% em cascata: 10% + ${Number(c.secondPercent||0).toFixed(2).replace(".",",")}%`;
-  }
-  return `${Number(c.requestedPercent||0).toFixed(2).replace(".",",")}% direto`;
-}
-
-function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="cliente",discountPercent,origin,paymentMethod,installments,interestPayer="loja"){
+function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="cliente",discountPercent,cascadeDiscountPercent=0,origin,paymentMethod,installments,interestPayer="loja"){
   const price=Number(productPrice||0);
   const freight=Number(freightCost||0);
   freightPayer=freightPayer==="loja" ? "loja" : "cliente";
 
   const pct=Math.min(100,Math.max(0,Number(discountPercent||0)));
+  const cascadePct=Math.min(100,Math.max(0,Number(cascadeDiscountPercent||0)));
 
   /*
     Frete:
@@ -11233,18 +11191,30 @@ function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="client
     O desconto só entra quando o percentual de cupom/desconto for preenchido.
     PIX também não tem taxa operacional.
   */
-  const cascadeDiscount=calcCascadeDiscountValue(subtotal,pct);
-  const couponDiscountValue=cascadeDiscount.discountValue;
-  const couponEffectivePercent=cascadeDiscount.effectivePercent;
-  const couponDiscountMode=cascadeDiscount.mode;
-  const couponFirstPercent=cascadeDiscount.firstPercent;
-  const couponSecondPercent=cascadeDiscount.secondPercent;
-  const couponFirstDiscountValue=cascadeDiscount.firstDiscountValue;
-  const couponSecondDiscountValue=cascadeDiscount.secondDiscountValue;
+
+  /*
+    Desconto em duas etapas:
+    1) Desconto do cupom é direto sobre o subtotal.
+    2) Desconto Cascata é aplicado sobre o valor já reduzido pelo cupom.
+    Exemplo: R$100 com cupom 30% e cascata 10%:
+    100 - 30 = 70; depois 10% de 70 = 7; total final = 63.
+  */
+  const couponDiscountValue=subtotal*(pct/100);
+  const afterCoupon=Math.max(0,subtotal-couponDiscountValue);
+  const cascadeDiscountValue=afterCoupon*(cascadePct/100);
+
+  const couponEffectivePercent=pct;
+  const cascadeEffectivePercent=subtotal?((cascadeDiscountValue/subtotal)*100):0;
+  const totalEffectiveDiscountPercent=subtotal?(((couponDiscountValue+cascadeDiscountValue)/subtotal)*100):0;
+  const couponDiscountMode=cascadePct>0 ? "direct_plus_cascade" : "direct";
+  const couponFirstPercent=pct;
+  const couponSecondPercent=cascadePct;
+  const couponFirstDiscountValue=couponDiscountValue;
+  const couponSecondDiscountValue=cascadeDiscountValue;
   const pixDiscountPercent=0;
   const pixDiscountValue=0;
 
-  const discountValue=Math.min(subtotal,couponDiscountValue);
+  const discountValue=Math.min(subtotal,couponDiscountValue+cascadeDiscountValue);
   const baseBeforeFreightCost=Math.max(0,subtotal-discountValue);
   const baseTotal=Math.max(0,baseBeforeFreightCost-freightSubtracted);
 
@@ -11256,9 +11226,14 @@ function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="client
     freightAdded,
     freightSubtracted,
     pct,
+    cascadePct,
+    cascadeDiscountPercent:cascadePct,
     subtotal,
     couponDiscountValue,
+    cascadeDiscountValue,
     couponEffectivePercent,
+    cascadeEffectivePercent,
+    totalEffectiveDiscountPercent,
     couponDiscountMode,
     couponFirstPercent,
     couponSecondPercent,
@@ -11279,11 +11254,12 @@ function calcWholesaleRetail(){
   const freight=Number($("wholesaleFreightCost")?.value||0);
   const freightPayer=$("wholesaleFreightPayer")?.value||"cliente";
   const pct=Number($("wholesaleDiscountPercent")?.value||0);
+  const cascadePct=Number($("wholesaleCascadeDiscountPercent")?.value||0);
   const origin=$("wholesaleOrigin")?.value||"Site";
   const paymentMethod=$("wholesalePaymentMethod")?.value||"PIX";
   const installments=Number($("wholesaleInstallments")?.value||1);
   const interestPayer=$("wholesaleInterestPayer")?.value||"loja";
-  const c=calcWholesaleRetailValues(price,freight,freightPayer,pct,origin,paymentMethod,installments,interestPayer);
+  const c=calcWholesaleRetailValues(price,freight,freightPayer,pct,cascadePct,origin,paymentMethod,installments,interestPayer);
 
   if($("wholesaleTotal"))$("wholesaleTotal").value=money(c.total);
   if($("wholesaleTotalPreview"))$("wholesaleTotalPreview").textContent=money(c.total);
@@ -11293,8 +11269,8 @@ function calcWholesaleRetail(){
     ? ` • Frete: ${c.freightPayer==="loja"?"-"+money(c.freightSubtracted)+" pago por nós":money(c.freight)+" pago pelo cliente, fora do total"}`
     : "";
 
-  const discountInfo=c.couponDiscountMode==="cascade"
-    ? ` • Desconto: ${Number(c.pct||0).toFixed(2).replace(".",",")}% em cascata, efetivo ${Number(c.couponEffectivePercent||0).toFixed(2).replace(".",",")}%`
+  const discountInfo=(c.pct>0||c.cascadePct>0)
+    ? ` • Desconto: ${Number(c.pct||0).toFixed(2).replace(".",",")}% direto${c.cascadePct>0?` + ${Number(c.cascadePct||0).toFixed(2).replace(".",",")}% cascata sobre o saldo`:""}`
     : "";
 
   let feeText="";
@@ -11807,8 +11783,8 @@ function renderWholesaleRetail(){
     <td data-label="Produto"><span class="wholesaleProductList productCompactSafe" title="${esc(String(w.product||"-"))}">${esc(compactProductText(w.product||"-"))}</span></td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
     <td data-label="Frete"><span class="wholesaleMoneyPill freight">${w.freightPayer==="loja"?"-":""}${money(w.freightCost)}</span><span class="createdByMini">${esc(freightPayerLabel(w.freightPayer))}</span></td>
-    <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill" title="${esc(cascadeDiscountLabel({requestedPercent:w.discountPercent,mode:w.couponDiscountMode,secondPercent:w.couponSecondPercent}))}">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>${w.couponDiscountMode==="cascade"?`<span class="createdByMini">cascata efetiva ${Number(w.couponEffectivePercent||0).toFixed(2).replace(".",",")}%</span>`:""}`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
-    <td data-label="Desconto"><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span></td>
+    <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill" title="Cupom direto ${Number(w.discountPercent||0).toFixed(2).replace(".",",")}%${Number(w.cascadeDiscountPercent||0)>0?` + Cascata ${Number(w.cascadeDiscountPercent||0).toFixed(2).replace(".",",")}% sobre saldo`:""}">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>${Number(w.cascadeDiscountPercent||0)>0?`<span class="createdByMini">cascata ${Number(w.cascadeDiscountPercent||0).toFixed(2).replace(".",",")}%</span>`:""}`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
+    <td data-label="Desconto"><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span>${Number(w.cascadeDiscountPercent||0)>0?`<span class="createdByMini">direto ${money(w.couponDiscountValue)} + cascata ${money(w.cascadeDiscountValue)}</span>`:""}</td>
     <td data-label="Total"><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
     <td data-label="Pagamento"><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabel(w.paymentMethod,w.installments,w.interestPayer))}</span></td>
     <td data-label="Taxa"><span class="feePill">${w.paymentMethod==="PIX"?"PIX sem taxa":`${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer))} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}`}</span></td>
@@ -11902,6 +11878,7 @@ function renderWholesaleOrder(){
     if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent="-";
     $("wholesaleReceiptSubtotal").textContent=money(0);
     $("wholesaleReceiptDiscountPercent").textContent="0%";
+    if($("wholesaleReceiptCascadeDiscount"))$("wholesaleReceiptCascadeDiscount").textContent="0%";
     $("wholesaleReceiptNotes").textContent="Nenhuma observação adicionada.";
     if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent="0% • R$ 0,00";
     if($("wholesaleReceiptFeeBase"))$("wholesaleReceiptFeeBase").textContent=money(0);
@@ -11921,10 +11898,11 @@ function renderWholesaleOrder(){
   $("wholesaleReceiptProduct").textContent=w.product||"-";
   if($("wholesaleReceiptSaleType"))$("wholesaleReceiptSaleType").textContent=w.saleType||"Varejo";
   if($("wholesaleReceiptOrigin"))$("wholesaleReceiptOrigin").textContent=w.origin||"Site";
-  $("wholesaleReceiptCoupon").textContent=w.couponName?`${w.couponName} • ${cascadeDiscountLabel({requestedPercent:w.discountPercent,mode:w.couponDiscountMode,secondPercent:w.couponSecondPercent})}${w.couponDiscountMode==="cascade"?` • efetivo ${Number(w.couponEffectivePercent||0).toFixed(2).replace(".",",")}%`:""}`:"Sem cupom";
+  $("wholesaleReceiptCoupon").textContent=w.couponName?`${w.couponName} • ${Number(w.discountPercent||0)}% direto${Number(w.cascadeDiscountPercent||0)>0?` + ${Number(w.cascadeDiscountPercent||0)}% cascata`:""}`:"Sem cupom";
   if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent=paymentLabel(w.paymentMethod,w.installments,w.interestPayer);
   $("wholesaleReceiptSubtotal").textContent=money(w.subtotal);
-  $("wholesaleReceiptDiscountPercent").textContent=w.couponDiscountMode==="cascade"?`${Number(w.discountPercent||0)}% solicitado • ${Number(w.couponEffectivePercent||0).toFixed(2).replace(".",",")}% efetivo`:`${Number(w.discountPercent||0)}%`;
+  $("wholesaleReceiptDiscountPercent").textContent=`${Number(w.discountPercent||0)}% direto${Number(w.totalEffectiveDiscountPercent||0)>0?` • efetivo ${Number(w.totalEffectiveDiscountPercent||w.discountPercent||0).toFixed(2).replace(".",",")}%`:""}`;
+  if($("wholesaleReceiptCascadeDiscount"))$("wholesaleReceiptCascadeDiscount").textContent=Number(w.cascadeDiscountPercent||0)>0?`${Number(w.cascadeDiscountPercent||0)}% sobre saldo • ${money(w.cascadeDiscountValue||0)}`:"Sem cascata";
   if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent=w.paymentMethod==="PIX"
     ? `PIX sem taxa • ${money(0)}`
     : `${w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer)} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • ${w.interestPayer==="cliente"?"+":"-"}${money(w.feeValue)}`;
@@ -11975,6 +11953,7 @@ function editWholesaleRetail(id){
   if($("wholesaleFreightPayer"))$("wholesaleFreightPayer").value=w.freightPayer||"cliente";
   $("wholesaleCouponName").value=w.couponName||"";
   $("wholesaleDiscountPercent").value=Number(w.discountPercent||0);
+  if($("wholesaleCascadeDiscountPercent"))$("wholesaleCascadeDiscountPercent").value=Number(w.cascadeDiscountPercent||0);
   if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value=w.paymentMethod||"PIX";
   if($("wholesaleInstallments"))$("wholesaleInstallments").value=Number(w.installments||1);
   if($("wholesaleInterestPayer"))$("wholesaleInterestPayer").value=w.interestPayer||"loja";
@@ -12067,7 +12046,7 @@ function exportWholesaleRetailPDF(){
 
 function exportWholesaleRetailCSV(){
   const rows=wholesaleRetailRows();
-  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Quem pagou o frete","Cupom usado","Desconto solicitado %","Desconto efetivo %","Modo desconto","Desconto valor","Total","Forma de pagamento","Parcelas","Juros do cartão","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
+  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Quem pagou o frete","Cupom usado","Desconto cupom %","Desconto Cascata %","Modo desconto","Desconto cupom valor","Desconto cascata valor","Desconto total valor","Total","Forma de pagamento","Parcelas","Juros do cartão","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
     dateBR(w.date),
     w.saleType||"Varejo",
     w.origin||"Site",
@@ -12080,8 +12059,10 @@ function exportWholesaleRetailCSV(){
     freightPayerLabel(w.freightPayer||"cliente"),
     w.couponName||"",
     w.discountPercent||0,
-    w.couponEffectivePercent||w.discountPercent||0,
-    w.couponDiscountMode==="cascade" ? "Cascata 10% + restante" : "Direto",
+    w.cascadeDiscountPercent||0,
+    Number(w.cascadeDiscountPercent||0)>0 ? "Direto + cascata" : "Direto",
+    w.couponDiscountValue||0,
+    w.cascadeDiscountValue||0,
     w.discountValue||0,
     w.total||0,
     w.paymentMethod||"PIX",
@@ -12564,7 +12545,7 @@ $("launchForm").addEventListener("submit",e=>{
 });
 $("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId").value||uid();const item={id,name:$("infName").value.trim(),coupon:$("infCoupon").value.trim(),productRate:Number($("infProductRate").value||0),cashRate:Number($("infCashRate").value||0),instagram:$("infInstagram").value,whatsapp:$("infWhatsapp").value,pix:(infById(id)||{}).pix||""};if(!item.name||!item.coupon){alert("Informe nome e cupom.");return}const idx=state.influencers.findIndex(i=>i.id===id);if(idx>=0)state.influencers[idx]=item;else state.influencers.push(item);save();resetInfForm();render();});
 
-["wholesaleProductPrice","wholesaleFreightCost","wholesaleDiscountPercent"].forEach(id=>{
+["wholesaleProductPrice","wholesaleFreightCost","wholesaleDiscountPercent","wholesaleCascadeDiscountPercent"].forEach(id=>{
   const el=$(id);
   if(el)el.addEventListener("input",calcWholesaleRetail);
 });
@@ -12607,8 +12588,12 @@ if($("wholesaleForm")){
       freightSubtracted:c.freightSubtracted,
       couponName:($("wholesaleCouponName").value||"").trim(),
       discountPercent:c.pct,
+      cascadeDiscountPercent:c.cascadePct,
       subtotal:c.subtotal,
       couponDiscountValue:c.couponDiscountValue,
+      cascadeDiscountValue:c.cascadeDiscountValue,
+      cascadeEffectivePercent:c.cascadeEffectivePercent,
+      totalEffectiveDiscountPercent:c.totalEffectiveDiscountPercent,
       couponEffectivePercent:c.couponEffectivePercent,
       couponDiscountMode:c.couponDiscountMode,
       couponFirstPercent:c.couponFirstPercent,
@@ -12642,11 +12627,15 @@ if($("wholesaleForm")){
       item.installments=1;
       item.interestPayer="loja";
     }
-    const finalCalc=calcWholesaleRetailValues(item.productPrice,item.freightCost,item.freightPayer,item.discountPercent,item.origin,item.paymentMethod,item.installments,item.interestPayer);
+    const finalCalc=calcWholesaleRetailValues(item.productPrice,item.freightCost,item.freightPayer,item.discountPercent,item.cascadeDiscountPercent,item.origin,item.paymentMethod,item.installments,item.interestPayer);
     item.freightPayer=finalCalc.freightPayer;
     item.freightAdded=finalCalc.freightAdded;
     item.freightSubtracted=finalCalc.freightSubtracted;
     item.couponDiscountValue=finalCalc.couponDiscountValue;
+    item.cascadeDiscountPercent=finalCalc.cascadePct;
+    item.cascadeDiscountValue=finalCalc.cascadeDiscountValue;
+    item.cascadeEffectivePercent=finalCalc.cascadeEffectivePercent;
+    item.totalEffectiveDiscountPercent=finalCalc.totalEffectiveDiscountPercent;
     item.couponEffectivePercent=finalCalc.couponEffectivePercent;
     item.couponDiscountMode=finalCalc.couponDiscountMode;
     item.couponFirstPercent=finalCalc.couponFirstPercent;
