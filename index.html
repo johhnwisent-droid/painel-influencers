@@ -8232,6 +8232,26 @@ body.appRecovered #cloudStatus{
   }
 }
 
+
+/* ===== V116 RECUPERAÇÃO PROFUNDA ===== */
+.profileMenuDropdown .wholesaleRecoverBtn{
+  font-weight:900!important;
+}
+
+
+/* ===== V117 AUDITORIA E ESTABILIDADE ===== */
+.profileMenuDropdown .systemAuditBtn{
+  border-color:#c7d2fe!important;
+  background:#eef2ff!important;
+  color:#3730a3!important;
+  font-weight:900!important;
+}
+
+#wholesaleSubmitButton:disabled{
+  opacity:.72!important;
+  cursor:wait!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8313,7 +8333,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V115</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V117</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8323,7 +8343,8 @@ body.appRecovered #cloudStatus{
         <button type="button" class="secondary small undoBtn" data-undo-button onclick="undoLastChange();closeProfileMenu();" disabled>Desfazer alteração</button>
         <button type="button" class="secondary small backupBtn" onclick="exportFullBackup();closeProfileMenu();">Baixar backup</button>
         <button type="button" class="secondary small backupRestoreBtn" onclick="triggerBackupImport();closeProfileMenu();">Restaurar backup</button>
-        <button type="button" class="secondary small wholesaleRecoverBtn" onclick="recoverWholesaleLaunchesFromDevice();closeProfileMenu();">Recuperar lançamentos locais</button>
+        <button type="button" class="secondary small wholesaleRecoverBtn" onclick="recoverWholesaleLaunchesDeepScan();closeProfileMenu();">Recuperação profunda</button>
+        <button type="button" class="secondary small systemAuditBtn" onclick="runSystemAuditAndShow();closeProfileMenu();">Auditoria do sistema</button>
         <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Resetar testes</button>
         <button type="button" class="secondary small" onclick="logoutUser();closeProfileMenu();">Sair</button>
       </div>
@@ -8587,8 +8608,8 @@ body.appRecovered #cloudStatus{
               </label>
 
               <div class="actions fieldActions">
-                <button class="primary" type="submit">Salvar lançamento</button>
-                <button class="secondary" type="button" onclick="resetWholesaleRetailForm()">Cancelar</button>
+                <button class="primary" id="wholesaleSubmitButton" type="submit">Salvar lançamento</button>
+                <button class="secondary" type="button" onclick="cancelWholesaleRetailForm()">Cancelar</button>
               </div>
             </div>
           </div>
@@ -9340,6 +9361,18 @@ let wholesaleFlushBusy=false;
 let wholesaleSyncBusy=false;
 let wholesaleSyncWatchersInstalled=false;
 let wholesalePollTimer=null;
+
+const WHOLESALE_DRAFT_PREFIX=KEY+"_wholesale_draft_v117_";
+const SYSTEM_AUDIT_KEY=KEY+"_system_audit_v117";
+const DEVICE_ID_KEY=KEY+"_device_id_v117";
+
+let wholesaleDraftTimer=null;
+let wholesaleDraftProtectionInstalled=false;
+let wholesaleSubmitLocked=false;
+
+let cloudSaveInFlight=null;
+let cloudSaveRetryTimer=null;
+let cloudSaveRetryAttempt=0;
 function legacyStorageKeys(){
   return [
     'painel_influencers_backup_estavel_v60',
@@ -9430,8 +9463,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V115";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v115";
+const APP_BUILD_VERSION="V117";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v117";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9470,7 +9503,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=115");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=117");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10063,6 +10096,7 @@ function initAuthUi(){
   if(session){
     setSessionUser(session);
     hideLoginScreen();
+    setTimeout(()=>restoreWholesaleFormDraft({notify:true}),120);
   }else{
     setSessionUser(null);
     showLoginScreen("Use seu usuário interno para entrar.");
@@ -10085,6 +10119,7 @@ function handleLoginSubmit(e){
   setSessionUser(user);
   if($("loginPassword"))$("loginPassword").value="";
   hideLoginScreen();
+  setTimeout(()=>restoreWholesaleFormDraft({notify:true}),120);
   showUndoToast("Login salvo neste aparelho.");
 }
 
@@ -10265,20 +10300,46 @@ function deleteAuthUser(id){
 
 
 function save(){
+  repairStateStructure();
+
+  state._syncMeta={
+    ...ensurePlainObject(state._syncMeta,{}),
+    deviceId:getDeviceId(),
+    updatedAt:new Date().toISOString(),
+    updatedBy:currentUser?.name||"Sistema"
+  };
+
   const data=JSON.stringify(state);
 
   handleUndoCommit(data);
   writeWholesaleSnapshot(state.wholesaleRetail||[]);
 
+  let localSaved=false;
+
   try{
     localStorage.setItem(KEY,data);
+    localSaved=true;
   }catch(e){
-    try{window.name=KEY+"::"+data;}catch(_){}
+    console.warn("localStorage indisponível ou cheio:",e);
+  }
+
+  if(!localSaved){
+    try{
+      window.name=KEY+"::"+data;
+      localSaved=true;
+    }catch(e){
+      console.error("Falha também no fallback window.name:",e);
+    }
+  }
+
+  if(!localSaved){
+    updateCloudStatus("Atenção: falha ao salvar localmente. Não feche o app.",true);
+    updateCloudDebug("armazenamento local indisponível ou sem espaço");
   }
 
   if(!cloudBooting)scheduleCloudSave();
   updateUndoButtons();
-  return true;
+  return localSaved;
 }
 
 
@@ -10694,6 +10755,7 @@ function installWholesaleSyncWatchers(){
   wholesaleSyncWatchersInstalled=true;
 
   window.addEventListener("online",()=>{
+    scheduleCloudSave(50);
     flushWholesalePendingQueue()
       .then(()=>syncWholesaleLaunchRecordsFromCloud({showStatus:true}));
   });
@@ -10753,6 +10815,683 @@ function collectWholesaleCandidatesFromDevice(){
   return mergeWholesaleCollections(...groups);
 }
 
+
+function looksLikeWholesaleLaunch(obj){
+  if(!obj||typeof obj!=="object"||Array.isArray(obj))return false;
+
+  const hasClient=typeof obj.clientName==="string"&&obj.clientName.trim().length>0;
+  const hasProduct=typeof obj.product==="string"&&obj.product.trim().length>0;
+  const hasPrice=Number(obj.productPrice||0)>0;
+  const hasWholesaleShape=
+    "saleType" in obj||
+    "origin" in obj||
+    "paymentMethod" in obj||
+    "freightCost" in obj||
+    "discountPercent" in obj||
+    "realReceived" in obj;
+
+  return hasClient&&hasProduct&&hasPrice&&hasWholesaleShape;
+}
+
+function normalizeRecoveredWholesaleLaunch(obj,source="armazenamento desconhecido"){
+  const item=cloneSafe(obj,{})||{};
+
+  item.id=String(item.id||uid());
+  item.date=String(item.date||today()).slice(0,10);
+  item.month=item.month||item.date.slice(0,7);
+  item.clientName=String(item.clientName||"").trim();
+  item.product=String(item.product||"").trim();
+  item.productPrice=Number(item.productPrice||0);
+  item.freightCost=Number(item.freightCost||0);
+  item.freightPayer=item.freightPayer==="loja"?"loja":"cliente";
+  item.discountPercent=Number(item.discountPercent||0);
+  item.cascadeDiscountPercent=Number(item.cascadeDiscountPercent||0);
+  item.origin=item.origin||"Site";
+  item.saleType=item.saleType||"Varejo";
+  item.paymentMethod=item.paymentMethod||"PIX";
+  item.installments=Number(item.installments||1);
+  item.interestPayer=item.interestPayer==="cliente"?"cliente":"loja";
+  item.createdByName=item.createdByName||item.createdByUsername||"Recuperado do aparelho";
+  item.createdAt=item.createdAt||item.updatedAt||new Date().toISOString();
+  item.updatedAt=item.updatedAt||item.createdAt;
+  item.recoveredAt=new Date().toISOString();
+  item.recoveredSource=source;
+
+  const calc=calcWholesaleRetailValues(
+    item.productPrice,
+    item.freightCost,
+    item.freightPayer,
+    item.discountPercent,
+    item.cascadeDiscountPercent,
+    item.origin,
+    item.paymentMethod,
+    item.installments,
+    item.interestPayer
+  );
+
+  item.freightAdded=calc.freightAdded;
+  item.freightSubtracted=calc.freightSubtracted;
+  item.subtotal=calc.subtotal;
+  item.couponDiscountValue=calc.couponDiscountValue;
+  item.cascadeDiscountValue=calc.cascadeDiscountValue;
+  item.cascadeEffectivePercent=calc.cascadeEffectivePercent;
+  item.totalEffectiveDiscountPercent=calc.totalEffectiveDiscountPercent;
+  item.couponEffectivePercent=calc.couponEffectivePercent;
+  item.couponDiscountMode=calc.couponDiscountMode;
+  item.couponFirstPercent=calc.couponFirstPercent;
+  item.couponSecondPercent=calc.couponSecondPercent;
+  item.couponFirstDiscountValue=calc.couponFirstDiscountValue;
+  item.couponSecondDiscountValue=calc.couponSecondDiscountValue;
+  item.pixDiscountPercent=calc.pixDiscountPercent;
+  item.pixDiscountValue=calc.pixDiscountValue;
+  item.discountValue=calc.discountValue;
+  item.baseTotal=calc.baseTotal;
+  item.total=calc.total;
+  item.feePercent=calc.feePercent;
+  item.feeValue=calc.feeValue;
+  item.realReceived=calc.realReceived;
+  item.feeRule=calc.feeRule;
+
+  return item;
+}
+
+function deepExtractWholesaleCandidates(value,source,out,seen,depth=0){
+  if(depth>7||value==null)return;
+
+  if(typeof value==="string"){
+    const text=value.trim();
+    if(!text||text.length<2)return;
+
+    if((text.startsWith("{")&&text.endsWith("}"))||
+       (text.startsWith("[")&&text.endsWith("]"))){
+      try{
+        deepExtractWholesaleCandidates(JSON.parse(text),source,out,seen,depth+1);
+      }catch(e){}
+    }
+    return;
+  }
+
+  if(typeof value!=="object")return;
+
+  if(seen.has(value))return;
+  seen.add(value);
+
+  if(Array.isArray(value)){
+    value.forEach((item,index)=>{
+      deepExtractWholesaleCandidates(item,`${source}[${index}]`,out,seen,depth+1);
+    });
+    return;
+  }
+
+  if(looksLikeWholesaleLaunch(value)){
+    const normalized=normalizeRecoveredWholesaleLaunch(value,source);
+    const signature=[
+      normalized.id,
+      normalized.clientName.toLowerCase(),
+      normalized.product.toLowerCase(),
+      normalized.productPrice,
+      normalized.date
+    ].join("|");
+
+    if(!out.some(x=>x.__recoverySignature===signature)){
+      Object.defineProperty(normalized,"__recoverySignature",{
+        value:signature,
+        enumerable:false
+      });
+      out.push(normalized);
+    }
+  }
+
+  Object.entries(value).forEach(([key,val])=>{
+    if(key==="settings"&&depth>2)return;
+    deepExtractWholesaleCandidates(val,`${source}.${key}`,out,seen,depth+1);
+  });
+}
+
+function allStorageEntries(storage,label){
+  const entries=[];
+
+  try{
+    for(let i=0;i<storage.length;i++){
+      const key=storage.key(i);
+      if(!key)continue;
+
+      let value=null;
+      try{value=storage.getItem(key);}catch(e){}
+
+      entries.push({
+        source:`${label}:${key}`,
+        value
+      });
+    }
+  }catch(e){
+    console.warn(`Não foi possível ler ${label}:`,e);
+  }
+
+  return entries;
+}
+
+function collectWholesaleCandidatesDeepScan(){
+  const found=[];
+  const seen=new WeakSet();
+
+  const sources=[
+    {source:"estado atual",value:state},
+    {source:"snapshot V115/V116",value:readWholesaleSnapshot()},
+    {source:"fila pendente V115/V116",value:readWholesalePendingQueue()},
+    ...allStorageEntries(localStorage,"localStorage"),
+    ...allStorageEntries(sessionStorage,"sessionStorage")
+  ];
+
+  try{
+    if(window.name){
+      sources.push({source:"window.name",value:window.name});
+
+      const separators=["::","|","="];
+      separators.forEach(sep=>{
+        const idx=window.name.indexOf(sep);
+        if(idx>=0&&idx<200){
+          sources.push({
+            source:`window.name após ${sep}`,
+            value:window.name.slice(idx+sep.length)
+          });
+        }
+      });
+    }
+  }catch(e){}
+
+  try{
+    readUndoStack().forEach((entry,index)=>{
+      sources.push({
+        source:`histórico desfazer ${index+1}`,
+        value:entry?.state
+      });
+    });
+  }catch(e){}
+
+  sources.forEach(entry=>{
+    deepExtractWholesaleCandidates(
+      entry.value,
+      entry.source,
+      found,
+      seen,
+      0
+    );
+  });
+
+  return mergeWholesaleCollections(found);
+}
+
+function recoveredItemsNotInCurrent(candidates){
+  const current=Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[];
+  const currentById=new Map(current.map(x=>[String(x.id),x]));
+
+  return (candidates||[]).filter(item=>{
+    const existing=currentById.get(String(item.id));
+
+    if(!existing)return true;
+
+    const existingSignature=[
+      String(existing.clientName||"").trim().toLowerCase(),
+      String(existing.product||"").trim().toLowerCase(),
+      Number(existing.productPrice||0),
+      String(existing.date||"").slice(0,10)
+    ].join("|");
+
+    const candidateSignature=[
+      String(item.clientName||"").trim().toLowerCase(),
+      String(item.product||"").trim().toLowerCase(),
+      Number(item.productPrice||0),
+      String(item.date||"").slice(0,10)
+    ].join("|");
+
+    return existingSignature!==candidateSignature&&
+      wholesaleRecordTime(item)>=wholesaleRecordTime(existing);
+  });
+}
+
+async function recoverWholesaleLaunchesDeepScan(){
+  updateCloudStatus("Fazendo recuperação profunda neste aparelho...");
+  updateCloudDebug("varrendo todas as chaves locais, sessão, histórico e filas");
+
+  const candidates=collectWholesaleCandidatesDeepScan();
+  const recoverable=recoveredItemsNotInCurrent(candidates);
+
+  if(!recoverable.length){
+    alert(
+      "A recuperação profunda também não encontrou lançamentos adicionais neste aparelho.\n\n"+
+      "Isso indica que os dados não chegaram a ser gravados no navegador, no histórico local ou na fila de sincronização. "+
+      "Nesse caso, não existe registro técnico para reconstruir automaticamente os lançamentos."
+    );
+    updateCloudStatus("Nenhum lançamento adicional encontrado na recuperação profunda.",true);
+    updateCloudDebug(`${candidates.length} candidato(s) conferido(s), nenhum adicional`);
+    return;
+  }
+
+  const pabloItems=recoverable.filter(item=>{
+    const text=String(
+      item.createdByName||
+      item.createdByUsername||
+      item.recoveredSource||
+      ""
+    ).toLowerCase();
+
+    return text.includes("pablo");
+  });
+
+  const preview=recoverable
+    .slice(0,8)
+    .map((item,index)=>
+      `${index+1}. ${item.clientName} • ${item.product} • ${money(item.total)} • ${dateBR(item.date)}`
+    )
+    .join("\n");
+
+  const more=recoverable.length>8
+    ? `\n... e mais ${recoverable.length-8} lançamento(s).`
+    : "";
+
+  const pabloText=pabloItems.length
+    ? `\n\nEncontrados para Pablo: ${pabloItems.length}.`
+    : "";
+
+  const ok=confirm(
+    `A recuperação profunda encontrou ${recoverable.length} lançamento(s) adicional(is).`+
+    pabloText+
+    `\n\n${preview}${more}\n\nDeseja recuperar e sincronizar agora?`
+  );
+
+  if(!ok){
+    updateCloudStatus("Recuperação profunda cancelada.");
+    return;
+  }
+
+  state.wholesaleRetail=mergeWholesaleCollections(
+    state.wholesaleRetail||[],
+    recoverable
+  );
+
+  writeWholesaleSnapshot(state.wholesaleRetail);
+  queueAllWholesaleRows(recoverable);
+  save();
+
+  try{
+    render();
+    showPage("wholesaleRetail");
+  }catch(e){}
+
+  const synced=await flushWholesalePendingQueue();
+  await syncWholesaleLaunchRecordsFromCloud({showStatus:true});
+
+  alert(
+    synced
+      ? `${recoverable.length} lançamento(s) recuperado(s) e sincronizado(s) com todos os colaboradores.`
+      : `${recoverable.length} lançamento(s) recuperado(s) neste aparelho. A sincronização continuará automaticamente.`
+  );
+}
+
+
+
+function approxEqual(a,b,tolerance=0.01){
+  return Math.abs(Number(a)-Number(b))<=tolerance;
+}
+
+function auditAdd(report,level,code,title,detail=""){
+  report.items.push({
+    level,
+    code,
+    title,
+    detail
+  });
+}
+
+function localStorageBytesEstimate(){
+  let total=0;
+
+  try{
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i)||"";
+      const value=localStorage.getItem(key)||"";
+      total+=(key.length+value.length)*2;
+    }
+  }catch(e){}
+
+  return total;
+}
+
+function runLocalSystemAudit(){
+  const report={
+    version:"V117",
+    generatedAt:new Date().toISOString(),
+    generatedBy:currentUser?.name||"Sem login",
+    deviceId:getDeviceId(),
+    items:[],
+    metrics:{}
+  };
+
+  // DOM
+  const domIds=[...document.querySelectorAll("[id]")].map(el=>el.id);
+  const duplicateIds=domIds.filter((id,index)=>domIds.indexOf(id)!==index);
+
+  if(!duplicateIds.length){
+    auditAdd(report,"pass","DOM_UNIQUE_IDS","IDs da interface sem duplicidade.");
+  }else{
+    auditAdd(report,"error","DOM_DUPLICATE_IDS","Existem IDs duplicados na interface.",[...new Set(duplicateIds)].join(", "));
+  }
+
+  const requiredIds=[
+    "loginForm",
+    "globalMonth",
+    "wholesaleForm",
+    "wholesaleRows",
+    "wholesaleSubmitButton",
+    "wholesaleProductPrice",
+    "wholesaleDiscountPercent",
+    "wholesaleCascadeDiscountPercent",
+    "wholesaleFreightPayer",
+    "wholesalePaymentMethod",
+    "wholesaleRealReceivedPreview",
+    "authUsersRows"
+  ];
+
+  const missingIds=requiredIds.filter(id=>!document.getElementById(id));
+
+  if(!missingIds.length){
+    auditAdd(report,"pass","DOM_REQUIRED","Elementos críticos da interface encontrados.");
+  }else{
+    auditAdd(report,"error","DOM_REQUIRED_MISSING","Elementos críticos ausentes.",missingIds.join(", "));
+  }
+
+  // Estrutura do estado
+  const requiredArrays=[
+    "influencers",
+    "launches",
+    "redemptions",
+    "wholesaleRetail",
+    "cashPayments",
+    "accumulationHistory"
+  ];
+
+  const invalidArrays=requiredArrays.filter(key=>!Array.isArray(state[key]));
+
+  if(!invalidArrays.length){
+    auditAdd(report,"pass","STATE_ARRAYS","Estruturas principais do banco local estão válidas.");
+  }else{
+    auditAdd(report,"error","STATE_ARRAYS_INVALID","Estruturas inválidas detectadas.",invalidArrays.join(", "));
+  }
+
+  // Armazenamento local
+  const testKey=KEY+"_audit_rw_test";
+
+  try{
+    localStorage.setItem(testKey,"ok");
+    const ok=localStorage.getItem(testKey)==="ok";
+    localStorage.removeItem(testKey);
+
+    if(ok){
+      auditAdd(report,"pass","LOCAL_STORAGE","Leitura e gravação local funcionando.");
+    }else{
+      auditAdd(report,"error","LOCAL_STORAGE","Armazenamento local não confirmou a gravação.");
+    }
+  }catch(e){
+    auditAdd(report,"error","LOCAL_STORAGE","Falha no armazenamento local.",String(e.message||e));
+  }
+
+  const storageBytes=localStorageBytesEstimate();
+  report.metrics.localStorageApproxBytes=storageBytes;
+
+  if(storageBytes<3.5*1024*1024){
+    auditAdd(report,"pass","LOCAL_STORAGE_SIZE","Uso estimado do armazenamento local dentro da faixa segura.",`${(storageBytes/1024/1024).toFixed(2)} MB`);
+  }else{
+    auditAdd(report,"warn","LOCAL_STORAGE_SIZE","Armazenamento local está ficando alto.",`${(storageBytes/1024/1024).toFixed(2)} MB; recomenda-se baixar backup e revisar logos/base64.`);
+  }
+
+  // Cálculos críticos
+  const direct=calcWholesaleRetailValues(757,0,"cliente",30,0,"Site","PIX",1,"loja");
+  const cascade=calcWholesaleRetailValues(100,0,"cliente",30,10,"Site","PIX",1,"loja");
+  const freightClient=calcWholesaleRetailValues(100,20,"cliente",0,0,"Site","PIX",1,"loja");
+  const freightStore=calcWholesaleRetailValues(100,20,"loja",0,0,"Site","PIX",1,"loja");
+  const pix=calcWholesaleRetailValues(100,0,"cliente",0,0,"Site","PIX",1,"loja");
+
+  const calculationsOk=
+    approxEqual(direct.total,529.90)&&
+    approxEqual(cascade.total,63.00)&&
+    approxEqual(freightClient.total,100.00)&&
+    approxEqual(freightClient.realReceived,100.00)&&
+    approxEqual(freightStore.total,80.00)&&
+    approxEqual(pix.total,100.00)&&
+    approxEqual(pix.feeValue,0);
+
+  if(calculationsOk){
+    auditAdd(
+      report,
+      "pass",
+      "WHOLESALE_CALCULATIONS",
+      "Cálculos críticos de Atacado e Varejo aprovados.",
+      "30% direto, cascata, frete cliente, frete loja e PIX sem desconto/taxa."
+    );
+  }else{
+    auditAdd(
+      report,
+      "error",
+      "WHOLESALE_CALCULATIONS",
+      "Falha em um ou mais cálculos críticos.",
+      JSON.stringify({
+        direct:direct.total,
+        cascade:cascade.total,
+        freightClient:freightClient.total,
+        freightStore:freightStore.total,
+        pix:pix.total
+      })
+    );
+  }
+
+  // Compartilhamento entre colaboradores
+  const rowsSource=String(wholesaleRetailRows);
+
+  const hasPerUserFilter=
+    rowsSource.includes("createdById===currentUser")||
+    rowsSource.includes("createdByUsername===currentUser")||
+    rowsSource.includes(".filter(w=>w.createdBy");
+
+  if(!hasPerUserFilter){
+    auditAdd(report,"pass","SHARED_VISIBILITY","Lista sem filtro por usuário: todos os colaboradores podem ver todos os lançamentos.");
+  }else{
+    auditAdd(report,"error","SHARED_VISIBILITY","Foi detectado filtro por colaborador na lista compartilhada.");
+  }
+
+  // Fila e snapshots
+  const pending=readWholesalePendingQueue();
+  report.metrics.pendingWholesaleRecords=pending.length;
+  report.metrics.wholesaleRecords=ensureArray(state.wholesaleRetail).length;
+
+  if(!pending.length){
+    auditAdd(report,"pass","WHOLESALE_QUEUE","Nenhum lançamento aguardando sincronização.");
+  }else{
+    auditAdd(report,"warn","WHOLESALE_QUEUE","Existem lançamentos aguardando sincronização.",`${pending.length} registro(s) preservado(s) localmente.`);
+  }
+
+  if(readWholesaleSnapshot().length>=state.wholesaleRetail.length){
+    auditAdd(report,"pass","WHOLESALE_SNAPSHOT","Espelho local de Atacado e Varejo disponível.");
+  }else{
+    auditAdd(report,"warn","WHOLESALE_SNAPSHOT","Espelho local possui menos registros que a lista atual.");
+  }
+
+  // Rascunho
+  auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
+
+  // Usuários / segurança
+  const users=ensureArray(state.settings?.authUsers);
+
+  if(users.length&&users.some(u=>u.active!==false)){
+    auditAdd(report,"pass","AUTH_USERS","Há colaboradores ativos cadastrados.",`${users.filter(u=>u.active!==false).length} usuário(s) ativo(s).`);
+  }else{
+    auditAdd(report,"error","AUTH_USERS","Nenhum colaborador ativo cadastrado.");
+  }
+
+  const weakPasswords=users.filter(u=>
+    String(u.password||"").length<8||
+    ["1234","admin","senha","password"].includes(String(u.password||"").toLowerCase())
+  );
+
+  if(weakPasswords.length){
+    auditAdd(report,"warn","AUTH_WEAK_PASSWORDS","Existem senhas fracas no login interno.",`${weakPasswords.length} usuário(s).`);
+  }
+
+  auditAdd(
+    report,
+    "security",
+    "AUTH_ARCHITECTURE",
+    "Autenticação ainda é local no navegador, não Supabase Auth.",
+    "O login atual serve para rastreio interno, mas não é uma barreira de segurança profissional contra acesso técnico ou manipulação do frontend."
+  );
+
+  auditAdd(
+    report,
+    "security",
+    "RLS_NOT_VERIFIED",
+    "Políticas RLS do Supabase não podem ser comprovadas apenas pelo arquivo HTML.",
+    "Para aprovação de segurança profissional, é necessário revisar as policies no painel do Supabase."
+  );
+
+  const errors=report.items.filter(x=>x.level==="error").length;
+  const warnings=report.items.filter(x=>x.level==="warn").length;
+  const security=report.items.filter(x=>x.level==="security").length;
+  const passes=report.items.filter(x=>x.level==="pass").length;
+
+  report.summary={passes,warnings,errors,security};
+
+  report.operationalStatus=errors
+    ?"REPROVADO_OPERACIONAL"
+    :"APROVADO_USO_INTERNO_CONTROLADO";
+
+  report.professionalSecurityStatus=
+    "PENDENTE_SUPABASE_AUTH_E_REVISAO_RLS";
+
+  return report;
+}
+
+async function runSystemAudit(){
+  const report=runLocalSystemAudit();
+
+  try{
+    const url=SUPABASE_URL+
+      "/rest/v1/personalizacao?chave=eq."+
+      encodeURIComponent(CLOUD_STATE_KEY)+
+      "&select=chave";
+
+    const response=await fetchWithTimeout(url,{
+      method:"GET",
+      headers:cloudHeaders()
+    },10000);
+
+    if(response.ok){
+      auditAdd(report,"pass","SUPABASE_READ","Leitura do Supabase respondeu corretamente.",`HTTP ${response.status}`);
+    }else{
+      auditAdd(report,"error","SUPABASE_READ","Supabase respondeu com erro na leitura.",`HTTP ${response.status}`);
+    }
+  }catch(e){
+    auditAdd(report,"error","SUPABASE_READ","Não foi possível confirmar a conexão com o Supabase.",String(e.message||e));
+  }
+
+  try{
+    const rows=await fetchWholesaleCloudRecords();
+    auditAdd(report,"pass","WHOLESALE_CLOUD_READ","Leitura dos lançamentos individuais na nuvem funcionando.",`${rows.length} registro(s) encontrado(s).`);
+  }catch(e){
+    auditAdd(report,"error","WHOLESALE_CLOUD_READ","Falha ao ler lançamentos individuais na nuvem.",String(e.message||e));
+  }
+
+  const errors=report.items.filter(x=>x.level==="error").length;
+  const warnings=report.items.filter(x=>x.level==="warn").length;
+  const security=report.items.filter(x=>x.level==="security").length;
+  const passes=report.items.filter(x=>x.level==="pass").length;
+
+  report.summary={passes,warnings,errors,security};
+
+  report.operationalStatus=errors
+    ?"REPROVADO_OPERACIONAL"
+    :"APROVADO_USO_INTERNO_CONTROLADO";
+
+  try{
+    localStorage.setItem(SYSTEM_AUDIT_KEY,JSON.stringify(report));
+  }catch(e){}
+
+  return report;
+}
+
+function downloadSystemAuditReport(report){
+  const blob=new Blob(
+    [JSON.stringify(report,null,2)],
+    {type:"application/json;charset=utf-8"}
+  );
+
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download=`auditoria-painel-v117-${today()}.json`;
+
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
+async function runSystemAuditAndShow(){
+  updateCloudStatus("Executando auditoria do sistema...");
+  updateCloudDebug("validando interface, cálculos, armazenamento e Supabase");
+
+  const report=await runSystemAudit();
+
+  const s=report.summary;
+  const status=report.operationalStatus==="APROVADO_USO_INTERNO_CONTROLADO"
+    ?"APROVADO PARA USO INTERNO CONTROLADO"
+    :"REPROVADO OPERACIONALMENTE";
+
+  const securityText=
+    "Segurança profissional: PENDENTE — migrar login para Supabase Auth e revisar RLS.";
+
+  const critical=report.items
+    .filter(x=>x.level==="error")
+    .map(x=>`• ${x.title}${x.detail?` — ${x.detail}`:""}`)
+    .slice(0,6)
+    .join("\n");
+
+  const message=[
+    "AUDITORIA DO SISTEMA — V117",
+    "",
+    `Status operacional: ${status}`,
+    securityText,
+    "",
+    `Aprovados: ${s.passes}`,
+    `Alertas: ${s.warnings}`,
+    `Erros: ${s.errors}`,
+    `Pendências de segurança: ${s.security}`,
+    critical?`\nErros encontrados:\n${critical}`:"",
+    "",
+    "Deseja baixar o relatório técnico em JSON?"
+  ].join("\n");
+
+  const shouldDownload=confirm(message);
+
+  if(shouldDownload){
+    downloadSystemAuditReport(report);
+  }
+
+  updateCloudStatus(
+    report.operationalStatus==="APROVADO_USO_INTERNO_CONTROLADO"
+      ?"Auditoria operacional aprovada para uso interno controlado."
+      :"Auditoria encontrou erro operacional.",
+    report.operationalStatus!=="APROVADO_USO_INTERNO_CONTROLADO"
+  );
+
+  updateCloudDebug(
+    `auditoria V117: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+  );
+
+  return report;
+}
+
 async function recoverWholesaleLaunchesFromDevice(){
   const candidates=collectWholesaleCandidatesFromDevice();
   const current=Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[];
@@ -10802,7 +11541,7 @@ async function recoverWholesaleLaunchesFromDevice(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V115 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V117 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -10857,45 +11596,78 @@ async function cloudLoad(){
   }
 }
 
+function scheduleCloudSaveRetry(){
+  clearTimeout(cloudSaveRetryTimer);
+
+  const delay=Math.min(60000,2000*Math.pow(2,Math.min(cloudSaveRetryAttempt,5)));
+  cloudSaveRetryAttempt+=1;
+
+  cloudSaveRetryTimer=setTimeout(()=>{
+    if(navigator.onLine===false){
+      scheduleCloudSaveRetry();
+      return;
+    }
+    cloudSaveNow();
+  },delay);
+}
+
 async function cloudSaveNow(){
-  updateCloudStatus("Salvando na nuvem...");
-  updateCloudDebug("enviando salvamento para personalizacao/painel_state");
+  if(cloudSaveInFlight)return cloudSaveInFlight;
 
-  try{
-    const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
-      method:"POST",
-      headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
-      body:JSON.stringify({
-        chave:CLOUD_STATE_KEY,
-        valor:JSON.stringify(state)
-      })
-    },10000);
+  cloudSaveInFlight=(async()=>{
+    updateCloudStatus("Salvando na nuvem...");
+    updateCloudDebug("enviando salvamento para personalizacao/painel_state");
 
-    updateCloudDebug("resposta do Supabase no salvamento: HTTP "+response.status);
+    try{
+      const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
+        method:"POST",
+        headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
+        body:JSON.stringify({
+          chave:CLOUD_STATE_KEY,
+          valor:JSON.stringify(state)
+        })
+      },12000);
 
-    if(!response.ok){
-      const text=await response.text();
-      console.error("Erro ao salvar Supabase:",text);
-      updateCloudStatus("Erro ao salvar na nuvem.",true);
-      updateCloudDebug("verifique insert/update policy da tabela personalizacao. Detalhe: "+text.slice(0,160));
+      updateCloudDebug("resposta do Supabase no salvamento: HTTP "+response.status);
+
+      if(!response.ok){
+        const text=await response.text();
+        console.error("Erro ao salvar Supabase:",text);
+        updateCloudStatus("Erro ao salvar na nuvem. Os dados locais foram preservados.",true);
+        updateCloudDebug("nova tentativa automática agendada. Detalhe: "+text.slice(0,160));
+        scheduleCloudSaveRetry();
+        return false;
+      }
+
+      clearTimeout(cloudSaveRetryTimer);
+      cloudSaveRetryAttempt=0;
+      cloudLastSavedAt=new Date();
+
+      updateCloudStatus("Salvo na nuvem automaticamente.");
+      updateCloudDebug("último salvamento: "+cloudLastSavedAt.toLocaleTimeString("pt-BR"));
+      return true;
+    }catch(e){
+      console.error("Falha ao salvar na nuvem:",e);
+      updateCloudStatus("Sem conexão com a nuvem. Dados locais preservados.",true);
+      updateCloudDebug(
+        (e.name==="AbortError"?"tempo esgotado":"erro de salvamento: "+(e.message||e))+
+        " • nova tentativa automática agendada"
+      );
+      scheduleCloudSaveRetry();
       return false;
     }
+  })();
 
-    cloudLastSavedAt=new Date();
-    updateCloudStatus("Salvo na nuvem automaticamente.");
-    updateCloudDebug("último salvamento: "+cloudLastSavedAt.toLocaleTimeString("pt-BR"));
-    return true;
-  }catch(e){
-    console.error("Falha ao salvar na nuvem:",e);
-    updateCloudStatus("Falha ao salvar na nuvem.",true);
-    updateCloudDebug(e.name==="AbortError"?"tempo esgotado ao salvar no Supabase":"erro de salvamento: "+(e.message||e));
-    return false;
+  try{
+    return await cloudSaveInFlight;
+  }finally{
+    cloudSaveInFlight=null;
   }
 }
 
-function scheduleCloudSave(){
+function scheduleCloudSave(delay=650){
   clearTimeout(cloudSaveTimer);
-  cloudSaveTimer=setTimeout(()=>cloudSaveNow(),650);
+  cloudSaveTimer=setTimeout(()=>cloudSaveNow(),delay);
 }
 
 async function startApp(){
@@ -10955,6 +11727,7 @@ async function startApp(){
       await seedWholesaleRecordsOnce();
       await syncWholesaleLaunchRecordsFromCloud({showStatus:false});
       installWholesaleSyncWatchers();
+      installWholesaleDraftProtection();
     }catch(e){
       console.warn("Sincronização inicial de Atacado e Varejo adiada:",e);
     }
@@ -10978,8 +11751,80 @@ async function startApp(){
 }
 
 
+
+function ensurePlainObject(value,fallback={}){
+  return value&&typeof value==="object"&&!Array.isArray(value)
+    ? value
+    : cloneSafe(fallback,{});
+}
+
+function ensureArray(value){
+  return Array.isArray(value)?value:[];
+}
+
+function finiteNumber(value,fallback=0){
+  const n=Number(value);
+  return Number.isFinite(n)?n:Number(fallback||0);
+}
+
+function boundedPercent(value){
+  return Math.min(100,Math.max(0,finiteNumber(value,0)));
+}
+
+function getDeviceId(){
+  try{
+    let id=localStorage.getItem(DEVICE_ID_KEY);
+    if(id)return id;
+
+    id=(crypto&&typeof crypto.randomUUID==="function")
+      ? crypto.randomUUID()
+      : `device-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+    localStorage.setItem(DEVICE_ID_KEY,id);
+    return id;
+  }catch(e){
+    return "device-local";
+  }
+}
+
+function repairStateStructure(){
+  if(!state||typeof state!=="object"||Array.isArray(state)){
+    state=structuredClone(INITIAL_STATE);
+  }
+
+  const initialSettings=ensurePlainObject(INITIAL_STATE.settings,{});
+  const currentSettings=ensurePlainObject(state.settings,{});
+
+  state.settings={...initialSettings,...currentSettings};
+
+  state.influencers=ensureArray(state.influencers);
+  state.launches=ensureArray(state.launches);
+  state.redemptions=ensureArray(state.redemptions);
+  state.wholesaleRetail=ensureArray(state.wholesaleRetail);
+  state.cashPayments=ensureArray(state.cashPayments);
+  state.accumulationHistory=ensureArray(state.accumulationHistory);
+
+  state.settings.origins=ensureArray(state.settings.origins);
+  if(!state.settings.origins.length){
+    state.settings.origins=ensureArray(initialSettings.origins);
+  }
+
+  state.settings.statuses=ensureArray(state.settings.statuses);
+  if(!state.settings.statuses.length){
+    state.settings.statuses=ensureArray(initialSettings.statuses);
+  }
+
+  state.settings.authUsers=ensureArray(state.settings.authUsers);
+
+  state._syncMeta=ensurePlainObject(state._syncMeta,{});
+  state._syncMeta.deviceId=state._syncMeta.deviceId||getDeviceId();
+
+  return state;
+}
+
 function normalize(){
-  state.settings={...INITIAL_STATE.settings,...(state.settings||{})};
+  repairStateStructure();
+  state.settings={...ensurePlainObject(INITIAL_STATE.settings,{}),...ensurePlainObject(state.settings,{})};
   state.settings.systemLogo=state.settings.systemLogo||state.settings.logo||"";
   state.settings.pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
   state.settings.mobileMenuBg=state.settings.mobileMenuBg||"#0b0f19";
@@ -10991,12 +11836,12 @@ function normalize(){
   state.settings.mobileBottomActiveBg=state.settings.mobileBottomActiveBg||"#ffffff";
   state.settings.mobileBottomActiveText=state.settings.mobileBottomActiveText||"#111827";
   normalizeAuthUsers();
-    state.influencers=state.influencers||[];
-  state.launches=state.launches||[];
-  state.redemptions=state.redemptions||[];
-  state.wholesaleRetail=state.wholesaleRetail||[];
-  state.cashPayments=state.cashPayments||[];
-  state.accumulationHistory=state.accumulationHistory||[];
+  state.influencers=ensureArray(state.influencers);
+  state.launches=ensureArray(state.launches);
+  state.redemptions=ensureArray(state.redemptions);
+  state.wholesaleRetail=ensureArray(state.wholesaleRetail);
+  state.cashPayments=ensureArray(state.cashPayments);
+  state.accumulationHistory=ensureArray(state.accumulationHistory);
 
   state.launches.forEach(l=>{
     l.accumulate=!!l.accumulate;
@@ -11023,17 +11868,17 @@ function normalize(){
     w.saleType=w.saleType||"Varejo";
     if(!["Varejo","Atacado"].includes(w.saleType))w.saleType="Varejo";
     w.product=w.product||"";
-    w.productPrice=Number(w.productPrice||0);
-    w.freightCost=Number(w.freightCost||0);
+    w.productPrice=Math.max(0,finiteNumber(w.productPrice,0));
+    w.freightCost=Math.max(0,finiteNumber(w.freightCost,0));
     w.freightPayer=w.freightPayer||"cliente";
     if(!["cliente","loja"].includes(w.freightPayer))w.freightPayer="cliente";
     w.couponName=w.couponName||"";
-    w.discountPercent=Number(w.discountPercent||0);
-    w.cascadeDiscountPercent=Number(w.cascadeDiscountPercent||0);
+    w.discountPercent=boundedPercent(w.discountPercent);
+    w.cascadeDiscountPercent=boundedPercent(w.cascadeDiscountPercent);
     w.origin=w.origin||"Site";
     if(!["Site","Loja Física"].includes(w.origin))w.origin="Site";
     w.paymentMethod=w.paymentMethod||"PIX";
-    w.installments=Number(w.installments||1);
+    w.installments=Math.min(12,Math.max(1,Math.round(finiteNumber(w.installments,1))));
     w.interestPayer=w.interestPayer||"loja";
     if(!["loja","cliente"].includes(w.interestPayer))w.interestPayer="loja";
     if(w.paymentMethod!=="Cartão de Crédito"){
@@ -11202,24 +12047,6 @@ function renderLaunchTotals(){
     <td>${r.count}</td>
     <td>${r.acc?"Sim":"Não"}</td>
   </tr>`).join(""):`<tr><td colspan="7">Sem resumo para mostrar.</td></tr>`;
-}
-
-function renderPaidInfluencers(){
-  if(!$("paidInfluencerRows"))return;
-
-  const rows=state.influencers.map(i=>{
-    const list=filteredLaunches().filter(l=>l.influencerId===i.id&&l.paid&&!l.accumulate);
-    const totals=stats(list);
-    return {i,...totals};
-  }).filter(r=>r.count).sort((a,b)=>b.cash-a.cash||b.product-a.product||b.sold-a.sold);
-
-  $("paidInfluencerRows").innerHTML=rows.length?rows.map(r=>`<tr>
-    <td>${esc(r.i.name)}</td>
-    <td>${esc(r.i.coupon)}</td>
-    <td><span class="moneyHighlight cash">${money(r.cash)}</span></td>
-    <td><span class="moneyHighlight product">${money(r.product)}</span></td>
-    <td><span class="paidBadge">Pago</span></td>
-  </tr>`).join(""):`<tr><td colspan="5">Nenhum influencer marcado como pago neste mês.</td></tr>`;
 }
 
 function selectedPaidMonth(){
@@ -11941,6 +12768,196 @@ function saleTypePillClass(type){
   return type==="Atacado" ? "atacado" : "varejo";
 }
 
+
+
+function wholesaleDraftUserKey(){
+  return String(
+    currentUser?.id||
+    currentUser?.username||
+    "sem-login"
+  ).replace(/[^a-zA-Z0-9_-]/g,"_");
+}
+
+function wholesaleDraftKey(){
+  return WHOLESALE_DRAFT_PREFIX+wholesaleDraftUserKey();
+}
+
+function captureWholesaleFormDraft(){
+  if(!$("wholesaleForm"))return null;
+
+  return {
+    id:$("wholesaleId")?.value||"",
+    date:$("wholesaleDate")?.value||today(),
+    clientName:($("wholesaleClient")?.value||"").trim(),
+    saleType:$("wholesaleSaleType")?.value||"Varejo",
+    origin:$("wholesaleOrigin")?.value||"Site",
+    product:cleanProductLines($("wholesaleProduct")?.value||""),
+    productPrice:finiteNumber($("wholesaleProductPrice")?.value,0),
+    freightCost:finiteNumber($("wholesaleFreightCost")?.value,0),
+    freightPayer:$("wholesaleFreightPayer")?.value||"cliente",
+    couponName:($("wholesaleCouponName")?.value||"").trim(),
+    discountPercent:boundedPercent($("wholesaleDiscountPercent")?.value),
+    cascadeDiscountPercent:boundedPercent($("wholesaleCascadeDiscountPercent")?.value),
+    paymentMethod:$("wholesalePaymentMethod")?.value||"PIX",
+    installments:finiteNumber($("wholesaleInstallments")?.value,1),
+    interestPayer:$("wholesaleInterestPayer")?.value||"loja",
+    notes:$("wholesaleNotes")?.value||"",
+    createdById:currentUser?.id||"",
+    createdByName:currentUser?.name||"Rascunho local",
+    createdByUsername:currentUser?.username||"",
+    createdAt:new Date().toISOString(),
+    draft:true
+  };
+}
+
+function wholesaleDraftHasContent(draft){
+  if(!draft)return false;
+
+  return !!(
+    String(draft.clientName||"").trim()||
+    String(draft.product||"").trim()||
+    Number(draft.productPrice||0)>0||
+    Number(draft.freightCost||0)>0||
+    String(draft.couponName||"").trim()||
+    Number(draft.discountPercent||0)>0||
+    Number(draft.cascadeDiscountPercent||0)>0||
+    String(draft.notes||"").trim()
+  );
+}
+
+function saveWholesaleFormDraft(){
+  clearTimeout(wholesaleDraftTimer);
+
+  wholesaleDraftTimer=setTimeout(()=>{
+    const draft=captureWholesaleFormDraft();
+    const key=wholesaleDraftKey();
+
+    try{
+      if(wholesaleDraftHasContent(draft)){
+        localStorage.setItem(key,JSON.stringify(draft));
+      }else{
+        localStorage.removeItem(key);
+      }
+    }catch(e){
+      console.warn("Não foi possível salvar o rascunho do lançamento:",e);
+    }
+  },180);
+}
+
+function readWholesaleFormDraft(){
+  try{
+    const raw=localStorage.getItem(wholesaleDraftKey());
+    const parsed=raw?JSON.parse(raw):null;
+    return parsed&&typeof parsed==="object"?parsed:null;
+  }catch(e){
+    return null;
+  }
+}
+
+function clearWholesaleFormDraft(){
+  clearTimeout(wholesaleDraftTimer);
+
+  try{
+    localStorage.removeItem(wholesaleDraftKey());
+  }catch(e){}
+}
+
+function applyWholesaleDraftToForm(draft){
+  if(!draft||!$("wholesaleForm"))return false;
+
+  if($("wholesaleId"))$("wholesaleId").value=draft.id||"";
+  if($("wholesaleDate"))$("wholesaleDate").value=draft.date||today();
+  if($("wholesaleClient"))$("wholesaleClient").value=draft.clientName||"";
+  if($("wholesaleSaleType"))$("wholesaleSaleType").value=draft.saleType||"Varejo";
+  if($("wholesaleOrigin"))$("wholesaleOrigin").value=draft.origin||"Site";
+  if($("wholesaleProduct"))$("wholesaleProduct").value=draft.product||"";
+  if($("wholesaleProductPrice"))$("wholesaleProductPrice").value=finiteNumber(draft.productPrice,0)||"";
+  if($("wholesaleFreightCost"))$("wholesaleFreightCost").value=finiteNumber(draft.freightCost,0)||"";
+  if($("wholesaleFreightPayer"))$("wholesaleFreightPayer").value=draft.freightPayer||"cliente";
+  if($("wholesaleCouponName"))$("wholesaleCouponName").value=draft.couponName||"";
+  if($("wholesaleDiscountPercent"))$("wholesaleDiscountPercent").value=boundedPercent(draft.discountPercent)||"";
+  if($("wholesaleCascadeDiscountPercent"))$("wholesaleCascadeDiscountPercent").value=boundedPercent(draft.cascadeDiscountPercent)||"";
+  if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value=draft.paymentMethod||"PIX";
+  if($("wholesaleInstallments"))$("wholesaleInstallments").value=finiteNumber(draft.installments,1);
+  if($("wholesaleInterestPayer"))$("wholesaleInterestPayer").value=draft.interestPayer||"loja";
+  if($("wholesaleNotes"))$("wholesaleNotes").value=draft.notes||"";
+
+  toggleWholesaleInstallments();
+  calcWholesaleRetail();
+  return true;
+}
+
+function restoreWholesaleFormDraft({notify=false}={}){
+  const draft=readWholesaleFormDraft();
+
+  if(!wholesaleDraftHasContent(draft))return false;
+
+  const current=captureWholesaleFormDraft();
+
+  if(wholesaleDraftHasContent(current))return false;
+
+  const restored=applyWholesaleDraftToForm(draft);
+
+  if(restored&&notify){
+    showUndoToast("Rascunho de Atacado e Varejo recuperado neste aparelho.");
+  }
+
+  return restored;
+}
+
+function cancelWholesaleRetailForm(){
+  clearWholesaleFormDraft();
+  resetWholesaleRetailForm();
+  showUndoToast("Rascunho do lançamento descartado.");
+}
+
+function installWholesaleDraftProtection(){
+  if(wholesaleDraftProtectionInstalled)return;
+
+  const form=$("wholesaleForm");
+  if(!form)return;
+
+  wholesaleDraftProtectionInstalled=true;
+
+  form.addEventListener("input",saveWholesaleFormDraft);
+  form.addEventListener("change",saveWholesaleFormDraft);
+
+  window.addEventListener("beforeunload",()=>{
+    const draft=captureWholesaleFormDraft();
+
+    if(!wholesaleDraftHasContent(draft))return;
+
+    try{
+      localStorage.setItem(
+        wholesaleDraftKey(),
+        JSON.stringify(draft)
+      );
+    }catch(e){}
+  });
+}
+
+function lockWholesaleSubmit(){
+  if(wholesaleSubmitLocked)return false;
+
+  wholesaleSubmitLocked=true;
+
+  const button=$("wholesaleSubmitButton");
+  if(button){
+    button.disabled=true;
+    button.textContent="Salvando...";
+  }
+
+  setTimeout(()=>{
+    wholesaleSubmitLocked=false;
+
+    if(button){
+      button.disabled=false;
+      button.textContent="Salvar lançamento";
+    }
+  },1400);
+
+  return true;
+}
 
 function resetWholesaleRetailForm(){
   if(!$("wholesaleForm"))return;
@@ -13185,6 +14202,9 @@ if($("wholesalePaymentMethod")){
 if($("wholesaleForm")){
   $("wholesaleForm").addEventListener("submit",e=>{
     e.preventDefault();
+
+    if(!lockWholesaleSubmit())return;
+
     if(!currentUser){
       showLoginScreen("Faça login para salvar o lançamento.",true);
       return;
@@ -13309,6 +14329,7 @@ if($("wholesaleForm")){
     if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
 
     save();
+    clearWholesaleFormDraft();
     showUndoToast("Lançamento salvo neste aparelho. Sincronizando com todos...");
     flushWholesalePendingQueue()
       .then(ok=>{
