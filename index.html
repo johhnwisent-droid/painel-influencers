@@ -8252,6 +8252,376 @@ body.appRecovered #cloudStatus{
   cursor:wait!important;
 }
 
+
+/* ===== V118 COMPROVANTE DETALHADO POR COLABORADOR ===== */
+.collabPersonButton{
+  appearance:none!important;
+  width:100%!important;
+  min-height:0!important;
+  padding:8px 10px!important;
+  border:1px solid transparent!important;
+  border-radius:13px!important;
+  background:transparent!important;
+  color:inherit!important;
+  text-align:left!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  gap:2px!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+}
+
+.collabPersonButton:hover,
+.collabPersonButton:focus-visible{
+  background:#eff6ff!important;
+  border-color:#bfdbfe!important;
+  outline:none!important;
+}
+
+.collabPersonOpenHint{
+  display:block!important;
+  margin-top:4px!important;
+  font-size:10px!important;
+  line-height:1.15!important;
+  font-weight:900!important;
+  color:#2563eb!important;
+}
+
+.collabSummaryClickable:hover td{
+  background:#f8fbff!important;
+}
+
+.collabReceiptCard{
+  margin-top:22px!important;
+  padding:22px!important;
+  border:1px solid #cbd5e1!important;
+  border-radius:24px!important;
+  background:
+    radial-gradient(circle at top right,rgba(59,130,246,.08),transparent 32%),
+    #ffffff!important;
+  box-shadow:0 18px 42px rgba(15,23,42,.10)!important;
+  scroll-margin-top:18px!important;
+}
+
+.collabReceiptCard[hidden]{
+  display:none!important;
+}
+
+.collabReceiptHeader{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:18px!important;
+  padding-bottom:18px!important;
+  border-bottom:1px solid #e2e8f0!important;
+}
+
+.collabReceiptEyebrow{
+  display:block!important;
+  margin-bottom:7px!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  color:#2563eb!important;
+  text-transform:uppercase!important;
+  letter-spacing:.08em!important;
+}
+
+.collabReceiptHeader h3{
+  margin:0!important;
+  font-size:27px!important;
+  line-height:1.05!important;
+  letter-spacing:-.03em!important;
+  color:#0f172a!important;
+}
+
+.collabReceiptHeader p{
+  margin:8px 0 0!important;
+  color:#64748b!important;
+  font-size:13px!important;
+  font-weight:750!important;
+}
+
+.collabReceiptActions{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  gap:9px!important;
+  flex-wrap:wrap!important;
+}
+
+.collabReceiptStats{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px!important;
+  margin:18px 0!important;
+}
+
+.collabReceiptStat{
+  min-width:0!important;
+  min-height:92px!important;
+  padding:15px!important;
+  border:1px solid #e2e8f0!important;
+  border-radius:18px!important;
+  background:#f8fafc!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+
+.collabReceiptStat.main{
+  background:#eff6ff!important;
+  border-color:#bfdbfe!important;
+}
+
+.collabReceiptStat small{
+  display:block!important;
+  margin-bottom:8px!important;
+  color:#64748b!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  text-transform:uppercase!important;
+  letter-spacing:.05em!important;
+}
+
+.collabReceiptStat strong{
+  display:block!important;
+  max-width:100%!important;
+  color:#0f172a!important;
+  font-size:23px!important;
+  font-weight:1000!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
+.collabReceiptSection{
+  margin-top:16px!important;
+  padding:18px!important;
+  border:1px solid #e2e8f0!important;
+  border-radius:20px!important;
+  background:#fff!important;
+}
+
+.collabReceiptSectionHead{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+  margin-bottom:14px!important;
+}
+
+.collabReceiptSectionHead h4{
+  margin:0!important;
+  color:#0f172a!important;
+  font-size:17px!important;
+  font-weight:1000!important;
+}
+
+.collabReceiptSectionHead p{
+  margin:5px 0 0!important;
+  color:#64748b!important;
+  font-size:12px!important;
+}
+
+.collabReceiptCountBadge{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:32px!important;
+  padding:7px 11px!important;
+  border-radius:999px!important;
+  background:#eef2ff!important;
+  border:1px solid #c7d2fe!important;
+  color:#4338ca!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  white-space:nowrap!important;
+}
+
+.collabReceiptProducts{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
+}
+
+.collabReceiptProduct{
+  min-width:0!important;
+  padding:13px!important;
+  border:1px solid #e2e8f0!important;
+  border-radius:16px!important;
+  background:#f8fafc!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+}
+
+.collabReceiptProduct > div:first-child{
+  min-width:0!important;
+}
+
+.collabReceiptProduct strong{
+  display:block!important;
+  color:#0f172a!important;
+  font-size:13px!important;
+  line-height:1.25!important;
+  overflow-wrap:anywhere!important;
+}
+
+.collabReceiptProduct span{
+  display:block!important;
+  margin-top:5px!important;
+  color:#64748b!important;
+  font-size:11px!important;
+  font-weight:800!important;
+}
+
+.collabReceiptProductTypes{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:5px!important;
+  flex:0 0 auto!important;
+}
+
+.collabReceiptProductTypes .collabTypeChip{
+  margin:0!important;
+}
+
+.collabReceiptEmpty{
+  grid-column:1/-1!important;
+  padding:18px!important;
+  border:1px dashed #cbd5e1!important;
+  border-radius:15px!important;
+  color:#64748b!important;
+  text-align:center!important;
+  font-weight:800!important;
+}
+
+.collabReceiptTableWrap{
+  width:100%!important;
+  border:1px solid #e2e8f0!important;
+  border-radius:16px!important;
+  overflow-x:auto!important;
+  background:#fff!important;
+}
+
+.collabReceiptTable{
+  width:100%!important;
+  min-width:930px!important;
+  table-layout:fixed!important;
+}
+
+.collabReceiptTable th,
+.collabReceiptTable td{
+  padding:10px 9px!important;
+  vertical-align:middle!important;
+}
+
+.collabReceiptTable th:nth-child(1),
+.collabReceiptTable td:nth-child(1){
+  width:92px!important;
+}
+
+.collabReceiptTable th:nth-child(2),
+.collabReceiptTable td:nth-child(2){
+  width:95px!important;
+}
+
+.collabReceiptTable th:nth-child(3),
+.collabReceiptTable td:nth-child(3){
+  width:150px!important;
+}
+
+.collabReceiptTable th:nth-child(4),
+.collabReceiptTable td:nth-child(4){
+  width:230px!important;
+}
+
+.collabReceiptTable th:nth-child(5),
+.collabReceiptTable td:nth-child(5),
+.collabReceiptTable th:nth-child(6),
+.collabReceiptTable td:nth-child(6){
+  width:115px!important;
+}
+
+.collabReceiptTable th:nth-child(7),
+.collabReceiptTable td:nth-child(7){
+  width:140px!important;
+}
+
+.collabReceiptProductList{
+  white-space:pre-line!important;
+  line-height:1.3!important;
+  color:#334155!important;
+  font-weight:750!important;
+}
+
+.collabReceiptFooter{
+  margin:16px 0 0!important;
+  padding-top:14px!important;
+  border-top:1px solid #e2e8f0!important;
+  color:#64748b!important;
+  font-size:11px!important;
+  line-height:1.4!important;
+}
+
+@media(max-width:1050px){
+  .collabReceiptStats{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  .collabReceiptProducts{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+}
+
+@media(max-width:700px){
+  .collabReceiptCard{
+    padding:14px!important;
+    border-radius:19px!important;
+  }
+
+  .collabReceiptHeader{
+    flex-direction:column!important;
+  }
+
+  .collabReceiptHeader h3{
+    font-size:23px!important;
+  }
+
+  .collabReceiptActions{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .collabReceiptActions button{
+    width:100%!important;
+  }
+
+  .collabReceiptStats{
+    grid-template-columns:1fr!important;
+    gap:9px!important;
+  }
+
+  .collabReceiptStat{
+    min-height:78px!important;
+  }
+
+  .collabReceiptProducts{
+    grid-template-columns:1fr!important;
+  }
+
+  .collabReceiptSection{
+    padding:13px!important;
+  }
+
+  .collabReceiptSectionHead{
+    flex-direction:column!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8333,7 +8703,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V117</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V118</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8672,7 +9042,7 @@ body.appRecovered #cloudStatus{
         <div class="panelHead">
           <div>
             <h3>Vendas por colaborador</h3>
-            <span class="muted">Veja o total vendido por colaborador. Use os filtros apenas se precisar refinar.</span>
+            <span class="muted">Veja o total e os produtos vendidos por colaborador. Defina o período e clique no nome para abrir o comprovante detalhado.</span>
           </div>
         </div>
 
@@ -8742,6 +9112,80 @@ body.appRecovered #cloudStatus{
             <tbody id="wholesaleCollabRows"></tbody>
           </table>
         </div>
+
+        <div id="wholesaleCollabReceipt" class="collabReceiptCard" hidden>
+          <div class="collabReceiptHeader">
+            <div>
+              <span class="collabReceiptEyebrow">Comprovante de vendas do colaborador</span>
+              <h3 id="wholesaleCollabReceiptName">Colaborador</h3>
+              <p id="wholesaleCollabReceiptMeta">Período e tipo de venda</p>
+            </div>
+
+            <div class="collabReceiptActions">
+              <button type="button" class="primary" onclick="exportSelectedWholesaleCollaboratorReceiptPDF()">Exportar comprovante PDF</button>
+              <button type="button" class="secondary" onclick="closeWholesaleCollaboratorReceipt()">Fechar</button>
+            </div>
+          </div>
+
+          <div class="collabReceiptStats">
+            <div class="collabReceiptStat main">
+              <small>Total vendido</small>
+              <strong id="wholesaleCollabReceiptTotal">R$ 0,00</strong>
+            </div>
+            <div class="collabReceiptStat">
+              <small>Pedidos</small>
+              <strong id="wholesaleCollabReceiptCount">0</strong>
+            </div>
+            <div class="collabReceiptStat">
+              <small>Valor real recebido</small>
+              <strong id="wholesaleCollabReceiptReal">R$ 0,00</strong>
+            </div>
+            <div class="collabReceiptStat">
+              <small>Ticket médio</small>
+              <strong id="wholesaleCollabReceiptTicket">R$ 0,00</strong>
+            </div>
+          </div>
+
+          <div class="collabReceiptSection">
+            <div class="collabReceiptSectionHead">
+              <div>
+                <h4>Produtos vendidos no período</h4>
+                <p>Resumo dos produtos presentes nos pedidos selecionados.</p>
+              </div>
+              <span id="wholesaleCollabReceiptProductCount" class="collabReceiptCountBadge">0 produtos</span>
+            </div>
+
+            <div id="wholesaleCollabReceiptProducts" class="collabReceiptProducts"></div>
+          </div>
+
+          <div class="collabReceiptSection">
+            <div class="collabReceiptSectionHead">
+              <div>
+                <h4>Pedidos do período</h4>
+                <p>Detalhamento por data, cliente, tipo, produto e pagamento.</p>
+              </div>
+            </div>
+
+            <div class="tableWrap collabReceiptTableWrap">
+              <table class="collabReceiptTable">
+                <thead>
+                  <tr>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>Cliente</th>
+                    <th>Produto</th>
+                    <th>Total</th>
+                    <th>Valor real</th>
+                    <th>Pagamento</th>
+                  </tr>
+                </thead>
+                <tbody id="wholesaleCollabReceiptRows"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <p id="wholesaleCollabReceiptFooter" class="collabReceiptFooter">Comprovante gerado a partir dos lançamentos salvos no painel.</p>
+        </div>
       </div>
 
 
@@ -8751,7 +9195,7 @@ body.appRecovered #cloudStatus{
 
           <div class="pdfCleanHeader">
             <div>
-              <h1>Relatório - Vendas por colaborador</h1>
+              <h1 id="collabSalesPdfTitle">Relatório - Vendas por colaborador</h1>
               <p id="collabSalesPdfSubtitle" class="muted">Vendas filtradas por colaborador, período e tipo.</p>
             </div>
             <img id="collabSalesPdfLogo" class="printLogo" style="display:none">
@@ -9463,8 +9907,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V117";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v117";
+const APP_BUILD_VERSION="V118";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v118";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9503,7 +9947,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=117");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=118");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -9585,6 +10029,7 @@ window.currentPage=window.currentPage||"dashboard";
 var currentPage=window.currentPage;
 var currentWholesaleOrderId=null;
 var lastSavedWholesaleId=null;
+var selectedWholesaleCollaboratorReceipt=null;
 window.addEventListener("error",e=>{
   const el=document.getElementById("cloudStatus");
   const dbg=document.getElementById("cloudDebug");
@@ -11160,7 +11605,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V117",
+    version:"V118",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -11428,7 +11873,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v117-${today()}.json`;
+  a.download=`auditoria-painel-v118-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -11458,7 +11903,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V117",
+    "AUDITORIA DO SISTEMA — V118",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -11486,7 +11931,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V117: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V118: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -11541,7 +11986,7 @@ async function recoverWholesaleLaunchesFromDevice(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V117 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V118 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13206,6 +13651,278 @@ function groupWholesaleCollaboratorRows(rows){
   });
 }
 
+
+function wholesaleCollaboratorCurrentPeriod(){
+  let start=normalizeDateOnly($("wholesaleCollabStart")?.value||"");
+  let end=normalizeDateOnly($("wholesaleCollabEnd")?.value||"");
+
+  if(start&&!end)end=start;
+  if(end&&!start)start=end;
+
+  if(start&&end&&start>end){
+    const temp=start;
+    start=end;
+    end=temp;
+  }
+
+  const label=start&&end
+    ? (start===end?dateBR(start):`${dateBR(start)} até ${dateBR(end)}`)
+    : "Todo o período";
+
+  return {start,end,label};
+}
+
+function wholesaleCollaboratorReceiptRows(key,type){
+  key=String(key||"").trim();
+  type=String(type||"").trim();
+
+  const period=wholesaleCollaboratorCurrentPeriod();
+
+  return (state.wholesaleRetail||[])
+    .filter(w=>{
+      if(key&&wholesaleCollaboratorKey(w)!==key)return false;
+
+      const rowType=String(w.saleType||"Varejo").trim()||"Varejo";
+      if(type&&rowType!==type)return false;
+
+      const date=normalizeDateOnly(w.date);
+      if(period.start&&(!date||date<period.start))return false;
+      if(period.end&&(!date||date>period.end))return false;
+
+      return true;
+    })
+    .slice()
+    .sort((a,b)=>{
+      const byDate=String(b.date||"").localeCompare(String(a.date||""));
+      if(byDate)return byDate;
+
+      return String(b.createdAt||"").localeCompare(String(a.createdAt||""));
+    });
+}
+
+function wholesaleCollaboratorReceiptProductSummary(rows){
+  const map=new Map();
+
+  (rows||[]).forEach(order=>{
+    const orderId=String(order.id||"");
+    const products=productLinesArray(order.product||"");
+
+    const uniqueProducts=new Set(
+      products
+        .map(name=>String(name||"").trim())
+        .filter(Boolean)
+    );
+
+    uniqueProducts.forEach(name=>{
+      const key=name.toLocaleLowerCase("pt-BR");
+
+      if(!map.has(key)){
+        map.set(key,{
+          name,
+          orderIds:new Set(),
+          types:new Set()
+        });
+      }
+
+      const item=map.get(key);
+      item.orderIds.add(orderId);
+      item.types.add(String(order.saleType||"Varejo"));
+    });
+  });
+
+  return [...map.values()]
+    .map(item=>({
+      name:item.name,
+      orders:item.orderIds.size,
+      types:[...item.types]
+    }))
+    .sort((a,b)=>{
+      if(b.orders!==a.orders)return b.orders-a.orders;
+      return String(a.name).localeCompare(String(b.name),"pt-BR");
+    });
+}
+
+function openWholesaleCollaboratorReceiptFromButton(button){
+  if(!button)return;
+
+  openWholesaleCollaboratorReceipt(
+    button.dataset.collabKey||"",
+    button.dataset.collabType||""
+  );
+}
+
+function openWholesaleCollaboratorReceipt(key,type){
+  const rows=wholesaleCollaboratorReceiptRows(key,type);
+
+  if(!rows.length){
+    alert("Não há pedidos deste colaborador no período e tipo selecionados.");
+    return;
+  }
+
+  selectedWholesaleCollaboratorReceipt={
+    key:String(key||""),
+    type:String(type||"")
+  };
+
+  renderWholesaleCollaboratorReceipt();
+
+  const panel=$("wholesaleCollabReceipt");
+  if(panel){
+    panel.hidden=false;
+
+    setTimeout(()=>{
+      panel.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+    },60);
+  }
+}
+
+function closeWholesaleCollaboratorReceipt(){
+  selectedWholesaleCollaboratorReceipt=null;
+
+  const panel=$("wholesaleCollabReceipt");
+  if(panel)panel.hidden=true;
+}
+
+function renderWholesaleCollaboratorReceipt(){
+  const panel=$("wholesaleCollabReceipt");
+  if(!panel||!selectedWholesaleCollaboratorReceipt)return;
+
+  const key=selectedWholesaleCollaboratorReceipt.key;
+  const type=selectedWholesaleCollaboratorReceipt.type;
+  const rows=wholesaleCollaboratorReceiptRows(key,type);
+
+  if(!rows.length){
+    closeWholesaleCollaboratorReceipt();
+    return;
+  }
+
+  const name=wholesaleCollaboratorNameByKey(key);
+  const username=wholesaleCollaboratorUserByKey(key);
+  const period=wholesaleCollaboratorCurrentPeriod();
+
+  const total=rows.reduce((sum,row)=>sum+Number(row.total||0),0);
+  const real=rows.reduce((sum,row)=>sum+Number(row.realReceived||0),0);
+  const ticket=rows.length?total/rows.length:0;
+
+  const products=wholesaleCollaboratorReceiptProductSummary(rows);
+
+  if($("wholesaleCollabReceiptName")){
+    $("wholesaleCollabReceiptName").textContent=name||"Colaborador";
+  }
+
+  if($("wholesaleCollabReceiptMeta")){
+    $("wholesaleCollabReceiptMeta").textContent=[
+      username?`Usuário: ${username}`:"",
+      type||"Atacado + Varejo",
+      period.label,
+      `${rows.length} pedido(s)`
+    ].filter(Boolean).join(" • ");
+  }
+
+  if($("wholesaleCollabReceiptTotal")){
+    $("wholesaleCollabReceiptTotal").textContent=money(total);
+  }
+
+  if($("wholesaleCollabReceiptCount")){
+    $("wholesaleCollabReceiptCount").textContent=rows.length;
+  }
+
+  if($("wholesaleCollabReceiptReal")){
+    $("wholesaleCollabReceiptReal").textContent=money(real);
+  }
+
+  if($("wholesaleCollabReceiptTicket")){
+    $("wholesaleCollabReceiptTicket").textContent=money(ticket);
+  }
+
+  if($("wholesaleCollabReceiptProductCount")){
+    $("wholesaleCollabReceiptProductCount").textContent=
+      `${products.length} produto${products.length===1?"":"s"}`;
+  }
+
+  if($("wholesaleCollabReceiptProducts")){
+    $("wholesaleCollabReceiptProducts").innerHTML=products.length
+      ? products.map(item=>`<div class="collabReceiptProduct">
+          <div>
+            <strong>${esc(item.name)}</strong>
+            <span>${item.orders} pedido${item.orders===1?"":"s"}</span>
+          </div>
+          <div class="collabReceiptProductTypes">
+            ${item.types.map(productType=>`<span class="collabTypeChip ${String(productType).toLowerCase()}">${esc(productType)}</span>`).join("")}
+          </div>
+        </div>`).join("")
+      : `<div class="collabReceiptEmpty">Nenhum produto identificado nos pedidos.</div>`;
+  }
+
+  if($("wholesaleCollabReceiptRows")){
+    $("wholesaleCollabReceiptRows").innerHTML=rows.map(row=>`<tr>
+      <td data-label="Data">${dateBR(row.date)}</td>
+      <td data-label="Tipo"><span class="collabTypeChip ${String(row.saleType||"Varejo").toLowerCase()}">${esc(row.saleType||"Varejo")}</span></td>
+      <td data-label="Cliente"><strong>${esc(row.clientName||"-")}</strong></td>
+      <td data-label="Produto"><span class="collabReceiptProductList">${esc(row.product||"-")}</span></td>
+      <td data-label="Total"><strong>${money(row.total)}</strong></td>
+      <td data-label="Valor real">${money(row.realReceived)}</td>
+      <td data-label="Pagamento">${esc(paymentLabel(row.paymentMethod,row.installments,row.interestPayer))}</td>
+    </tr>`).join("");
+  }
+
+  if($("wholesaleCollabReceiptFooter")){
+    $("wholesaleCollabReceiptFooter").textContent=
+      `Comprovante de ${name} • ${type||"Atacado + Varejo"} • ${period.label} • gerado em ${new Date().toLocaleString("pt-BR")}.`;
+  }
+
+  panel.hidden=false;
+}
+
+function exportSelectedWholesaleCollaboratorReceiptPDF(){
+  if(!selectedWholesaleCollaboratorReceipt){
+    alert("Clique primeiro no nome de um colaborador para abrir o comprovante.");
+    return;
+  }
+
+  const key=selectedWholesaleCollaboratorReceipt.key;
+  const type=selectedWholesaleCollaboratorReceipt.type;
+  const rows=wholesaleCollaboratorReceiptRows(key,type);
+
+  if(!rows.length){
+    alert("Não há vendas para exportar neste comprovante.");
+    return;
+  }
+
+  const period=wholesaleCollaboratorCurrentPeriod();
+
+  renderWholesaleCollaboratorPDF({
+    rows,
+    collabKey:key,
+    collabName:wholesaleCollaboratorNameByKey(key),
+    type:type||"Atacado + Varejo",
+    period:period.label,
+    title:"Comprovante - Vendas do colaborador"
+  });
+
+  const oldTitle=document.title;
+  document.title=`Comprovante - ${wholesaleCollaboratorNameByKey(key)}`;
+
+  document.body.classList.remove(
+    "print-report",
+    "print-accumulation",
+    "print-wholesale",
+    "print-wholesale-list",
+    "print-launches-list"
+  );
+
+  document.body.classList.add("print-collab-sales");
+  window.print();
+
+  setTimeout(()=>{
+    document.body.classList.remove("print-collab-sales");
+    document.title=oldTitle;
+  },700);
+}
+
 function renderWholesaleCollaboratorPanel(){
   if(!$("wholesaleCollabTotal"))return;
 
@@ -13240,8 +13957,21 @@ function renderWholesaleCollaboratorPanel(){
 
   const grouped=groupWholesaleCollaboratorRows(rows);
   if($("wholesaleCollabRows")){
-    $("wholesaleCollabRows").innerHTML=grouped.length?grouped.map(g=>`<tr>
-      <td><span class="collabPersonName">${esc(g.name)}</span><span class="collabPersonUser">${esc(g.username||"")}</span></td>
+    $("wholesaleCollabRows").innerHTML=grouped.length?grouped.map(g=>`<tr class="collabSummaryClickable">
+      <td>
+        <button
+          type="button"
+          class="collabPersonButton"
+          data-collab-key="${esc(g.key)}"
+          data-collab-type="${esc(g.type)}"
+          onclick="openWholesaleCollaboratorReceiptFromButton(this)"
+          title="Abrir comprovante com produtos e pedidos"
+        >
+          <span class="collabPersonName">${esc(g.name)}</span>
+          <span class="collabPersonUser">${esc(g.username||"")}</span>
+          <span class="collabPersonOpenHint">Ver produtos e comprovante</span>
+        </button>
+      </td>
       <td><span class="collabTypeChip ${String(g.type).toLowerCase()}">${esc(g.type)}</span></td>
       <td>${g.count}</td>
       <td><span class="collabMoneyStrong">${money(g.total)}</span></td>
@@ -13250,6 +13980,10 @@ function renderWholesaleCollaboratorPanel(){
       <td>${money(g.freight)}</td>
     </tr>`).join(""):`<tr><td colspan="7">Nenhuma venda encontrada com os filtros selecionados.</td></tr>`;
   }
+
+  if(selectedWholesaleCollaboratorReceipt){
+    renderWholesaleCollaboratorReceipt();
+  }
 }
 
 function clearWholesaleCollaboratorFilter(){
@@ -13257,14 +13991,18 @@ function clearWholesaleCollaboratorFilter(){
   if($("wholesaleCollabStart"))$("wholesaleCollabStart").value="";
   if($("wholesaleCollabEnd"))$("wholesaleCollabEnd").value="";
   if($("wholesaleCollabSaleType"))$("wholesaleCollabSaleType").value="";
+  closeWholesaleCollaboratorReceipt();
   renderWholesaleCollaboratorPanel();
 }
 
-function renderWholesaleCollaboratorPDF(){
+function renderWholesaleCollaboratorPDF(options={}){
   const target=$("collabSalesPdfRows");
   if(!target)return;
 
-  const rows=wholesaleCollaboratorFilteredRows();
+  const rows=Array.isArray(options.rows)
+    ? options.rows
+    : wholesaleCollaboratorFilteredRows();
+
   const total=rows.reduce((a,w)=>a+Number(w.total||0),0);
   const real=rows.reduce((a,w)=>a+Number(w.realReceived||0),0);
 
@@ -13277,16 +14015,31 @@ function renderWholesaleCollaboratorPDF(){
 
   if(typeof applyPdfWatermark==="function")applyPdfWatermark("collabSalesWatermark");
 
-  const collabKey=$("wholesaleCollabFilter")?.value||"";
-  const collabName=collabKey?wholesaleCollaboratorNameByKey(collabKey):"Todos os colaboradores";
-  const type=$("wholesaleCollabSaleType")?.value||"Atacado + Varejo";
+  const selectedFilterKey=$("wholesaleCollabFilter")?.value||"";
+  const collabKey=options.collabKey!==undefined
+    ? options.collabKey
+    : selectedFilterKey;
+
+  const collabName=options.collabName||
+    (collabKey?wholesaleCollaboratorNameByKey(collabKey):"Todos os colaboradores");
+
+  const type=options.type||
+    ($("wholesaleCollabSaleType")?.value||"Atacado + Varejo");
 
   let start=normalizeDateOnly($("wholesaleCollabStart")?.value||"");
   let end=normalizeDateOnly($("wholesaleCollabEnd")?.value||"");
+
   if(start&&!end)end=start;
   if(end&&!start)start=end;
-  const period=start&&end?(start===end?dateBR(start):`${dateBR(start)} até ${dateBR(end)}`):"Todo o período";
 
+  const defaultPeriod=start&&end
+    ? (start===end?dateBR(start):`${dateBR(start)} até ${dateBR(end)}`)
+    : "Todo o período";
+
+  const period=options.period||defaultPeriod;
+  const title=options.title||"Relatório - Vendas por colaborador";
+
+  if($("collabSalesPdfTitle"))$("collabSalesPdfTitle").textContent=title;
   if($("collabSalesPdfSubtitle"))$("collabSalesPdfSubtitle").textContent=`${collabName} • ${type} • ${period}`;
   if($("collabSalesPdfTotal"))$("collabSalesPdfTotal").textContent=money(total);
   if($("collabSalesPdfCount"))$("collabSalesPdfCount").textContent=rows.length;
@@ -13316,7 +14069,9 @@ function exportWholesaleCollaboratorPDF(){
     return;
   }
 
-  renderWholesaleCollaboratorPDF();
+  renderWholesaleCollaboratorPDF({
+    title:"Relatório - Vendas por colaborador"
+  });
 
   const oldTitle=document.title;
   document.title="Relatório Vendas por Colaborador";
