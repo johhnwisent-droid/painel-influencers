@@ -8211,6 +8211,27 @@ body.appRecovered #cloudStatus{
   }
 }
 
+
+/* ===== V115 SALVAMENTO COLABORATIVO E RECUPERAÇÃO ===== */
+.wholesaleSharedBadge{
+  white-space:normal!important;
+  text-align:center!important;
+  line-height:1.2!important;
+}
+
+.profileMenuDropdown .wholesaleRecoverBtn{
+  border-color:#bfdbfe!important;
+  background:#eff6ff!important;
+  color:#1d4ed8!important;
+}
+
+@media(max-width:700px){
+  .wholesaleSharedBadge{
+    width:100%!important;
+    justify-content:center!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8292,7 +8313,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V114</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V115</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8302,6 +8323,7 @@ body.appRecovered #cloudStatus{
         <button type="button" class="secondary small undoBtn" data-undo-button onclick="undoLastChange();closeProfileMenu();" disabled>Desfazer alteração</button>
         <button type="button" class="secondary small backupBtn" onclick="exportFullBackup();closeProfileMenu();">Baixar backup</button>
         <button type="button" class="secondary small backupRestoreBtn" onclick="triggerBackupImport();closeProfileMenu();">Restaurar backup</button>
+        <button type="button" class="secondary small wholesaleRecoverBtn" onclick="recoverWholesaleLaunchesFromDevice();closeProfileMenu();">Recuperar lançamentos locais</button>
         <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Resetar testes</button>
         <button type="button" class="secondary small" onclick="logoutUser();closeProfileMenu();">Sair</button>
       </div>
@@ -8388,6 +8410,7 @@ body.appRecovered #cloudStatus{
             <h3>Atacado e Varejo</h3>
             <span class="muted">Controle separado para vendas do setor, com cálculo automático de cupom e frete.</span>
           </div>
+          <span class="badge blue wholesaleSharedBadge">Visão compartilhada: todos os colaboradores</span>
         </div>
 
                 <form id="wholesaleForm" class="form wholesaleFormPro wholesaleFormV91">
@@ -8576,7 +8599,7 @@ body.appRecovered #cloudStatus{
         <div class="panelHead">
           <div>
             <h3>Lançamentos de Atacado e Varejo</h3>
-            <span class="muted">Todos os lançamentos aparecem aqui. Use data ou tipo apenas se quiser filtrar.</span>
+            <span class="muted">Todos os lançamentos aparecem aqui para todos os colaboradores. Use data ou tipo apenas se quiser filtrar.</span>
           </div>
           <div class="filters wholesaleListFilters">
             <label>Data opcional
@@ -9303,6 +9326,20 @@ const KEY = "painel_influencers_backup_estavel_v60";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
 const CLOUD_STATE_KEY = "painel_state";
+
+/*
+  V115 — salvamento robusto dos lançamentos de Atacado e Varejo.
+  Cada lançamento também é salvo em uma linha própria da tabela personalizacao.
+  Isso evita que dois colaboradores sobrescrevam a lista inteira ao mesmo tempo.
+*/
+const WHOLESALE_RECORD_PREFIX="wholesale_launch_";
+const WHOLESALE_PENDING_KEY=KEY+"_wholesale_pending_v115";
+const WHOLESALE_SNAPSHOT_KEY=KEY+"_wholesale_snapshot_v115";
+const WHOLESALE_SEED_KEY=KEY+"_wholesale_seed_v115";
+let wholesaleFlushBusy=false;
+let wholesaleSyncBusy=false;
+let wholesaleSyncWatchersInstalled=false;
+let wholesalePollTimer=null;
 function legacyStorageKeys(){
   return [
     'painel_influencers_backup_estavel_v60',
@@ -9393,8 +9430,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V114";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v114";
+const APP_BUILD_VERSION="V115";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v115";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9433,7 +9470,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=114");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=115");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10231,6 +10268,7 @@ function save(){
   const data=JSON.stringify(state);
 
   handleUndoCommit(data);
+  writeWholesaleSnapshot(state.wholesaleRetail||[]);
 
   try{
     localStorage.setItem(KEY,data);
@@ -10336,8 +10374,435 @@ async function fetchWithTimeout(url,options={},timeout=10000){
   }
 }
 
+
+function cloneSafe(value,fallback=null){
+  try{return JSON.parse(JSON.stringify(value));}
+  catch(e){return fallback;}
+}
+
+function wholesaleRecordTime(item){
+  const raw=item?.deletedAt||item?.updatedAt||item?.createdAt||item?.date||"";
+  const t=Date.parse(raw);
+  return Number.isFinite(t)?t:0;
+}
+
+function mergeWholesaleCollections(...collections){
+  const map=new Map();
+
+  collections.flat().forEach(item=>{
+    if(!item||typeof item!=="object"||!item.id)return;
+
+    if(item.deleted===true){
+      map.delete(String(item.id));
+      return;
+    }
+
+    const id=String(item.id);
+    const current=map.get(id);
+
+    if(!current){
+      map.set(id,cloneSafe(item,item));
+      return;
+    }
+
+    const currentTime=wholesaleRecordTime(current);
+    const nextTime=wholesaleRecordTime(item);
+
+    if(nextTime>=currentTime){
+      map.set(id,cloneSafe(item,item));
+    }
+  });
+
+  return [...map.values()].sort((a,b)=>{
+    const byTime=wholesaleRecordTime(b)-wholesaleRecordTime(a);
+    if(byTime)return byTime;
+    return String(b.date||"").localeCompare(String(a.date||""));
+  });
+}
+
+function readWholesaleSnapshot(){
+  try{
+    const raw=localStorage.getItem(WHOLESALE_SNAPSHOT_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed:[];
+  }catch(e){
+    return [];
+  }
+}
+
+function writeWholesaleSnapshot(rows=state.wholesaleRetail||[]){
+  try{
+    localStorage.setItem(WHOLESALE_SNAPSHOT_KEY,JSON.stringify(Array.isArray(rows)?rows:[]));
+  }catch(e){
+    console.warn("Não foi possível gravar o espelho local de Atacado e Varejo:",e);
+  }
+}
+
+function readWholesalePendingQueue(){
+  try{
+    const raw=localStorage.getItem(WHOLESALE_PENDING_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed.filter(x=>x&&x.id&&x.record):[];
+  }catch(e){
+    return [];
+  }
+}
+
+function writeWholesalePendingQueue(queue){
+  try{
+    localStorage.setItem(WHOLESALE_PENDING_KEY,JSON.stringify(Array.isArray(queue)?queue:[]));
+  }catch(e){
+    console.warn("Não foi possível gravar a fila local de lançamentos:",e);
+  }
+}
+
+function queueWholesaleCloudRecord(record){
+  if(!record||!record.id)return false;
+
+  const queue=readWholesalePendingQueue();
+  const entry={
+    id:String(record.id),
+    record:cloneSafe(record,record),
+    queuedAt:new Date().toISOString()
+  };
+
+  const idx=queue.findIndex(x=>String(x.id)===entry.id);
+  if(idx>=0)queue[idx]=entry;
+  else queue.push(entry);
+
+  writeWholesalePendingQueue(queue);
+  writeWholesaleSnapshot(state.wholesaleRetail||[]);
+  return true;
+}
+
+function wholesaleCloudRow(record){
+  return {
+    chave:WHOLESALE_RECORD_PREFIX+String(record.id),
+    valor:JSON.stringify(record)
+  };
+}
+
+async function flushWholesalePendingQueue(){
+  if(wholesaleFlushBusy)return false;
+
+  let queue=readWholesalePendingQueue();
+  if(!queue.length)return true;
+
+  wholesaleFlushBusy=true;
+
+  try{
+    while(queue.length){
+      const batch=queue.slice(0,40);
+      const payload=batch.map(x=>wholesaleCloudRow(x.record));
+
+      const response=await fetchWithTimeout(
+        SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",
+        {
+          method:"POST",
+          headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
+          body:JSON.stringify(payload)
+        },
+        12000
+      );
+
+      if(!response.ok){
+        const text=await response.text();
+        console.error("Falha ao sincronizar lançamentos individuais:",text);
+        updateCloudStatus("Lançamento salvo neste aparelho. Sincronização pendente.",true);
+        updateCloudDebug("fila local preservada; detalhe: "+text.slice(0,160));
+        return false;
+      }
+
+      const sentMap=new Map(batch.map(x=>[String(x.id),String(x.queuedAt)]));
+      const latest=readWholesalePendingQueue().filter(x=>{
+        const sentAt=sentMap.get(String(x.id));
+        return !sentAt||String(x.queuedAt)!==sentAt;
+      });
+
+      writeWholesalePendingQueue(latest);
+      queue=latest;
+    }
+
+    updateCloudStatus("Lançamentos sincronizados. Todos os colaboradores podem visualizar.");
+    updateCloudDebug("fila individual de Atacado e Varejo sincronizada");
+    return true;
+  }catch(e){
+    console.error("Erro na fila de sincronização de Atacado e Varejo:",e);
+    updateCloudStatus("Lançamento salvo neste aparelho. A nuvem será tentada novamente.",true);
+    updateCloudDebug(e.name==="AbortError"?"tempo esgotado na sincronização individual":String(e.message||e));
+    return false;
+  }finally{
+    wholesaleFlushBusy=false;
+  }
+}
+
+function applyWholesaleCloudRecords(records){
+  const current=Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[];
+  const pending=readWholesalePendingQueue();
+
+  const tombstones=new Set();
+  const cloudItems=[];
+
+  (records||[]).forEach(record=>{
+    if(!record||!record.id)return;
+    if(record.deleted===true)tombstones.add(String(record.id));
+    else cloudItems.push(record);
+  });
+
+  pending.forEach(entry=>{
+    const record=entry.record;
+    if(record?.deleted===true)tombstones.add(String(record.id));
+  });
+
+  let merged=mergeWholesaleCollections(current,cloudItems);
+
+  if(tombstones.size){
+    merged=merged.filter(item=>!tombstones.has(String(item.id)));
+  }
+
+  const pendingItems=pending
+    .map(x=>x.record)
+    .filter(x=>x&&x.deleted!==true);
+
+  merged=mergeWholesaleCollections(merged,pendingItems);
+
+  const before=JSON.stringify(current);
+  const after=JSON.stringify(merged);
+  const changed=before!==after;
+
+  if(changed){
+    state.wholesaleRetail=merged;
+    writeWholesaleSnapshot(merged);
+
+    try{
+      const data=JSON.stringify(state);
+      localStorage.setItem(KEY,data);
+      lastUndoSnapshot=data;
+    }catch(e){}
+
+    try{
+      renderWholesaleRetail();
+      renderWholesaleCollaboratorPanel();
+    }catch(e){
+      console.warn("Renderização após sincronização ignorada:",e);
+    }
+  }
+
+  return changed;
+}
+
+async function fetchWholesaleCloudRecords(){
+  const url=SUPABASE_URL+
+    "/rest/v1/personalizacao?chave=like."+
+    encodeURIComponent(WHOLESALE_RECORD_PREFIX+"*")+
+    "&select=chave,valor";
+
+  const response=await fetchWithTimeout(url,{
+    method:"GET",
+    headers:cloudHeaders()
+  },12000);
+
+  if(!response.ok){
+    const text=await response.text();
+    throw new Error("HTTP "+response.status+" ao ler lançamentos individuais: "+text.slice(0,160));
+  }
+
+  const rows=await response.json();
+  const records=[];
+
+  (Array.isArray(rows)?rows:[]).forEach(row=>{
+    try{
+      const parsed=typeof row.valor==="string"?JSON.parse(row.valor):row.valor;
+      if(parsed&&parsed.id)records.push(parsed);
+    }catch(e){
+      console.warn("Registro individual inválido ignorado:",row?.chave);
+    }
+  });
+
+  return records;
+}
+
+async function syncWholesaleLaunchRecordsFromCloud({showStatus=false}={}){
+  if(wholesaleSyncBusy)return false;
+  wholesaleSyncBusy=true;
+
+  try{
+    await flushWholesalePendingQueue();
+
+    const records=await fetchWholesaleCloudRecords();
+    const changed=applyWholesaleCloudRecords(records);
+
+    if(showStatus){
+      updateCloudStatus(changed
+        ?"Lista compartilhada atualizada."
+        :"Lista compartilhada já está atualizada.");
+      updateCloudDebug(records.length+" lançamentos individuais conferidos");
+    }
+
+    return true;
+  }catch(e){
+    console.warn("Sincronização compartilhada indisponível:",e);
+    if(showStatus){
+      updateCloudStatus("Modo local ativo. A sincronização será repetida automaticamente.",true);
+      updateCloudDebug(String(e.message||e));
+    }
+    return false;
+  }finally{
+    wholesaleSyncBusy=false;
+  }
+}
+
+function activeLocalWholesaleCandidates(){
+  const pendingItems=readWholesalePendingQueue()
+    .map(x=>x.record)
+    .filter(x=>x&&x.deleted!==true);
+
+  return mergeWholesaleCollections(
+    Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[],
+    readWholesaleSnapshot(),
+    pendingItems
+  );
+}
+
+function queueAllWholesaleRows(rows){
+  (Array.isArray(rows)?rows:[]).forEach(item=>{
+    if(item&&item.id)queueWholesaleCloudRecord(item);
+  });
+}
+
+async function seedWholesaleRecordsOnce(){
+  const rows=activeLocalWholesaleCandidates();
+
+  if(rows.length){
+    state.wholesaleRetail=mergeWholesaleCollections(state.wholesaleRetail||[],rows);
+    writeWholesaleSnapshot(state.wholesaleRetail);
+  }
+
+  let seeded=false;
+  try{seeded=localStorage.getItem(WHOLESALE_SEED_KEY)==="ok";}catch(e){}
+
+  if(!seeded&&rows.length){
+    queueAllWholesaleRows(rows);
+    try{localStorage.setItem(WHOLESALE_SEED_KEY,"ok");}catch(e){}
+  }
+
+  await flushWholesalePendingQueue();
+}
+
+function installWholesaleSyncWatchers(){
+  if(wholesaleSyncWatchersInstalled)return;
+  wholesaleSyncWatchersInstalled=true;
+
+  window.addEventListener("online",()=>{
+    flushWholesalePendingQueue()
+      .then(()=>syncWholesaleLaunchRecordsFromCloud({showStatus:true}));
+  });
+
+  window.addEventListener("focus",()=>{
+    syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+  });
+
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+      syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+    }
+  });
+
+  clearInterval(wholesalePollTimer);
+  wholesalePollTimer=setInterval(()=>{
+    syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+  },15000);
+}
+
+function collectWholesaleCandidatesFromDevice(){
+  const groups=[
+    Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[],
+    readWholesaleSnapshot()
+  ];
+
+  legacyStorageKeys().forEach(key=>{
+    const raw=readStorageByKey(key);
+    if(!raw)return;
+
+    try{
+      const parsed=JSON.parse(raw);
+      const candidate=parsed?.state||parsed;
+      if(Array.isArray(candidate?.wholesaleRetail)){
+        groups.push(candidate.wholesaleRetail);
+      }
+    }catch(e){}
+  });
+
+  try{
+    readUndoStack().forEach(entry=>{
+      try{
+        const parsed=typeof entry.state==="string"?JSON.parse(entry.state):entry.state;
+        if(Array.isArray(parsed?.wholesaleRetail)){
+          groups.push(parsed.wholesaleRetail);
+        }
+      }catch(e){}
+    });
+  }catch(e){}
+
+  const pending=readWholesalePendingQueue()
+    .map(x=>x.record)
+    .filter(x=>x&&x.deleted!==true);
+
+  groups.push(pending);
+
+  return mergeWholesaleCollections(...groups);
+}
+
+async function recoverWholesaleLaunchesFromDevice(){
+  const candidates=collectWholesaleCandidatesFromDevice();
+  const current=Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[];
+
+  const currentMap=new Map(current.map(x=>[String(x.id),x]));
+  const recoverable=candidates.filter(item=>{
+    const old=currentMap.get(String(item.id));
+    return !old||wholesaleRecordTime(item)>wholesaleRecordTime(old);
+  });
+
+  if(!recoverable.length){
+    alert("Não encontrei lançamentos locais adicionais neste aparelho.");
+    return;
+  }
+
+  const pabloCount=recoverable.filter(item=>
+    String(item.createdByName||item.createdByUsername||"")
+      .toLowerCase()
+      .includes("pablo")
+  ).length;
+
+  const detail=pabloCount
+    ? ` Entre eles, ${pabloCount} lançamento(s) atribuído(s) ao Pablo.`
+    : "";
+
+  if(!confirm(
+    `Encontrei ${recoverable.length} lançamento(s) local(is) que não estão na lista atual.${detail}\n\nDeseja recuperar e enviar para a nuvem?`
+  ))return;
+
+  state.wholesaleRetail=mergeWholesaleCollections(current,recoverable);
+  writeWholesaleSnapshot(state.wholesaleRetail);
+  queueAllWholesaleRows(recoverable);
+  save();
+
+  try{
+    render();
+    showPage("wholesaleRetail");
+  }catch(e){}
+
+  const synced=await flushWholesalePendingQueue();
+  await syncWholesaleLaunchRecordsFromCloud({showStatus:true});
+
+  alert(synced
+    ? `${recoverable.length} lançamento(s) recuperado(s) e sincronizado(s).`
+    : `${recoverable.length} lançamento(s) recuperado(s) neste aparelho. A sincronização com a nuvem continuará automaticamente.`);
+}
+
+
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V114 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V115 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -10362,10 +10827,16 @@ async function cloudLoad(){
 
     if(row&&row.valor){
       try{
+        const localWholesaleBeforeCloud=activeLocalWholesaleCandidates();
         state=JSON.parse(row.valor);
+        state.wholesaleRetail=mergeWholesaleCollections(
+          Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[],
+          localWholesaleBeforeCloud
+        );
+        writeWholesaleSnapshot(state.wholesaleRetail);
         const recoveredMedia=preserveMediaFromLegacy(state);
-        updateCloudStatus("Dados carregados da nuvem.");
-        updateCloudDebug(recoveredMedia?"linha painel_state carregada e mídia antiga recuperada":"linha painel_state encontrada e carregada");
+        updateCloudStatus("Dados carregados da nuvem e lançamentos locais preservados.");
+        updateCloudDebug(recoveredMedia?"painel_state carregado, mídia recuperada e lista local mesclada":"painel_state carregado sem apagar lançamentos locais");
         return true;
       }catch(e){
         console.error("Erro ao interpretar dados da nuvem:",e);
@@ -10478,6 +10949,14 @@ async function startApp(){
       console.error("Erro ao iniciar login interno:",e);
       setSessionUser(null);
       showLoginScreen("Use seu usuário interno para entrar.");
+    }
+
+    try{
+      await seedWholesaleRecordsOnce();
+      await syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+      installWholesaleSyncWatchers();
+    }catch(e){
+      console.warn("Sincronização inicial de Atacado e Varejo adiada:",e);
     }
 
     try{
@@ -11651,6 +12130,10 @@ function wholesaleCollaboratorFilteredRows(){
     end=tmp;
   }
 
+  /*
+    Visão compartilhada:
+    nunca filtrar por currentUser. Todos os colaboradores veem todos os lançamentos.
+  */
   let rows=(state.wholesaleRetail||[]).slice();
 
   if(collab)rows=rows.filter(w=>wholesaleCollaboratorKey(w)===collab);
@@ -12088,10 +12571,27 @@ function editWholesaleRetail(id){
 
 function deleteWholesaleRetail(id){
   if(confirm("Excluir este lançamento de atacado e varejo?")){
-    state.wholesaleRetail=(state.wholesaleRetail||[]).filter(w=>w.id!==id);
+    const audit=currentAuditInfo();
+    const tombstone={
+      id:String(id),
+      deleted:true,
+      deletedAt:new Date().toISOString(),
+      deletedById:audit.id||"",
+      deletedByName:audit.name||"Não registrado",
+      deletedByUsername:audit.username||""
+    };
+
+    state.wholesaleRetail=(state.wholesaleRetail||[]).filter(w=>String(w.id)!==String(id));
     if(currentWholesaleOrderId===id)currentWholesaleOrderId=null;
+
+    writeWholesaleSnapshot(state.wholesaleRetail);
+    queueWholesaleCloudRecord(tombstone);
     save();
     render();
+
+    flushWholesalePendingQueue()
+      .then(()=>syncWholesaleLaunchRecordsFromCloud({showStatus:false}))
+      .catch(()=>{});
   }
 }
 
@@ -12798,10 +13298,27 @@ if($("wholesaleForm")){
 
     lastSavedWholesaleId=id;
 
+    /*
+      Primeiro salva localmente e na fila individual.
+      Mesmo sem internet, o lançamento não some e será enviado depois.
+    */
+    writeWholesaleSnapshot(state.wholesaleRetail);
+    queueWholesaleCloudRecord(item);
+
     if($("wholesaleFilterDate"))$("wholesaleFilterDate").value="";
     if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
 
     save();
+    showUndoToast("Lançamento salvo neste aparelho. Sincronizando com todos...");
+    flushWholesalePendingQueue()
+      .then(ok=>{
+        if(ok){
+          showUndoToast("Lançamento salvo e compartilhado com todos os colaboradores.");
+          return syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+        }
+      })
+      .catch(()=>{});
+
     resetWholesaleRetailForm();
 
     currentPage="wholesaleRetail";
