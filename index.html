@@ -8622,6 +8622,20 @@ body.appRecovered #cloudStatus{
   }
 }
 
+
+/* ===== V119 BLINDAGEM DOS LANÇAMENTOS DOS INFLUENCERS ===== */
+.profileMenuDropdown .launchRecoverBtn{
+  border-color:#bbf7d0!important;
+  background:#ecfdf5!important;
+  color:#047857!important;
+  font-weight:900!important;
+}
+
+#launchSubmitButton:disabled{
+  opacity:.72!important;
+  cursor:wait!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8703,7 +8717,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V118</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V119</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -8714,6 +8728,7 @@ body.appRecovered #cloudStatus{
         <button type="button" class="secondary small backupBtn" onclick="exportFullBackup();closeProfileMenu();">Baixar backup</button>
         <button type="button" class="secondary small backupRestoreBtn" onclick="triggerBackupImport();closeProfileMenu();">Restaurar backup</button>
         <button type="button" class="secondary small wholesaleRecoverBtn" onclick="recoverWholesaleLaunchesDeepScan();closeProfileMenu();">Recuperação profunda</button>
+        <button type="button" class="secondary small launchRecoverBtn" onclick="recoverInfluencerLaunchesDeepScan();closeProfileMenu();">Recuperar lançamentos influencers</button>
         <button type="button" class="secondary small systemAuditBtn" onclick="runSystemAuditAndShow();closeProfileMenu();">Auditoria do sistema</button>
         <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Resetar testes</button>
         <button type="button" class="secondary small" onclick="logoutUser();closeProfileMenu();">Sair</button>
@@ -8727,7 +8742,7 @@ body.appRecovered #cloudStatus{
 
     <section id="launches" class="view">
       <div class="panel"><div class="panelHead"><h3>Novo lançamento</h3><span class="muted">Marque Acumular para jogar o saldo na carteira do influencer.</span></div>
-        <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="resetLaunchForm()">Cancelar</button></div></form>
+        <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" id="launchSubmitButton" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="cancelLaunchForm()">Cancelar</button></div></form>
       </div>
       <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><label class="dateMini">Mês<input id="launchMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="primary" onclick="exportLaunchesPDF()">Exportar para PDF</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
 
@@ -9817,6 +9832,24 @@ let wholesaleSubmitLocked=false;
 let cloudSaveInFlight=null;
 let cloudSaveRetryTimer=null;
 let cloudSaveRetryAttempt=0;
+
+/*
+  V119 — salvamento robusto dos lançamentos com cupom/influencer.
+  Cada lançamento da aba Lançamentos também é salvo em linha individual na nuvem.
+*/
+const INFLUENCER_LAUNCH_RECORD_PREFIX="influencer_launch_";
+const INFLUENCER_LAUNCH_PENDING_KEY=KEY+"_influencer_launch_pending_v119";
+const INFLUENCER_LAUNCH_SNAPSHOT_KEY=KEY+"_influencer_launch_snapshot_v119";
+const INFLUENCER_LAUNCH_SEED_KEY=KEY+"_influencer_launch_seed_v119";
+const LAUNCH_DRAFT_PREFIX=KEY+"_launch_draft_v119_";
+
+let launchFlushBusy=false;
+let launchSyncBusy=false;
+let launchSyncWatchersInstalled=false;
+let launchPollTimer=null;
+let launchDraftTimer=null;
+let launchDraftProtectionInstalled=false;
+let launchSubmitLocked=false;
 function legacyStorageKeys(){
   return [
     'painel_influencers_backup_estavel_v60',
@@ -9907,8 +9940,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V118";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v118";
+const APP_BUILD_VERSION="V119";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v119";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9947,7 +9980,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=118");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=119");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10541,7 +10574,7 @@ function initAuthUi(){
   if(session){
     setSessionUser(session);
     hideLoginScreen();
-    setTimeout(()=>restoreWholesaleFormDraft({notify:true}),120);
+    setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
   }else{
     setSessionUser(null);
     showLoginScreen("Use seu usuário interno para entrar.");
@@ -10564,7 +10597,7 @@ function handleLoginSubmit(e){
   setSessionUser(user);
   if($("loginPassword"))$("loginPassword").value="";
   hideLoginScreen();
-  setTimeout(()=>restoreWholesaleFormDraft({notify:true}),120);
+  setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
   showUndoToast("Login salvo neste aparelho.");
 }
 
@@ -10758,6 +10791,7 @@ function save(){
 
   handleUndoCommit(data);
   writeWholesaleSnapshot(state.wholesaleRetail||[]);
+  writeInfluencerLaunchSnapshot(state.launches||[]);
 
   let localSaved=false;
 
@@ -11605,7 +11639,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V118",
+    version:"V119",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -11744,7 +11778,7 @@ function runLocalSystemAudit(){
     auditAdd(report,"error","SHARED_VISIBILITY","Foi detectado filtro por colaborador na lista compartilhada.");
   }
 
-  // Fila e snapshots
+  // Fila e snapshots de Atacado e Varejo
   const pending=readWholesalePendingQueue();
   report.metrics.pendingWholesaleRecords=pending.length;
   report.metrics.wholesaleRecords=ensureArray(state.wholesaleRetail).length;
@@ -11760,6 +11794,24 @@ function runLocalSystemAudit(){
   }else{
     auditAdd(report,"warn","WHOLESALE_SNAPSHOT","Espelho local possui menos registros que a lista atual.");
   }
+
+  const launchPending=readInfluencerLaunchPendingQueue();
+  report.metrics.pendingInfluencerLaunchRecords=launchPending.length;
+  report.metrics.influencerLaunchRecords=ensureArray(state.launches).length;
+
+  if(!launchPending.length){
+    auditAdd(report,"pass","INFLUENCER_LAUNCH_QUEUE","Nenhum lançamento de influencer aguardando sincronização.");
+  }else{
+    auditAdd(report,"warn","INFLUENCER_LAUNCH_QUEUE","Existem lançamentos de influencer aguardando sincronização.",`${launchPending.length} registro(s) preservado(s) localmente.`);
+  }
+
+  if(readInfluencerLaunchSnapshot().length>=state.launches.length){
+    auditAdd(report,"pass","INFLUENCER_LAUNCH_SNAPSHOT","Espelho local da aba Lançamentos disponível.");
+  }else{
+    auditAdd(report,"warn","INFLUENCER_LAUNCH_SNAPSHOT","Espelho local possui menos lançamentos que a lista atual.");
+  }
+
+  auditAdd(report,"pass","INFLUENCER_LAUNCH_DRAFT","Proteção de rascunho automático da aba Lançamentos instalada.");
 
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
@@ -11840,9 +11892,16 @@ async function runSystemAudit(){
 
   try{
     const rows=await fetchWholesaleCloudRecords();
-    auditAdd(report,"pass","WHOLESALE_CLOUD_READ","Leitura dos lançamentos individuais na nuvem funcionando.",`${rows.length} registro(s) encontrado(s).`);
+    auditAdd(report,"pass","WHOLESALE_CLOUD_READ","Leitura dos lançamentos individuais de Atacado e Varejo na nuvem funcionando.",`${rows.length} registro(s) encontrado(s).`);
   }catch(e){
-    auditAdd(report,"error","WHOLESALE_CLOUD_READ","Falha ao ler lançamentos individuais na nuvem.",String(e.message||e));
+    auditAdd(report,"error","WHOLESALE_CLOUD_READ","Falha ao ler lançamentos individuais de Atacado e Varejo na nuvem.",String(e.message||e));
+  }
+
+  try{
+    const launchRows=await fetchInfluencerLaunchCloudRecords();
+    auditAdd(report,"pass","INFLUENCER_LAUNCH_CLOUD_READ","Leitura dos lançamentos individuais dos influencers na nuvem funcionando.",`${launchRows.length} registro(s) encontrado(s).`);
+  }catch(e){
+    auditAdd(report,"error","INFLUENCER_LAUNCH_CLOUD_READ","Falha ao ler lançamentos individuais dos influencers na nuvem.",String(e.message||e));
   }
 
   const errors=report.items.filter(x=>x.level==="error").length;
@@ -11873,7 +11932,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v118-${today()}.json`;
+  a.download=`auditoria-painel-v119-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -11903,7 +11962,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V118",
+    "AUDITORIA DO SISTEMA — V119",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -11931,7 +11990,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V118: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V119: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -11985,8 +12044,574 @@ async function recoverWholesaleLaunchesFromDevice(){
 }
 
 
+
+function influencerLaunchRecordTime(item){
+  const raw=item?.deletedAt||item?.updatedAt||item?.createdAt||item?.date||"";
+  const t=Date.parse(raw);
+  return Number.isFinite(t)?t:0;
+}
+
+function mergeInfluencerLaunchCollections(...collections){
+  const map=new Map();
+
+  collections.flat().forEach(item=>{
+    if(!item||typeof item!=="object"||!item.id)return;
+
+    const id=String(item.id);
+
+    if(item.deleted===true){
+      map.delete(id);
+      return;
+    }
+
+    const current=map.get(id);
+
+    if(!current){
+      map.set(id,cloneSafe(item,item));
+      return;
+    }
+
+    const currentTime=influencerLaunchRecordTime(current);
+    const nextTime=influencerLaunchRecordTime(item);
+
+    if(nextTime>=currentTime){
+      map.set(id,cloneSafe(item,item));
+    }
+  });
+
+  return [...map.values()].sort((a,b)=>{
+    const byTime=influencerLaunchRecordTime(b)-influencerLaunchRecordTime(a);
+    if(byTime)return byTime;
+    return String(b.date||"").localeCompare(String(a.date||""));
+  });
+}
+
+function readInfluencerLaunchSnapshot(){
+  try{
+    const raw=localStorage.getItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed:[];
+  }catch(e){
+    return [];
+  }
+}
+
+function writeInfluencerLaunchSnapshot(rows=state.launches||[]){
+  try{
+    localStorage.setItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY,JSON.stringify(Array.isArray(rows)?rows:[]));
+  }catch(e){
+    console.warn("Não foi possível gravar o espelho local dos lançamentos de influencers:",e);
+  }
+}
+
+function readInfluencerLaunchPendingQueue(){
+  try{
+    const raw=localStorage.getItem(INFLUENCER_LAUNCH_PENDING_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed.filter(x=>x&&x.id&&x.record):[];
+  }catch(e){
+    return [];
+  }
+}
+
+function writeInfluencerLaunchPendingQueue(queue){
+  try{
+    localStorage.setItem(INFLUENCER_LAUNCH_PENDING_KEY,JSON.stringify(Array.isArray(queue)?queue:[]));
+  }catch(e){
+    console.warn("Não foi possível gravar a fila local dos lançamentos de influencers:",e);
+  }
+}
+
+function queueInfluencerLaunchCloudRecord(record){
+  if(!record||!record.id)return false;
+
+  const queue=readInfluencerLaunchPendingQueue();
+  const entry={
+    id:String(record.id),
+    record:cloneSafe(record,record),
+    queuedAt:new Date().toISOString()
+  };
+
+  const idx=queue.findIndex(x=>String(x.id)===entry.id);
+  if(idx>=0)queue[idx]=entry;
+  else queue.push(entry);
+
+  writeInfluencerLaunchPendingQueue(queue);
+  writeInfluencerLaunchSnapshot(state.launches||[]);
+  return true;
+}
+
+function influencerLaunchCloudRow(record){
+  return {
+    chave:INFLUENCER_LAUNCH_RECORD_PREFIX+String(record.id),
+    valor:JSON.stringify(record)
+  };
+}
+
+async function flushInfluencerLaunchPendingQueue(){
+  if(launchFlushBusy)return false;
+
+  let queue=readInfluencerLaunchPendingQueue();
+  if(!queue.length)return true;
+
+  launchFlushBusy=true;
+
+  try{
+    while(queue.length){
+      const batch=queue.slice(0,40);
+      const payload=batch.map(x=>influencerLaunchCloudRow(x.record));
+
+      const response=await fetchWithTimeout(
+        SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",
+        {
+          method:"POST",
+          headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
+          body:JSON.stringify(payload)
+        },
+        12000
+      );
+
+      if(!response.ok){
+        const text=await response.text();
+        console.error("Falha ao sincronizar lançamentos individuais de influencers:",text);
+        updateCloudStatus("Lançamento de influencer salvo neste aparelho. Sincronização pendente.",true);
+        updateCloudDebug("fila local de lançamentos preservada; detalhe: "+text.slice(0,160));
+        return false;
+      }
+
+      const sentMap=new Map(batch.map(x=>[String(x.id),String(x.queuedAt)]));
+      const latest=readInfluencerLaunchPendingQueue().filter(x=>{
+        const sentAt=sentMap.get(String(x.id));
+        return !sentAt||String(x.queuedAt)!==sentAt;
+      });
+
+      writeInfluencerLaunchPendingQueue(latest);
+      queue=latest;
+    }
+
+    updateCloudStatus("Lançamentos dos influencers sincronizados.");
+    updateCloudDebug("fila individual da aba Lançamentos sincronizada");
+    return true;
+  }catch(e){
+    console.error("Erro na fila de lançamentos de influencers:",e);
+    updateCloudStatus("Lançamento de influencer salvo neste aparelho. Tentaremos novamente.",true);
+    updateCloudDebug(e.name==="AbortError"?"tempo esgotado na sincronização dos lançamentos":"erro: "+(e.message||e));
+    return false;
+  }finally{
+    launchFlushBusy=false;
+  }
+}
+
+function applyInfluencerLaunchCloudRecords(records){
+  const current=Array.isArray(state.launches)?state.launches:[];
+  const pending=readInfluencerLaunchPendingQueue();
+
+  const tombstones=new Set();
+  const cloudItems=[];
+
+  (records||[]).forEach(record=>{
+    if(!record||!record.id)return;
+    if(record.deleted===true)tombstones.add(String(record.id));
+    else cloudItems.push(record);
+  });
+
+  pending.forEach(entry=>{
+    const record=entry.record;
+    if(record?.deleted===true)tombstones.add(String(record.id));
+  });
+
+  let merged=mergeInfluencerLaunchCollections(current,cloudItems);
+
+  if(tombstones.size){
+    merged=merged.filter(item=>!tombstones.has(String(item.id)));
+  }
+
+  const pendingItems=pending
+    .map(x=>x.record)
+    .filter(x=>x&&x.deleted!==true);
+
+  merged=mergeInfluencerLaunchCollections(merged,pendingItems);
+
+  const before=JSON.stringify(current);
+  const after=JSON.stringify(merged);
+  const changed=before!==after;
+
+  if(changed){
+    state.launches=merged;
+    writeInfluencerLaunchSnapshot(merged);
+
+    try{
+      const data=JSON.stringify(state);
+      localStorage.setItem(KEY,data);
+      lastUndoSnapshot=data;
+    }catch(e){}
+
+    try{
+      renderDashboard();
+      renderLaunches();
+      renderPaidPage();
+      renderAccumulations();
+      renderReports();
+    }catch(e){
+      console.warn("Renderização após sincronização de lançamentos ignorada:",e);
+    }
+  }
+
+  return changed;
+}
+
+async function fetchInfluencerLaunchCloudRecords(){
+  const url=SUPABASE_URL+
+    "/rest/v1/personalizacao?chave=like."+
+    encodeURIComponent(INFLUENCER_LAUNCH_RECORD_PREFIX+"*")+
+    "&select=chave,valor";
+
+  const response=await fetchWithTimeout(url,{
+    method:"GET",
+    headers:cloudHeaders()
+  },12000);
+
+  if(!response.ok){
+    const text=await response.text();
+    throw new Error("HTTP "+response.status+" ao ler lançamentos individuais: "+text.slice(0,160));
+  }
+
+  const rows=await response.json();
+  const records=[];
+
+  (Array.isArray(rows)?rows:[]).forEach(row=>{
+    try{
+      const parsed=typeof row.valor==="string"?JSON.parse(row.valor):row.valor;
+      if(parsed&&parsed.id)records.push(parsed);
+    }catch(e){
+      console.warn("Registro individual de lançamento inválido ignorado:",row?.chave);
+    }
+  });
+
+  return records;
+}
+
+async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
+  if(launchSyncBusy)return false;
+  launchSyncBusy=true;
+
+  try{
+    await flushInfluencerLaunchPendingQueue();
+
+    const records=await fetchInfluencerLaunchCloudRecords();
+    const changed=applyInfluencerLaunchCloudRecords(records);
+
+    if(showStatus){
+      updateCloudStatus(changed
+        ?"Lançamentos dos influencers atualizados."
+        :"Lançamentos dos influencers já estão atualizados.");
+      updateCloudDebug(records.length+" lançamentos individuais conferidos");
+    }
+
+    return true;
+  }catch(e){
+    console.warn("Sincronização de lançamentos indisponível:",e);
+    if(showStatus){
+      updateCloudStatus("Modo local ativo. Lançamentos serão sincronizados automaticamente.",true);
+      updateCloudDebug(String(e.message||e));
+    }
+    return false;
+  }finally{
+    launchSyncBusy=false;
+  }
+}
+
+function activeLocalInfluencerLaunchCandidates(){
+  const pendingItems=readInfluencerLaunchPendingQueue()
+    .map(x=>x.record)
+    .filter(x=>x&&x.deleted!==true);
+
+  return mergeInfluencerLaunchCollections(
+    Array.isArray(state.launches)?state.launches:[],
+    readInfluencerLaunchSnapshot(),
+    pendingItems
+  );
+}
+
+function queueAllInfluencerLaunchRows(rows){
+  (Array.isArray(rows)?rows:[]).forEach(item=>{
+    if(item&&item.id)queueInfluencerLaunchCloudRecord(item);
+  });
+}
+
+async function seedInfluencerLaunchRecordsOnce(){
+  const rows=activeLocalInfluencerLaunchCandidates();
+
+  if(rows.length){
+    state.launches=mergeInfluencerLaunchCollections(state.launches||[],rows);
+    writeInfluencerLaunchSnapshot(state.launches);
+  }
+
+  let seeded=false;
+  try{seeded=localStorage.getItem(INFLUENCER_LAUNCH_SEED_KEY)==="ok";}catch(e){}
+
+  if(!seeded&&rows.length){
+    queueAllInfluencerLaunchRows(rows);
+    try{localStorage.setItem(INFLUENCER_LAUNCH_SEED_KEY,"ok");}catch(e){}
+  }
+
+  await flushInfluencerLaunchPendingQueue();
+}
+
+function installInfluencerLaunchSyncWatchers(){
+  if(launchSyncWatchersInstalled)return;
+  launchSyncWatchersInstalled=true;
+
+  window.addEventListener("online",()=>{
+    scheduleCloudSave(50);
+    flushInfluencerLaunchPendingQueue()
+      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:true}));
+  });
+
+  window.addEventListener("focus",()=>{
+    syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+  });
+
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+      syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+    }
+  });
+
+  clearInterval(launchPollTimer);
+  launchPollTimer=setInterval(()=>{
+    syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+  },15000);
+}
+
+function looksLikeInfluencerLaunch(obj){
+  if(!obj||typeof obj!=="object"||Array.isArray(obj))return false;
+
+  const hasInfluencer=typeof obj.influencerId==="string"&&obj.influencerId.trim().length>0;
+  const hasSold=Number(obj.sold||0)>0;
+  const hasCommission=("productCommission" in obj)||("cashCommission" in obj);
+  const hasShape=("origin" in obj)||("status" in obj)||("pdfSent" in obj)||("accumulate" in obj)||("paid" in obj);
+
+  return hasInfluencer&&hasSold&&hasCommission&&hasShape;
+}
+
+function normalizeRecoveredInfluencerLaunch(obj,source="armazenamento desconhecido"){
+  const item=cloneSafe(obj,{})||{};
+  const audit=typeof currentAuditInfo==="function"?currentAuditInfo():{id:"",name:"Recuperado",username:"",at:new Date().toISOString()};
+
+  item.id=String(item.id||uid());
+  item.date=String(item.date||today()).slice(0,10);
+  item.month=item.month||item.date.slice(0,7);
+  item.influencerId=String(item.influencerId||"");
+  item.origin=String(item.origin||"Site");
+  item.sold=Math.max(0,finiteNumber(item.sold,0));
+  item.productCommission=Math.max(0,finiteNumber(item.productCommission,0));
+  item.cashCommission=Math.max(0,finiteNumber(item.cashCommission,0));
+  item.status=String(item.status||"Pendente");
+  item.pdfSent=!!item.pdfSent;
+  item.accumulate=!!item.accumulate;
+  item.paid=item.accumulate?false:!!item.paid;
+  item.paidAt=item.accumulate?"":(item.paidAt||"");
+  item.paidMonth=item.accumulate?"":(item.paidMonth||"");
+  item.notes=String(item.notes||"");
+  item.createdById=item.createdById||audit.id||"";
+  item.createdByName=item.createdByName||audit.name||"Recuperado do aparelho";
+  item.createdByUsername=item.createdByUsername||audit.username||"";
+  item.createdAt=item.createdAt||item.updatedAt||new Date().toISOString();
+  item.updatedAt=item.updatedAt||item.createdAt;
+  item.recoveredAt=new Date().toISOString();
+  item.recoveredSource=source;
+
+  return item;
+}
+
+function deepExtractInfluencerLaunchCandidates(value,source,out,seen,depth=0){
+  if(depth>7||value==null)return;
+
+  if(typeof value==="string"){
+    const text=value.trim();
+    if(!text||text.length<2)return;
+
+    if((text.startsWith("{")&&text.endsWith("}"))||
+       (text.startsWith("[")&&text.endsWith("]"))){
+      try{
+        deepExtractInfluencerLaunchCandidates(JSON.parse(text),source,out,seen,depth+1);
+      }catch(e){}
+    }
+    return;
+  }
+
+  if(typeof value!=="object")return;
+
+  if(seen.has(value))return;
+  seen.add(value);
+
+  if(Array.isArray(value)){
+    value.forEach((item,index)=>{
+      deepExtractInfluencerLaunchCandidates(item,`${source}[${index}]`,out,seen,depth+1);
+    });
+    return;
+  }
+
+  if(looksLikeInfluencerLaunch(value)){
+    const normalized=normalizeRecoveredInfluencerLaunch(value,source);
+    const signature=[
+      normalized.id,
+      normalized.influencerId,
+      normalized.sold,
+      normalized.date,
+      normalized.origin
+    ].join("|");
+
+    if(!out.some(x=>x.__recoverySignature===signature)){
+      Object.defineProperty(normalized,"__recoverySignature",{
+        value:signature,
+        enumerable:false
+      });
+      out.push(normalized);
+    }
+  }
+
+  Object.entries(value).forEach(([key,val])=>{
+    if(key==="settings"&&depth>2)return;
+    deepExtractInfluencerLaunchCandidates(val,`${source}.${key}`,out,seen,depth+1);
+  });
+}
+
+function collectInfluencerLaunchCandidatesDeepScan(){
+  const found=[];
+  const seen=new WeakSet();
+
+  const sources=[
+    {source:"estado atual",value:state},
+    {source:"snapshot lançamentos V119",value:readInfluencerLaunchSnapshot()},
+    {source:"fila lançamentos V119",value:readInfluencerLaunchPendingQueue()},
+    ...allStorageEntries(localStorage,"localStorage"),
+    ...allStorageEntries(sessionStorage,"sessionStorage")
+  ];
+
+  try{
+    if(window.name){
+      sources.push({source:"window.name",value:window.name});
+    }
+  }catch(e){}
+
+  try{
+    readUndoStack().forEach((entry,index)=>{
+      sources.push({
+        source:`histórico desfazer ${index+1}`,
+        value:entry?.state
+      });
+    });
+  }catch(e){}
+
+  sources.forEach(entry=>{
+    deepExtractInfluencerLaunchCandidates(
+      entry.value,
+      entry.source,
+      found,
+      seen,
+      0
+    );
+  });
+
+  return mergeInfluencerLaunchCollections(found);
+}
+
+function recoveredInfluencerLaunchesNotInCurrent(candidates){
+  const current=Array.isArray(state.launches)?state.launches:[];
+  const currentById=new Map(current.map(x=>[String(x.id),x]));
+
+  return (candidates||[]).filter(item=>{
+    const existing=currentById.get(String(item.id));
+
+    if(!existing)return true;
+
+    const existingSignature=[
+      String(existing.influencerId||"").trim(),
+      Number(existing.sold||0),
+      Number(existing.productCommission||0),
+      Number(existing.cashCommission||0),
+      String(existing.date||"").slice(0,10),
+      String(existing.origin||"").trim()
+    ].join("|");
+
+    const candidateSignature=[
+      String(item.influencerId||"").trim(),
+      Number(item.sold||0),
+      Number(item.productCommission||0),
+      Number(item.cashCommission||0),
+      String(item.date||"").slice(0,10),
+      String(item.origin||"").trim()
+    ].join("|");
+
+    return existingSignature!==candidateSignature&&
+      influencerLaunchRecordTime(item)>=influencerLaunchRecordTime(existing);
+  });
+}
+
+async function recoverInfluencerLaunchesDeepScan(){
+  updateCloudStatus("Fazendo recuperação profunda dos lançamentos de influencers...");
+  updateCloudDebug("varrendo storage, sessão, histórico e filas da aba Lançamentos");
+
+  const candidates=collectInfluencerLaunchCandidatesDeepScan();
+  const recoverable=recoveredInfluencerLaunchesNotInCurrent(candidates);
+
+  if(!recoverable.length){
+    alert(
+      "Não encontrei lançamentos adicionais de influencers neste aparelho.\\n\\n"+
+      "Se o sistema antigo não gravou o lançamento no navegador, não existe registro técnico para recuperar automaticamente."
+    );
+    updateCloudStatus("Nenhum lançamento de influencer adicional encontrado.",true);
+    updateCloudDebug(`${candidates.length} candidato(s) conferido(s), nenhum adicional`);
+    return;
+  }
+
+  const preview=recoverable.slice(0,8).map((item,index)=>{
+    const inf=infById(item.influencerId)||{};
+    return `${index+1}. ${inf.name||item.influencerId} • ${dateBR(item.date)} • ${money(item.sold)} • ${item.origin}`;
+  }).join("\\n");
+
+  const more=recoverable.length>8
+    ? `\\n... e mais ${recoverable.length-8} lançamento(s).`
+    : "";
+
+  const ok=confirm(
+    `Encontrei ${recoverable.length} lançamento(s) de influencer que podem ser recuperados.\\n\\n${preview}${more}\\n\\nDeseja recuperar e sincronizar agora?`
+  );
+
+  if(!ok){
+    updateCloudStatus("Recuperação de lançamentos cancelada.");
+    return;
+  }
+
+  state.launches=mergeInfluencerLaunchCollections(
+    state.launches||[],
+    recoverable
+  );
+
+  writeInfluencerLaunchSnapshot(state.launches);
+  queueAllInfluencerLaunchRows(recoverable);
+  save();
+
+  try{
+    render();
+    showPage("launches");
+  }catch(e){}
+
+  const synced=await flushInfluencerLaunchPendingQueue();
+  await syncInfluencerLaunchRecordsFromCloud({showStatus:true});
+
+  alert(
+    synced
+      ? `${recoverable.length} lançamento(s) recuperado(s) e sincronizado(s).`
+      : `${recoverable.length} lançamento(s) recuperado(s) neste aparelho. A sincronização continuará automaticamente.`
+  );
+}
+
+
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V118 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V119 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -12012,15 +12637,26 @@ async function cloudLoad(){
     if(row&&row.valor){
       try{
         const localWholesaleBeforeCloud=activeLocalWholesaleCandidates();
+        const localInfluencerLaunchesBeforeCloud=activeLocalInfluencerLaunchCandidates();
+
         state=JSON.parse(row.valor);
+
         state.wholesaleRetail=mergeWholesaleCollections(
           Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[],
           localWholesaleBeforeCloud
         );
+
+        state.launches=mergeInfluencerLaunchCollections(
+          Array.isArray(state.launches)?state.launches:[],
+          localInfluencerLaunchesBeforeCloud
+        );
+
         writeWholesaleSnapshot(state.wholesaleRetail);
+        writeInfluencerLaunchSnapshot(state.launches);
+
         const recoveredMedia=preserveMediaFromLegacy(state);
         updateCloudStatus("Dados carregados da nuvem e lançamentos locais preservados.");
-        updateCloudDebug(recoveredMedia?"painel_state carregado, mídia recuperada e lista local mesclada":"painel_state carregado sem apagar lançamentos locais");
+        updateCloudDebug(recoveredMedia?"painel_state carregado, mídia recuperada e listas locais mescladas":"painel_state carregado sem apagar lançamentos locais");
         return true;
       }catch(e){
         console.error("Erro ao interpretar dados da nuvem:",e);
@@ -12173,8 +12809,13 @@ async function startApp(){
       await syncWholesaleLaunchRecordsFromCloud({showStatus:false});
       installWholesaleSyncWatchers();
       installWholesaleDraftProtection();
+
+      await seedInfluencerLaunchRecordsOnce();
+      await syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+      installInfluencerLaunchSyncWatchers();
+      installLaunchDraftProtection();
     }catch(e){
-      console.warn("Sincronização inicial de Atacado e Varejo adiada:",e);
+      console.warn("Sincronização inicial de vendas adiada:",e);
     }
 
     try{
@@ -12289,14 +12930,32 @@ function normalize(){
   state.accumulationHistory=ensureArray(state.accumulationHistory);
 
   state.launches.forEach(l=>{
+    l.id=l.id||uid();
+    l.date=l.date||today();
+    l.month=l.month||(l.date||today()).slice(0,7);
+    l.influencerId=l.influencerId||"";
+    l.origin=l.origin||"Site";
+    l.sold=Math.max(0,finiteNumber(l.sold,0));
+    l.productCommission=Math.max(0,finiteNumber(l.productCommission,0));
+    l.cashCommission=Math.max(0,finiteNumber(l.cashCommission,0));
+    l.status=l.status||"Pendente";
+    l.notes=l.notes||"";
     l.accumulate=!!l.accumulate;
     l.pdfSent=!!l.pdfSent;
     l.paid=!!l.paid;
-    l.month=l.month||(l.date||today()).slice(0,7);
+    l.createdByName=l.createdByName||"Não registrado";
+    l.createdByUsername=l.createdByUsername||"";
+    l.createdById=l.createdById||"";
+    l.createdAt=l.createdAt||"";
+    l.updatedByName=l.updatedByName||"";
+    l.updatedByUsername=l.updatedByUsername||"";
+    l.updatedAt=l.updatedAt||"";
+
     if(l.paid){
       l.paidAt=l.paidAt||today();
       l.paidMonth=l.paidMonth||(l.paidAt||l.date||today()).slice(0,7);
     }
+
     if(l.accumulate){
       l.paid=false;
       l.paidAt="";
@@ -12578,27 +13237,255 @@ function exportPaidCSV(){
 }
 
 function calcLaunch(){}
+
+function launchDraftUserKey(){
+  return String(
+    currentUser?.id||
+    currentUser?.username||
+    "sem-login"
+  ).replace(/[^a-zA-Z0-9_-]/g,"_");
+}
+
+function launchDraftKey(){
+  return LAUNCH_DRAFT_PREFIX+launchDraftUserKey();
+}
+
+function captureLaunchFormDraft(){
+  if(!$("launchForm"))return null;
+
+  return {
+    id:$("launchId")?.value||"",
+    date:$("launchDate")?.value||today(),
+    influencerId:$("launchInfluencer")?.value||"",
+    origin:$("launchOrigin")?.value||"Site",
+    sold:finiteNumber($("launchSold")?.value,0),
+    productCommission:finiteNumber($("launchProduct")?.value,0),
+    cashCommission:finiteNumber($("launchCash")?.value,0),
+    status:$("launchStatus")?.value||"Pendente",
+    pdfSent:!!$("launchPdfSent")?.checked,
+    accumulate:!!$("launchAccumulate")?.checked,
+    notes:$("launchNotes")?.value||"",
+    createdById:currentUser?.id||"",
+    createdByName:currentUser?.name||"Rascunho local",
+    createdByUsername:currentUser?.username||"",
+    createdAt:new Date().toISOString(),
+    draft:true
+  };
+}
+
+function launchDraftHasContent(draft){
+  if(!draft)return false;
+
+  return !!(
+    String(draft.influencerId||"").trim()||
+    Number(draft.sold||0)>0||
+    Number(draft.productCommission||0)>0||
+    Number(draft.cashCommission||0)>0||
+    String(draft.notes||"").trim()
+  );
+}
+
+function saveLaunchFormDraft(){
+  clearTimeout(launchDraftTimer);
+
+  launchDraftTimer=setTimeout(()=>{
+    const draft=captureLaunchFormDraft();
+    const key=launchDraftKey();
+
+    try{
+      if(launchDraftHasContent(draft)){
+        localStorage.setItem(key,JSON.stringify(draft));
+      }else{
+        localStorage.removeItem(key);
+      }
+    }catch(e){
+      console.warn("Não foi possível salvar o rascunho do lançamento de influencer:",e);
+    }
+  },180);
+}
+
+function readLaunchFormDraft(){
+  try{
+    const raw=localStorage.getItem(launchDraftKey());
+    const parsed=raw?JSON.parse(raw):null;
+    return parsed&&typeof parsed==="object"?parsed:null;
+  }catch(e){
+    return null;
+  }
+}
+
+function clearLaunchFormDraft(){
+  clearTimeout(launchDraftTimer);
+
+  try{
+    localStorage.removeItem(launchDraftKey());
+  }catch(e){}
+}
+
+function applyLaunchDraftToForm(draft){
+  if(!draft||!$("launchForm"))return false;
+
+  if($("launchId"))$("launchId").value=draft.id||"";
+  if($("launchDate"))$("launchDate").value=draft.date||today();
+  if($("launchInfluencer"))$("launchInfluencer").value=draft.influencerId||"";
+  if($("launchOrigin"))$("launchOrigin").value=draft.origin||"Site";
+  if($("launchSold"))$("launchSold").value=finiteNumber(draft.sold,0)||"";
+  if($("launchProduct"))$("launchProduct").value=finiteNumber(draft.productCommission,0)||"";
+  if($("launchCash"))$("launchCash").value=finiteNumber(draft.cashCommission,0)||"";
+  if($("launchStatus"))$("launchStatus").value=draft.status||"Pendente";
+  if($("launchPdfSent"))$("launchPdfSent").checked=!!draft.pdfSent;
+  if($("launchAccumulate"))$("launchAccumulate").checked=!!draft.accumulate;
+  if($("launchNotes"))$("launchNotes").value=draft.notes||"";
+
+  calcLaunch();
+  return true;
+}
+
+function restoreLaunchFormDraft({notify=false}={}){
+  const draft=readLaunchFormDraft();
+
+  if(!launchDraftHasContent(draft))return false;
+
+  const current=captureLaunchFormDraft();
+  if(launchDraftHasContent(current))return false;
+
+  const restored=applyLaunchDraftToForm(draft);
+
+  if(restored&&notify){
+    showUndoToast("Rascunho da aba Lançamentos recuperado neste aparelho.");
+  }
+
+  return restored;
+}
+
+function cancelLaunchForm(){
+  clearLaunchFormDraft();
+  resetLaunchForm();
+  showUndoToast("Rascunho do lançamento descartado.");
+}
+
+function installLaunchDraftProtection(){
+  if(launchDraftProtectionInstalled)return;
+
+  const form=$("launchForm");
+  if(!form)return;
+
+  launchDraftProtectionInstalled=true;
+
+  form.addEventListener("input",saveLaunchFormDraft);
+  form.addEventListener("change",saveLaunchFormDraft);
+
+  window.addEventListener("beforeunload",()=>{
+    const draft=captureLaunchFormDraft();
+
+    if(!launchDraftHasContent(draft))return;
+
+    try{
+      localStorage.setItem(
+        launchDraftKey(),
+        JSON.stringify(draft)
+      );
+    }catch(e){}
+  });
+}
+
+function lockLaunchSubmit(){
+  if(launchSubmitLocked)return false;
+
+  launchSubmitLocked=true;
+
+  const button=$("launchSubmitButton");
+  if(button){
+    button.disabled=true;
+    button.textContent="Salvando...";
+  }
+
+  setTimeout(()=>{
+    launchSubmitLocked=false;
+
+    if(button){
+      button.disabled=false;
+      button.textContent="Salvar lançamento";
+    }
+  },1400);
+
+  return true;
+}
+
 function resetLaunchForm(){$("launchForm").reset();$("launchId").value="";$("launchDate").value=today();$("launchAccumulate").checked=false;if(state.influencers[0])$("launchInfluencer").value=state.influencers[0].id;if(state.settings.origins[0])$("launchOrigin").value=state.settings.origins[0];if(state.settings.statuses[0])$("launchStatus").value=state.settings.statuses[0];calcLaunch();}
 function autoCommission(){if($("launchId").value)return;const inf=infById($("launchInfluencer").value);const sold=Number($("launchSold").value||0);if(inf&&sold){$("launchProduct").value=(sold*Number(inf.productRate||0)/100).toFixed(2);$("launchCash").value=(sold*Number(inf.cashRate||0)/100).toFixed(2);}calcLaunch();}
 function editLaunch(id){const l=state.launches.find(x=>x.id===id);if(!l)return;showPage("launches");$("launchId").value=l.id;$("launchDate").value=l.date;$("launchInfluencer").value=l.influencerId;$("launchOrigin").value=l.origin;$("launchSold").value=l.sold;$("launchProduct").value=l.productCommission;$("launchCash").value=l.cashCommission;$("launchStatus").value=l.status;$("launchPdfSent").checked=!!l.pdfSent;$("launchAccumulate").checked=!!l.accumulate;$("launchNotes").value=l.notes||"";calcLaunch();}
-function deleteLaunch(id){if(confirm("Excluir este lançamento?")){state.launches=state.launches.filter(l=>l.id!==id);save();render();}}
-function togglePdfSent(id,val){const l=state.launches.find(x=>x.id===id);if(l){l.pdfSent=!!val;if(val)l.status="Enviado";save();render();}}
+function deleteLaunch(id){
+  if(confirm("Excluir este lançamento?")){
+    const audit=currentAuditInfo();
+    const tombstone={
+      id:String(id),
+      deleted:true,
+      deletedAt:new Date().toISOString(),
+      deletedById:audit.id||"",
+      deletedByName:audit.name||"Não registrado",
+      deletedByUsername:audit.username||""
+    };
+
+    state.launches=state.launches.filter(l=>String(l.id)!==String(id));
+    writeInfluencerLaunchSnapshot(state.launches);
+    queueInfluencerLaunchCloudRecord(tombstone);
+    save();
+    render();
+
+    flushInfluencerLaunchPendingQueue()
+      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
+      .catch(()=>{});
+  }
+}
+function togglePdfSent(id,val){
+  const l=state.launches.find(x=>x.id===id);
+  if(l){
+    const audit=currentAuditInfo();
+    l.pdfSent=!!val;
+    if(val)l.status="Enviado";
+    l.updatedById=audit.id||"";
+    l.updatedByName=audit.name||"";
+    l.updatedByUsername=audit.username||"";
+    l.updatedAt=audit.at||new Date().toISOString();
+
+    queueInfluencerLaunchCloudRecord(l);
+    save();
+    render();
+
+    flushInfluencerLaunchPendingQueue()
+      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
+      .catch(()=>{});
+  }
+}
 function toggleAccumulate(id,val){
   const l=state.launches.find(x=>x.id===id);
   if(l){
+    const audit=currentAuditInfo();
     l.accumulate=!!val;
     if(l.accumulate){
       l.paid=false;
       l.paidAt="";
       l.paidMonth="";
     }
+    l.updatedById=audit.id||"";
+    l.updatedByName=audit.name||"";
+    l.updatedByUsername=audit.username||"";
+    l.updatedAt=audit.at||new Date().toISOString();
+
+    queueInfluencerLaunchCloudRecord(l);
     save();
     render();
+
+    flushInfluencerLaunchPendingQueue()
+      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
+      .catch(()=>{});
   }
 }
 function togglePaid(id,val){
   const l=state.launches.find(x=>x.id===id);
   if(l){
+    const audit=currentAuditInfo();
     l.paid=!!val;
     if(l.paid){
       l.accumulate=false;
@@ -12608,8 +13495,18 @@ function togglePaid(id,val){
       l.paidAt="";
       l.paidMonth="";
     }
+    l.updatedById=audit.id||"";
+    l.updatedByName=audit.name||"";
+    l.updatedByUsername=audit.username||"";
+    l.updatedAt=audit.at||new Date().toISOString();
+
+    queueInfluencerLaunchCloudRecord(l);
     save();
     render();
+
+    flushInfluencerLaunchPendingQueue()
+      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
+      .catch(()=>{});
   }
 }
 
@@ -14903,8 +15800,17 @@ async function clearAll(){
 $("launchSold").addEventListener("input",autoCommission);$("launchInfluencer").addEventListener("change",autoCommission);$("launchProduct").addEventListener("input",calcLaunch);$("launchCash").addEventListener("input",calcLaunch);
 $("launchForm").addEventListener("submit",e=>{
   e.preventDefault();
+
+  if(!lockLaunchSubmit())return;
+
+  if(!currentUser){
+    showLoginScreen("Faça login para salvar o lançamento.",true);
+    return;
+  }
+
   const infId=$("launchInfluencer").value;
-  const sold=Number($("launchSold").value||0);
+  const sold=finiteNumber($("launchSold").value,0);
+
   if(!infId){alert("Selecione um influencer.");return}
   if(sold<=0){alert("Informe o valor vendido.");return}
 
@@ -14912,6 +15818,7 @@ $("launchForm").addEventListener("submit",e=>{
   const id=$("launchId").value||uid();
   const old=state.launches.find(l=>l.id===id);
   const accumulate=$("launchAccumulate").checked;
+  const audit=currentAuditInfo();
 
   const item={
     id,
@@ -14920,20 +15827,44 @@ $("launchForm").addEventListener("submit",e=>{
     influencerId:infId,
     origin:$("launchOrigin").value||"Site",
     sold,
-    productCommission:Number($("launchProduct").value||0),
-    cashCommission:Number($("launchCash").value||0),
+    productCommission:Math.max(0,finiteNumber($("launchProduct").value,0)),
+    cashCommission:Math.max(0,finiteNumber($("launchCash").value,0)),
     status:$("launchStatus").value||"Pendente",
     pdfSent:$("launchPdfSent").checked,
     accumulate,
     paid:accumulate?false:!!(old&&old.paid),
     paidAt:accumulate?"":(old&&old.paidAt)||"",
     paidMonth:accumulate?"":(old&&old.paidMonth)||"",
-    notes:$("launchNotes").value||""
+    notes:$("launchNotes").value||"",
+    createdById:old?.createdById||audit.id,
+    createdByName:old?.createdByName||audit.name,
+    createdByUsername:old?.createdByUsername||audit.username,
+    createdAt:old?.createdAt||audit.at,
+    updatedById:old?audit.id:"",
+    updatedByName:old?audit.name:"",
+    updatedByUsername:old?audit.username:"",
+    updatedAt:audit.at
   };
 
   const idx=state.launches.findIndex(l=>l.id===id);
   if(idx>=0)state.launches[idx]=item;else state.launches.push(item);
+
+  writeInfluencerLaunchSnapshot(state.launches);
+  queueInfluencerLaunchCloudRecord(item);
+
   save();
+  clearLaunchFormDraft();
+
+  showUndoToast("Lançamento salvo neste aparelho. Sincronizando com a nuvem...");
+  flushInfluencerLaunchPendingQueue()
+    .then(ok=>{
+      if(ok){
+        showUndoToast("Lançamento salvo e blindado na nuvem.");
+        return syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+      }
+    })
+    .catch(()=>{});
+
   resetLaunchForm();
   render();
   showPage("launches");
