@@ -8636,6 +8636,153 @@ body.appRecovered #cloudStatus{
   cursor:wait!important;
 }
 
+
+/* ===== V122 FILTRO DE PERÍODO EM UM CAMPO ===== */
+.wholesaleListDateFiltersV122{
+  display:grid!important;
+  grid-template-columns:minmax(150px,.75fr) minmax(160px,.75fr) minmax(270px,1.35fr) minmax(135px,.65fr) auto!important;
+  align-items:end!important;
+  gap:10px!important;
+  width:100%!important;
+}
+
+.wholesaleListDateFiltersV122 label{
+  min-width:0!important;
+  width:100%!important;
+}
+
+.wholesaleListDateFiltersV122 input,
+.wholesaleListDateFiltersV122 select{
+  width:100%!important;
+  min-width:0!important;
+}
+
+.wholesaleRangeBox{
+  min-width:0!important;
+  width:100%!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:6px!important;
+}
+
+.wholesaleRangeBox small{
+  display:block!important;
+  color:#475569!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  text-transform:uppercase!important;
+  letter-spacing:.04em!important;
+}
+
+.wholesaleRangeStatus{
+  min-height:44px!important;
+  width:100%!important;
+  padding:7px!important;
+  border:1px solid #e2e8f0!important;
+  border-radius:14px!important;
+  background:#ffffff!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+}
+
+.wholesaleRangeStatus .empty{
+  color:#94a3b8!important;
+  font-size:12px!important;
+  font-weight:800!important;
+}
+
+.wholesaleRangeChip{
+  min-height:30px!important;
+  padding:6px 10px!important;
+  border-radius:999px!important;
+  border:1px solid #bfdbfe!important;
+  background:#eff6ff!important;
+  color:#1d4ed8!important;
+  font-size:12px!important;
+  font-weight:950!important;
+  cursor:pointer!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:7px!important;
+}
+
+.wholesaleRangeChip span{
+  font-size:14px!important;
+  line-height:1!important;
+}
+
+.wholesaleRangeChip:hover{
+  background:#dbeafe!important;
+}
+
+.wholesaleRangePending{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:30px!important;
+  padding:6px 10px!important;
+  border-radius:999px!important;
+  background:#fff7ed!important;
+  border:1px solid #fed7aa!important;
+  color:#c2410c!important;
+  font-size:12px!important;
+  font-weight:950!important;
+}
+
+.wholesaleRangeClear{
+  min-height:30px!important;
+  padding:6px 10px!important;
+  border-radius:999px!important;
+  border:1px solid #e2e8f0!important;
+  background:#f8fafc!important;
+  color:#475569!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  cursor:pointer!important;
+}
+
+.wholesaleListFilterActions{
+  display:flex!important;
+  align-items:end!important;
+  justify-content:flex-end!important;
+  gap:8px!important;
+  flex-wrap:nowrap!important;
+}
+
+@media(max-width:1250px){
+  .wholesaleListDateFiltersV122{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  .wholesaleRangeBox,
+  .wholesaleListFilterActions{
+    grid-column:1/-1!important;
+  }
+
+  .wholesaleListFilterActions{
+    justify-content:flex-start!important;
+    flex-wrap:wrap!important;
+  }
+}
+
+@media(max-width:760px){
+  .wholesaleListDateFiltersV122{
+    grid-template-columns:1fr!important;
+  }
+
+  .wholesaleListFilterActions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    width:100%!important;
+  }
+
+  .wholesaleListFilterActions button{
+    width:100%!important;
+  }
+}
+
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8717,7 +8864,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V119</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V122</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9007,10 +9154,21 @@ body.appRecovered #cloudStatus{
             <h3>Lançamentos de Atacado e Varejo</h3>
             <span class="muted">Todos os lançamentos aparecem aqui para todos os colaboradores. Use data ou tipo apenas se quiser filtrar.</span>
           </div>
-          <div class="filters wholesaleListFilters">
-            <label>Data opcional
-              <input id="wholesaleFilterDate" type="date" onchange="renderWholesaleRetail()">
+          <div class="filters wholesaleListFilters wholesaleListDateFiltersV122">
+            <label>Mês inteiro
+              <input id="wholesaleFilterMonth" type="month" onchange="applyWholesaleMonthFilter()">
             </label>
+
+            <label>Escolher período
+              <input id="wholesaleFilterRangePicker" type="date" onchange="selectWholesaleRangeDate(this.value)">
+            </label>
+
+            <div class="wholesaleRangeBox">
+              <small>Período filtrado</small>
+              <div id="wholesaleRangeStatus" class="wholesaleRangeStatus">
+                <span class="empty">Nenhum período selecionado</span>
+              </div>
+            </div>
 
             <label>Tipo
               <select id="wholesaleFilterType" onchange="renderWholesaleRetail()">
@@ -9940,8 +10098,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V119";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v119";
+const APP_BUILD_VERSION="V122";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v122";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -9980,7 +10138,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=119");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=122");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -11639,7 +11797,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V119",
+    version:"V122",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -11662,6 +11820,9 @@ function runLocalSystemAudit(){
     "globalMonth",
     "wholesaleForm",
     "wholesaleRows",
+    "wholesaleFilterMonth",
+    "wholesaleFilterRangePicker",
+    "wholesaleRangeStatus",
     "wholesaleSubmitButton",
     "wholesaleProductPrice",
     "wholesaleDiscountPercent",
@@ -11932,7 +12093,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v119-${today()}.json`;
+  a.download=`auditoria-painel-v122-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -11962,7 +12123,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V119",
+    "AUDITORIA DO SISTEMA — V122",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -11990,7 +12151,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V119: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V122: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -12611,7 +12772,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V119 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V122 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -14317,8 +14478,8 @@ function resetWholesaleRetailForm(){
 }
 
 function selectedWholesaleDate(){
-  const el=$("wholesaleFilterDate");
-  return el?.value||"";
+  const range=readWholesaleRange();
+  return range.start||"";
 }
 
 
@@ -15003,14 +15164,180 @@ function compactProductText(product){
   return `${lines[0]} ... +${lines.length-1}`;
 }
 
+
+function wholesaleListFilterMonth(){
+  return String($("wholesaleFilterMonth")?.value||"").trim();
+}
+
+function wholesaleRangeStorageKey(){
+  return KEY+"_wholesale_range_filter_v122";
+}
+
+function normalizeWholesaleRange(range){
+  const start=normalizeDateOnly(range?.start||"");
+  const end=normalizeDateOnly(range?.end||"");
+
+  const validStart=/^\d{4}-\d{2}-\d{2}$/.test(start)?start:"";
+  const validEnd=/^\d{4}-\d{2}-\d{2}$/.test(end)?end:"";
+
+  if(validStart&&validEnd&&validStart>validEnd){
+    return {start:validEnd,end:validStart};
+  }
+
+  return {start:validStart,end:validEnd};
+}
+
+function readWholesaleRange(){
+  try{
+    const raw=sessionStorage.getItem(wholesaleRangeStorageKey());
+    const parsed=raw?JSON.parse(raw):{};
+    return normalizeWholesaleRange(parsed);
+  }catch(e){
+    return {start:"",end:""};
+  }
+}
+
+function writeWholesaleRange(range){
+  const normalized=normalizeWholesaleRange(range);
+
+  try{
+    sessionStorage.setItem(
+      wholesaleRangeStorageKey(),
+      JSON.stringify(normalized)
+    );
+  }catch(e){}
+
+  renderWholesaleRangeStatus(normalized);
+  return normalized;
+}
+
+function selectWholesaleRangeDate(value){
+  const date=normalizeDateOnly(value);
+
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(date)){
+    return;
+  }
+
+  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+
+  const current=readWholesaleRange();
+
+  /*
+    Um único campo de data funciona como seletor de período:
+    - primeira seleção define o início;
+    - segunda seleção define o final;
+    - depois de fechado, o próximo clique começa um novo período.
+  */
+  let next;
+
+  if(!current.start || (current.start&&current.end)){
+    next={start:date,end:""};
+  }else{
+    next=normalizeWholesaleRange({
+      start:current.start,
+      end:date
+    });
+  }
+
+  writeWholesaleRange(next);
+
+  if($("wholesaleFilterRangePicker")){
+    $("wholesaleFilterRangePicker").value="";
+  }
+
+  renderWholesaleRetail();
+}
+
+function clearWholesaleRange({renderNow=true}={}){
+  writeWholesaleRange({start:"",end:""});
+
+  if($("wholesaleFilterRangePicker")){
+    $("wholesaleFilterRangePicker").value="";
+  }
+
+  if(renderNow){
+    renderWholesaleRetail();
+  }
+}
+
+function renderWholesaleRangeStatus(range=readWholesaleRange()){
+  const box=$("wholesaleRangeStatus");
+  if(!box)return;
+
+  const normalized=normalizeWholesaleRange(range);
+
+  if(normalized.start&&normalized.end){
+    const sameDay=normalized.start===normalized.end;
+    box.innerHTML=`<button type="button" class="wholesaleRangeChip" onclick="clearWholesaleRange()" title="Limpar período">${sameDay?dateBR(normalized.start):`${dateBR(normalized.start)} até ${dateBR(normalized.end)}`} <span>×</span></button>`;
+    return;
+  }
+
+  if(normalized.start&&!normalized.end){
+    box.innerHTML=`<span class="wholesaleRangePending">Início: ${dateBR(normalized.start)} • escolha a data final</span><button type="button" class="wholesaleRangeClear" onclick="clearWholesaleRange()">limpar</button>`;
+    return;
+  }
+
+  box.innerHTML=`<span class="empty">Nenhum período selecionado</span>`;
+}
+
+function applyWholesaleMonthFilter(){
+  const month=wholesaleListFilterMonth();
+
+  if(month){
+    clearWholesaleRange({renderNow:false});
+  }
+
+  renderWholesaleRetail();
+}
+
+function wholesaleListDateFilterLabel(){
+  const range=readWholesaleRange();
+  const month=wholesaleListFilterMonth();
+
+  if(range.start&&range.end){
+    return range.start===range.end
+      ? `Data: ${dateBR(range.start)}`
+      : `Período: ${dateBR(range.start)} até ${dateBR(range.end)}`;
+  }
+
+  if(range.start&&!range.end){
+    return `Data inicial escolhida: ${dateBR(range.start)}`;
+  }
+
+  if(month){
+    return `Mês inteiro: ${monthLabel(month)}`;
+  }
+
+  return "Todas as datas";
+}
+
+
 function wholesaleRetailRows(){
-  const date=String($("wholesaleFilterDate")?.value||"").trim();
   const type=String($("wholesaleFilterType")?.value||"").trim();
+  const month=wholesaleListFilterMonth();
+  const range=readWholesaleRange();
 
   let rows=(state.wholesaleRetail||[]).slice();
 
-  if(/^\d{4}-\d{2}-\d{2}$/.test(date)){
-    rows=rows.filter(w=>String(w.date||"").slice(0,10)===date);
+  /*
+    Filtro de data dos lançamentos de Atacado e Varejo:
+    1) Se o usuário clicou no primeiro dia e depois no segundo dia,
+       puxa todo o intervalo entre os dois.
+    2) Se só escolheu o primeiro dia, puxa apenas aquele dia enquanto aguarda o final.
+    3) Se nenhum período foi escolhido e houver mês selecionado, puxa o mês inteiro.
+    4) Se nada for preenchido, mostra tudo.
+  */
+  if(range.start||range.end){
+    const start=range.start||range.end;
+    const end=range.end||range.start;
+
+    rows=rows.filter(w=>{
+      const date=normalizeDateOnly(w.date);
+      if(!date)return false;
+      return date>=start&&date<=end;
+    });
+  }else if(/^\d{4}-\d{2}$/.test(month)){
+    rows=rows.filter(w=>normalizeDateOnly(w.date).slice(0,7)===month);
   }
 
   if(type){
@@ -15033,10 +15360,10 @@ function wholesaleRetailRows(){
 
   return rows;
 }
-
 function renderWholesaleRetail(){
   if(!$("wholesaleRows"))return;
 
+  renderWholesaleRangeStatus();
   calcWholesaleRetail();
 
   const rows=wholesaleRetailRows();
@@ -15080,7 +15407,8 @@ function renderWholesaleRetail(){
 function showSavedWholesaleLaunch(savedId){
   lastSavedWholesaleId=savedId;
 
-  if($("wholesaleFilterDate"))$("wholesaleFilterDate").value="";
+  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+  clearWholesaleRange({renderNow:false});
   if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
 
   renderWholesaleRetail();
@@ -15265,7 +15593,8 @@ function deleteWholesaleRetail(id){
 }
 
 function clearWholesaleDateFilter(){
-  if($("wholesaleFilterDate"))$("wholesaleFilterDate").value="";
+  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+  clearWholesaleRange({renderNow:false});
   if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
   renderWholesaleRetail();
 }
@@ -15284,9 +15613,8 @@ function renderWholesaleRetailPDF(){
 
   applyPdfWatermark("wholesaleListWatermark");
 
-  const dateFilter=$("wholesaleFilterDate")?.value||"";
+  const dateText=wholesaleListDateFilterLabel();
   const typeFilter=$("wholesaleFilterType")?.value||"";
-  const dateText=dateFilter?dateBR(dateFilter):"Todas as datas";
   const typeText=typeFilter||"Todos os tipos";
 
   if($("wholesaleListPdfSubtitle")){
@@ -16011,7 +16339,8 @@ if($("wholesaleForm")){
     writeWholesaleSnapshot(state.wholesaleRetail);
     queueWholesaleCloudRecord(item);
 
-    if($("wholesaleFilterDate"))$("wholesaleFilterDate").value="";
+    if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+  clearWholesaleRange({renderNow:false});
     if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
 
     save();
