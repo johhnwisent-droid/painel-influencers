@@ -8783,6 +8783,14 @@ body.appRecovered #cloudStatus{
 }
 
 
+
+/* ===== V123 ZERAR ACÚMULO EM TEMPO REAL ===== */
+#accRows .accStatusBadge.manual{
+  background:#fff7ed!important;
+  border-color:#fed7aa!important;
+  color:#c2410c!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8864,7 +8872,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V122</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V123</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10098,8 +10106,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V122";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v122";
+const APP_BUILD_VERSION="V123";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v123";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10138,7 +10146,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=122");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=123");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -11797,7 +11805,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V122",
+    version:"V123",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -11974,6 +11982,19 @@ function runLocalSystemAudit(){
 
   auditAdd(report,"pass","INFLUENCER_LAUNCH_DRAFT","Proteção de rascunho automático da aba Lançamentos instalada.");
 
+  const renderAccumulationsSource=String(renderAccumulations);
+  const stopAccumulatingSource=String(stopAccumulatingInfluencer);
+
+  if(
+    renderAccumulationsSource.includes("const groups=activeGroups")&&
+    stopAccumulatingSource.includes("changedLaunches.forEach")&&
+    stopAccumulatingSource.includes("queueInfluencerLaunchCloudRecord")
+  ){
+    auditAdd(report,"pass","ACCUMULATION_ZERO_REALTIME","Zerar acúmulo remove o saldo aberto da tela e sincroniza os lançamentos alterados.");
+  }else{
+    auditAdd(report,"warn","ACCUMULATION_ZERO_REALTIME","Não foi possível confirmar toda a proteção do zerar acúmulo.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12093,7 +12114,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v122-${today()}.json`;
+  a.download=`auditoria-painel-v123-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12123,7 +12144,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V122",
+    "AUDITORIA DO SISTEMA — V123",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12151,7 +12172,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V122: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V123: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -12772,7 +12793,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V122 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V123 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13801,7 +13822,15 @@ function accumulationByInfluencer(){
 
 function renderAccumulations(){
   const activeGroups=accumulationByInfluencer();
-  const groups=accumulationDisplayRows();
+
+  /*
+    V123:
+    A tabela "Saldo acumulado por influencer" deve mostrar somente saldos abertos.
+    Quando o botão Zerar é usado, o influencer sai desta lista em tempo real.
+    O registro de antes/depois continua apenas no histórico de acúmulo.
+  */
+  const groups=activeGroups;
+
   const productTotal=activeGroups.reduce((a,r)=>a+r.product,0);
   const cashTotal=activeGroups.reduce((a,r)=>a+r.cash,0);
 
@@ -13981,8 +14010,15 @@ function printAccumulationReport(){
 function stopAccumulatingInfluencer(infId){
   const row=accumulationByInfluencer().find(r=>r.i.id===infId);
   const inf=infById(infId);
-  if(!row&&!inf){
+
+  if(!inf){
     alert("Influencer não encontrado.");
+    return;
+  }
+
+  if(!row){
+    alert("Este influencer não possui saldo acumulado aberto para zerar.");
+    renderAccumulations();
     return;
   }
 
@@ -13990,10 +14026,25 @@ function stopAccumulatingInfluencer(infId){
   if(reason===null)return;
 
   if(confirm("Zerar o acúmulo deste influencer? Os lançamentos sairão da carteira de acúmulo e a alteração ficará registrada no histórico.")){
-    const beforeProduct=Number(row?.product||0);
-    const beforeCash=Number(row?.cash||0);
+    const beforeProduct=Number(row.product||0);
+    const beforeCash=Number(row.cash||0);
+    const audit=currentAuditInfo();
 
-    state.launches.forEach(l=>{if(l.influencerId===infId)l.accumulate=false});
+    const changedLaunches=[];
+
+    state.launches.forEach(l=>{
+      if(l.influencerId===infId&&l.accumulate){
+        l.accumulate=false;
+        l.paid=false;
+        l.paidAt="";
+        l.paidMonth="";
+        l.updatedById=audit.id||"";
+        l.updatedByName=audit.name||"";
+        l.updatedByUsername=audit.username||"";
+        l.updatedAt=audit.at||new Date().toISOString();
+        changedLaunches.push(l);
+      }
+    });
 
     addAccumulationHistory({
       influencerId:infId,
@@ -14006,8 +14057,30 @@ function stopAccumulatingInfluencer(infId){
       afterCash:0
     });
 
+    /*
+      V123:
+      Além do painel_state, cada lançamento alterado também entra na fila segura
+      individual dos lançamentos de influencers. Isso impede que outro colaborador
+      ou uma sincronização antiga traga o acúmulo de volta.
+    */
+    writeInfluencerLaunchSnapshot(state.launches);
+    changedLaunches.forEach(l=>queueInfluencerLaunchCloudRecord(l));
+
     save();
-    render();
+
+    renderAccumulations();
+    renderDashboard();
+    renderLaunches();
+    renderReports();
+
+    showUndoToast("Acúmulo zerado em tempo real. Sincronizando com todos...");
+
+    flushInfluencerLaunchPendingQueue()
+      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
+      .then(()=>{
+        showUndoToast("Acúmulo zerado e sincronizado.");
+      })
+      .catch(()=>{});
   }
 }
 function resetInfForm(){$("infForm").reset();$("infId").value="";$("infProductRate").value=20;$("infCashRate").value=10;}
