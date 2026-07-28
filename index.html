@@ -8911,6 +8911,28 @@ body.appRecovered #cloudStatus{
   max-width:260px!important;
 }
 
+
+/* ===== V126 HISTÓRICO DE ALTERAÇÕES EM PAGOS ===== */
+.paidHistoryPanel{
+  border-color:#e2e8f0!important;
+}
+
+.paidHistoryWrap table{
+  min-width:920px!important;
+}
+
+.paidHistoryRestored{
+  display:inline-flex!important;
+  align-items:center!important;
+  padding:7px 11px!important;
+  border-radius:999px!important;
+  background:#f8fafc!important;
+  color:#475569!important;
+  border:1px solid #e2e8f0!important;
+  font-weight:950!important;
+  font-size:12px!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8992,7 +9014,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V125</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V126</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9789,6 +9811,36 @@ body.appRecovered #cloudStatus{
           </table>
         </div>
       </div>
+
+      <div class="panel paidHistoryPanel">
+        <div class="panelHead">
+          <div>
+            <h3>Histórico de alterações</h3>
+            <span class="muted">Registro das edições feitas nos valores pagos. Este histórico fica separado da lista principal.</span>
+          </div>
+          <div class="filters">
+            <button class="secondary" onclick="exportPaidHistoryCSV()">Exportar histórico</button>
+          </div>
+        </div>
+
+        <div class="tableWrap paidHistoryWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data/hora</th>
+                <th>Influencer</th>
+                <th>Cupom</th>
+                <th>Tipo pago</th>
+                <th>Valor editado</th>
+                <th>Status</th>
+                <th>Responsável</th>
+                <th>Observação</th>
+              </tr>
+            </thead>
+            <tbody id="paidHistoryRows"></tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
     <section id="products" class="view">
@@ -10274,8 +10326,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V125";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v125";
+const APP_BUILD_VERSION="V126";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v126";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10314,7 +10366,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=125");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=126");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -11974,7 +12026,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V125",
+    version:"V126",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12187,6 +12239,16 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","PAID_PRODUCT_CHOICE_AUTO","Não foi possível confirmar a entrada automática do Produto escolhido em Pagos.");
   }
 
+  if(
+    $("paidHistoryRows")&&
+    String(renderPaidAdjustmentHistory).includes("paidAdjustmentHistoryRows")&&
+    String(exportPaidHistoryCSV).includes("historico-pagos")
+  ){
+    auditAdd(report,"pass","PAID_HISTORY_VISIBLE","Histórico de alterações da sessão Pagos permanece visível abaixo da tabela principal.");
+  }else{
+    auditAdd(report,"warn","PAID_HISTORY_VISIBLE","Histórico de alterações da sessão Pagos não foi confirmado na interface.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12306,7 +12368,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v125-${today()}.json`;
+  a.download=`auditoria-painel-v126-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12336,7 +12398,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V125",
+    "AUDITORIA DO SISTEMA — V126",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12364,7 +12426,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V125: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V126: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -12985,7 +13047,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V125 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V126 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13809,6 +13871,87 @@ function paidGroupsForMonth(month){
   });
 }
 
+
+function paidAdjustmentHistoryRows(month=selectedPaidMonth()){
+  return (state.paidAdjustments||[])
+    .filter(p=>p.month===month&&p.influencerId)
+    .slice()
+    .sort((a,b)=>{
+      const atA=String(a.updatedAt||a.createdAt||a.date||"");
+      const atB=String(b.updatedAt||b.createdAt||b.date||"");
+      return atB.localeCompare(atA);
+    });
+}
+
+function paidAdjustmentStatusLabel(row){
+  if(!row)return "-";
+  if(row.status==="Cancelado")return "Restaurado para original";
+  return "Editado manualmente";
+}
+
+function paidAdjustmentResponsible(row){
+  if(!row)return "Não registrado";
+  return row.updatedByName||row.createdByName||"Não registrado";
+}
+
+function renderPaidAdjustmentHistory(){
+  const target=$("paidHistoryRows");
+  if(!target)return;
+
+  const month=selectedPaidMonth();
+  const rows=paidAdjustmentHistoryRows(month);
+
+  target.innerHTML=rows.length?rows.map(row=>{
+    const inf=infById(row.influencerId)||{};
+    const when=row.updatedAt||row.createdAt||row.date;
+
+    return `<tr>
+      <td>${dateTimeBR(when)}</td>
+      <td><span class="mobileKeyText mobileInfluencerName">${esc(inf.name||row.influencerName||"-")}</span></td>
+      <td><span class="mobileCouponText">${esc(inf.coupon||row.coupon||"-")}</span></td>
+      <td><span class="paidTypeBadge ${paidTypeBadgeClass(row.paymentType)}">${esc(row.paymentType||"-")}</span></td>
+      <td><span class="paidAmountStrong">${money(row.amount)}</span></td>
+      <td>${row.status==="Cancelado"?`<span class="paidHistoryRestored">Restaurado</span>`:`<span class="paidManualBadge">Editado</span>`}</td>
+      <td>${esc(paidAdjustmentResponsible(row))}</td>
+      <td>${esc(row.notes||row.source||"-")}</td>
+    </tr>`;
+  }).join(""):`<tr><td colspan="8">Nenhuma alteração manual registrada neste mês.</td></tr>`;
+}
+
+function exportPaidHistoryCSV(){
+  const month=selectedPaidMonth();
+  const rows=paidAdjustmentHistoryRows(month);
+
+  rowsCSV([
+    [
+      "Mês",
+      "Data/hora",
+      "Influencer",
+      "Cupom",
+      "Tipo pago",
+      "Valor editado",
+      "Status",
+      "Responsável",
+      "Observação"
+    ],
+    ...rows.map(row=>{
+      const inf=infById(row.influencerId)||{};
+      return [
+        monthLabel(month),
+        dateTimeBR(row.updatedAt||row.createdAt||row.date),
+        inf.name||row.influencerName||"-",
+        inf.coupon||row.coupon||"-",
+        row.paymentType||"-",
+        row.amount||0,
+        paidAdjustmentStatusLabel(row),
+        paidAdjustmentResponsible(row),
+        row.notes||row.source||""
+      ];
+    })
+  ],`historico-pagos-${month}.csv`);
+}
+
+
 function renderPaidPage(){
   if(!$("paidPageRows"))return;
 
@@ -13834,6 +13977,8 @@ function renderPaidPage(){
       ${r.adjusted?`<button class="small danger" onclick="clearPaidAdjustment('${esc(r.influencerId)}')">Restaurar</button>`:""}
     </td>
   </tr>`).join(""):`<tr><td colspan="9">Nenhum influencer pago neste mês.</td></tr>`;
+
+  renderPaidAdjustmentHistory();
 }
 
 function renderPaidInfluencers(){renderPaidPage();}
@@ -13973,6 +14118,7 @@ function clearPaidAdjustment(influencerId){
   save();
   cancelPaidEdit();
   renderPaidPage();
+  renderPaidAdjustmentHistory();
   showUndoToast("Pagamento restaurado para o valor original do sistema.");
 }
 
