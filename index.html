@@ -9276,7 +9276,7 @@ textarea{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V138</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V139</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10662,8 +10662,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V138";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v138";
+const APP_BUILD_VERSION="V139";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v139";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10702,7 +10702,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=138");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=139");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12418,7 +12418,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V138",
+    version:"V139",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12774,6 +12774,17 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","PRODUCT_CHOICE_PERSISTENCE","Não foi possível confirmar toda a blindagem de Produto escolhido.");
   }
 
+  if(
+    String(cloudStateForSave).includes("compactCloudState")&&
+    String(stringifyForCloudSave).includes("shouldUseCompactCloudState")&&
+    String(cloudSaveNow).includes("25000")&&
+    String(cloudLoad).includes("painel_state leve carregado")
+  ){
+    auditAdd(report,"pass","CLOUD_LIGHT_STATE","Salvamento da nuvem usa painel_state leve quando o payload fica pesado, reduzindo timeout e mensagem falsa de sem conexão.");
+  }else{
+    auditAdd(report,"warn","CLOUD_LIGHT_STATE","Não foi possível confirmar o salvamento leve da nuvem.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12893,7 +12904,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v138-${today()}.json`;
+  a.download=`auditoria-painel-v139-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12923,7 +12934,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V138",
+    "AUDITORIA DO SISTEMA — V139",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12951,7 +12962,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V138: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V139: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13938,7 +13949,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V138 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V139 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13995,8 +14006,17 @@ async function cloudLoad(){
         writeProductChoiceSnapshot(state.redemptions);
 
         const recoveredMedia=preserveMediaFromLegacy(state);
-        updateCloudStatus("Dados carregados da nuvem e lançamentos locais preservados.");
-        updateCloudDebug(recoveredMedia?"painel_state carregado, mídia recuperada e listas locais mescladas":"painel_state carregado sem apagar lançamentos locais");
+        const compactState=!!state?._syncMeta?.compactCloudState;
+
+        updateCloudStatus(compactState
+          ?"Configurações carregadas. Listas individuais sendo sincronizadas..."
+          :"Dados carregados da nuvem e lançamentos locais preservados.");
+
+        updateCloudDebug(
+          compactState
+            ?"painel_state leve carregado; listas serão preenchidas pelas linhas individuais"
+            :(recoveredMedia?"painel_state carregado, mídia recuperada e listas locais mescladas":"painel_state carregado sem apagar lançamentos locais")
+        );
         return true;
       }catch(e){
         console.error("Erro ao interpretar dados da nuvem:",e);
@@ -14032,17 +14052,91 @@ function scheduleCloudSaveRetry(){
   },delay);
 }
 
+
+function cloudStateForSave(){
+  /*
+    V139:
+    O painel_state completo pode ficar pesado demais e causar timeout,
+    exibindo "Sem conexão com a nuvem" mesmo com internet.
+    As listas grandes já possuem salvamento individual:
+    - Atacado/Varejo;
+    - Lançamentos;
+    - Produto escolhido.
+    Então o painel_state fica como índice leve/configuração, e os dados
+    transacionais continuam preservados nas linhas individuais.
+  */
+  const compact=cloneSafe(state,{});
+
+  compact.wholesaleRetail=[];
+  compact.launches=[];
+  compact.redemptions=[];
+
+  compact._syncMeta={
+    ...ensurePlainObject(compact._syncMeta,{}),
+    compactCloudState:true,
+    compactedAt:new Date().toISOString(),
+    wholesaleCount:(state.wholesaleRetail||[]).length,
+    launchesCount:(state.launches||[]).length,
+    productChoiceCount:(state.redemptions||[]).length,
+    accumulationHistoryCount:(state.accumulationHistory||[]).length
+  };
+
+  return compact;
+}
+
+function cloudPayloadInfo(payload){
+  const size=new Blob([payload||""]).size;
+  return {
+    bytes:size,
+    kb:Math.round(size/1024)
+  };
+}
+
+function shouldUseCompactCloudState(fullPayload){
+  const info=cloudPayloadInfo(fullPayload);
+  return info.bytes>650000;
+}
+
+async function stringifyForCloudSave(){
+  return await new Promise(resolve=>{
+    idleCallback(()=>{
+      let payload=JSON.stringify(state);
+      let compact=false;
+
+      if(shouldUseCompactCloudState(payload)){
+        payload=JSON.stringify(cloudStateForSave());
+        compact=true;
+      }
+
+      resolve({
+        payload,
+        compact,
+        info:cloudPayloadInfo(payload)
+      });
+    },1600);
+  });
+}
+
+
 async function cloudSaveNow(){
   if(cloudSaveInFlight)return cloudSaveInFlight;
 
   cloudSaveInFlight=(async()=>{
     updateCloudStatus("Salvando na nuvem...");
-    updateCloudDebug("enviando salvamento para personalizacao/painel_state");
+    updateCloudDebug("preparando salvamento leve para personalizacao/painel_state");
 
     try{
-      const statePayload=await new Promise(resolve=>{
-        idleCallback(()=>resolve(JSON.stringify(state)),1600);
-      });
+      /*
+        Antes o painel_state inteiro era enviado sempre.
+        Agora, se o payload ficar pesado, o painel_state vira leve e as
+        listas grandes ficam protegidas pelas linhas individuais.
+      */
+      const savePackage=await stringifyForCloudSave();
+      const statePayload=savePackage.payload;
+
+      updateCloudDebug(
+        `enviando painel_state ${savePackage.compact?"compacto":"completo"} • ${savePackage.info.kb} KB`
+      );
 
       const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
         method:"POST",
@@ -14051,7 +14145,7 @@ async function cloudSaveNow(){
           chave:CLOUD_STATE_KEY,
           valor:statePayload
         })
-      },12000);
+      },25000);
 
       updateCloudDebug("resposta do Supabase no salvamento: HTTP "+response.status);
 
@@ -14068,15 +14162,17 @@ async function cloudSaveNow(){
       cloudSaveRetryAttempt=0;
       cloudLastSavedAt=new Date();
 
-      updateCloudStatus("Salvo na nuvem automaticamente.");
-      updateCloudDebug("último salvamento: "+cloudLastSavedAt.toLocaleTimeString("pt-BR"));
+      updateCloudStatus("Nuvem salva automaticamente.");
+      updateCloudDebug(
+        `último salvamento: ${cloudLastSavedAt.toLocaleTimeString("pt-BR")} • painel_state ${savePackage.compact?"leve":"completo"} ${savePackage.info.kb} KB`
+      );
       return true;
     }catch(e){
       console.error("Falha ao salvar na nuvem:",e);
-      updateCloudStatus("Sem conexão com a nuvem. Dados locais preservados.",true);
+      updateCloudStatus("Nuvem instável. Dados locais preservados e nova tentativa agendada.",true);
       updateCloudDebug(
-        (e.name==="AbortError"?"tempo esgotado":"erro de salvamento: "+(e.message||e))+
-        " • nova tentativa automática agendada"
+        (e.name==="AbortError"?"tempo esgotado no Supabase":"erro de salvamento: "+(e.message||e))+
+        " • dados locais, filas e snapshots preservados"
       );
       scheduleCloudSaveRetry();
       return false;
@@ -14162,6 +14258,8 @@ async function startApp(){
       await seedProductChoiceRecordsOnce();
       await syncProductChoiceRecordsFromCloud({showStatus:false});
       installProductChoiceSyncWatchers();
+
+      render();
     }catch(e){
       console.warn("Sincronização inicial de vendas adiada:",e);
     }
