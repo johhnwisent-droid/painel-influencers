@@ -8900,6 +8900,17 @@ body.appRecovered #cloudStatus{
   }
 }
 
+
+/* ===== V125 PAGOS PRODUTO ESCOLHIDO AUTOMÁTICO ===== */
+.paidTypeBadge.product::before{
+  content:"Produto";
+  display:none;
+}
+
+.paidOriginalValue{
+  max-width:260px!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8981,7 +8992,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V124</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V125</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9752,7 +9763,7 @@ body.appRecovered #cloudStatus{
         <div class="panelHead">
           <div>
             <h3>Influencers pagos</h3>
-            <span class="muted">Valor efetivamente pago, com tipo explícito: dinheiro ou produto.</span>
+            <span class="muted">Valor efetivamente pago. O tipo final pode ser definido como dinheiro ou produto.</span>
           </div>
           <div class="filters">
             <label style="display:flex;align-items:center;gap:8px;font-weight:800;color:#6b7280">Mês <input id="paidMonth" type="month" onchange="renderPaidPage()"></label>
@@ -10263,8 +10274,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V124";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v124";
+const APP_BUILD_VERSION="V125";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v125";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10303,7 +10314,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=124");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=125");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -11963,7 +11974,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V124",
+    version:"V125",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12153,16 +12164,27 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ACCUMULATION_ZERO_REALTIME","Não foi possível confirmar toda a proteção do zerar acúmulo.");
   }
 
-  const paidSource=String(renderPaidPage)+String(savePaidAdjustmentFromForm)+String(paidGroupsForMonth);
+  const paidSource=String(renderPaidPage)+String(savePaidAdjustmentFromForm)+String(paidGroupsForMonth)+String(productChoicePaidRecordsForMonth);
   if(
     paidSource.includes("paidAdjustments")&&
     paidSource.includes("paymentType")&&
-    paidSource.includes("Valor pago")&&
+    paidSource.includes("Produto escolhido")&&
+    paidTypeLabelFromValues(10,10)!=="Dinheiro + Produto"&&
     $("paidEditForm")
   ){
     auditAdd(report,"pass","PAID_EDITABLE_VALUES","Sessão Pagos permite editar valor pago e marcar dinheiro/produto explicitamente.");
   }else{
     auditAdd(report,"warn","PAID_EDITABLE_VALUES","Não foi possível confirmar toda a edição manual da sessão Pagos.");
+  }
+
+  if(
+    String(productChoicePaidRecordsForMonth).includes("state.redemptions")&&
+    String(productChoicePaidRecordsForMonth).includes("status===\"Pago\"")&&
+    String(paidBaseRecordsForMonth).includes("productChoiceRecords")
+  ){
+    auditAdd(report,"pass","PAID_PRODUCT_CHOICE_AUTO","Produto escolhido com status Pago aparece automaticamente em Pagos como produto.");
+  }else{
+    auditAdd(report,"warn","PAID_PRODUCT_CHOICE_AUTO","Não foi possível confirmar a entrada automática do Produto escolhido em Pagos.");
   }
 
   // Rascunho
@@ -12284,7 +12306,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v124-${today()}.json`;
+  a.download=`auditoria-painel-v125-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12314,7 +12336,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V124",
+    "AUDITORIA DO SISTEMA — V125",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12342,7 +12364,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V124: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V125: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -12963,7 +12985,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V124 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V125 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13528,6 +13550,30 @@ function selectedPaidMonth(){
   return el.value;
 }
 
+function productChoicePaidRecordsForMonth(month){
+  return (state.redemptions||[])
+    .filter(r=>{
+      const status=String(r.status||"").trim();
+      const rowMonth=(r.date||today()).slice(0,7);
+
+      return r.influencerId&&
+        rowMonth===month&&
+        (status==="Pago"||status==="Resgatado");
+    })
+    .map(r=>({
+      id:r.id,
+      influencerId:r.influencerId,
+      cash:0,
+      product:Math.max(0,finiteNumber(r.value||r.used,0)),
+      date:r.date||today(),
+      source:r.name||"Produto escolhido",
+      kind:"Produto escolhido",
+      productChoiceId:r.id,
+      productChoiceName:r.name||"Produto escolhido",
+      notes:r.notes||""
+    }));
+}
+
 function paidBaseRecordsForMonth(month){
   const launchRecords=state.launches
     .filter(l=>l.paid&&!l.accumulate&&((l.paidMonth||l.month||(l.date||"").slice(0,7))===month))
@@ -13542,7 +13588,12 @@ function paidBaseRecordsForMonth(month){
     }));
 
   const accumulatedRecords=(state.cashPayments||[])
-    .filter(p=>(p.month||(p.date||"").slice(0,7))===month&&p.status!=="Cancelado")
+    .filter(p=>{
+      const rowMonth=(p.month||(p.date||"").slice(0,7));
+      return rowMonth===month&&
+        p.status!=="Cancelado"&&
+        !p.productRedemptionId;
+    })
     .map(p=>({
       id:p.id,
       influencerId:p.influencerId,
@@ -13553,7 +13604,16 @@ function paidBaseRecordsForMonth(month){
       kind:"Acúmulo"
     }));
 
-  return [...launchRecords,...accumulatedRecords];
+  /*
+    V125:
+    Produto escolhido com status Pago/Resgatado entra automaticamente em Pagos
+    como pagamento em produto. Pagamentos internos gerados só para zerar saldo
+    em dinheiro do Produto escolhido não entram como dinheiro, para evitar
+    aparecer "Dinheiro + Produto".
+  */
+  const productChoiceRecords=productChoicePaidRecordsForMonth(month);
+
+  return [...launchRecords,...accumulatedRecords,...productChoiceRecords];
 }
 
 /* Compatibilidade com cache antigo */
@@ -13577,6 +13637,7 @@ function paidBaseGroupsForMonth(month){
         baseProduct:0,
         dates:[],
         sources:new Set(),
+        productChoices:new Set(),
         count:0
       });
     }
@@ -13591,6 +13652,10 @@ function paidBaseGroupsForMonth(month){
 
     if(r.date)g.dates.push(r.date);
     g.sources.add(r.kind||r.source||"Pagamento");
+
+    if(r.kind==="Produto escolhido"&&r.productChoiceName){
+      g.productChoices.add(r.productChoiceName);
+    }
   });
 
   return map;
@@ -13613,7 +13678,12 @@ function paidTypeLabelFromValues(cash,product){
   cash=Number(cash||0);
   product=Number(product||0);
 
-  if(cash>0&&product>0)return "Dinheiro + Produto";
+  /*
+    V125:
+    Na coluna Tipo pago, o sistema nunca exibe "Dinheiro + Produto".
+    Quando houver produto envolvido, a sugestão final fica Produto.
+    O usuário pode clicar em Editar e trocar explicitamente para Dinheiro.
+  */
   if(product>0)return "Produto";
   if(cash>0)return "Dinheiro";
   return "Não definido";
@@ -13622,20 +13692,41 @@ function paidTypeLabelFromValues(cash,product){
 function paidTypeBadgeClass(type){
   type=String(type||"").toLowerCase();
 
-  if(type.includes("produto")&&!type.includes("dinheiro"))return "product";
-  if(type.includes("dinheiro")&&!type.includes("produto"))return "cash";
-  if(type.includes("produto")&&type.includes("dinheiro"))return "mixed";
+  if(type.includes("produto"))return "product";
+  if(type.includes("dinheiro"))return "cash";
   return "neutral";
 }
 
 function paidOriginalText(group){
   const cash=Number(group?.baseCash||0);
   const product=Number(group?.baseProduct||0);
+  const productChoices=[...(group?.productChoices||new Set())];
 
-  if(cash>0&&product>0)return `Dinheiro ${money(cash)} • Produto ${money(product)}`;
-  if(cash>0)return money(cash);
-  if(product>0)return money(product);
-  return "R$ 0,00";
+  const parts=[];
+
+  if(cash>0)parts.push(`Dinheiro ${money(cash)}`);
+  if(product>0)parts.push(`Produto ${money(product)}`);
+  if(productChoices.length)parts.push(`Produto escolhido: ${productChoices.join(", ")}`);
+
+  return parts.length?parts.join(" • "):"R$ 0,00";
+}
+
+function paidSuggestedAmountByType(base,type){
+  type=String(type||"");
+
+  if(type==="Produto"){
+    return Number(base.product||0)>0
+      ? Number(base.product||0)
+      : Number(base.cash||0);
+  }
+
+  if(type==="Dinheiro"){
+    return Number(base.cash||0)>0
+      ? Number(base.cash||0)
+      : Number(base.product||0);
+  }
+
+  return Number(base.cash||0)+Number(base.product||0);
 }
 
 function paidGroupsForMonth(month){
@@ -13652,6 +13743,7 @@ function paidGroupsForMonth(month){
       baseProduct:0,
       dates:[],
       sources:new Set(),
+      productChoices:new Set(),
       count:0
     };
 
@@ -13667,7 +13759,8 @@ function paidGroupsForMonth(month){
     let sourcesText=[...(base.sources||new Set())].join(" + ")||"-";
     let paymentType=paidTypeLabelFromValues(cash,product);
     let adjusted=false;
-    let amount=Number(cash||0)+Number(product||0);
+
+    let amount=paidSuggestedAmountByType(base,paymentType);
 
     if(adjustment){
       adjusted=true;
@@ -13685,6 +13778,14 @@ function paidGroupsForMonth(month){
       paymentType=adjustment.paymentType;
       sourcesText="Editado manualmente";
       dateText=dateBR(adjustment.date);
+    }else{
+      if(paymentType==="Produto"){
+        cash=0;
+        product=amount;
+      }else if(paymentType==="Dinheiro"){
+        cash=amount;
+        product=0;
+      }
     }
 
     return {
@@ -13749,21 +13850,18 @@ function editPaidPayment(influencerId){
   }
 
   const adjustment=row.adjustment||null;
+  const suggestedType=adjustment?.paymentType||row.paymentTypeLabel||"Dinheiro";
 
   $("paidEditInfluencerId").value=influencerId;
   $("paidEditMonth").value=month;
   $("paidEditInfluencerName").value=`${inf.name||"-"} (${inf.coupon||"-"})`;
-  $("paidEditType").value=adjustment?.paymentType||(
-    row.product>0&&row.cash<=0
-      ?"Produto"
-      :"Dinheiro"
-  );
+  $("paidEditType").value=suggestedType==="Produto"?"Produto":"Dinheiro";
   $("paidEditAmount").value=Number(adjustment?.amount||row.amount||0).toFixed(2);
   $("paidEditDate").value=adjustment?.date||today();
   $("paidEditNotes").value=adjustment?.notes||"";
 
   if($("paidEditSubtitle")){
-    $("paidEditSubtitle").textContent=`Original do sistema: ${row.originalText}. Edite apenas o valor efetivamente pago.`;
+    $("paidEditSubtitle").textContent=`Original do sistema: ${row.originalText}. Você pode deixar como Pago em produto ou trocar para Pago em dinheiro.`;
   }
 
   const panel=$("paidEditPanel");
@@ -16315,6 +16413,14 @@ function reconcileProductChoicePaid(item){
     afterCash,
     relatedId:`product-choice-${item.id}`
   });
+
+  /*
+    V125:
+    A própria sessão Pagos lê state.redemptions com status Pago/Resgatado.
+    Este render garante que, ao marcar Produto escolhido como Pago,
+    a linha apareça em Pagos automaticamente sem precisar recarregar.
+  */
+  renderPaidPage();
 }
 
 function productUsed(infId){return state.redemptions.filter(r=>r.influencerId===infId&&r.status!=="Cancelado").reduce((a,r)=>a+Number(r.used||0),0);}
