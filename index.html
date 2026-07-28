@@ -9036,6 +9036,41 @@ body.appRecovered #cloudStatus{
   margin-top:6px!important;
 }
 
+
+/* ===== V132 ZERAGEM SEPARADA ACUMULAR ===== */
+.accActionStack{
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  flex-wrap:wrap!important;
+}
+
+.accActionStack .productZeroBtn{
+  background:#eff6ff!important;
+  color:#1d4ed8!important;
+  border-color:#bfdbfe!important;
+  font-weight:950!important;
+}
+
+.accActionStack .cashZeroBtn{
+  background:#ecfdf5!important;
+  color:#047857!important;
+  border-color:#bbf7d0!important;
+  font-weight:950!important;
+}
+
+@media(max-width:760px){
+  .accActionStack{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    width:100%!important;
+  }
+
+  .accActionStack button{
+    width:100%!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9117,7 +9152,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V131</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V132</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10013,6 +10048,8 @@ body.appRecovered #cloudStatus{
               <option value="cash_paid">Pagos em dinheiro</option>
               <option value="product_paid">Pagos em produto</option>
               <option value="product_choice_paid">Produto escolhido pago</option>
+              <option value="product_zero_only">Saldo em produto zerado</option>
+              <option value="cash_zero_only">Saldo em dinheiro zerado</option>
               <option value="manual_zero">Zerados manualmente</option>
             </select>
             <button class="secondary" onclick="exportAccumulationHistoryCSV()">Exportar histórico</button>
@@ -10449,8 +10486,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V131";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v131";
+const APP_BUILD_VERSION="V132";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v132";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10489,7 +10526,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=131");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=132");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12149,7 +12186,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V131",
+    version:"V132",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12436,6 +12473,17 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ACCUMULATION_HISTORY_CAPTURE","Não foi possível confirmar a captação contábil do histórico do Acumular.");
   }
 
+  if(
+    String(zeroAccumulatedProductBalance).includes("product_zero_only")&&
+    String(zeroAccumulatedCashBalance).includes("cash_zero_only")&&
+    String(accumulationHistoryTypesThatCloseBalance).includes("product_zero_only")&&
+    String(accumulationHistoryTypesThatCloseBalance).includes("cash_zero_only")
+  ){
+    auditAdd(report,"pass","ACCUMULATION_PARTIAL_ZERO","Acumular permite zerar separadamente saldo em produto e saldo em dinheiro com checkpoint no histórico.");
+  }else{
+    auditAdd(report,"warn","ACCUMULATION_PARTIAL_ZERO","Não foi possível confirmar a zeragem separada de produto/dinheiro em Acumular.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12555,7 +12603,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v131-${today()}.json`;
+  a.download=`auditoria-painel-v132-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12585,7 +12633,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V131",
+    "AUDITORIA DO SISTEMA — V132",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12613,7 +12661,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V131: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V132: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13234,7 +13282,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V131 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V132 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -14722,14 +14770,16 @@ function accTypeLabel(type){
     cash_paid:"Pago em dinheiro",
     product_paid:"Pago em produto",
     product_choice_paid:"Pago em produto",
+    product_zero_only:"Saldo em produto zerado",
+    cash_zero_only:"Saldo em dinheiro zerado",
     manual_zero:"Zerado manualmente"
   };
   return map[type]||"Alteração";
 }
 
 function accTypeClass(type){
-  if(type==="cash_paid")return "money";
-  if(type==="product_paid"||type==="product_choice_paid")return "product";
+  if(type==="cash_paid"||type==="cash_zero_only")return "money";
+  if(type==="product_paid"||type==="product_choice_paid"||type==="product_zero_only")return "product";
   return "manual";
 }
 
@@ -15232,7 +15282,7 @@ function accumulationAsOfDate(period=accumulationExportPeriod()){
 }
 
 function accumulationHistoryTypesThatCloseBalance(){
-  return new Set(["product_choice_paid","cash_paid","product_paid","manual_zero"]);
+  return new Set(["product_choice_paid","cash_paid","product_paid","manual_zero","product_zero_only","cash_zero_only"]);
 }
 
 function accumulationHistoricalCashResetAmount(infId,period=accumulationExportPeriod()){
@@ -15499,8 +15549,12 @@ function renderAccumulations(){
         ${r.ledgerEvents?.some(e=>e.kind==="history_checkpoint")?`<small class="accPeriodDetail history">Histórico captado no saldo</small>`:""}
       </td>
       <td>
-        ${r.cash>0?`<button class="small primary" onclick="payAccumulatedCash('${r.i.id}')">Pagar dinheiro</button> `:""}
-        <button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Zerar acúmulo</button>
+        <div class="accActionStack">
+          ${r.cash>0?`<button class="small primary" onclick="payAccumulatedCash('${r.i.id}')">Pagar dinheiro</button>`:""}
+          ${r.product>0?`<button class="small secondary productZeroBtn" onclick="zeroAccumulatedProductBalance('${r.i.id}')">Zerar saldo em produto</button>`:""}
+          ${r.cash>0?`<button class="small secondary cashZeroBtn" onclick="zeroAccumulatedCashBalance('${r.i.id}')">Zerar saldo em dinheiro</button>`:""}
+          <button class="small secondary" onclick="stopAccumulatingInfluencer('${r.i.id}')">Zerar acúmulo</button>
+        </div>
       </td>
     </tr>`;
   }).join(""):`<tr><td colspan="5">Nenhum influencer com saldo acumulado aberto.</td></tr>`;
@@ -15642,6 +15696,113 @@ function printAccumulationReport(){
   document.body.classList.add("print-accumulation");
   window.print();
   setTimeout(()=>document.body.classList.remove("print-accumulation"),500);
+}
+
+
+
+function accumulationRowForAction(infId){
+  const period=accumulationExportPeriod();
+  return accumulationByInfluencer(period).find(r=>r.i.id===infId) ||
+    accumulationByInfluencer().find(r=>r.i.id===infId) ||
+    null;
+}
+
+function persistAccumulationCheckpoint(message){
+  save();
+  renderAccumulations();
+  renderDashboard();
+  renderLaunches();
+  renderReports();
+  renderAccumulationReport();
+  showUndoToast(message||"Saldo atualizado e histórico registrado.");
+}
+
+function zeroAccumulatedProductBalance(infId){
+  const row=accumulationRowForAction(infId);
+  const inf=infById(infId);
+
+  if(!inf){
+    alert("Influencer não encontrado.");
+    return;
+  }
+
+  if(!row||Number(row.product||0)<=0){
+    alert("Este influencer não possui saldo em produto para zerar.");
+    renderAccumulations();
+    return;
+  }
+
+  const reason=promptAccumulationReason("Zerado somente saldo em produto");
+  if(reason===null)return;
+
+  const beforeProduct=Number(row.product||0);
+  const beforeCash=Number(row.cash||0);
+
+  if(!confirm(`Zerar somente o saldo em produto de ${inf.name}?\\n\\nProduto: ${money(beforeProduct)} → R$ 0,00\\nDinheiro permanece: ${money(beforeCash)}\\n\\nA alteração ficará registrada no histórico.`)){
+    return;
+  }
+
+  addAccumulationHistory({
+    influencerId:infId,
+    type:"product_zero_only",
+    label:"Saldo em produto zerado",
+    reason,
+    beforeProduct,
+    beforeCash,
+    afterProduct:0,
+    afterCash:beforeCash
+  });
+
+  /*
+    V132:
+    A zeragem parcial é gravada como checkpoint no histórico de Acumular.
+    O livro contábil passa a obedecer afterProduct=0 e mantém afterCash.
+  */
+  persistAccumulationCheckpoint("Saldo em produto zerado em tempo real.");
+}
+
+function zeroAccumulatedCashBalance(infId){
+  const row=accumulationRowForAction(infId);
+  const inf=infById(infId);
+
+  if(!inf){
+    alert("Influencer não encontrado.");
+    return;
+  }
+
+  if(!row||Number(row.cash||0)<=0){
+    alert("Este influencer não possui saldo em dinheiro para zerar.");
+    renderAccumulations();
+    return;
+  }
+
+  const reason=promptAccumulationReason("Zerado somente saldo em dinheiro");
+  if(reason===null)return;
+
+  const beforeProduct=Number(row.product||0);
+  const beforeCash=Number(row.cash||0);
+
+  if(!confirm(`Zerar somente o saldo em dinheiro de ${inf.name}?\\n\\nDinheiro: ${money(beforeCash)} → R$ 0,00\\nProduto permanece: ${money(beforeProduct)}\\n\\nA alteração ficará registrada no histórico.`)){
+    return;
+  }
+
+  addAccumulationHistory({
+    influencerId:infId,
+    type:"cash_zero_only",
+    label:"Saldo em dinheiro zerado",
+    reason,
+    beforeProduct,
+    beforeCash,
+    afterProduct:beforeProduct,
+    afterCash:0
+  });
+
+  /*
+    V132:
+    A zeragem parcial é gravada como checkpoint no histórico de Acumular.
+    O livro contábil passa a obedecer afterCash=0 e mantém afterProduct.
+  */
+  persistAccumulationCheckpoint("Saldo em dinheiro zerado em tempo real.");
 }
 
 
