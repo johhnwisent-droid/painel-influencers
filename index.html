@@ -8933,6 +8933,12 @@ body.appRecovered #cloudStatus{
   font-size:12px!important;
 }
 
+
+/* ===== V127 PAGOS STATUS SEM EDITADO E PROTEÇÃO ANTIGA ===== */
+#paidPageRows .paidManualBadge{
+  display:none!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9014,7 +9020,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V126</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V127</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10326,8 +10332,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V126";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v126";
+const APP_BUILD_VERSION="V127";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v127";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10366,7 +10372,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=126");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=127");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12026,7 +12032,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V126",
+    version:"V127",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12249,6 +12255,26 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","PAID_HISTORY_VISIBLE","Histórico de alterações da sessão Pagos não foi confirmado na interface.");
   }
 
+  const paidStatusSource=String(renderPaidPage);
+  if(
+    paidStatusSource.includes('<span class="paidBadge">Pago</span>')&&
+    !paidStatusSource.includes('paidManualBadge">Editado')
+  ){
+    auditAdd(report,"pass","PAID_STATUS_STAYS_PAID","Tabela Influencers pagos mantém status Pago mesmo após edição manual.");
+  }else{
+    auditAdd(report,"warn","PAID_STATUS_STAYS_PAID","Status da tabela Influencers pagos pode voltar a mostrar Editado.");
+  }
+
+  if(
+    String(mergePaidAdjustmentsCollections).includes("latestIds")&&
+    String(savePaidAdjustmentFromForm).includes("Substituído por edição mais recente")&&
+    String(cloudLoad).includes("localPaidAdjustmentsBeforeCloud")
+  ){
+    auditAdd(report,"pass","PAID_STALE_PROTECTION","Ajustes manuais de Pagos usam proteção contra informação antiga sobrescrever a atual.");
+  }else{
+    auditAdd(report,"warn","PAID_STALE_PROTECTION","Não foi possível confirmar toda a proteção contra dados antigos em Pagos.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12368,7 +12394,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v126-${today()}.json`;
+  a.download=`auditoria-painel-v127-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12398,7 +12424,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V126",
+    "AUDITORIA DO SISTEMA — V127",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12426,7 +12452,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V126: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V127: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13047,7 +13073,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V126 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V127 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13074,6 +13100,7 @@ async function cloudLoad(){
       try{
         const localWholesaleBeforeCloud=activeLocalWholesaleCandidates();
         const localInfluencerLaunchesBeforeCloud=activeLocalInfluencerLaunchCandidates();
+        const localPaidAdjustmentsBeforeCloud=ensureArray(state.paidAdjustments);
 
         state=JSON.parse(row.valor);
 
@@ -13085,6 +13112,11 @@ async function cloudLoad(){
         state.launches=mergeInfluencerLaunchCollections(
           Array.isArray(state.launches)?state.launches:[],
           localInfluencerLaunchesBeforeCloud
+        );
+
+        state.paidAdjustments=mergePaidAdjustmentsCollections(
+          Array.isArray(state.paidAdjustments)?state.paidAdjustments:[],
+          localPaidAdjustmentsBeforeCloud
         );
 
         writeWholesaleSnapshot(state.wholesaleRetail);
@@ -13482,20 +13514,7 @@ function normalize(){
     p.cash=Number(p.cash||p.amount||0);
   });
 
-  state.paidAdjustments.forEach(p=>{
-    p.id=p.id||uid();
-    p.date=p.date||today();
-    p.month=p.month||(p.date||today()).slice(0,7);
-    p.influencerId=p.influencerId||"";
-    p.paymentType=p.paymentType==="Produto"?"Produto":"Dinheiro";
-    p.amount=Math.max(0,finiteNumber(p.amount,0));
-    p.status=p.status||"Pago";
-    p.notes=p.notes||"";
-    p.createdAt=p.createdAt||"";
-    p.createdByName=p.createdByName||"Não registrado";
-    p.updatedAt=p.updatedAt||"";
-    p.updatedByName=p.updatedByName||"";
-  });
+  repairPaidAdjustments();
 }
 function selectedMonth(){return $("globalMonth").value||currentMonth();}
 function monthLabel(m){const [y,mo]=m.split("-");return `${mo}/${y}`;}
@@ -13604,6 +13623,97 @@ function renderLaunchTotals(){
     <td>${r.acc?"Sim":"Não"}</td>
   </tr>`).join(""):`<tr><td colspan="7">Sem resumo para mostrar.</td></tr>`;
 }
+
+
+function paidAdjustmentKey(row){
+  return `${row?.month||""}__${row?.influencerId||""}`;
+}
+
+function paidAdjustmentTime(row){
+  const raw=row?.updatedAt||row?.createdAt||row?.date||"";
+  const t=Date.parse(raw);
+  return Number.isFinite(t)?t:0;
+}
+
+function normalizePaidAdjustmentRecord(row){
+  if(!row||typeof row!=="object")return null;
+
+  const item=cloneSafe(row,{});
+  item.id=item.id||uid();
+  item.month=item.month||(item.date||today()).slice(0,7);
+  item.date=item.date||today();
+  item.influencerId=item.influencerId||"";
+  item.paymentType=item.paymentType==="Produto"?"Produto":"Dinheiro";
+  item.amount=Math.max(0,finiteNumber(item.amount,0));
+  item.status=item.status||"Pago";
+  item.notes=item.notes||"";
+  item.createdAt=item.createdAt||item.updatedAt||new Date().toISOString();
+  item.updatedAt=item.updatedAt||"";
+  item.createdByName=item.createdByName||"Não registrado";
+  item.updatedByName=item.updatedByName||"";
+
+  return item.influencerId&&item.month?item:null;
+}
+
+function mergePaidAdjustmentsCollections(...collections){
+  const map=new Map();
+  const history=[];
+
+  collections.flat().forEach(raw=>{
+    const item=normalizePaidAdjustmentRecord(raw);
+    if(!item)return;
+
+    const key=paidAdjustmentKey(item);
+    const current=map.get(key);
+
+    history.push(item);
+
+    if(!current){
+      map.set(key,item);
+      return;
+    }
+
+    const itemTime=paidAdjustmentTime(item);
+    const currentTime=paidAdjustmentTime(current);
+
+    if(itemTime>=currentTime){
+      map.set(key,item);
+    }
+  });
+
+  const latestIds=new Set([...map.values()].map(item=>String(item.id)));
+
+  /*
+    V127:
+    Mantém o histórico, mas garante que só o ajuste mais recente de cada
+    influencer/mês seja considerado ativo. Assim uma informação antiga não
+    volta para a tabela principal como se fosse atual.
+  */
+  return history.map(item=>{
+    if(latestIds.has(String(item.id)))return item;
+
+    if(item.status!=="Cancelado"){
+      item.status="Cancelado";
+      item.notes=item.notes
+        ? `${item.notes} • Ajuste antigo preservado no histórico`
+        : "Ajuste antigo preservado no histórico";
+    }
+
+    return item;
+  }).sort((a,b)=>{
+    const byTime=paidAdjustmentTime(b)-paidAdjustmentTime(a);
+    if(byTime)return byTime;
+    return String(b.id||"").localeCompare(String(a.id||""));
+  });
+}
+
+function repairPaidAdjustments(){
+  state.paidAdjustments=mergePaidAdjustmentsCollections(
+    ensureArray(state.paidAdjustments)
+  );
+  return state.paidAdjustments;
+}
+
 
 function selectedPaidMonth(){
   const el=$("paidMonth");
@@ -13726,9 +13836,15 @@ function paidBaseGroupsForMonth(month){
 function activePaidAdjustmentsForMonth(month){
   const map=new Map();
 
+  repairPaidAdjustments();
+
   (state.paidAdjustments||[])
     .filter(p=>p.month===month&&p.status!=="Cancelado"&&p.influencerId)
-    .sort((a,b)=>String(a.updatedAt||a.createdAt||"").localeCompare(String(b.updatedAt||b.createdAt||"")))
+    .sort((a,b)=>{
+      const byTime=paidAdjustmentTime(a)-paidAdjustmentTime(b);
+      if(byTime)return byTime;
+      return String(a.id||"").localeCompare(String(b.id||""));
+    })
     .forEach(p=>{
       map.set(p.influencerId,p);
     });
@@ -13971,7 +14087,7 @@ function renderPaidPage(){
     <td><span class="paidOriginalValue">${esc(r.originalText)}</span></td>
     <td>${esc(r.sourcesText||"-")}</td>
     <td>${esc(r.dateText||"-")}</td>
-    <td>${r.adjusted?`<span class="paidManualBadge">Editado</span>`:`<span class="paidBadge">Pago</span>`}</td>
+    <td><span class="paidBadge">Pago</span></td>
     <td>
       <button class="small secondary" onclick="editPaidPayment('${esc(r.influencerId)}')">Editar</button>
       ${r.adjusted?`<button class="small danger" onclick="clearPaidAdjustment('${esc(r.influencerId)}')">Restaurar</button>`:""}
@@ -14047,42 +14163,52 @@ function savePaidAdjustmentFromForm(e){
   state.paidAdjustments=ensureArray(state.paidAdjustments);
 
   const audit=currentAuditInfo();
-  const existing=(state.paidAdjustments||[])
-    .filter(p=>p.month===month&&p.influencerId===influencerId&&p.status!=="Cancelado")
-    .sort((a,b)=>String(b.updatedAt||b.createdAt||"").localeCompare(String(a.updatedAt||a.createdAt||"")))[0];
+  const now=audit.at||new Date().toISOString();
 
-  if(existing){
-    existing.amount=amount;
-    existing.paymentType=paymentType;
-    existing.date=date;
-    existing.notes=notes;
-    existing.status="Pago";
-    existing.updatedById=audit.id||"";
-    existing.updatedByName=audit.name||"";
-    existing.updatedByUsername=audit.username||"";
-    existing.updatedAt=audit.at||new Date().toISOString();
-  }else{
-    state.paidAdjustments.push({
-      id:uid(),
-      month,
-      date,
-      influencerId,
-      amount,
-      paymentType,
-      status:"Pago",
-      notes,
-      source:"Edição manual em Pagos",
-      createdById:audit.id||"",
-      createdByName:audit.name||"Não registrado",
-      createdByUsername:audit.username||"",
-      createdAt:audit.at||new Date().toISOString(),
-      updatedById:"",
-      updatedByName:"",
-      updatedByUsername:"",
-      updatedAt:""
-    });
-  }
+  /*
+    V127:
+    Ao salvar uma nova edição, qualquer ajuste ativo anterior do mesmo
+    influencer/mês é cancelado e preservado no histórico. Isso evita que uma
+    informação antiga seja usada de novo como valor atual.
+  */
+  state.paidAdjustments.forEach(p=>{
+    if(
+      p.month===month&&
+      p.influencerId===influencerId&&
+      p.status!=="Cancelado"
+    ){
+      p.status="Cancelado";
+      p.updatedById=audit.id||"";
+      p.updatedByName=audit.name||"";
+      p.updatedByUsername=audit.username||"";
+      p.updatedAt=now;
+      p.notes=p.notes
+        ? `${p.notes} • Substituído por edição mais recente`
+        : "Substituído por edição mais recente";
+    }
+  });
 
+  state.paidAdjustments.push({
+    id:uid(),
+    month,
+    date,
+    influencerId,
+    amount,
+    paymentType,
+    status:"Pago",
+    notes,
+    source:"Edição manual em Pagos",
+    createdById:audit.id||"",
+    createdByName:audit.name||"Não registrado",
+    createdByUsername:audit.username||"",
+    createdAt:now,
+    updatedById:"",
+    updatedByName:"",
+    updatedByUsername:"",
+    updatedAt:""
+  });
+
+  repairPaidAdjustments();
   save();
   cancelPaidEdit();
   renderPaidPage();
@@ -14115,6 +14241,7 @@ function clearPaidAdjustment(influencerId){
     p.updatedAt=audit.at||new Date().toISOString();
   });
 
+  repairPaidAdjustments();
   save();
   cancelPaidEdit();
   renderPaidPage();
