@@ -9100,17 +9100,39 @@ body.appRecovered #cloudStatus{
 }
 
 
-/* ===== V134 GANHOS VISÍVEIS NO ACUMULAR ===== */
-.accPeriodDetail.gain{
+/* ===== V135 EXTRATO ORGANIZADO DO ACUMULAR ===== */
+.accExtractPanel[hidden]{
+  display:none!important;
+}
+
+.accExtractPanel{
+  border-color:#dbeafe!important;
+  background:linear-gradient(180deg,#ffffff,#f8fbff)!important;
+}
+
+.accExtractCards{
+  margin-bottom:12px!important;
+}
+
+.accExtractWrap table{
+  min-width:920px!important;
+}
+
+.accExtractBtn{
+  background:#f8fafc!important;
+  border-color:#cbd5e1!important;
+  color:#0f172a!important;
+  font-weight:950!important;
+}
+
+.accExtractGain{
   color:#047857!important;
-  background:#ecfdf5!important;
-  border:1px solid #bbf7d0!important;
-  border-radius:999px!important;
-  display:inline-flex!important;
-  width:max-content!important;
-  max-width:100%!important;
-  padding:4px 8px!important;
-  margin-top:6px!important;
+  font-weight:1000!important;
+}
+
+.accExtractMinus{
+  color:#b91c1c!important;
+  font-weight:1000!important;
 }
 
 </style>
@@ -9194,7 +9216,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V134</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V135</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10077,6 +10099,43 @@ body.appRecovered #cloudStatus{
         </div>
       </div>
 
+      <div class="panel accExtractPanel" id="accExtractPanel" hidden>
+        <div class="panelHead">
+          <div>
+            <h3>Extrato do acúmulo</h3>
+            <span class="muted" id="accExtractSubtitle">Selecione um influencer para visualizar ganhos, usos e zeragens.</span>
+          </div>
+          <div class="filters">
+            <button class="secondary" onclick="exportAccumulationExtractCSV()">Exportar extrato</button>
+            <button class="secondary" onclick="closeAccumulationExtract()">Fechar</button>
+          </div>
+        </div>
+
+        <div class="grid accExtractCards">
+          <div class="card"><small>Ganho produto</small><strong id="accExtractProductGain">R$ 0,00</strong></div>
+          <div class="card"><small>Produto usado/zerado</small><strong id="accExtractProductMinus">R$ 0,00</strong></div>
+          <div class="card"><small>Ganho dinheiro</small><strong id="accExtractCashGain">R$ 0,00</strong></div>
+          <div class="card"><small>Dinheiro pago/zerado</small><strong id="accExtractCashMinus">R$ 0,00</strong></div>
+        </div>
+
+        <div class="tableWrap accExtractWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Movimento</th>
+                <th>Produto +</th>
+                <th>Produto -</th>
+                <th>Dinheiro +</th>
+                <th>Dinheiro -</th>
+                <th>Origem / detalhe</th>
+              </tr>
+            </thead>
+            <tbody id="accExtractRows"></tbody>
+          </table>
+        </div>
+      </div>
+
 
       <div class="panel">
         <div class="panelHead">
@@ -10528,8 +10587,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V134";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v134";
+const APP_BUILD_VERSION="V135";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v135";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10568,7 +10627,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=134");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=135");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12229,7 +12288,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V134",
+    version:"V135",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12540,13 +12599,15 @@ function runLocalSystemAudit(){
   }
 
   if(
-    String(renderAccumulations).includes("Ganho no período")&&
-    String(accumulationGainDetail).includes("lançamento")&&
-    String(accumulationExportRows).includes("Ganhos produto por lançamento")
+    $("accExtractPanel")&&
+    $("accExtractRows")&&
+    String(openAccumulationExtract).includes("renderAccumulationExtract")&&
+    String(renderAccumulations).includes("openAccumulationExtract")&&
+    !String(renderAccumulations).includes("Ganho no período")
   ){
-    auditAdd(report,"pass","ACCUMULATION_GAIN_DETAILS","Acumular mostra ganhos de produto/dinheiro abaixo do saldo e exporta ganhos por lançamento.");
+    auditAdd(report,"pass","ACCUMULATION_EXTRACT_BUTTON","Detalhes de ganhos, usos e zeragens ficam organizados no botão Extrato, sem poluir a tabela principal.");
   }else{
-    auditAdd(report,"warn","ACCUMULATION_GAIN_DETAILS","Não foi possível confirmar os detalhes de ganho no Acumular.");
+    auditAdd(report,"warn","ACCUMULATION_EXTRACT_BUTTON","Não foi possível confirmar que os detalhes foram movidos para o Extrato.");
   }
 
   // Rascunho
@@ -12668,7 +12729,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v134-${today()}.json`;
+  a.download=`auditoria-painel-v135-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12698,7 +12759,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V134",
+    "AUDITORIA DO SISTEMA — V135",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12726,7 +12787,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V134: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V135: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13348,7 +13409,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V134 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V135 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -14988,6 +15049,7 @@ function applyAccumulationBalanceMonth(){
 
   renderAccumulations();
   renderAccumulationReport();
+  if(selectedAccumulationExtractInfluencerId)renderAccumulationExtract();
 }
 
 function accumulationDateInPeriod(value,period=accumulationExportPeriod()){
@@ -15602,6 +15664,177 @@ function accumulationGainDetail(total,count,type,list=[]){
 }
 
 
+
+let selectedAccumulationExtractInfluencerId=null;
+
+function accumulationExtractMovements(infId,period=accumulationExportPeriod()){
+  const rows=[];
+
+  accumulationPeriodLaunches(period)
+    .filter(l=>l.influencerId===infId)
+    .forEach(l=>{
+      const product=Number(l.productCommission||0);
+      const cash=Number(l.cashCommission||0);
+
+      if(product>0||cash>0){
+        rows.push({
+          date:l.date,
+          type:"Ganho por lançamento",
+          productPlus:product,
+          productMinus:0,
+          cashPlus:cash,
+          cashMinus:0,
+          detail:`${l.origin||"Lançamento"} • Venda ${money(l.sold||0)}`
+        });
+      }
+    });
+
+  accumulationPeriodRedemptions(period)
+    .filter(r=>r.influencerId===infId)
+    .forEach(r=>{
+      rows.push({
+        date:r.date,
+        type:"Produto usado/resgatado",
+        productPlus:0,
+        productMinus:Number(r.used||0),
+        cashPlus:0,
+        cashMinus:0,
+        detail:`${r.name||"Produto"} • Status: ${r.status||"-"}`
+      });
+    });
+
+  accumulationPeriodCashPayments(period)
+    .filter(p=>p.influencerId===infId)
+    .forEach(p=>{
+      rows.push({
+        date:p.date,
+        type:p.productRedemptionId?"Dinheiro zerado por resgate em produto":"Dinheiro pago/zerado",
+        productPlus:0,
+        productMinus:0,
+        cashPlus:0,
+        cashMinus:Number(p.cash||p.amount||0),
+        detail:p.notes||p.source||"Pagamento"
+      });
+    });
+
+  accumulationPeriodHistory(period)
+    .filter(h=>h.influencerId===infId)
+    .forEach(h=>{
+      rows.push({
+        date:h.createdAt||h.date,
+        type:accTypeLabel(h.type),
+        productPlus:0,
+        productMinus:Math.max(0,Number(h.beforeProduct||0)-Number(h.afterProduct||0)),
+        cashPlus:0,
+        cashMinus:Math.max(0,Number(h.beforeCash||0)-Number(h.afterCash||0)),
+        detail:h.reason||h.label||"Histórico do acúmulo"
+      });
+    });
+
+  return rows.sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
+}
+
+function accumulationExtractTotals(rows){
+  return (Array.isArray(rows)?rows:[]).reduce((acc,r)=>{
+    acc.productGain+=Number(r.productPlus||0);
+    acc.productMinus+=Number(r.productMinus||0);
+    acc.cashGain+=Number(r.cashPlus||0);
+    acc.cashMinus+=Number(r.cashMinus||0);
+    return acc;
+  },{productGain:0,productMinus:0,cashGain:0,cashMinus:0});
+}
+
+function openAccumulationExtract(infId){
+  selectedAccumulationExtractInfluencerId=infId;
+  renderAccumulationExtract();
+
+  const panel=$("accExtractPanel");
+  if(panel){
+    panel.hidden=false;
+    panel.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+}
+
+function closeAccumulationExtract(){
+  selectedAccumulationExtractInfluencerId=null;
+
+  if($("accExtractPanel"))$("accExtractPanel").hidden=true;
+  if($("accExtractRows"))$("accExtractRows").innerHTML="";
+}
+
+function renderAccumulationExtract(){
+  const panel=$("accExtractPanel");
+  if(!panel)return;
+
+  const inf=infById(selectedAccumulationExtractInfluencerId);
+  if(!inf){
+    panel.hidden=true;
+    return;
+  }
+
+  const period=accumulationExportPeriod();
+  const rows=accumulationExtractMovements(inf.id,period);
+  const totals=accumulationExtractTotals(rows);
+
+  if($("accExtractSubtitle")){
+    $("accExtractSubtitle").textContent=`${inf.name} (${inf.coupon||"-"}) • ${accumulationExportPeriodLabel()}`;
+  }
+
+  if($("accExtractProductGain"))$("accExtractProductGain").textContent=money(totals.productGain);
+  if($("accExtractProductMinus"))$("accExtractProductMinus").textContent=money(totals.productMinus);
+  if($("accExtractCashGain"))$("accExtractCashGain").textContent=money(totals.cashGain);
+  if($("accExtractCashMinus"))$("accExtractCashMinus").textContent=money(totals.cashMinus);
+
+  if($("accExtractRows")){
+    $("accExtractRows").innerHTML=rows.length?rows.map(r=>`<tr>
+      <td>${dateTimeBR(r.date)||dateBR(r.date)}</td>
+      <td>${esc(r.type||"-")}</td>
+      <td><span class="accExtractGain">${Number(r.productPlus||0)>0?`+${money(r.productPlus)}`:"-"}</span></td>
+      <td><span class="accExtractMinus">${Number(r.productMinus||0)>0?`-${money(r.productMinus)}`:"-"}</span></td>
+      <td><span class="accExtractGain">${Number(r.cashPlus||0)>0?`+${money(r.cashPlus)}`:"-"}</span></td>
+      <td><span class="accExtractMinus">${Number(r.cashMinus||0)>0?`-${money(r.cashMinus)}`:"-"}</span></td>
+      <td>${esc(r.detail||"-")}</td>
+    </tr>`).join(""):`<tr><td colspan="7">Nenhum movimento encontrado no período.</td></tr>`;
+  }
+
+  panel.hidden=false;
+}
+
+function exportAccumulationExtractCSV(){
+  const inf=infById(selectedAccumulationExtractInfluencerId);
+
+  if(!inf){
+    alert("Abra o extrato de um influencer antes de exportar.");
+    return;
+  }
+
+  const rows=accumulationExtractMovements(inf.id,accumulationExportPeriod());
+  const totals=accumulationExtractTotals(rows);
+
+  rowsCSV([
+    ["Extrato do acúmulo"],
+    ["Influencer",inf.name||""],
+    ["Cupom",inf.coupon||""],
+    ["Período",accumulationExportPeriodLabel()],
+    ["Ganho produto",totals.productGain],
+    ["Produto usado/zerado",totals.productMinus],
+    ["Ganho dinheiro",totals.cashGain],
+    ["Dinheiro pago/zerado",totals.cashMinus],
+    [],
+    ["Data","Movimento","Produto +","Produto -","Dinheiro +","Dinheiro -","Origem / detalhe"],
+    ...rows.map(r=>[
+      dateTimeBR(r.date)||dateBR(r.date),
+      r.type||"",
+      r.productPlus||0,
+      r.productMinus||0,
+      r.cashPlus||0,
+      r.cashMinus||0,
+      r.detail||""
+    ])
+  ],`extrato-acumulo-${inf.coupon||inf.name||"influencer"}.csv`);
+}
+
+
 function renderAccumulations(){
   const balancePeriod=accumulationExportPeriod();
   const activeGroups=accumulationByInfluencer(balancePeriod);
@@ -15647,19 +15880,11 @@ function renderAccumulations(){
     return `<tr>
       <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
       <td><span class="mobileCouponText">${esc(r.i.coupon)}</span></td>
-      <td>
-        <span class="mobileValueText">${money(r.product)}</span>
-        ${r.earnedProduct>0?`<small class="accPeriodDetail gain">${esc(accumulationGainDetail(r.earnedProduct,r.list?.filter(l=>Number(l.productCommission||0)>0).length||0,"product",r.list))}</small>`:""}
-        ${r.usedProduct>0?`<small class="accPeriodDetail">Usado/resgatado: -${money(r.usedProduct)}</small>`:""}
-      </td>
-      <td>
-        <span class="mobileValueText">${money(r.cash)}</span>
-        ${r.earnedCash>0?`<small class="accPeriodDetail gain">${esc(accumulationGainDetail(r.earnedCash,r.list?.filter(l=>Number(l.cashCommission||0)>0).length||0,"cash",r.list))}</small>`:""}
-        ${r.paidCash>0?`<small class="accPeriodDetail">Pago/zerado: -${money(r.paidCash)}</small>`:""}
-        ${r.ledgerEvents?.some(e=>e.kind==="history_checkpoint")?`<small class="accPeriodDetail history">Histórico captado no saldo</small>`:""}
-      </td>
+      <td><span class="mobileValueText">${money(r.product)}</span></td>
+      <td><span class="mobileValueText">${money(r.cash)}</span></td>
       <td>
         <div class="accActionStack">
+          <button class="small secondary accExtractBtn" onclick="openAccumulationExtract('${r.i.id}')">Extrato</button>
           ${r.cash>0?`<button class="small primary" onclick="payAccumulatedCash('${r.i.id}')">Pagar dinheiro</button>`:""}
           ${r.product>0?`<button class="small secondary productZeroBtn" onclick="zeroAccumulatedProductBalance('${r.i.id}')">Zerar saldo em produto</button>`:""}
           ${r.cash>0?`<button class="small secondary cashZeroBtn" onclick="zeroAccumulatedCashBalance('${r.i.id}')">Zerar saldo em dinheiro</button>`:""}
@@ -15671,6 +15896,10 @@ function renderAccumulations(){
 
   renderAccumulationHistory();
   renderAccumulationReport();
+
+  if(selectedAccumulationExtractInfluencerId){
+    renderAccumulationExtract();
+  }
 }
 function payAccumulatedProduct(infId){
   alert("A opção Pago em produto foi removida da página Acumular. Para usar comissão em produtos, registre em Produto escolhido e marque como Pago.");
