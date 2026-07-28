@@ -9135,6 +9135,29 @@ body.appRecovered #cloudStatus{
   font-weight:1000!important;
 }
 
+
+/* ===== V136 AÇÕES MAIS FLUIDAS ===== */
+button,
+input,
+select,
+textarea{
+  touch-action:manipulation!important;
+}
+
+.view.active{
+  will-change:auto!important;
+}
+
+.tableWrap{
+  overflow-anchor:none!important;
+}
+
+.accActionStack button,
+.filters button,
+.menu button{
+  transform:translateZ(0);
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9216,7 +9239,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V135</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V136</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10587,8 +10610,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V135";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v135";
+const APP_BUILD_VERSION="V136";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v136";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10627,7 +10650,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=135");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=136");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -11425,6 +11448,52 @@ function deleteAuthUser(id){
 }
 
 
+
+let snapshotWriteTimer=null;
+let lastWholesaleSnapshotWriteSig="";
+let lastInfluencerLaunchSnapshotWriteSig="";
+
+function rowsLightSignature(rows){
+  return (Array.isArray(rows)?rows:[])
+    .map(x=>`${x.id}|${x.updatedAt||""}|${x.createdAt||""}|${x.date||""}|${x.deleted?"1":"0"}`)
+    .join(";");
+}
+
+function scheduleSnapshotWrites(delay=900){
+  clearTimeout(snapshotWriteTimer);
+
+  snapshotWriteTimer=setTimeout(()=>{
+    try{
+      const wholesaleRows=state.wholesaleRetail||[];
+      const wholesaleSig=rowsLightSignature(wholesaleRows);
+
+      if(wholesaleSig!==lastWholesaleSnapshotWriteSig){
+        writeWholesaleSnapshot(wholesaleRows);
+        lastWholesaleSnapshotWriteSig=wholesaleSig;
+      }
+
+      const launchRows=state.launches||[];
+      const launchSig=rowsLightSignature(launchRows);
+
+      if(launchSig!==lastInfluencerLaunchSnapshotWriteSig){
+        writeInfluencerLaunchSnapshot(launchRows);
+        lastInfluencerLaunchSnapshotWriteSig=launchSig;
+      }
+    }catch(e){
+      console.warn("Snapshot adiado ignorado:",e);
+    }
+  },delay);
+}
+
+function idleCallback(fn,timeout=1600){
+  if("requestIdleCallback" in window){
+    return requestIdleCallback(fn,{timeout});
+  }
+
+  return setTimeout(fn,0);
+}
+
+
 function save(){
   repairStateStructure();
 
@@ -11438,8 +11507,7 @@ function save(){
   const data=JSON.stringify(state);
 
   handleUndoCommit(data);
-  writeWholesaleSnapshot(state.wholesaleRetail||[]);
-  writeInfluencerLaunchSnapshot(state.launches||[]);
+  scheduleSnapshotWrites();
 
   let localSaved=false;
 
@@ -11769,8 +11837,9 @@ function applyWholesaleCloudRecords(records){
     }catch(e){}
 
     try{
-      renderWholesaleRetail();
-      renderWholesaleCollaboratorPanel();
+      if(currentPage==="wholesaleRetail"||currentPage==="wholesaleOrder"){
+        render();
+      }
     }catch(e){
       console.warn("Renderização após sincronização ignorada:",e);
     }
@@ -12288,7 +12357,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V135",
+    version:"V136",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12610,6 +12679,19 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ACCUMULATION_EXTRACT_BUTTON","Não foi possível confirmar que os detalhes foram movidos para o Extrato.");
   }
 
+  if(
+    String(render).includes("scheduleRender")&&
+    String(runRenderNow).includes("repairStateStructure")&&
+    !String(runRenderNow).includes("normalize();")&&
+    String(save).includes("scheduleSnapshotWrites")&&
+    String(cloudSaveNow).includes("idleCallback")&&
+    String(applyInfluencerLaunchCloudRecords).includes("render();")
+  ){
+    auditAdd(report,"pass","PERFORMANCE_ACTIONS_V136","Ações foram otimizadas com render agendado, normalize removido do ciclo comum, snapshots adiados e salvamento em nuvem em idle.");
+  }else{
+    auditAdd(report,"warn","PERFORMANCE_ACTIONS_V136","Não foi possível confirmar toda a otimização de ações da V136.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12729,7 +12811,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v135-${today()}.json`;
+  a.download=`auditoria-painel-v136-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12759,7 +12841,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V135",
+    "AUDITORIA DO SISTEMA — V136",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12787,7 +12869,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V135: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V136: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13044,11 +13126,7 @@ function applyInfluencerLaunchCloudRecords(records){
     }catch(e){}
 
     try{
-      renderDashboard();
-      renderLaunches();
-      renderPaidPage();
-      renderAccumulations();
-      renderReports();
+      render();
     }catch(e){
       console.warn("Renderização após sincronização de lançamentos ignorada:",e);
     }
@@ -13409,7 +13487,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V135 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V136 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13504,12 +13582,16 @@ async function cloudSaveNow(){
     updateCloudDebug("enviando salvamento para personalizacao/painel_state");
 
     try{
+      const statePayload=await new Promise(resolve=>{
+        idleCallback(()=>resolve(JSON.stringify(state)),1600);
+      });
+
       const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
         method:"POST",
         headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
         body:JSON.stringify({
           chave:CLOUD_STATE_KEY,
-          valor:JSON.stringify(state)
+          valor:statePayload
         })
       },12000);
 
@@ -13550,7 +13632,7 @@ async function cloudSaveNow(){
   }
 }
 
-function scheduleCloudSave(delay=650){
+function scheduleCloudSave(delay=2200){
   clearTimeout(cloudSaveTimer);
   cloudSaveTimer=setTimeout(()=>cloudSaveNow(),delay);
 }
@@ -13855,12 +13937,55 @@ function normalize(){
 function selectedMonth(){return $("globalMonth").value||currentMonth();}
 function monthLabel(m){const [y,mo]=m.split("-");return `${mo}/${y}`;}
 function dateBR(d){if(!d)return"-";const [y,m,day]=d.split("-");return `${day}/${m}/${y}`;}
-function infById(id){return state.influencers.find(i=>i.id===id);}
+
+let influencerMapCache=null;
+let influencerMapSignature="";
+function influencerCacheSignature(){
+  return (state.influencers||[]).map(i=>`${i.id}|${i.name}|${i.coupon}`).join(";");
+}
+function influencerMap(){
+  const sig=influencerCacheSignature();
+
+  if(sig!==influencerMapSignature||!influencerMapCache){
+    influencerMapCache=new Map((state.influencers||[]).map(i=>[String(i.id),i]));
+    influencerMapSignature=sig;
+  }
+
+  return influencerMapCache;
+}
+function resetInfluencerCache(){
+  influencerMapCache=null;
+  influencerMapSignature="";
+}
+function infById(id){return influencerMap().get(String(id));}
 function totalLaunch(l){return Number(l.productCommission||0)+Number(l.cashCommission||0);}
 function monthLaunches(){return state.launches.filter(l=>(l.month||(l.date||"").slice(0,7))===selectedMonth());}
 function stats(rows){return rows.reduce((a,l)=>{a.sold+=Number(l.sold||0);a.product+=Number(l.productCommission||0);a.cash+=Number(l.cashCommission||0);a.total=a.product+a.cash;a.count++;return a;},{sold:0,product:0,cash:0,total:0,count:0});}
+let lastThemeSignature="";
 function applyTheme(){
   const s=state.settings;
+  const themeSignature=[
+    s.primaryColor,
+    s.accentColor,
+    s.backgroundColor,
+    s.cardColor,
+    s.textColor,
+    s.mobileMenuBg,
+    s.mobileMenuText,
+    s.mobileMenuActiveBg,
+    s.mobileMenuActiveText,
+    s.mobileBottomBg,
+    s.mobileBottomText,
+    s.mobileBottomActiveBg,
+    s.mobileBottomActiveText,
+    s.systemName,
+    s.subtitle,
+    s.systemLogo
+  ].join("|");
+
+  if(themeSignature===lastThemeSignature)return;
+  lastThemeSignature=themeSignature;
+
   document.documentElement.style.setProperty("--primary",s.primaryColor);
   document.documentElement.style.setProperty("--accent",s.accentColor);
   document.documentElement.style.setProperty("--bg",s.backgroundColor);
@@ -18253,31 +18378,45 @@ function enhanceMobileTables(scope=null){
 
 let mobileTableObserver=null;
 let mobileTableObserverBusy=false;
+let mobileTableEnhanceTimer=null;
+
+function scheduleMobileTableEnhancement(){
+  clearTimeout(mobileTableEnhanceTimer);
+  mobileTableEnhanceTimer=setTimeout(()=>enhanceMobileTables(),80);
+}
+
 function initMobileEnhancements(){
-  enhanceMobileTables();
+  scheduleMobileTableEnhancement();
   if(mobileTableObserver)return;
   const main=document.querySelector(".main");
   if(!main)return;
   mobileTableObserver=new MutationObserver(()=>{
     if(mobileTableObserverBusy)return;
     mobileTableObserverBusy=true;
-    requestAnimationFrame(()=>{
+    clearTimeout(mobileTableEnhanceTimer);
+    mobileTableEnhanceTimer=setTimeout(()=>{
       mobileTableObserverBusy=false;
       enhanceMobileTables();
-    });
+    },120);
   });
   mobileTableObserver.observe(main,{childList:true,subtree:true});
 }
 
 function showPage(id){
-  currentPage=id||"dashboard";
+  const nextPage=id||"dashboard";
+  const samePage=currentPage===nextPage&&$(nextPage)?.classList.contains("active");
+
+  currentPage=nextPage;
   window.currentPage=currentPage;
   setPageClass(currentPage);
-  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
+
+  if(!samePage){
+    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+    document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
+  }
 
   const view=$(currentPage);
-  if(view)view.classList.add("active");
+  if(view&&!view.classList.contains("active"))view.classList.add("active");
 
   const btn=document.querySelector(`.menu button[data-page="${currentPage}"]`);
   if(btn){
@@ -18292,6 +18431,8 @@ function showPage(id){
 
 let renderBusy=false;
 let renderQueued=false;
+let renderScheduled=false;
+let renderFrameId=null;
 let lastPopulateSignature="";
 
 function populateSignature(){
@@ -18310,6 +18451,7 @@ function populateIfNeeded(){
   const sig=populateSignature();
 
   if(sig!==lastPopulateSignature){
+    resetInfluencerCache();
     populate();
     lastPopulateSignature=sig;
   }
@@ -18382,7 +18524,7 @@ function renderCurrentPageOnly(){
   }
 }
 
-function render(options={}){
+function runRenderNow(){
   if(renderBusy){
     renderQueued=true;
     return;
@@ -18391,10 +18533,16 @@ function render(options={}){
   renderBusy=true;
 
   try{
-    normalize();
+    /*
+      V136:
+      render não executa normalize completo em toda ação.
+      A estrutura básica é reparada, e normalizações completas continuam
+      nos pontos de entrada: startup, backup, cloud load e importações.
+    */
+    repairStateStructure();
     renderSharedShell();
     renderCurrentPageOnly();
-    enhanceMobileTables();
+    scheduleMobileTableEnhancement();
   }catch(e){
     console.error("Erro ao renderizar painel:",e);
     updateCloudDebug("erro de renderização: "+(e.message||e));
@@ -18404,8 +18552,34 @@ function render(options={}){
 
   if(renderQueued){
     renderQueued=false;
-    setTimeout(()=>render({force:true}),0);
+    scheduleRender();
   }
+}
+
+function scheduleRender(){
+  if(renderScheduled)return;
+
+  renderScheduled=true;
+  renderFrameId=requestAnimationFrame(()=>{
+    renderScheduled=false;
+    renderFrameId=null;
+    runRenderNow();
+  });
+}
+
+function render(options={}){
+  if(options.force||options.immediate){
+    if(renderFrameId){
+      cancelAnimationFrame(renderFrameId);
+      renderFrameId=null;
+      renderScheduled=false;
+    }
+
+    runRenderNow();
+    return;
+  }
+
+  scheduleRender();
 }
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 
@@ -18619,7 +18793,6 @@ $("launchForm").addEventListener("submit",e=>{
     .catch(()=>{});
 
   resetLaunchForm();
-  render();
   showPage("launches");
 });
 $("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId").value||uid();const item={id,name:$("infName").value.trim(),coupon:$("infCoupon").value.trim(),productRate:Number($("infProductRate").value||0),cashRate:Number($("infCashRate").value||0),instagram:$("infInstagram").value,whatsapp:$("infWhatsapp").value,pix:(infById(id)||{}).pix||""};if(!item.name||!item.coupon){alert("Informe nome e cupom.");return}const idx=state.influencers.findIndex(i=>i.id===id);if(idx>=0)state.influencers[idx]=item;else state.influencers.push(item);save();resetInfForm();render();});
@@ -18786,7 +18959,6 @@ if($("wholesaleForm")){
     window.currentPage="wholesaleRetail";
     setPageClass("wholesaleRetail");
 
-    render();
     showPage("wholesaleRetail");
     showSavedWholesaleLaunch(id);
   });
