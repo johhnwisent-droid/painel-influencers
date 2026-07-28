@@ -9158,6 +9158,43 @@ textarea{
   transform:translateZ(0);
 }
 
+
+/* ===== V137 EXTRATO SEM DUPLICIDADE E MOTIVO CURTO ===== */
+.accReasonBox.compact{
+  max-width:280px!important;
+}
+
+.accReasonButton{
+  display:inline-block!important;
+  max-width:260px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+  border:1px solid #e2e8f0!important;
+  background:#f8fafc!important;
+  color:#334155!important;
+  border-radius:999px!important;
+  padding:6px 10px!important;
+  font-size:12px!important;
+  font-weight:850!important;
+  cursor:pointer!important;
+  text-align:left!important;
+}
+
+.accReasonButton:hover{
+  border-color:#2563eb!important;
+  color:#1d4ed8!important;
+  background:#eff6ff!important;
+}
+
+.accReasonShort{
+  display:inline-block!important;
+  max-width:260px!important;
+  white-space:nowrap!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9239,7 +9276,7 @@ textarea{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V136</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V137</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10610,8 +10647,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V136";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v136";
+const APP_BUILD_VERSION="V137";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v137";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10650,7 +10687,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=136");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=137");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12357,7 +12394,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V136",
+    version:"V137",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12692,6 +12729,16 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","PERFORMANCE_ACTIONS_V136","Não foi possível confirmar toda a otimização de ações da V136.");
   }
 
+  if(
+    String(accumulationExtractMovements).includes("productChoiceHistoryIds.has")&&
+    String(accumulationExtractDetailForHistory).includes("Resgate em produto")&&
+    String(accumulationReasonCell).includes("showFullAccumulationReason")
+  ){
+    auditAdd(report,"pass","ACCUMULATION_EXTRACT_DEDUP_REASON","Extrato de Acumular evita duplicidade de resgate em produto e motivo longo vira botão clicável.");
+  }else{
+    auditAdd(report,"warn","ACCUMULATION_EXTRACT_DEDUP_REASON","Não foi possível confirmar deduplicação do extrato e motivo clicável.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12811,7 +12858,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v136-${today()}.json`;
+  a.download=`auditoria-painel-v137-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12841,7 +12888,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V136",
+    "AUDITORIA DO SISTEMA — V137",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12869,7 +12916,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V136: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V137: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13487,7 +13534,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V136 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V137 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -15100,6 +15147,47 @@ function accumulationDisplayRows(){
   return [...active,...closed];
 }
 
+
+function shortReasonText(value,limit=72){
+  const text=String(value||"").trim();
+  if(text.length<=limit)return text||"-";
+  return text.slice(0,limit).trim()+"...";
+}
+
+function showFullAccumulationReason(id){
+  const row=(state.accumulationHistory||[]).find(h=>String(h.id)===String(id));
+
+  if(!row){
+    alert("Motivo não encontrado.");
+    return;
+  }
+
+  const inf=infById(row.influencerId)||{name:row.influencerName||"-",coupon:row.coupon||"-"};
+  alert([
+    "Motivo completo",
+    "",
+    `Influencer: ${inf.name||"-"}`,
+    `Cupom: ${inf.coupon||"-"}`,
+    `Tipo: ${accTypeLabel(row.type)}`,
+    `Data: ${dateTimeBR(row.createdAt)}`,
+    "",
+    row.reason||"Sem motivo informado"
+  ].join("\\n"));
+}
+
+function accumulationReasonCell(row){
+  const reason=String(row?.reason||"").trim();
+
+  if(!reason)return "-";
+
+  if(reason.length<=72){
+    return `<span class="accReasonShort">${esc(reason)}</span>`;
+  }
+
+  return `<button class="accReasonButton" type="button" onclick="showFullAccumulationReason('${row.id}')">${esc(shortReasonText(reason))}</button>`;
+}
+
+
 function renderAccumulationHistory(){
   if(!$("accHistoryRows"))return;
   const type=$("accHistoryFilter")?.value||"";
@@ -15113,7 +15201,7 @@ function renderAccumulationHistory(){
       <td><span class="accHistoryTableName">${esc(i.name||"-")}</span></td>
       <td>${esc(i.coupon||"-")}</td>
       <td><span class="accStatusBadge ${accTypeClass(h.type)}">${esc(accTypeLabel(h.type))}</span></td>
-      <td><div class="accReasonBox">${esc(h.reason||"Sem motivo informado")}</div></td>
+      <td><div class="accReasonBox compact">${accumulationReasonCell(h)}</div></td>
       <td><span class="before">${money(h.beforeProduct)}</span></td>
       <td><span class="after">${money(h.afterProduct)}</span></td>
       <td><span class="before">${money(h.beforeCash)}</span></td>
@@ -15792,8 +15880,37 @@ function accumulationGainDetail(total,count,type,list=[]){
 
 let selectedAccumulationExtractInfluencerId=null;
 
+function accumulationHistoryProductChoiceIds(period=accumulationExportPeriod(),infId=""){
+  const ids=new Set();
+
+  accumulationPeriodHistory(period)
+    .filter(h=>!infId||h.influencerId===infId)
+    .forEach(h=>{
+      if(h.type!=="product_choice_paid")return;
+      const related=String(h.relatedId||"");
+      if(related.startsWith("product-choice-")){
+        ids.add(related.replace("product-choice-",""));
+      }
+    });
+
+  return ids;
+}
+
+function accumulationExtractDetailForHistory(h){
+  if(!h)return "Histórico do acúmulo";
+
+  if(h.type==="product_choice_paid")return "Resgate em produto";
+  if(h.type==="cash_paid")return "Resgate em dinheiro";
+  if(h.type==="product_zero_only")return "Zeragem do saldo em produto";
+  if(h.type==="cash_zero_only")return "Zeragem do saldo em dinheiro";
+  if(h.type==="manual_zero")return "Zeragem manual do acúmulo";
+
+  return h.label||"Histórico do acúmulo";
+}
+
 function accumulationExtractMovements(infId,period=accumulationExportPeriod()){
   const rows=[];
+  const productChoiceHistoryIds=accumulationHistoryProductChoiceIds(period,infId);
 
   accumulationPeriodLaunches(period)
     .filter(l=>l.influencerId===infId)
@@ -15817,6 +15934,14 @@ function accumulationExtractMovements(infId,period=accumulationExportPeriod()){
   accumulationPeriodRedemptions(period)
     .filter(r=>r.influencerId===infId)
     .forEach(r=>{
+      /*
+        V137:
+        Se o resgate em produto já gerou o histórico "Pago em produto",
+        o extrato não mostra também "Produto usado/resgatado".
+        Assim o lançamento de -R$ 149,00 aparece uma única vez, como Pago em produto.
+      */
+      if(productChoiceHistoryIds.has(String(r.id)))return;
+
       rows.push({
         date:r.date,
         type:"Produto usado/resgatado",
@@ -15831,6 +15956,13 @@ function accumulationExtractMovements(infId,period=accumulationExportPeriod()){
   accumulationPeriodCashPayments(period)
     .filter(p=>p.influencerId===infId)
     .forEach(p=>{
+      /*
+        Quando o dinheiro é zerado automaticamente por resgate em produto,
+        o histórico "Pago em produto" já representa a ação principal.
+        O extrato não duplica esse movimento.
+      */
+      if(p.productRedemptionId&&productChoiceHistoryIds.has(String(p.productRedemptionId)))return;
+
       rows.push({
         date:p.date,
         type:p.productRedemptionId?"Dinheiro zerado por resgate em produto":"Dinheiro pago/zerado",
@@ -15838,7 +15970,7 @@ function accumulationExtractMovements(infId,period=accumulationExportPeriod()){
         productMinus:0,
         cashPlus:0,
         cashMinus:Number(p.cash||p.amount||0),
-        detail:p.notes||p.source||"Pagamento"
+        detail:p.productRedemptionId?"Resgate em produto":(p.notes||p.source||"Pagamento")
       });
     });
 
@@ -15852,7 +15984,7 @@ function accumulationExtractMovements(infId,period=accumulationExportPeriod()){
         productMinus:Math.max(0,Number(h.beforeProduct||0)-Number(h.afterProduct||0)),
         cashPlus:0,
         cashMinus:Math.max(0,Number(h.beforeCash||0)-Number(h.afterCash||0)),
-        detail:h.reason||h.label||"Histórico do acúmulo"
+        detail:accumulationExtractDetailForHistory(h)
       });
     });
 
