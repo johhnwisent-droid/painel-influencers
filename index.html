@@ -8791,6 +8791,115 @@ body.appRecovered #cloudStatus{
   color:#c2410c!important;
 }
 
+
+/* ===== V124 PAGOS EDITÁVEL ===== */
+.paidEditPanel[hidden]{
+  display:none!important;
+}
+
+.paidEditPanel{
+  border-color:#bfdbfe!important;
+  background:
+    radial-gradient(circle at top right,rgba(37,99,235,.07),transparent 34%),
+    #ffffff!important;
+}
+
+.paidEditForm{
+  margin-top:14px!important;
+}
+
+.paidEditActions{
+  align-items:end!important;
+}
+
+.paidTableWrap table{
+  min-width:980px!important;
+}
+
+.paidAmountStrong{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:112px!important;
+  padding:8px 12px!important;
+  border-radius:999px!important;
+  background:#f8fafc!important;
+  border:1px solid #e2e8f0!important;
+  color:#0f172a!important;
+  font-weight:1000!important;
+}
+
+.paidTypeBadge{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:98px!important;
+  padding:7px 10px!important;
+  border-radius:999px!important;
+  font-size:12px!important;
+  font-weight:950!important;
+  border:1px solid transparent!important;
+}
+
+.paidTypeBadge.cash{
+  background:#ecfdf5!important;
+  color:#047857!important;
+  border-color:#bbf7d0!important;
+}
+
+.paidTypeBadge.product{
+  background:#eff6ff!important;
+  color:#1d4ed8!important;
+  border-color:#bfdbfe!important;
+}
+
+.paidTypeBadge.mixed{
+  background:#f5f3ff!important;
+  color:#6d28d9!important;
+  border-color:#ddd6fe!important;
+}
+
+.paidTypeBadge.neutral{
+  background:#f8fafc!important;
+  color:#64748b!important;
+  border-color:#e2e8f0!important;
+}
+
+.paidOriginalValue{
+  display:block!important;
+  color:#475569!important;
+  font-size:12px!important;
+  font-weight:850!important;
+  line-height:1.25!important;
+}
+
+.paidManualBadge{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  padding:7px 11px!important;
+  border-radius:999px!important;
+  background:#fff7ed!important;
+  color:#c2410c!important;
+  border:1px solid #fed7aa!important;
+  font-weight:950!important;
+  font-size:12px!important;
+}
+
+.paidAdjustedRow td{
+  background:#ffffbf14!important;
+}
+
+@media(max-width:720px){
+  .paidEditForm{
+    grid-template-columns:1fr!important;
+  }
+
+  .paidEditForm .two{
+    grid-column:auto!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -8872,7 +8981,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V123</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V124</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9593,28 +9702,76 @@ body.appRecovered #cloudStatus{
       <div class="grid">
         <div class="card"><small>Total pago em dinheiro</small><strong id="paidCashTotal">R$ 0,00</strong></div>
         <div class="card"><small>Influencers pagos</small><strong id="paidInfluencerCount">0</strong></div>
-        <div class="card"><small>Comissão em produtos separada</small><strong id="paidProductTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Total pago em produto</small><strong id="paidProductTotal">R$ 0,00</strong></div>
         <div class="card"><small>Mês consultado</small><strong id="paidMonthLabel">-</strong></div>
       </div>
+
+      <div class="panel paidEditPanel" id="paidEditPanel" hidden>
+        <div class="panelHead">
+          <div>
+            <h3>Editar pagamento</h3>
+            <span class="muted" id="paidEditSubtitle">Altere o valor efetivamente pago e marque se foi dinheiro ou produto.</span>
+          </div>
+        </div>
+
+        <form id="paidEditForm" class="form paidEditForm">
+          <input type="hidden" id="paidEditInfluencerId">
+          <input type="hidden" id="paidEditMonth">
+
+          <label>Influencer
+            <input id="paidEditInfluencerName" readonly>
+          </label>
+
+          <label>Tipo pago
+            <select id="paidEditType">
+              <option value="Dinheiro">Pago em dinheiro</option>
+              <option value="Produto">Pago em produto</option>
+            </select>
+          </label>
+
+          <label>Valor pago
+            <input id="paidEditAmount" type="number" step="0.01" min="0" required>
+          </label>
+
+          <label>Data do pagamento
+            <input id="paidEditDate" type="date" required>
+          </label>
+
+          <label class="two">Observação
+            <input id="paidEditNotes" placeholder="Ex.: valor corrigido manualmente, pago por Pix, produto entregue...">
+          </label>
+
+          <div class="actions two paidEditActions">
+            <button class="primary" type="submit">Salvar pagamento editado</button>
+            <button class="secondary" type="button" onclick="cancelPaidEdit()">Cancelar</button>
+          </div>
+        </form>
+      </div>
+
       <div class="panel">
         <div class="panelHead">
-          <h3>Influencers pagos</h3>
+          <div>
+            <h3>Influencers pagos</h3>
+            <span class="muted">Valor efetivamente pago, com tipo explícito: dinheiro ou produto.</span>
+          </div>
           <div class="filters">
             <label style="display:flex;align-items:center;gap:8px;font-weight:800;color:#6b7280">Mês <input id="paidMonth" type="month" onchange="renderPaidPage()"></label>
             <button class="secondary" onclick="exportPaidCSV()">Exportar CSV</button>
           </div>
         </div>
-        <div class="tableWrap">
+        <div class="tableWrap paidTableWrap">
           <table>
             <thead>
               <tr>
                 <th>Influencer</th>
                 <th>Cupom</th>
-                <th>Comissão em dinheiro paga</th>
-                <th>Comissão em produtos separada</th>
-                <th>Origem do pagamento</th>
+                <th>Valor pago</th>
+                <th>Tipo pago</th>
+                <th>Valor original do sistema</th>
+                <th>Origem</th>
                 <th>Data do pagamento</th>
                 <th>Status</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody id="paidPageRows"></tbody>
@@ -10106,8 +10263,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V123";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v123";
+const APP_BUILD_VERSION="V124";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v124";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10146,7 +10303,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=123");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=124");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -10505,6 +10662,7 @@ function resetTestData(){
     wholesaleRetail:[],
     redemptions:[],
     cashPayments:[],
+    paidAdjustments:[],
     productPayments:[],
     balances:[],
     accumulationHistory:[],
@@ -11805,7 +11963,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V123",
+    version:"V124",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -11995,6 +12153,18 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ACCUMULATION_ZERO_REALTIME","Não foi possível confirmar toda a proteção do zerar acúmulo.");
   }
 
+  const paidSource=String(renderPaidPage)+String(savePaidAdjustmentFromForm)+String(paidGroupsForMonth);
+  if(
+    paidSource.includes("paidAdjustments")&&
+    paidSource.includes("paymentType")&&
+    paidSource.includes("Valor pago")&&
+    $("paidEditForm")
+  ){
+    auditAdd(report,"pass","PAID_EDITABLE_VALUES","Sessão Pagos permite editar valor pago e marcar dinheiro/produto explicitamente.");
+  }else{
+    auditAdd(report,"warn","PAID_EDITABLE_VALUES","Não foi possível confirmar toda a edição manual da sessão Pagos.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12114,7 +12284,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v123-${today()}.json`;
+  a.download=`auditoria-painel-v124-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12144,7 +12314,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V123",
+    "AUDITORIA DO SISTEMA — V124",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12172,7 +12342,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V123: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V124: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -12793,7 +12963,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V123 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V124 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13070,6 +13240,7 @@ function repairStateStructure(){
   state.redemptions=ensureArray(state.redemptions);
   state.wholesaleRetail=ensureArray(state.wholesaleRetail);
   state.cashPayments=ensureArray(state.cashPayments);
+  state.paidAdjustments=ensureArray(state.paidAdjustments);
   state.accumulationHistory=ensureArray(state.accumulationHistory);
 
   state.settings.origins=ensureArray(state.settings.origins);
@@ -13226,6 +13397,21 @@ function normalize(){
     p.amount=Number(p.amount||p.cash||0);
     p.cash=Number(p.cash||p.amount||0);
   });
+
+  state.paidAdjustments.forEach(p=>{
+    p.id=p.id||uid();
+    p.date=p.date||today();
+    p.month=p.month||(p.date||today()).slice(0,7);
+    p.influencerId=p.influencerId||"";
+    p.paymentType=p.paymentType==="Produto"?"Produto":"Dinheiro";
+    p.amount=Math.max(0,finiteNumber(p.amount,0));
+    p.status=p.status||"Pago";
+    p.notes=p.notes||"";
+    p.createdAt=p.createdAt||"";
+    p.createdByName=p.createdByName||"Não registrado";
+    p.updatedAt=p.updatedAt||"";
+    p.updatedByName=p.updatedByName||"";
+  });
 }
 function selectedMonth(){return $("globalMonth").value||currentMonth();}
 function monthLabel(m){const [y,mo]=m.split("-");return `${mo}/${y}`;}
@@ -13342,7 +13528,7 @@ function selectedPaidMonth(){
   return el.value;
 }
 
-function paidRecordsForMonth(month){
+function paidBaseRecordsForMonth(month){
   const launchRecords=state.launches
     .filter(l=>l.paid&&!l.accumulate&&((l.paidMonth||l.month||(l.date||"").slice(0,7))===month))
     .map(l=>({
@@ -13370,53 +13556,360 @@ function paidRecordsForMonth(month){
   return [...launchRecords,...accumulatedRecords];
 }
 
-function paidGroupsForMonth(month){
+/* Compatibilidade com cache antigo */
+function paidRecordsForMonth(month){
+  return paidBaseRecordsForMonth(month);
+}
+
+function paidBaseGroupsForMonth(month){
   const map=new Map();
-  paidRecordsForMonth(month).forEach(r=>{
-    const key=r.influencerId;
-    if(!map.has(key))map.set(key,{influencerId:key,cash:0,product:0,dates:[],sources:new Set(),count:0});
+
+  paidBaseRecordsForMonth(month).forEach(r=>{
+    const key=r.influencerId||"";
+    if(!key)return;
+
+    if(!map.has(key)){
+      map.set(key,{
+        influencerId:key,
+        cash:0,
+        product:0,
+        baseCash:0,
+        baseProduct:0,
+        dates:[],
+        sources:new Set(),
+        count:0
+      });
+    }
+
     const g=map.get(key);
-    g.cash+=r.cash;
-    g.product+=r.product;
+
+    g.cash+=Number(r.cash||0);
+    g.product+=Number(r.product||0);
+    g.baseCash+=Number(r.cash||0);
+    g.baseProduct+=Number(r.product||0);
     g.count++;
+
     if(r.date)g.dates.push(r.date);
-    g.sources.add(r.kind);
+    g.sources.add(r.kind||r.source||"Pagamento");
   });
 
-  return [...map.values()].map(g=>{
-    const i=infById(g.influencerId)||{};
-    return {...g,i,sourcesText:[...g.sources].join(" + "),dateText:g.dates.length?[...new Set(g.dates.map(dateBR))].join(", "):"-"};
-  }).sort((a,b)=>b.cash-a.cash||b.product-a.product);
+  return map;
+}
+
+function activePaidAdjustmentsForMonth(month){
+  const map=new Map();
+
+  (state.paidAdjustments||[])
+    .filter(p=>p.month===month&&p.status!=="Cancelado"&&p.influencerId)
+    .sort((a,b)=>String(a.updatedAt||a.createdAt||"").localeCompare(String(b.updatedAt||b.createdAt||"")))
+    .forEach(p=>{
+      map.set(p.influencerId,p);
+    });
+
+  return map;
+}
+
+function paidTypeLabelFromValues(cash,product){
+  cash=Number(cash||0);
+  product=Number(product||0);
+
+  if(cash>0&&product>0)return "Dinheiro + Produto";
+  if(product>0)return "Produto";
+  if(cash>0)return "Dinheiro";
+  return "Não definido";
+}
+
+function paidTypeBadgeClass(type){
+  type=String(type||"").toLowerCase();
+
+  if(type.includes("produto")&&!type.includes("dinheiro"))return "product";
+  if(type.includes("dinheiro")&&!type.includes("produto"))return "cash";
+  if(type.includes("produto")&&type.includes("dinheiro"))return "mixed";
+  return "neutral";
+}
+
+function paidOriginalText(group){
+  const cash=Number(group?.baseCash||0);
+  const product=Number(group?.baseProduct||0);
+
+  if(cash>0&&product>0)return `Dinheiro ${money(cash)} • Produto ${money(product)}`;
+  if(cash>0)return money(cash);
+  if(product>0)return money(product);
+  return "R$ 0,00";
+}
+
+function paidGroupsForMonth(month){
+  const baseMap=paidBaseGroupsForMonth(month);
+  const adjustments=activePaidAdjustmentsForMonth(month);
+  const allIds=new Set([...baseMap.keys(),...adjustments.keys()]);
+
+  return [...allIds].map(influencerId=>{
+    const base=baseMap.get(influencerId)||{
+      influencerId,
+      cash:0,
+      product:0,
+      baseCash:0,
+      baseProduct:0,
+      dates:[],
+      sources:new Set(),
+      count:0
+    };
+
+    const adjustment=adjustments.get(influencerId);
+    const i=infById(influencerId)||{};
+
+    let cash=Number(base.cash||0);
+    let product=Number(base.product||0);
+    let dateText=base.dates?.length
+      ? [...new Set(base.dates.map(dateBR))].join(", ")
+      : "-";
+
+    let sourcesText=[...(base.sources||new Set())].join(" + ")||"-";
+    let paymentType=paidTypeLabelFromValues(cash,product);
+    let adjusted=false;
+    let amount=Number(cash||0)+Number(product||0);
+
+    if(adjustment){
+      adjusted=true;
+      const adjustedAmount=Number(adjustment.amount||0);
+
+      if(adjustment.paymentType==="Produto"){
+        cash=0;
+        product=adjustedAmount;
+      }else{
+        cash=adjustedAmount;
+        product=0;
+      }
+
+      amount=adjustedAmount;
+      paymentType=adjustment.paymentType;
+      sourcesText="Editado manualmente";
+      dateText=dateBR(adjustment.date);
+    }
+
+    return {
+      ...base,
+      i,
+      influencerId,
+      cash,
+      product,
+      amount,
+      paymentType,
+      paymentTypeLabel:paymentType,
+      adjusted,
+      adjustment,
+      sourcesText,
+      dateText,
+      originalText:paidOriginalText(base)
+    };
+  }).sort((a,b)=>{
+    if(b.amount!==a.amount)return b.amount-a.amount;
+    return String(a.i.name||"").localeCompare(String(b.i.name||""),"pt-BR");
+  });
 }
 
 function renderPaidPage(){
   if(!$("paidPageRows"))return;
+
   const month=selectedPaidMonth();
   const rows=paidGroupsForMonth(month);
 
-  $("paidCashTotal").textContent=money(rows.reduce((a,r)=>a+r.cash,0));
-  $("paidProductTotal").textContent=money(rows.reduce((a,r)=>a+r.product,0));
+  $("paidCashTotal").textContent=money(rows.reduce((a,r)=>a+Number(r.cash||0),0));
+  $("paidProductTotal").textContent=money(rows.reduce((a,r)=>a+Number(r.product||0),0));
   $("paidInfluencerCount").textContent=rows.length;
   $("paidMonthLabel").textContent=monthLabel(month);
 
-  $("paidPageRows").innerHTML=rows.length?rows.map(r=>`<tr>
+  $("paidPageRows").innerHTML=rows.length?rows.map(r=>`<tr class="${r.adjusted?"paidAdjustedRow":""}">
     <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name||"-")}</span></td>
     <td><span class="mobileCouponText">${esc(r.i.coupon||"-")}</span></td>
-    <td><span class="moneyHighlight cash">${money(r.cash)}</span></td>
-    <td><span class="moneyHighlight product">${money(r.product)}</span></td>
+    <td><span class="paidAmountStrong">${money(r.amount)}</span></td>
+    <td><span class="paidTypeBadge ${paidTypeBadgeClass(r.paymentTypeLabel)}">${esc(r.paymentTypeLabel)}</span></td>
+    <td><span class="paidOriginalValue">${esc(r.originalText)}</span></td>
     <td>${esc(r.sourcesText||"-")}</td>
     <td>${esc(r.dateText||"-")}</td>
-    <td><span class="paidBadge">Pago</span></td>
-  </tr>`).join(""):`<tr><td colspan="7">Nenhum influencer pago neste mês.</td></tr>`;
+    <td>${r.adjusted?`<span class="paidManualBadge">Editado</span>`:`<span class="paidBadge">Pago</span>`}</td>
+    <td>
+      <button class="small secondary" onclick="editPaidPayment('${esc(r.influencerId)}')">Editar</button>
+      ${r.adjusted?`<button class="small danger" onclick="clearPaidAdjustment('${esc(r.influencerId)}')">Restaurar</button>`:""}
+    </td>
+  </tr>`).join(""):`<tr><td colspan="9">Nenhum influencer pago neste mês.</td></tr>`;
 }
 
 function renderPaidInfluencers(){renderPaidPage();}
 
+function editPaidPayment(influencerId){
+  const month=selectedPaidMonth();
+  const rows=paidGroupsForMonth(month);
+  const row=rows.find(r=>r.influencerId===influencerId);
+  const inf=infById(influencerId);
+
+  if(!row||!inf){
+    alert("Pagamento não encontrado para editar.");
+    return;
+  }
+
+  const adjustment=row.adjustment||null;
+
+  $("paidEditInfluencerId").value=influencerId;
+  $("paidEditMonth").value=month;
+  $("paidEditInfluencerName").value=`${inf.name||"-"} (${inf.coupon||"-"})`;
+  $("paidEditType").value=adjustment?.paymentType||(
+    row.product>0&&row.cash<=0
+      ?"Produto"
+      :"Dinheiro"
+  );
+  $("paidEditAmount").value=Number(adjustment?.amount||row.amount||0).toFixed(2);
+  $("paidEditDate").value=adjustment?.date||today();
+  $("paidEditNotes").value=adjustment?.notes||"";
+
+  if($("paidEditSubtitle")){
+    $("paidEditSubtitle").textContent=`Original do sistema: ${row.originalText}. Edite apenas o valor efetivamente pago.`;
+  }
+
+  const panel=$("paidEditPanel");
+  if(panel){
+    panel.hidden=false;
+    panel.scrollIntoView({behavior:"smooth",block:"start"});
+  }
+}
+
+function cancelPaidEdit(){
+  if($("paidEditForm"))$("paidEditForm").reset();
+  if($("paidEditInfluencerId"))$("paidEditInfluencerId").value="";
+  if($("paidEditMonth"))$("paidEditMonth").value="";
+  if($("paidEditPanel"))$("paidEditPanel").hidden=true;
+}
+
+function savePaidAdjustmentFromForm(e){
+  if(e)e.preventDefault();
+
+  const influencerId=$("paidEditInfluencerId")?.value||"";
+  const month=$("paidEditMonth")?.value||selectedPaidMonth();
+  const inf=infById(influencerId);
+  const amount=Math.max(0,finiteNumber($("paidEditAmount")?.value,0));
+  const paymentType=$("paidEditType")?.value==="Produto"?"Produto":"Dinheiro";
+  const date=$("paidEditDate")?.value||today();
+  const notes=$("paidEditNotes")?.value||"";
+
+  if(!inf){
+    alert("Influencer não encontrado.");
+    return false;
+  }
+
+  if(amount<=0){
+    alert("Informe o valor pago.");
+    return false;
+  }
+
+  state.paidAdjustments=ensureArray(state.paidAdjustments);
+
+  const audit=currentAuditInfo();
+  const existing=(state.paidAdjustments||[])
+    .filter(p=>p.month===month&&p.influencerId===influencerId&&p.status!=="Cancelado")
+    .sort((a,b)=>String(b.updatedAt||b.createdAt||"").localeCompare(String(a.updatedAt||a.createdAt||"")))[0];
+
+  if(existing){
+    existing.amount=amount;
+    existing.paymentType=paymentType;
+    existing.date=date;
+    existing.notes=notes;
+    existing.status="Pago";
+    existing.updatedById=audit.id||"";
+    existing.updatedByName=audit.name||"";
+    existing.updatedByUsername=audit.username||"";
+    existing.updatedAt=audit.at||new Date().toISOString();
+  }else{
+    state.paidAdjustments.push({
+      id:uid(),
+      month,
+      date,
+      influencerId,
+      amount,
+      paymentType,
+      status:"Pago",
+      notes,
+      source:"Edição manual em Pagos",
+      createdById:audit.id||"",
+      createdByName:audit.name||"Não registrado",
+      createdByUsername:audit.username||"",
+      createdAt:audit.at||new Date().toISOString(),
+      updatedById:"",
+      updatedByName:"",
+      updatedByUsername:"",
+      updatedAt:""
+    });
+  }
+
+  save();
+  cancelPaidEdit();
+  renderPaidPage();
+  showUndoToast("Pagamento editado e salvo.");
+
+  return true;
+}
+
+function clearPaidAdjustment(influencerId){
+  const month=selectedPaidMonth();
+  const adjustments=(state.paidAdjustments||[])
+    .filter(p=>p.month===month&&p.influencerId===influencerId&&p.status!=="Cancelado");
+
+  if(!adjustments.length){
+    alert("Não há edição manual para restaurar.");
+    return;
+  }
+
+  if(!confirm("Restaurar o valor original calculado pelo sistema para este influencer?")){
+    return;
+  }
+
+  const audit=currentAuditInfo();
+
+  adjustments.forEach(p=>{
+    p.status="Cancelado";
+    p.updatedById=audit.id||"";
+    p.updatedByName=audit.name||"";
+    p.updatedByUsername=audit.username||"";
+    p.updatedAt=audit.at||new Date().toISOString();
+  });
+
+  save();
+  cancelPaidEdit();
+  renderPaidPage();
+  showUndoToast("Pagamento restaurado para o valor original do sistema.");
+}
+
 function exportPaidCSV(){
   const month=selectedPaidMonth();
   const rows=paidGroupsForMonth(month);
-  rowsCSV([["Mês","Influencer","Cupom","Comissão em dinheiro paga","Comissão em produtos separada","Origem do pagamento","Data do pagamento"],...rows.map(r=>[monthLabel(month),r.i.name||"-",r.i.coupon||"-",r.cash,r.product,r.sourcesText,r.dateText])],`influencers-pagos-${month}.csv`);
+
+  rowsCSV([
+    [
+      "Mês",
+      "Influencer",
+      "Cupom",
+      "Valor pago",
+      "Tipo pago",
+      "Valor original do sistema",
+      "Origem do pagamento",
+      "Data do pagamento",
+      "Status",
+      "Observação manual"
+    ],
+    ...rows.map(r=>[
+      monthLabel(month),
+      r.i.name||"-",
+      r.i.coupon||"-",
+      r.amount,
+      r.paymentTypeLabel,
+      r.originalText,
+      r.sourcesText,
+      r.dateText,
+      r.adjusted?"Editado manualmente":"Pago",
+      r.adjustment?.notes||""
+    ])
+  ],`influencers-pagos-${month}.csv`);
 }
+
 
 function calcLaunch(){}
 
@@ -16494,6 +16987,7 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Escape")closeMobileMenu();
 });
 if($("loginForm"))$("loginForm").addEventListener("submit",handleLoginSubmit);
+if($("paidEditForm"))$("paidEditForm").addEventListener("submit",savePaidAdjustmentFromForm);
 
 document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",()=>{syncMonthInputs();render();});
 setTimeout(()=>{
