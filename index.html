@@ -9276,7 +9276,7 @@ textarea{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V137</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V138</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10557,6 +10557,21 @@ let launchPollTimer=null;
 let launchDraftTimer=null;
 let launchDraftProtectionInstalled=false;
 let launchSubmitLocked=false;
+
+/*
+  V138 — salvamento robusto de Produto escolhido.
+  Cada produto escolhido também é salvo em linha individual na nuvem.
+  Isso evita perda quando painel_state antigo ou outro colaborador sobrescreve a lista.
+*/
+const PRODUCT_CHOICE_RECORD_PREFIX="product_choice_";
+const PRODUCT_CHOICE_PENDING_KEY=KEY+"_product_choice_pending_v138";
+const PRODUCT_CHOICE_SNAPSHOT_KEY=KEY+"_product_choice_snapshot_v138";
+const PRODUCT_CHOICE_SEED_KEY=KEY+"_product_choice_seed_v138";
+
+let productChoiceFlushBusy=false;
+let productChoiceSyncBusy=false;
+let productChoiceSyncWatchersInstalled=false;
+let productChoicePollTimer=null;
 function legacyStorageKeys(){
   return [
     'painel_influencers_backup_estavel_v60',
@@ -10647,8 +10662,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V137";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v137";
+const APP_BUILD_VERSION="V138";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v138";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10687,7 +10702,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=137");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=138");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -11489,6 +11504,7 @@ function deleteAuthUser(id){
 let snapshotWriteTimer=null;
 let lastWholesaleSnapshotWriteSig="";
 let lastInfluencerLaunchSnapshotWriteSig="";
+let lastProductChoiceSnapshotWriteSig="";
 
 function rowsLightSignature(rows){
   return (Array.isArray(rows)?rows:[])
@@ -11515,6 +11531,14 @@ function scheduleSnapshotWrites(delay=900){
       if(launchSig!==lastInfluencerLaunchSnapshotWriteSig){
         writeInfluencerLaunchSnapshot(launchRows);
         lastInfluencerLaunchSnapshotWriteSig=launchSig;
+      }
+
+      const productRows=state.redemptions||[];
+      const productSig=rowsLightSignature(productRows);
+
+      if(productSig!==lastProductChoiceSnapshotWriteSig){
+        writeProductChoiceSnapshot(productRows);
+        lastProductChoiceSnapshotWriteSig=productSig;
       }
     }catch(e){
       console.warn("Snapshot adiado ignorado:",e);
@@ -12394,7 +12418,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V137",
+    version:"V138",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12739,6 +12763,17 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ACCUMULATION_EXTRACT_DEDUP_REASON","Não foi possível confirmar deduplicação do extrato e motivo clicável.");
   }
 
+  if(
+    String(queueProductChoiceCloudRecord).includes("PRODUCT_CHOICE_PENDING_KEY")&&
+    String(syncProductChoiceRecordsFromCloud).includes("fetchProductChoiceCloudRecords")&&
+    String(cloudLoad).includes("localProductChoicesBeforeCloud")&&
+    String(deleteProduct).includes("deleted:true")
+  ){
+    auditAdd(report,"pass","PRODUCT_CHOICE_PERSISTENCE","Produto escolhido possui salvamento individual, fila local, snapshot, tombstone e merge contra painel_state antigo.");
+  }else{
+    auditAdd(report,"warn","PRODUCT_CHOICE_PERSISTENCE","Não foi possível confirmar toda a blindagem de Produto escolhido.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12858,7 +12893,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v137-${today()}.json`;
+  a.download=`auditoria-painel-v138-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12888,7 +12923,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V137",
+    "AUDITORIA DO SISTEMA — V138",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12916,7 +12951,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V137: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V138: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13533,8 +13568,377 @@ async function recoverInfluencerLaunchesDeepScan(){
 }
 
 
+
+function productChoiceRecordTime(item){
+  const raw=item?.updatedAt||item?.createdAt||item?.date||"";
+  const t=Date.parse(raw);
+  return Number.isFinite(t)?t:0;
+}
+
+function normalizeProductChoiceRecord(item,source=""){
+  if(!item||typeof item!=="object")return null;
+
+  const audit=typeof currentAuditInfo==="function"
+    ? currentAuditInfo()
+    : {id:"",name:"Sistema",username:"",at:new Date().toISOString()};
+
+  const r=cloneSafe(item,{});
+  r.id=String(r.id||uid());
+  r.date=String(r.date||today()).slice(0,10);
+  r.month=r.month||r.date.slice(0,7);
+  r.influencerId=String(r.influencerId||"");
+  r.name=String(r.name||"Produto").trim()||"Produto";
+  r.value=Math.max(0,finiteNumber(r.value,0));
+  r.used=Math.max(0,finiteNumber(r.used,0));
+  r.difference=Math.max(0,finiteNumber(r.difference,r.value-r.used));
+  r.status=String(r.status||"Pendente");
+  r.notes=String(r.notes||"");
+  r.createdById=r.createdById||audit.id||"";
+  r.createdByName=r.createdByName||audit.name||"Não registrado";
+  r.createdByUsername=r.createdByUsername||audit.username||"";
+  r.createdAt=r.createdAt||r.updatedAt||audit.at||new Date().toISOString();
+  r.updatedById=r.updatedById||"";
+  r.updatedByName=r.updatedByName||"";
+  r.updatedByUsername=r.updatedByUsername||"";
+  r.updatedAt=r.updatedAt||"";
+  r.recoveredSource=r.recoveredSource||source||"";
+
+  return r.influencerId?r:null;
+}
+
+function mergeProductChoiceCollections(...collections){
+  const map=new Map();
+
+  collections.flat().forEach(raw=>{
+    const item=normalizeProductChoiceRecord(raw);
+    if(!item)return;
+
+    const id=String(item.id);
+
+    if(item.deleted===true){
+      map.delete(id);
+      return;
+    }
+
+    const current=map.get(id);
+
+    if(!current){
+      map.set(id,cloneSafe(item,item));
+      return;
+    }
+
+    if(productChoiceRecordTime(item)>=productChoiceRecordTime(current)){
+      map.set(id,cloneSafe(item,item));
+    }
+  });
+
+  return [...map.values()].sort((a,b)=>{
+    const byTime=productChoiceRecordTime(b)-productChoiceRecordTime(a);
+    if(byTime)return byTime;
+    return String(b.date||"").localeCompare(String(a.date||""));
+  });
+}
+
+function readProductChoiceSnapshot(){
+  try{
+    const raw=localStorage.getItem(PRODUCT_CHOICE_SNAPSHOT_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed:[];
+  }catch(e){
+    return [];
+  }
+}
+
+function writeProductChoiceSnapshot(rows=state.redemptions||[]){
+  try{
+    localStorage.setItem(PRODUCT_CHOICE_SNAPSHOT_KEY,JSON.stringify(Array.isArray(rows)?rows:[]));
+  }catch(e){
+    console.warn("Não foi possível gravar o espelho local de Produto escolhido:",e);
+  }
+}
+
+function readProductChoicePendingQueue(){
+  try{
+    const raw=localStorage.getItem(PRODUCT_CHOICE_PENDING_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed.filter(x=>x&&x.id&&x.record):[];
+  }catch(e){
+    return [];
+  }
+}
+
+function writeProductChoicePendingQueue(queue){
+  try{
+    localStorage.setItem(PRODUCT_CHOICE_PENDING_KEY,JSON.stringify(Array.isArray(queue)?queue:[]));
+  }catch(e){
+    console.warn("Não foi possível gravar a fila local de Produto escolhido:",e);
+  }
+}
+
+function queueProductChoiceCloudRecord(record){
+  if(!record||!record.id)return false;
+
+  const queue=readProductChoicePendingQueue();
+  const entry={
+    id:String(record.id),
+    record:cloneSafe(record,record),
+    queuedAt:new Date().toISOString()
+  };
+
+  const idx=queue.findIndex(x=>String(x.id)===entry.id);
+  if(idx>=0)queue[idx]=entry;
+  else queue.push(entry);
+
+  writeProductChoicePendingQueue(queue);
+  writeProductChoiceSnapshot(state.redemptions||[]);
+  return true;
+}
+
+function productChoiceCloudRow(record){
+  return {
+    chave:PRODUCT_CHOICE_RECORD_PREFIX+String(record.id),
+    valor:JSON.stringify(record)
+  };
+}
+
+async function flushProductChoicePendingQueue(){
+  if(productChoiceFlushBusy)return false;
+
+  let queue=readProductChoicePendingQueue();
+  if(!queue.length)return true;
+
+  productChoiceFlushBusy=true;
+
+  try{
+    while(queue.length){
+      const batch=queue.slice(0,40);
+      const payload=batch.map(x=>productChoiceCloudRow(x.record));
+
+      const response=await fetchWithTimeout(
+        SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",
+        {
+          method:"POST",
+          headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
+          body:JSON.stringify(payload)
+        },
+        12000
+      );
+
+      if(!response.ok){
+        const text=await response.text();
+        console.error("Falha ao sincronizar Produto escolhido:",text);
+        updateCloudStatus("Produto escolhido salvo neste aparelho. Sincronização pendente.",true);
+        updateCloudDebug("fila local preservada; detalhe: "+text.slice(0,160));
+        return false;
+      }
+
+      const sentMap=new Map(batch.map(x=>[String(x.id),String(x.queuedAt)]));
+      const latest=readProductChoicePendingQueue().filter(x=>{
+        const sentAt=sentMap.get(String(x.id));
+        return !sentAt||String(x.queuedAt)!==sentAt;
+      });
+
+      writeProductChoicePendingQueue(latest);
+      queue=latest;
+    }
+
+    updateCloudStatus("Produto escolhido sincronizado.");
+    updateCloudDebug("fila individual de Produto escolhido sincronizada");
+    return true;
+  }catch(e){
+    console.error("Erro na fila de Produto escolhido:",e);
+    updateCloudStatus("Produto escolhido salvo neste aparelho. A nuvem será tentada novamente.",true);
+    updateCloudDebug(e.name==="AbortError"?"tempo esgotado na sincronização de Produto escolhido":String(e.message||e));
+    return false;
+  }finally{
+    productChoiceFlushBusy=false;
+  }
+}
+
+function applyProductChoiceCloudRecords(records){
+  const current=Array.isArray(state.redemptions)?state.redemptions:[];
+  const pending=readProductChoicePendingQueue();
+
+  const tombstones=new Set();
+  const cloudItems=[];
+
+  (records||[]).forEach(record=>{
+    if(!record||!record.id)return;
+    if(record.deleted===true)tombstones.add(String(record.id));
+    else cloudItems.push(record);
+  });
+
+  pending.forEach(entry=>{
+    const record=entry.record;
+    if(record?.deleted===true)tombstones.add(String(record.id));
+  });
+
+  let merged=mergeProductChoiceCollections(current,cloudItems);
+
+  if(tombstones.size){
+    merged=merged.filter(item=>!tombstones.has(String(item.id)));
+  }
+
+  const pendingItems=pending
+    .map(x=>x.record)
+    .filter(x=>x&&x.deleted!==true);
+
+  merged=mergeProductChoiceCollections(merged,pendingItems);
+
+  const before=JSON.stringify(current);
+  const after=JSON.stringify(merged);
+  const changed=before!==after;
+
+  if(changed){
+    state.redemptions=merged;
+    writeProductChoiceSnapshot(merged);
+
+    try{
+      const data=JSON.stringify(state);
+      localStorage.setItem(KEY,data);
+      lastUndoSnapshot=data;
+    }catch(e){}
+
+    try{
+      if(currentPage==="products"||currentPage==="accumulations"||currentPage==="paid"){
+        render();
+      }
+    }catch(e){
+      console.warn("Renderização após sincronização de Produto escolhido ignorada:",e);
+    }
+  }
+
+  return changed;
+}
+
+async function fetchProductChoiceCloudRecords(){
+  const url=SUPABASE_URL+
+    "/rest/v1/personalizacao?chave=like."+
+    encodeURIComponent(PRODUCT_CHOICE_RECORD_PREFIX+"*")+
+    "&select=chave,valor";
+
+  const response=await fetchWithTimeout(url,{
+    method:"GET",
+    headers:cloudHeaders()
+  },12000);
+
+  if(!response.ok){
+    const text=await response.text();
+    throw new Error("HTTP "+response.status+" ao ler Produto escolhido: "+text.slice(0,160));
+  }
+
+  const rows=await response.json();
+  const records=[];
+
+  (Array.isArray(rows)?rows:[]).forEach(row=>{
+    try{
+      const parsed=typeof row.valor==="string"?JSON.parse(row.valor):row.valor;
+      if(parsed&&parsed.id)records.push(parsed);
+    }catch(e){
+      console.warn("Registro individual de Produto escolhido inválido ignorado:",row?.chave);
+    }
+  });
+
+  return records;
+}
+
+async function syncProductChoiceRecordsFromCloud({showStatus=false}={}){
+  if(productChoiceSyncBusy)return false;
+  productChoiceSyncBusy=true;
+
+  try{
+    await flushProductChoicePendingQueue();
+
+    const records=await fetchProductChoiceCloudRecords();
+    const changed=applyProductChoiceCloudRecords(records);
+
+    if(showStatus){
+      updateCloudStatus(changed
+        ?"Produtos escolhidos atualizados."
+        :"Produtos escolhidos já estão atualizados.");
+      updateCloudDebug(records.length+" produto(s) escolhido(s) conferidos");
+    }
+
+    return true;
+  }catch(e){
+    console.warn("Sincronização de Produto escolhido indisponível:",e);
+    if(showStatus){
+      updateCloudStatus("Modo local ativo. Produto escolhido será sincronizado automaticamente.",true);
+      updateCloudDebug(String(e.message||e));
+    }
+    return false;
+  }finally{
+    productChoiceSyncBusy=false;
+  }
+}
+
+function activeLocalProductChoiceCandidates(){
+  const pendingItems=readProductChoicePendingQueue()
+    .map(x=>x.record)
+    .filter(x=>x&&x.deleted!==true);
+
+  return mergeProductChoiceCollections(
+    Array.isArray(state.redemptions)?state.redemptions:[],
+    readProductChoiceSnapshot(),
+    pendingItems
+  );
+}
+
+function queueAllProductChoiceRows(rows){
+  (Array.isArray(rows)?rows:[]).forEach(item=>{
+    if(item&&item.id)queueProductChoiceCloudRecord(item);
+  });
+}
+
+async function seedProductChoiceRecordsOnce(){
+  const rows=activeLocalProductChoiceCandidates();
+
+  if(rows.length){
+    state.redemptions=mergeProductChoiceCollections(state.redemptions||[],rows);
+    writeProductChoiceSnapshot(state.redemptions);
+  }
+
+  let seeded=false;
+  try{seeded=localStorage.getItem(PRODUCT_CHOICE_SEED_KEY)==="ok";}catch(e){}
+
+  if(!seeded&&rows.length){
+    queueAllProductChoiceRows(rows);
+    try{localStorage.setItem(PRODUCT_CHOICE_SEED_KEY,"ok");}catch(e){}
+  }
+
+  await flushProductChoicePendingQueue();
+}
+
+function installProductChoiceSyncWatchers(){
+  if(productChoiceSyncWatchersInstalled)return;
+  productChoiceSyncWatchersInstalled=true;
+
+  window.addEventListener("online",()=>{
+    scheduleCloudSave(50);
+    flushProductChoicePendingQueue()
+      .then(()=>syncProductChoiceRecordsFromCloud({showStatus:true}));
+  });
+
+  window.addEventListener("focus",()=>{
+    syncProductChoiceRecordsFromCloud({showStatus:false});
+  });
+
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+      syncProductChoiceRecordsFromCloud({showStatus:false});
+    }
+  });
+
+  clearInterval(productChoicePollTimer);
+  productChoicePollTimer=setInterval(()=>{
+    if(document.hidden)return;
+    syncProductChoiceRecordsFromCloud({showStatus:false});
+  },30000);
+}
+
+
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V137 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V138 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13561,6 +13965,7 @@ async function cloudLoad(){
       try{
         const localWholesaleBeforeCloud=activeLocalWholesaleCandidates();
         const localInfluencerLaunchesBeforeCloud=activeLocalInfluencerLaunchCandidates();
+        const localProductChoicesBeforeCloud=activeLocalProductChoiceCandidates();
         const localPaidAdjustmentsBeforeCloud=ensureArray(state.paidAdjustments);
 
         state=JSON.parse(row.valor);
@@ -13575,6 +13980,11 @@ async function cloudLoad(){
           localInfluencerLaunchesBeforeCloud
         );
 
+        state.redemptions=mergeProductChoiceCollections(
+          Array.isArray(state.redemptions)?state.redemptions:[],
+          localProductChoicesBeforeCloud
+        );
+
         state.paidAdjustments=mergePaidAdjustmentsCollections(
           Array.isArray(state.paidAdjustments)?state.paidAdjustments:[],
           localPaidAdjustmentsBeforeCloud
@@ -13582,6 +13992,7 @@ async function cloudLoad(){
 
         writeWholesaleSnapshot(state.wholesaleRetail);
         writeInfluencerLaunchSnapshot(state.launches);
+        writeProductChoiceSnapshot(state.redemptions);
 
         const recoveredMedia=preserveMediaFromLegacy(state);
         updateCloudStatus("Dados carregados da nuvem e lançamentos locais preservados.");
@@ -13747,6 +14158,10 @@ async function startApp(){
       await syncInfluencerLaunchRecordsFromCloud({showStatus:false});
       installInfluencerLaunchSyncWatchers();
       installLaunchDraftProtection();
+
+      await seedProductChoiceRecordsOnce();
+      await syncProductChoiceRecordsFromCloud({showStatus:false});
+      installProductChoiceSyncWatchers();
     }catch(e){
       console.warn("Sincronização inicial de vendas adiada:",e);
     }
@@ -13952,6 +14367,28 @@ function normalize(){
     w.updatedByUsername=w.updatedByUsername||"";
     w.updatedAt=w.updatedAt||"";
     w.notes=w.notes||"";
+  });
+
+
+  state.redemptions.forEach(r=>{
+    r.id=r.id||uid();
+    r.date=r.date||today();
+    r.month=r.month||(r.date||today()).slice(0,7);
+    r.influencerId=r.influencerId||"";
+    r.name=r.name||"Produto";
+    r.value=Math.max(0,finiteNumber(r.value,0));
+    r.used=Math.max(0,finiteNumber(r.used,0));
+    r.difference=Math.max(0,finiteNumber(r.difference,r.value-r.used));
+    r.status=r.status||"Pendente";
+    r.notes=r.notes||"";
+    r.createdByName=r.createdByName||"Não registrado";
+    r.createdByUsername=r.createdByUsername||"";
+    r.createdById=r.createdById||"";
+    r.createdAt=r.createdAt||"";
+    r.updatedByName=r.updatedByName||"";
+    r.updatedByUsername=r.updatedByUsername||"";
+    r.updatedById=r.updatedById||"";
+    r.updatedAt=r.updatedAt||"";
   });
 
 
@@ -18311,7 +18748,34 @@ function renderProductCalc(){const infId=$("productInfluencer").value;const avai
 function resetProductForm(){$("productForm").reset();$("productId").value="";$("productDate").value=today();if(state.influencers[0])$("productInfluencer").value=state.influencers[0].id;$("productStatus").value="Pendente";renderProductCalc();}
 function renderProducts(){renderProductCalc();$("productRows").innerHTML=state.redemptions.length?state.redemptions.map(r=>{const i=infById(r.influencerId)||{};return `<tr><td>${dateBR(r.date)}</td><td><span class="mobileKeyText mobileInfluencerName">${esc(i.name||"-")}</span></td><td><span class="mobileCouponText">${esc(i.coupon||"-")}</span></td><td>${esc(r.name)}</td><td><span class="mobileValueText">${money(r.value)}</span></td><td><span class="mobileValueText">${money(r.used)}</span></td><td><span class="mobileValueText">${money(r.difference)}</span></td><td><span class="badge ${r.status==="Pago"||r.status==="Resgatado"?"green":r.status==="Cancelado"?"red":"yellow"}">${esc(r.status)}</span></td><td><button class="small secondary" onclick="editProduct('${r.id}')">Editar</button> <button class="small danger" onclick="deleteProduct('${r.id}')">Excluir</button></td></tr>`}).join(""):`<tr><td colspan="9">Nenhum produto registrado.</td></tr>`;}
 function editProduct(id){const r=state.redemptions.find(x=>x.id===id);if(!r)return;showPage("products");$("productId").value=r.id;$("productDate").value=r.date;$("productInfluencer").value=r.influencerId;$("productName").value=r.name;$("productValue").value=r.value;$("productUsed").value=r.used;$("productStatus").value=r.status;$("productNotes").value=r.notes||"";renderProductCalc();}
-function deleteProduct(id){if(confirm("Excluir produto registrado?")){state.redemptions=state.redemptions.filter(r=>r.id!==id);save();render();}}
+function deleteProduct(id){
+  if(confirm("Excluir produto registrado?")){
+    const item=state.redemptions.find(r=>String(r.id)===String(id));
+    const audit=currentAuditInfo();
+    const tombstone={
+      ...(item||{}),
+      id:String(id),
+      deleted:true,
+      deletedAt:audit.at||new Date().toISOString(),
+      deletedById:audit.id||"",
+      deletedByName:audit.name||"",
+      deletedByUsername:audit.username||"",
+      updatedAt:audit.at||new Date().toISOString()
+    };
+
+    state.redemptions=state.redemptions.filter(r=>String(r.id)!==String(id));
+
+    writeProductChoiceSnapshot(state.redemptions);
+    queueProductChoiceCloudRecord(tombstone);
+
+    save();
+    render();
+
+    flushProductChoicePendingQueue()
+      .then(()=>syncProductChoiceRecordsFromCloud({showStatus:false}))
+      .catch(()=>{});
+  }
+}
 function renderPix(){$("pixRows").innerHTML=state.influencers.length?state.influencers.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.coupon)}</td><td><input value="${esc(i.pix||"")}" onchange="updatePix('${i.id}',this.value)" placeholder="Digite a chave PIX"></td><td><button class="small secondary" onclick="copyPix('${i.id}')">Copiar</button></td></tr>`).join(""):`<tr><td colspan="4">Nenhum influencer cadastrado.</td></tr>`;}
 function updatePix(id,val){const i=infById(id);if(i){i.pix=val;save();}}
 function copyPix(id){const i=infById(id);if(!i||!i.pix){alert("Este influencer ainda não tem chave PIX.");return}navigator.clipboard&&navigator.clipboard.writeText(i.pix);alert("Chave PIX copiada.");}
@@ -19109,16 +19573,28 @@ $("productForm").addEventListener("submit",e=>{
 
   const value=Number($("productValue").value||0);
   const used=Number($("productUsed").value||0);
+  const audit=currentAuditInfo();
+  const existing=state.redemptions.find(r=>String(r.id)===String(id));
+
   const item={
     id,
     date:$("productDate").value||today(),
+    month:($("productDate").value||today()).slice(0,7),
     influencerId:infId,
     name:$("productName").value||"Produto",
     value,
     used,
     difference:Math.max(0,value-used),
     status:$("productStatus").value,
-    notes:$("productNotes").value||""
+    notes:$("productNotes").value||"",
+    createdById:existing?.createdById||audit.id||"",
+    createdByName:existing?.createdByName||audit.name||"Não registrado",
+    createdByUsername:existing?.createdByUsername||audit.username||"",
+    createdAt:existing?.createdAt||audit.at||new Date().toISOString(),
+    updatedById:existing?audit.id||"":existing?.updatedById||"",
+    updatedByName:existing?audit.name||"":existing?.updatedByName||"",
+    updatedByUsername:existing?audit.username||"":existing?.updatedByUsername||"",
+    updatedAt:existing?(audit.at||new Date().toISOString()):""
   };
 
   if(!validateRedemptionChoiceBeforeProduct(item)){
@@ -19131,7 +19607,22 @@ $("productForm").addEventListener("submit",e=>{
 
   reconcileProductChoicePaid(item);
 
+  writeProductChoiceSnapshot(state.redemptions);
+  queueProductChoiceCloudRecord(item);
+
   save();
+
+  flushProductChoicePendingQueue()
+    .then(ok=>{
+      if(ok){
+        showUndoToast("Produto escolhido salvo e sincronizado.");
+        return syncProductChoiceRecordsFromCloud({showStatus:false});
+      }
+
+      showUndoToast("Produto escolhido salvo neste aparelho. Sincronização pendente.");
+    })
+    .catch(()=>{});
+
   resetProductForm();
   render();
 });
