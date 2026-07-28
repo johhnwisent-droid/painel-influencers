@@ -9099,6 +9099,20 @@ body.appRecovered #cloudStatus{
   }
 }
 
+
+/* ===== V134 GANHOS VISÍVEIS NO ACUMULAR ===== */
+.accPeriodDetail.gain{
+  color:#047857!important;
+  background:#ecfdf5!important;
+  border:1px solid #bbf7d0!important;
+  border-radius:999px!important;
+  display:inline-flex!important;
+  width:max-content!important;
+  max-width:100%!important;
+  padding:4px 8px!important;
+  margin-top:6px!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9180,7 +9194,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V133</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V134</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10514,8 +10528,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V133";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v133";
+const APP_BUILD_VERSION="V134";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v134";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10554,7 +10568,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=133");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=134");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12215,7 +12229,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V133",
+    version:"V134",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12525,6 +12539,16 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","PERFORMANCE_RENDERING","Não foi possível confirmar toda a otimização de fluidez.");
   }
 
+  if(
+    String(renderAccumulations).includes("Ganho no período")&&
+    String(accumulationGainDetail).includes("lançamento")&&
+    String(accumulationExportRows).includes("Ganhos produto por lançamento")
+  ){
+    auditAdd(report,"pass","ACCUMULATION_GAIN_DETAILS","Acumular mostra ganhos de produto/dinheiro abaixo do saldo e exporta ganhos por lançamento.");
+  }else{
+    auditAdd(report,"warn","ACCUMULATION_GAIN_DETAILS","Não foi possível confirmar os detalhes de ganho no Acumular.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12644,7 +12668,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v133-${today()}.json`;
+  a.download=`auditoria-painel-v134-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12674,7 +12698,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V133",
+    "AUDITORIA DO SISTEMA — V134",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12702,7 +12726,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V133: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V134: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13324,7 +13348,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V133 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V134 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -15108,6 +15132,7 @@ function accumulationPeriodSummaryRows(period=accumulationExportPeriod()){
       cashPaid,
       cashBalance,
       products:[...new Set(products)].join(", "),
+      launchRows,
       launchCount:launchRows.length,
       redemptionCount:redemptionRows.length,
       cashPaymentCount:cashRows.length,
@@ -15252,6 +15277,8 @@ function accumulationExportRows(){
       "Dinheiro pago/zerado no período",
       "Saldo dinheiro atualizado no período",
       "Produtos resgatados/usados",
+      "Ganhos produto por lançamento",
+      "Ganhos dinheiro por lançamento",
       "Zeragem dinheiro captada do histórico",
       "Zeragem produto captada do histórico",
       "Lançamentos acumulados",
@@ -15269,6 +15296,8 @@ function accumulationExportRows(){
       r.cashPaid,
       r.cashBalance,
       r.products||"",
+      accumulationLaunchGainBreakdown((r.launchRows||[]),"productCommission"),
+      accumulationLaunchGainBreakdown((r.launchRows||[]),"cashCommission"),
       r.historyCashReset||0,
       r.historyProductReset||0,
       r.launchCount,
@@ -15543,6 +15572,36 @@ function accumulationByInfluencer(period=accumulationExportPeriod()){
 }
 
 
+
+function accumulationLaunchGainBreakdown(list,field){
+  const rows=(Array.isArray(list)?list:[])
+    .filter(l=>Number(l?.[field]||0)>0)
+    .sort((a,b)=>String(a.date||"").localeCompare(String(b.date||"")));
+
+  if(!rows.length)return "";
+
+  const visible=rows.slice(0,3).map(l=>`${dateBR(l.date)} +${money(l[field])}`);
+  const extra=rows.length>3?` +${rows.length-3} lançamento(s)`:"";
+
+  return visible.join(" • ")+extra;
+}
+
+function accumulationGainDetail(total,count,type,list=[]){
+  total=Number(total||0);
+  count=Number(count||0);
+
+  if(total<=0)return "";
+
+  const field=type==="product"?"productCommission":"cashCommission";
+  const breakdown=accumulationLaunchGainBreakdown(list,field);
+  const label=count>1?`${count} lançamentos`:"1 lançamento";
+
+  return breakdown
+    ? `Ganho no período: +${money(total)} • ${label} • ${breakdown}`
+    : `Ganho no período: +${money(total)} • ${label}`;
+}
+
+
 function renderAccumulations(){
   const balancePeriod=accumulationExportPeriod();
   const activeGroups=accumulationByInfluencer(balancePeriod);
@@ -15590,10 +15649,12 @@ function renderAccumulations(){
       <td><span class="mobileCouponText">${esc(r.i.coupon)}</span></td>
       <td>
         <span class="mobileValueText">${money(r.product)}</span>
+        ${r.earnedProduct>0?`<small class="accPeriodDetail gain">${esc(accumulationGainDetail(r.earnedProduct,r.list?.filter(l=>Number(l.productCommission||0)>0).length||0,"product",r.list))}</small>`:""}
         ${r.usedProduct>0?`<small class="accPeriodDetail">Usado/resgatado: -${money(r.usedProduct)}</small>`:""}
       </td>
       <td>
         <span class="mobileValueText">${money(r.cash)}</span>
+        ${r.earnedCash>0?`<small class="accPeriodDetail gain">${esc(accumulationGainDetail(r.earnedCash,r.list?.filter(l=>Number(l.cashCommission||0)>0).length||0,"cash",r.list))}</small>`:""}
         ${r.paidCash>0?`<small class="accPeriodDetail">Pago/zerado: -${money(r.paidCash)}</small>`:""}
         ${r.ledgerEvents?.some(e=>e.kind==="history_checkpoint")?`<small class="accPeriodDetail history">Histórico captado no saldo</small>`:""}
       </td>
