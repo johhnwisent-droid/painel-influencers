@@ -8939,6 +8939,48 @@ body.appRecovered #cloudStatus{
   display:none!important;
 }
 
+
+/* ===== V128 EXPORTAÇÃO FILTRADA ACUMULAR ===== */
+.accExportFilters{
+  display:flex!important;
+  align-items:end!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+}
+
+.accExportFilters .accDateMini{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:4px!important;
+  min-width:138px!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  color:#475569!important;
+}
+
+.accExportFilters .accDateMini input{
+  min-height:38px!important;
+  border-radius:12px!important;
+  border:1px solid #e2e8f0!important;
+  padding:8px 10px!important;
+  font-weight:850!important;
+}
+
+@media(max-width:760px){
+  .accExportFilters{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    width:100%!important;
+  }
+
+  .accExportFilters select,
+  .accExportFilters button,
+  .accExportFilters .accDateMini,
+  .accExportFilters .accDateMini input{
+    width:100%!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9020,7 +9062,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V127</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V128</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9866,8 +9908,19 @@ body.appRecovered #cloudStatus{
       <div class="panel">
         <div class="panelHead">
           <h3>Saldo acumulado por influencer</h3>
-          <div class="filters">
+          <div class="filters accExportFilters">
             <select id="accReportInfluencer" onchange="renderAccumulationReport()"></select>
+
+            <label class="accDateMini">Data inicial
+              <input id="accExportStart" type="date" onchange="syncAccumulationExportPeriod('start')">
+            </label>
+
+            <label class="accDateMini">Data final
+              <input id="accExportEnd" type="date" onchange="syncAccumulationExportPeriod('end')">
+            </label>
+
+            <button class="secondary" onclick="setAccumulationExportMonth()">Usar mês do painel</button>
+            <button class="secondary" onclick="clearAccumulationExportPeriod()">Limpar período</button>
             <button class="primary" onclick="printAccumulationReport()">Exportar PDF do acúmulo</button>
             <button class="secondary" onclick="exportAccumulationsCSV()">Exportar acúmulos</button>
           </div>
@@ -9935,7 +9988,7 @@ body.appRecovered #cloudStatus{
           <div class="pdfCleanHeader">
             <div>
               <h1>Resumo de acúmulo</h1>
-              <p>Saldo de comissão acumulada disponível para o influencer.</p>
+              <p id="accReportPeriodLabel">Saldo de comissão acumulada disponível para o influencer.</p>
             </div>
             <img id="accReportLogo" class="printLogo" style="display:none">
           </div>
@@ -10332,8 +10385,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V127";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v127";
+const APP_BUILD_VERSION="V128";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v128";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10372,7 +10425,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=127");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=128");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12032,7 +12085,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V127",
+    version:"V128",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12275,6 +12328,18 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","PAID_STALE_PROTECTION","Não foi possível confirmar toda a proteção contra dados antigos em Pagos.");
   }
 
+  if(
+    $("accExportStart")&&
+    $("accExportEnd")&&
+    String(exportAccumulationsCSV).includes("accumulationExportRows")&&
+    String(accumulationPeriodSummaryRows).includes("productUsed")&&
+    String(accumulationPeriodLedgerRows).includes("Produto resgatado/usado")
+  ){
+    auditAdd(report,"pass","ACCUMULATION_PERIOD_EXPORT","Acumular possui exportação por data inicial/final com saldos e histórico do período.");
+  }else{
+    auditAdd(report,"warn","ACCUMULATION_PERIOD_EXPORT","Não foi possível confirmar toda a exportação filtrada do Acumular.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12394,7 +12459,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v127-${today()}.json`;
+  a.download=`auditoria-painel-v128-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12424,7 +12489,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V127",
+    "AUDITORIA DO SISTEMA — V128",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12452,7 +12517,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V127: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V128: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13073,7 +13138,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V127 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V128 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -14654,6 +14719,360 @@ function renderAccumulationHistory(){
 }
 
 
+
+function monthEndDate(month){
+  if(!/^\d{4}-\d{2}$/.test(String(month||"")))return today();
+  const [year,mo]=String(month).split("-").map(Number);
+  const lastDay=new Date(year,mo,0).getDate();
+  return `${String(year).padStart(4,"0")}-${String(mo).padStart(2,"0")}-${String(lastDay).padStart(2,"0")}`;
+}
+
+function accumulationExportPeriod(){
+  let start=normalizeDateOnly($("accExportStart")?.value||"");
+  let end=normalizeDateOnly($("accExportEnd")?.value||"");
+
+  if(start&&!end)end=start;
+  if(end&&!start)start=end;
+
+  if(start&&end&&start>end){
+    const temp=start;
+    start=end;
+    end=temp;
+  }
+
+  return {start,end};
+}
+
+function accumulationExportPeriodLabel(){
+  const {start,end}=accumulationExportPeriod();
+
+  if(start&&end){
+    return start===end
+      ? `Data: ${dateBR(start)}`
+      : `Período: ${dateBR(start)} até ${dateBR(end)}`;
+  }
+
+  return "Todo o histórico";
+}
+
+function accumulationDateInPeriod(value,period=accumulationExportPeriod()){
+  const date=normalizeDateOnly(value);
+  if(!date)return false;
+  if(period.start&&date<period.start)return false;
+  if(period.end&&date>period.end)return false;
+  return true;
+}
+
+function syncAccumulationExportPeriod(changed){
+  const start=$("accExportStart");
+  const end=$("accExportEnd");
+
+  if(!start||!end){
+    renderAccumulationReport();
+    return;
+  }
+
+  if(changed==="start"&&start.value&&!end.value)end.value=start.value;
+  if(changed==="end"&&end.value&&!start.value)start.value=end.value;
+
+  if(start.value&&end.value&&start.value>end.value){
+    if(changed==="start")end.value=start.value;
+    else start.value=end.value;
+  }
+
+  renderAccumulationReport();
+}
+
+function setAccumulationExportMonth(){
+  const month=selectedMonth();
+
+  if($("accExportStart"))$("accExportStart").value=`${month}-01`;
+  if($("accExportEnd"))$("accExportEnd").value=monthEndDate(month);
+
+  renderAccumulationReport();
+}
+
+function clearAccumulationExportPeriod(){
+  if($("accExportStart"))$("accExportStart").value="";
+  if($("accExportEnd"))$("accExportEnd").value="";
+
+  renderAccumulationReport();
+}
+
+function accumulationPeriodLaunches(period=accumulationExportPeriod()){
+  /*
+    Exportação do Acumular considera lançamentos que continuam marcados como
+    acumulados no estado atual. Se um lançamento foi zerado manualmente, ele
+    sai do saldo aberto e a alteração aparece no histórico do período.
+  */
+  return (state.launches||[])
+    .filter(l=>l.accumulate&&accumulationDateInPeriod(l.date,period));
+}
+
+function accumulationPeriodRedemptions(period=accumulationExportPeriod()){
+  return (state.redemptions||[])
+    .filter(r=>r.status!=="Cancelado"&&accumulationDateInPeriod(r.date,period));
+}
+
+function accumulationPeriodCashPayments(period=accumulationExportPeriod()){
+  return (state.cashPayments||[])
+    .filter(p=>p.status!=="Cancelado"&&accumulationDateInPeriod(p.date,period));
+}
+
+function accumulationPeriodHistory(period=accumulationExportPeriod()){
+  const type=$("accHistoryFilter")?.value||"";
+
+  return (state.accumulationHistory||[])
+    .filter(h=>{
+      const date=normalizeDateOnly(h.createdAt||h.date);
+      if(!accumulationDateInPeriod(date,period))return false;
+      if(type&&h.type!==type)return false;
+      return true;
+    })
+    .slice()
+    .sort((a,b)=>String(b.createdAt||b.date||"").localeCompare(String(a.createdAt||a.date||"")));
+}
+
+function accumulationProductNamesForInfluencer(infId,period=accumulationExportPeriod()){
+  const names=accumulationPeriodRedemptions(period)
+    .filter(r=>r.influencerId===infId)
+    .map(r=>String(r.name||"Produto").trim())
+    .filter(Boolean);
+
+  return [...new Set(names)].join(", ");
+}
+
+function accumulationPeriodSummaryRows(period=accumulationExportPeriod()){
+  const launches=accumulationPeriodLaunches(period);
+  const redemptions=accumulationPeriodRedemptions(period);
+  const cashPayments=accumulationPeriodCashPayments(period);
+
+  return (state.influencers||[]).map(i=>{
+    const launchRows=launches.filter(l=>l.influencerId===i.id);
+    const redemptionRows=redemptions.filter(r=>r.influencerId===i.id);
+    const cashRows=cashPayments.filter(p=>p.influencerId===i.id);
+
+    const productEarned=launchRows.reduce((a,l)=>a+Number(l.productCommission||0),0);
+    const cashEarned=launchRows.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+    const productUsedValue=redemptionRows.reduce((a,r)=>a+Number(r.used||0),0);
+    const cashPaid=cashRows.reduce((a,p)=>a+Number(p.cash||p.amount||0),0);
+
+    const productBalance=Math.max(0,productEarned-productUsedValue);
+    const cashBalance=Math.max(0,cashEarned-cashPaid);
+    const products=redemptionRows.map(r=>String(r.name||"Produto")).filter(Boolean);
+
+    return {
+      i,
+      periodLabel:accumulationExportPeriodLabel(),
+      productEarned,
+      productUsed:productUsedValue,
+      productBalance,
+      cashEarned,
+      cashPaid,
+      cashBalance,
+      products:[...new Set(products)].join(", "),
+      launchCount:launchRows.length,
+      redemptionCount:redemptionRows.length,
+      cashPaymentCount:cashRows.length
+    };
+  }).filter(r=>
+    r.productEarned>0||
+    r.productUsed>0||
+    r.productBalance>0||
+    r.cashEarned>0||
+    r.cashPaid>0||
+    r.cashBalance>0||
+    r.redemptionCount>0||
+    r.cashPaymentCount>0
+  ).sort((a,b)=>{
+    const totalB=Number(b.productBalance||0)+Number(b.cashBalance||0);
+    const totalA=Number(a.productBalance||0)+Number(a.cashBalance||0);
+    if(totalB!==totalA)return totalB-totalA;
+    return String(a.i.name||"").localeCompare(String(b.i.name||""),"pt-BR");
+  });
+}
+
+function accumulationPeriodLedgerRows(period=accumulationExportPeriod()){
+  const rows=[];
+
+  accumulationPeriodLaunches(period).forEach(l=>{
+    const inf=infById(l.influencerId)||{};
+    rows.push({
+      section:"Movimento",
+      date:l.date,
+      type:"Lançamento acumulado",
+      influencer:inf.name||"",
+      coupon:inf.coupon||"",
+      productPlus:Number(l.productCommission||0),
+      cashPlus:Number(l.cashCommission||0),
+      productMinus:0,
+      cashMinus:0,
+      productBefore:"",
+      productAfter:"",
+      cashBefore:"",
+      cashAfter:"",
+      productName:"",
+      reason:l.origin||"Lançamento acumulado",
+      responsible:l.createdByName||"Não registrado"
+    });
+  });
+
+  accumulationPeriodRedemptions(period).forEach(r=>{
+    const inf=infById(r.influencerId)||{};
+    rows.push({
+      section:"Movimento",
+      date:r.date,
+      type:"Produto resgatado/usado",
+      influencer:inf.name||"",
+      coupon:inf.coupon||"",
+      productPlus:0,
+      cashPlus:0,
+      productMinus:Number(r.used||0),
+      cashMinus:0,
+      productBefore:"",
+      productAfter:"",
+      cashBefore:"",
+      cashAfter:"",
+      productName:r.name||"Produto",
+      reason:r.status||"Produto escolhido",
+      responsible:r.createdByName||"Não registrado"
+    });
+  });
+
+  accumulationPeriodCashPayments(period).forEach(p=>{
+    const inf=infById(p.influencerId)||{};
+    rows.push({
+      section:"Movimento",
+      date:p.date,
+      type:p.productRedemptionId?"Dinheiro zerado por produto escolhido":"Dinheiro pago/zerado",
+      influencer:inf.name||"",
+      coupon:inf.coupon||"",
+      productPlus:0,
+      cashPlus:0,
+      productMinus:0,
+      cashMinus:Number(p.cash||p.amount||0),
+      productBefore:"",
+      productAfter:"",
+      cashBefore:"",
+      cashAfter:"",
+      productName:"",
+      reason:p.notes||p.source||"Pagamento",
+      responsible:p.createdByName||"Não registrado"
+    });
+  });
+
+  accumulationPeriodHistory(period).forEach(h=>{
+    const inf=infById(h.influencerId)||{name:h.influencerName||"",coupon:h.coupon||""};
+    rows.push({
+      section:"Histórico",
+      date:h.createdAt||h.date,
+      type:accTypeLabel(h.type),
+      influencer:inf.name||"",
+      coupon:inf.coupon||"",
+      productPlus:0,
+      cashPlus:0,
+      productMinus:Math.max(0,Number(h.beforeProduct||0)-Number(h.afterProduct||0)),
+      cashMinus:Math.max(0,Number(h.beforeCash||0)-Number(h.afterCash||0)),
+      productBefore:Number(h.beforeProduct||0),
+      productAfter:Number(h.afterProduct||0),
+      cashBefore:Number(h.beforeCash||0),
+      cashAfter:Number(h.afterCash||0),
+      productName:"",
+      reason:h.reason||h.label||"",
+      responsible:h.createdByName||"Não registrado"
+    });
+  });
+
+  return rows.sort((a,b)=>{
+    const at=String(a.date||"");
+    const bt=String(b.date||"");
+    return at.localeCompare(bt);
+  });
+}
+
+function accumulationExportRows(){
+  const period=accumulationExportPeriod();
+  const label=accumulationExportPeriodLabel();
+  const summary=accumulationPeriodSummaryRows(period);
+  const ledger=accumulationPeriodLedgerRows(period);
+
+  const rows=[
+    ["RELATÓRIO DE ACÚMULO FILTRADO"],
+    ["Período",label],
+    [],
+    [
+      "RESUMO ATUALIZADO POR INFLUENCER",
+      "Influencer",
+      "Cupom",
+      "Produto acumulado no período",
+      "Produto usado/resgatado no período",
+      "Saldo produto atualizado no período",
+      "Dinheiro acumulado no período",
+      "Dinheiro pago/zerado no período",
+      "Saldo dinheiro atualizado no período",
+      "Produtos resgatados/usados",
+      "Lançamentos acumulados",
+      "Produtos usados",
+      "Pagamentos em dinheiro"
+    ],
+    ...summary.map(r=>[
+      "Resumo",
+      r.i.name||"",
+      r.i.coupon||"",
+      r.productEarned,
+      r.productUsed,
+      r.productBalance,
+      r.cashEarned,
+      r.cashPaid,
+      r.cashBalance,
+      r.products||"",
+      r.launchCount,
+      r.redemptionCount,
+      r.cashPaymentCount
+    ]),
+    [],
+    [
+      "HISTÓRICO DO PERÍODO",
+      "Data",
+      "Tipo",
+      "Influencer",
+      "Cupom",
+      "Produto +",
+      "Dinheiro +",
+      "Produto -",
+      "Dinheiro -",
+      "Produto antes",
+      "Produto depois",
+      "Dinheiro antes",
+      "Dinheiro depois",
+      "Produto/Ação",
+      "Motivo/Observação",
+      "Responsável"
+    ],
+    ...ledger.map(r=>[
+      r.section,
+      dateTimeBR(r.date)||dateBR(r.date),
+      r.type,
+      r.influencer,
+      r.coupon,
+      r.productPlus||0,
+      r.cashPlus||0,
+      r.productMinus||0,
+      r.cashMinus||0,
+      r.productBefore,
+      r.productAfter,
+      r.cashBefore,
+      r.cashAfter,
+      r.productName||"",
+      r.reason||"",
+      r.responsible||""
+    ])
+  ];
+
+  return rows;
+}
+
+
 function accumulatedRows(){return state.launches.filter(l=>l.accumulate);}
 function productAccumulationPaid(infId){
   return (state.redemptions||[]).some(r=>
@@ -14738,6 +15157,7 @@ function renderAccumulations(){
   }).join(""):`<tr><td colspan="5">Nenhum influencer com saldo acumulado aberto.</td></tr>`;
 
   renderAccumulationHistory();
+  renderAccumulationReport();
 }
 function payAccumulatedProduct(infId){
   alert("A opção Pago em produto foi removida da página Acumular. Para usar comissão em produtos, registre em Produto escolhido e marque como Pago.");
@@ -14839,10 +15259,11 @@ function setWatermarkPreset(value){
 function renderAccumulationReport(){
   const sel=$("accReportInfluencer");
   const inf=sel?infById(sel.value):null;
-  const rows=inf?accumulatedRows().filter(l=>l.influencerId===inf.id):[];
+  const period=accumulationExportPeriod();
+  const summary=inf?accumulationPeriodSummaryRows(period).find(r=>r.i.id===inf.id):null;
 
-  const product=rows.reduce((a,l)=>a+Number(l.productCommission||0),0);
-  const cash=rows.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+  const product=Number(summary?.productBalance||0);
+  const cash=Number(summary?.cashBalance||0);
 
   if($("accReportLogo")){
     const pdfLogo=state.settings.pdfLogo||"";
@@ -14854,6 +15275,7 @@ function renderAccumulationReport(){
 
   if($("accReportName"))$("accReportName").textContent=inf?inf.name:"Selecione um influencer";
   if($("accReportCoupon"))$("accReportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
+  if($("accReportPeriodLabel"))$("accReportPeriodLabel").textContent=`Saldo filtrado • ${accumulationExportPeriodLabel()}`;
   if($("accReportProduct"))$("accReportProduct").textContent=money(product);
   if($("accReportCash"))$("accReportCash").textContent=money(cash);
 }
@@ -17015,11 +17437,9 @@ function exportLaunchesPDF(){
 function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
 
 function exportAccumulationHistoryCSV(){
-  const type=$("accHistoryFilter")?.value||"";
-  let rows=(state.accumulationHistory||[]).slice().sort((a,b)=>String(b.createdAt||"").localeCompare(String(a.createdAt||"")));
-  if(type)rows=rows.filter(h=>h.type===type);
+  const rows=accumulationPeriodHistory(accumulationExportPeriod());
 
-  rowsCSV([["Data/hora","Influencer","Cupom","Tipo","Motivo","Produto antes","Produto depois","Dinheiro antes","Dinheiro depois","Responsável"],...rows.map(h=>{
+  rowsCSV([["Período",accumulationExportPeriodLabel()],[],["Data/hora","Influencer","Cupom","Tipo","Motivo","Produto antes","Produto depois","Dinheiro antes","Dinheiro depois","Responsável"],...rows.map(h=>{
     const i=infById(h.influencerId)||{name:h.influencerName||"",coupon:h.coupon||""};
     return [
       dateTimeBR(h.createdAt),
@@ -17033,11 +17453,23 @@ function exportAccumulationHistoryCSV(){
       h.afterCash||0,
       h.createdByName||""
     ];
-  })],"historico-acumulo.csv");
+  })],"historico-acumulo-filtrado.csv");
 }
 
 
-function exportAccumulationsCSV(){rowsCSV([["Influencer","Cupom","Produto acumulado","Dinheiro acumulado"],...accumulationByInfluencer().map(r=>[r.i.name,r.i.coupon,r.product,r.cash])],"acumulos.csv");}
+
+
+function exportAccumulationsCSV(){
+  const rows=accumulationExportRows();
+  const period=accumulationExportPeriod();
+  const suffix=period.start&&period.end
+    ? `${period.start}_a_${period.end}`
+    : "todo-historico";
+
+  rowsCSV(rows,`acumulos-filtrado-${suffix}.csv`);
+}
+
+
 function exportReportCSV(){
   const inf=infById($("reportInfluencer").value);
   if(!inf){
