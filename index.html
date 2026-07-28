@@ -8996,6 +8996,32 @@ body.appRecovered #cloudStatus{
   font-weight:900!important;
 }
 
+
+/* ===== V130 REGRA DE RESGATE MENSAL ===== */
+.accReportRuleBox{
+  margin-top:18px!important;
+  padding:14px 16px!important;
+  border-radius:16px!important;
+  border:1px solid #dbeafe!important;
+  background:#eff6ff!important;
+  color:#1e3a8a!important;
+}
+
+.accReportRuleBox strong{
+  display:block!important;
+  font-size:13px!important;
+  font-weight:1000!important;
+  margin-bottom:6px!important;
+}
+
+.accReportRuleBox p{
+  margin:0!important;
+  font-size:12px!important;
+  line-height:1.45!important;
+  color:#1e40af!important;
+  font-weight:750!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9077,7 +9103,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V129</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V130</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10028,6 +10054,11 @@ body.appRecovered #cloudStatus{
             </div>
           </div>
 
+          <div class="accReportRuleBox" id="accReportRuleBox">
+            <strong>Regra de resgate</strong>
+            <p id="accReportRuleText">O influencer pode escolher resgatar em produto ou em dinheiro. Ao resgatar qualquer valor em produto, o saldo em dinheiro do período é zerado. O saldo de produto não usado permanece acumulado para futuros resgates em produto. Ao resgatar em dinheiro, o saldo em produto do período é zerado.</p>
+          </div>
+
           <p class="pdfFooterClean">Relatório gerado automaticamente pelo painel.</p>
         </div>
       </div>
@@ -10404,8 +10435,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V129";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v129";
+const APP_BUILD_VERSION="V130";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v130";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10444,7 +10475,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=129");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=130");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12104,7 +12135,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V129",
+    version:"V130",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12370,6 +12401,17 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ACCUMULATION_PANEL_PERIOD","Não foi possível confirmar o filtro de mês/período no painel de Acumular.");
   }
 
+  if(
+    String(reconcileProductChoicePaid).includes("afterProduct=Math.max")&&
+    String(validateRedemptionChoiceBeforeProduct).includes("cashRedeemedInMonth")&&
+    String(validateRedemptionChoiceBeforeCash).includes("productRedeemedInMonth")&&
+    String(redemptionRuleText).includes("Só é permitido um tipo de resgate")
+  ){
+    auditAdd(report,"pass","REDEMPTION_MONTHLY_RULE","Regra mensal de resgate único aplicada: produto zera dinheiro, dinheiro zera produto e produto parcial mantém saldo remanescente.");
+  }else{
+    auditAdd(report,"warn","REDEMPTION_MONTHLY_RULE","Não foi possível confirmar toda a regra mensal de resgate.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12489,7 +12531,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v129-${today()}.json`;
+  a.download=`auditoria-painel-v130-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12519,7 +12561,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V129",
+    "AUDITORIA DO SISTEMA — V130",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12547,7 +12589,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V129: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V130: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13168,7 +13210,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V129 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V130 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -15062,6 +15104,7 @@ function accumulationExportRows(){
   const rows=[
     ["RELATÓRIO DE ACÚMULO FILTRADO"],
     ["Período",label],
+    ["Regra de resgate",redemptionRuleText()],
     [],
     [
       "RESUMO ATUALIZADO POR INFLUENCER",
@@ -15254,6 +15297,8 @@ function payAccumulatedProduct(infId){
 }
 
 function payAccumulatedCash(infId){
+  if(!validateRedemptionChoiceBeforeCash(infId,selectedMonth()))return;
+
   const row=accumulationByInfluencer().find(r=>r.i.id===infId);
   if(!row||row.cash<=0){
     alert("Este influencer não possui saldo em dinheiro acumulado para pagar.");
@@ -15291,7 +15336,7 @@ function payAccumulatedCash(infId){
         used:beforeProduct,
         difference:0,
         status:"Resgatado",
-        notes:"Saldo em produtos zerado junto ao pagamento em dinheiro acumulado"
+        notes:"Saldo em produtos zerado porque o influencer escolheu resgatar em dinheiro neste mês"
       });
     }
 
@@ -15299,7 +15344,7 @@ function payAccumulatedCash(infId){
       influencerId:infId,
       type:"cash_paid",
       label:"Pago em dinheiro",
-      reason,
+      reason:`${reason}. ${redemptionRuleText()}`,
       beforeProduct,
       beforeCash,
       afterProduct:0,
@@ -15368,6 +15413,7 @@ function renderAccumulationReport(){
   if($("accReportPeriodLabel"))$("accReportPeriodLabel").textContent=`Saldo filtrado • ${accumulationExportPeriodLabel()}`;
   if($("accReportProduct"))$("accReportProduct").textContent=money(product);
   if($("accReportCash"))$("accReportCash").textContent=money(cash);
+  if($("accReportRuleText"))$("accReportRuleText").textContent=redemptionRuleText();
 }
 
 function printAccumulationReport(){
@@ -17147,6 +17193,74 @@ function exportWholesaleRetailCSV(){
 
 
 
+
+function redemptionChoiceMonth(date){
+  return (date||today()).slice(0,7);
+}
+
+function isProductChoiceRedemption(row){
+  if(!row||row.status==="Cancelado")return false;
+  const status=String(row.status||"").trim();
+  const name=String(row.name||"").trim();
+
+  return (status==="Pago"||status==="Resgatado")&&
+    name!=="Saldo em produtos zerado no pagamento";
+}
+
+function productRedeemedInMonth(infId,month,ignoreProductId=""){
+  return (state.redemptions||[]).some(r=>
+    r.influencerId===infId&&
+    r.id!==ignoreProductId&&
+    redemptionChoiceMonth(r.date)===month&&
+    isProductChoiceRedemption(r)
+  );
+}
+
+function cashRedeemedInMonth(infId,month){
+  return (state.cashPayments||[]).some(p=>
+    p.influencerId===infId&&
+    p.status!=="Cancelado"&&
+    !p.productRedemptionId&&
+    (p.month||redemptionChoiceMonth(p.date))===month
+  );
+}
+
+function redemptionChoiceLabel(infId,month){
+  if(productRedeemedInMonth(infId,month))return "Produto";
+  if(cashRedeemedInMonth(infId,month))return "Dinheiro";
+  return "";
+}
+
+function redemptionRuleText(){
+  return "Regra de resgate: o influencer pode escolher resgatar em produto ou em dinheiro. Ao resgatar qualquer valor em produto, o saldo em dinheiro do período é zerado; o saldo de produto não usado permanece acumulado para futuros resgates em produto. Ao resgatar em dinheiro, o saldo em produto do período é zerado. Só é permitido um tipo de resgate por influencer em cada mês.";
+}
+
+function validateRedemptionChoiceBeforeProduct(item){
+  const month=redemptionChoiceMonth(item.date);
+  const status=String(item.status||"").trim();
+
+  if(!(status==="Pago"||status==="Resgatado"))return true;
+
+  if(cashRedeemedInMonth(item.influencerId,month)){
+    const inf=infById(item.influencerId)||{};
+    alert(`${inf.name||"Este influencer"} já resgatou em dinheiro no mês ${monthLabel(month)}. Como a escolha mensal já foi dinheiro, o saldo em produto foi zerado e não é possível registrar resgate em produto nesse mesmo mês.`);
+    return false;
+  }
+
+  return true;
+}
+
+function validateRedemptionChoiceBeforeCash(infId,month=selectedMonth()){
+  if(productRedeemedInMonth(infId,month)){
+    const inf=infById(infId)||{};
+    alert(`${inf.name||"Este influencer"} já resgatou em produto no mês ${monthLabel(month)}. Como a escolha mensal já foi produto, o saldo em dinheiro foi zerado e não é possível pagar em dinheiro nesse mesmo mês.`);
+    return false;
+  }
+
+  return true;
+}
+
+
 function removeProductChoiceAutoCash(productId){
   state.cashPayments=(state.cashPayments||[]).filter(p=>p.productRedemptionId!==productId);
   state.accumulationHistory=(state.accumulationHistory||[]).filter(h=>h.relatedId!==`product-choice-${productId}`);
@@ -17155,20 +17269,32 @@ function removeProductChoiceAutoCash(productId){
 function reconcileProductChoicePaid(item){
   removeProductChoiceAutoCash(item.id);
 
-  if(item.status!=="Pago")return;
+  const status=String(item.status||"").trim();
+  if(!(status==="Pago"||status==="Resgatado"))return;
+
+  if(!validateRedemptionChoiceBeforeProduct(item))return;
 
   /*
-    Quando o produto escolhido é marcado como Pago:
-    - a comissão em produto já é consumida pelo próprio registro do produto escolhido;
-    - a comissão em dinheiro também precisa zerar;
-    - o histórico deve mostrar antes/depois dos dois saldos.
+    V130:
+    Quando o produto escolhido é marcado como Pago/Resgatado:
+    - o valor usado em produto é abatido do saldo de produto;
+    - se o influencer tinha R$ 200,00 em produto e usou R$ 100,00,
+      os outros R$ 100,00 continuam acumulados para futuro resgate em produto;
+    - o saldo em dinheiro do período é zerado porque a escolha mensal foi produto.
   */
-  const rowsBeforeCash=accumulationByInfluencer();
-  const rowBeforeCash=rowsBeforeCash.find(r=>r.i.id===item.influencerId);
-  const beforeCash=Number(rowBeforeCash?.cash||0);
+  const period={
+    start:`${redemptionChoiceMonth(item.date)}-01`,
+    end:monthEndDate(redemptionChoiceMonth(item.date))
+  };
+  const rowsBefore=accumulationByInfluencer(period);
+  const rowBefore=rowsBefore.find(r=>r.i.id===item.influencerId);
 
-  const beforeProduct=Number(item.used||0);
-  const afterProduct=0;
+  const beforeProduct=Math.max(
+    Number(rowBefore?.product||0)+Number(item.used||0),
+    Number(item.used||0)
+  );
+  const afterProduct=Math.max(0,beforeProduct-Number(item.used||0));
+  const beforeCash=Number(rowBefore?.cash||0);
   const afterCash=0;
 
   if(beforeCash>0){
@@ -17176,14 +17302,14 @@ function reconcileProductChoicePaid(item){
     state.cashPayments.push({
       id:uid(),
       date:item.date||today(),
-      month:(item.date||today()).slice(0,7),
+      month:redemptionChoiceMonth(item.date),
       influencerId:item.influencerId,
       amount:beforeCash,
       cash:beforeCash,
       source:"Produto escolhido",
       status:"Pago em produto",
       productRedemptionId:item.id,
-      notes:"Saldo em dinheiro zerado automaticamente porque o produto escolhido foi marcado como Pago"
+      notes:"Saldo em dinheiro zerado automaticamente porque o influencer escolheu resgatar em produto neste mês"
     });
   }
 
@@ -17191,7 +17317,7 @@ function reconcileProductChoicePaid(item){
     influencerId:item.influencerId,
     type:"product_choice_paid",
     label:"Produto escolhido pago",
-    reason:"Comissão usada em produto escolhido",
+    reason:`Resgate em produto: ${item.name||"Produto"}. ${redemptionRuleText()}`,
     beforeProduct,
     beforeCash,
     afterProduct,
@@ -17199,12 +17325,6 @@ function reconcileProductChoicePaid(item){
     relatedId:`product-choice-${item.id}`
   });
 
-  /*
-    V125:
-    A própria sessão Pagos lê state.redemptions com status Pago/Resgatado.
-    Este render garante que, ao marcar Produto escolhido como Pago,
-    a linha apareça em Pagos automaticamente sem precisar recarregar.
-  */
   renderPaidPage();
 }
 
@@ -17862,6 +17982,10 @@ $("productForm").addEventListener("submit",e=>{
     status:$("productStatus").value,
     notes:$("productNotes").value||""
   };
+
+  if(!validateRedemptionChoiceBeforeProduct(item)){
+    return;
+  }
 
   const idx=state.redemptions.findIndex(r=>r.id===id);
   if(idx>=0)state.redemptions[idx]=item;
