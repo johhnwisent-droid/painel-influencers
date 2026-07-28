@@ -9071,6 +9071,34 @@ body.appRecovered #cloudStatus{
   }
 }
 
+
+/* ===== V133 FLUIDEZ E PERFORMANCE ===== */
+.view:not(.active){
+  display:none!important;
+}
+
+.panel,
+.card,
+.tableWrap{
+  contain:layout paint!important;
+}
+
+.tableWrap{
+  content-visibility:auto!important;
+  contain-intrinsic-size:600px!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    scroll-behavior:auto!important;
+    transition-duration:.01ms!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9152,7 +9180,7 @@ body.appRecovered #cloudStatus{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V132</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V133</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10486,8 +10514,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V132";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v132";
+const APP_BUILD_VERSION="V133";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v133";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10526,7 +10554,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=132");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=133");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -11798,8 +11826,9 @@ function installWholesaleSyncWatchers(){
 
   clearInterval(wholesalePollTimer);
   wholesalePollTimer=setInterval(()=>{
+    if(document.hidden)return;
     syncWholesaleLaunchRecordsFromCloud({showStatus:false});
-  },15000);
+  },30000);
 }
 
 function collectWholesaleCandidatesFromDevice(){
@@ -12186,7 +12215,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V132",
+    version:"V133",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12484,6 +12513,18 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ACCUMULATION_PARTIAL_ZERO","Não foi possível confirmar a zeragem separada de produto/dinheiro em Acumular.");
   }
 
+  if(
+    String(render).includes("renderCurrentPageOnly")&&
+    !String(render).includes("save();")&&
+    String(populateIfNeeded).includes("lastPopulateSignature")&&
+    String(installWholesaleSyncWatchers).includes("30000")&&
+    String(installInfluencerLaunchSyncWatchers).includes("30000")
+  ){
+    auditAdd(report,"pass","PERFORMANCE_RENDERING","Renderização otimizada: render por página, sem salvar em render, selects cacheados e sincronização menos agressiva.");
+  }else{
+    auditAdd(report,"warn","PERFORMANCE_RENDERING","Não foi possível confirmar toda a otimização de fluidez.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12603,7 +12644,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v132-${today()}.json`;
+  a.download=`auditoria-painel-v133-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12633,7 +12674,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V132",
+    "AUDITORIA DO SISTEMA — V133",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12661,7 +12702,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V132: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V133: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13051,8 +13092,9 @@ function installInfluencerLaunchSyncWatchers(){
 
   clearInterval(launchPollTimer);
   launchPollTimer=setInterval(()=>{
+    if(document.hidden)return;
     syncInfluencerLaunchRecordsFromCloud({showStatus:false});
-  },15000);
+  },30000);
 }
 
 function looksLikeInfluencerLaunch(obj){
@@ -13282,7 +13324,7 @@ async function recoverInfluencerLaunchesDeepScan(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V132 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V133 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -13813,8 +13855,15 @@ function renderLaunches(){
     </tr>`;
   }).join(""):`<tr><td colspan="12">Nenhum lançamento neste mês.</td></tr>`;
   renderLaunchTotals();
-  renderPaidPage();
-  renderLaunchesPDF();
+
+  /*
+    V133:
+    O PDF da lista de lançamentos só é montado no momento da exportação.
+    Antes ele era remontado a cada render da tela, causando travadas em listas grandes.
+  */
+  if(document.body.classList.contains("print-launches-list")){
+    renderLaunchesPDF();
+  }
 }
 function renderLaunchTotals(){
   const rows=state.influencers.map(i=>{
@@ -17898,8 +17947,9 @@ function syncMobileBottomNav(id){
   });
 }
 
-function enhanceMobileTables(){
-  document.querySelectorAll(".tableWrap table").forEach(table=>{
+function enhanceMobileTables(scope=null){
+  const root=scope||document.querySelector(".view.active")||document;
+  root.querySelectorAll(".tableWrap table").forEach(table=>{
     const heads=[...table.querySelectorAll("thead th")].map(th=>th.textContent.trim());
     table.querySelectorAll("tbody tr").forEach(tr=>{
       [...tr.children].forEach((td,idx)=>{
@@ -17947,9 +17997,126 @@ function showPage(id){
 
   syncMobileBottomNav(currentPage);
   closeMobileMenu();
-  render();
+  render({force:true});
 }
-function render(){normalize();applyTheme();populate();currentPage=window.currentPage||currentPage||"dashboard";setPageClass(currentPage);syncMobileBottomNav(currentPage);syncMonthInputs();renderDashboard();renderLaunches();renderInfluencers();renderPaidPage();renderWholesaleRetail();renderWholesaleOrder();renderAuthUsers();renderProducts();renderAccumulations();renderAccumulationReport();renderPix();renderReport();renderSettings();calcLaunch();enhanceMobileTables();save();}
+
+let renderBusy=false;
+let renderQueued=false;
+let lastPopulateSignature="";
+
+function populateSignature(){
+  try{
+    return JSON.stringify({
+      influencers:(state.influencers||[]).map(i=>[i.id,i.name,i.coupon]),
+      origins:state.settings?.origins||[],
+      statuses:state.settings?.statuses||[]
+    });
+  }catch(e){
+    return String(Date.now());
+  }
+}
+
+function populateIfNeeded(){
+  const sig=populateSignature();
+
+  if(sig!==lastPopulateSignature){
+    populate();
+    lastPopulateSignature=sig;
+  }
+}
+
+function renderSharedShell(){
+  currentPage=window.currentPage||currentPage||"dashboard";
+  setPageClass(currentPage);
+  syncMobileBottomNav(currentPage);
+  syncMonthInputs();
+  applyTheme();
+  populateIfNeeded();
+}
+
+function renderCurrentPageOnly(){
+  switch(currentPage){
+    case "dashboard":
+      renderDashboard();
+      break;
+
+    case "launches":
+      renderDashboard();
+      renderLaunches();
+      calcLaunch();
+      break;
+
+    case "wholesaleRetail":
+      renderWholesaleRetail();
+      renderWholesaleOrder();
+      break;
+
+    case "wholesaleOrder":
+      renderWholesaleOrder();
+      break;
+
+    case "influencers":
+      renderInfluencers();
+      break;
+
+    case "paid":
+      renderPaidPage();
+      break;
+
+    case "products":
+      renderProducts();
+      break;
+
+    case "accumulations":
+      renderAccumulations();
+      break;
+
+    case "pix":
+      renderPix();
+      break;
+
+    case "reports":
+      renderReport();
+      break;
+
+    case "collaborators":
+      renderAuthUsers();
+      break;
+
+    case "settings":
+      renderSettings();
+      break;
+
+    default:
+      renderDashboard();
+  }
+}
+
+function render(options={}){
+  if(renderBusy){
+    renderQueued=true;
+    return;
+  }
+
+  renderBusy=true;
+
+  try{
+    normalize();
+    renderSharedShell();
+    renderCurrentPageOnly();
+    enhanceMobileTables();
+  }catch(e){
+    console.error("Erro ao renderizar painel:",e);
+    updateCloudDebug("erro de renderização: "+(e.message||e));
+  }finally{
+    renderBusy=false;
+  }
+
+  if(renderQueued){
+    renderQueued=false;
+    setTimeout(()=>render({force:true}),0);
+  }
+}
 function rowsCSV(rows,name){const txt=rows.map(r=>r.map(c=>`"${String(c??"").replaceAll('"','""')}"`).join(";")).join("\n");const blob=new Blob(["\ufeff"+txt],{type:"text/csv;charset=utf-8"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;a.click();URL.revokeObjectURL(url);}
 
 function renderLaunchesPDF(){
