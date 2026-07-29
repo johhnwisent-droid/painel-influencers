@@ -11245,6 +11245,190 @@ body.erpStandbyModalOpen{
   to{opacity:1}
 }
 
+
+/* ===== V159 ERP TIPO DE PEDIDO E ESTAMPA POR MODELO ===== */
+.erpOrderBadges{
+  display:flex!important;
+  align-items:center!important;
+  gap:6px!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-end!important;
+}
+
+.erpOrderTypeBadge{
+  display:inline-flex!important;
+  padding:4px 8px!important;
+  border-radius:999px!important;
+  font-size:10px!important;
+  font-weight:1000!important;
+  letter-spacing:.04em!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:rgba(255,255,255,.06)!important;
+  color:#e5e7eb!important;
+}
+
+.erpOrderTypeBadge.wisent{
+  color:#facc15!important;
+  background:rgba(212,175,55,.12)!important;
+  border-color:rgba(212,175,55,.30)!important;
+}
+
+.erpOrderTypeBadge.private{
+  color:#bfdbfe!important;
+  background:rgba(59,130,246,.14)!important;
+  border-color:rgba(96,165,250,.30)!important;
+}
+
+.erpArtworkUploadBox{
+  display:grid!important;
+  grid-template-columns:1fr auto!important;
+  gap:12px!important;
+  align-items:center!important;
+  padding:12px!important;
+  margin:10px 0!important;
+  border-radius:16px!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02))!important;
+}
+
+.erpArtworkPreviewWrap{
+  display:flex!important;
+  gap:12px!important;
+  align-items:center!important;
+  min-width:0!important;
+}
+
+.erpArtworkPreviewWrap img{
+  width:72px!important;
+  height:72px!important;
+  object-fit:cover!important;
+  border-radius:14px!important;
+  border:1px solid rgba(255,255,255,.14)!important;
+  background:#020617!important;
+  flex:0 0 auto!important;
+}
+
+.erpArtworkPreviewWrap strong{
+  display:block!important;
+  color:#fff!important;
+  font-size:13px!important;
+  font-weight:1000!important;
+}
+
+.erpArtworkPreviewWrap span{
+  display:block!important;
+  color:#94a3b8!important;
+  font-size:12px!important;
+  font-weight:900!important;
+  margin-top:2px!important;
+  word-break:break-word!important;
+}
+
+.erpArtworkPreviewWrap span.hasArtwork{
+  color:#86efac!important;
+}
+
+.erpArtworkPreviewWrap small{
+  display:block!important;
+  color:#64748b!important;
+  font-size:11px!important;
+  margin-top:3px!important;
+  line-height:1.25!important;
+}
+
+.erpArtworkActions{
+  display:flex!important;
+  gap:8px!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  flex-wrap:wrap!important;
+}
+
+.erpArtworkUploadBtn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:34px!important;
+  padding:7px 10px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(212,175,55,.30)!important;
+  background:rgba(212,175,55,.12)!important;
+  color:#facc15!important;
+  font-size:12px!important;
+  font-weight:1000!important;
+  cursor:pointer!important;
+}
+
+.erpArtworkUploadBtn input{
+  display:none!important;
+}
+
+.erpArtworkChip{
+  display:flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  margin:7px 0!important;
+  padding:6px!important;
+  border-radius:12px!important;
+  background:rgba(34,197,94,.09)!important;
+  border:1px solid rgba(34,197,94,.18)!important;
+}
+
+.erpArtworkChip img{
+  width:36px!important;
+  height:36px!important;
+  object-fit:cover!important;
+  border-radius:10px!important;
+  flex:0 0 auto!important;
+}
+
+.erpArtworkChip span{
+  color:#bbf7d0!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  line-height:1.2!important;
+}
+
+.erpArtworkChip.empty{
+  background:rgba(148,163,184,.07)!important;
+  border-color:rgba(148,163,184,.14)!important;
+}
+
+.erpArtworkChip.empty span{
+  color:#94a3b8!important;
+}
+
+@media(max-width:900px){
+  .erpArtworkUploadBox{
+    grid-template-columns:1fr!important;
+  }
+
+  .erpArtworkActions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpArtworkUploadBtn,
+  .erpArtworkActions button{
+    width:100%!important;
+  }
+}
+
+@media(max-width:520px){
+  .erpArtworkPreviewWrap{
+    align-items:flex-start!important;
+  }
+
+  .erpArtworkPreviewWrap img{
+    width:64px!important;
+    height:64px!important;
+  }
+
+  .erpOrderBadges{
+    justify-content:flex-start!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -11327,7 +11511,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V158</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V159</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -12606,6 +12790,7 @@ body.erpStandbyModalOpen{
       <form id="erpOrderForm" class="form erpOrderForm">
         <input type="hidden" id="erpOrderId">
         <label>Número do pedido<input id="erpOrderNumber" placeholder="Ex.: WIS-0001"></label>
+        <label>Tipo do pedido<select id="erpOrderType"><option value="WISENT">WISENT</option><option value="PRIVATE LABEL">PRIVATE LABEL</option></select></label>
         <label>Cliente<input id="erpOrderClient" list="erpClientDatalist" placeholder="Nome do cliente"><datalist id="erpClientDatalist"></datalist></label>
         <label>Telefone<input id="erpOrderPhone" placeholder="(00) 00000-0000"></label>
         <label>Data entrega<input id="erpOrderDue" type="date" onchange="syncErpProductionDueFromDelivery()"></label>
@@ -12619,7 +12804,7 @@ body.erpStandbyModalOpen{
           <div class="erpProductBuilderHead">
             <div>
               <h4>Modelos, cores e grade</h4>
-              <p>Adicione quantos cards de modelo precisar. Cada card tem cor própria e quantidades por tamanho: PP, P, M, G, GG, G3 e G4.</p>
+              <p>Adicione quantos cards de modelo precisar. Cada card tem cor própria, grade por tamanho e uma foto da estampa vinculada ao modelo.</p>
             </div>
             <div class="erpProductBuilderActions">
               <span id="erpProductBuilderTotal">0 modelos • 0 peças</span>
@@ -13154,8 +13339,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V158";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v158";
+const APP_BUILD_VERSION="V159";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v159";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -13194,7 +13379,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=158");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=159");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -15887,6 +16072,19 @@ function runLocalSystemAudit(){
     auditAdd(report,"error","SAVE_UNSTUCK_V158","Não foi possível confirmar a correção anti-travamento do salvamento.");
   }
 
+  if(
+    $("erpOrderType")&&
+    String(erpOrderType).includes("PRIVATE")&&
+    String(erpNormalizeProductItem).includes("artworkImage")&&
+    String(handleErpProductArtworkUpload).includes("erpCompressArtworkFile")&&
+    String(addErpProductItem).includes("data-erp-artwork-preview")&&
+    String(erpProductBoxes).includes("erpArtworkChip")
+  ){
+    auditAdd(report,"pass","ERP_ORDER_TYPE_ARTWORK_V159","ERP permite pedido WISENT/PRIVATE LABEL e foto de estampa vinculada individualmente a cada modelo do pedido.");
+  }else{
+    auditAdd(report,"warn","ERP_ORDER_TYPE_ARTWORK_V159","Não foi possível confirmar tipo do pedido e estampa por modelo.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -16020,7 +16218,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v158-${today()}.json`;
+  a.download=`auditoria-painel-v159-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -16050,7 +16248,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V158",
+    "AUDITORIA DO SISTEMA — V159",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -16078,7 +16276,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V158: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V159: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -17067,7 +17265,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V158 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V159 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -23096,6 +23294,7 @@ function normalizeErpTestData(raw){
     if(!ERP_STAGES.includes(fixed.stage)){
       fixed.stage=fixed.stage==="Novo"?"Pedido":(fixed.stage||"Pedido");
     }
+    fixed.orderType=erpOrderType(fixed);
     fixed.products=erpNormalizeOrderProducts(fixed);
     fixed.qty=erpOrderQtyTotal(fixed);
     fixed.productionDue=fixed.productionDue||fixed.dueDate||today();
@@ -23608,7 +23807,7 @@ function showErpModule(module){
 
 
 function erpBlankProductItem(){
-  return {id:uid(),model:"",color:"",sizes:{PP:0,P:0,M:0,G:0,GG:0,G3:0,G4:0}};
+  return {id:uid(),model:"",color:"",sizes:{PP:0,P:0,M:0,G:0,GG:0,G3:0,G4:0},artworkImage:"",artworkName:"",artworkUpdatedAt:"",artworkUpdatedBy:""};
 }
 
 function erpNormalizeProductItem(item){
@@ -23624,7 +23823,11 @@ function erpNormalizeProductItem(item){
     sizes,
     sewingWorker:String(item?.sewingWorker||"").trim(),
     sewingUpdatedAt:item?.sewingUpdatedAt||"",
-    sewingUpdatedBy:item?.sewingUpdatedBy||""
+    sewingUpdatedBy:item?.sewingUpdatedBy||"",
+    artworkImage:String(item?.artworkImage||""),
+    artworkName:String(item?.artworkName||"").trim(),
+    artworkUpdatedAt:item?.artworkUpdatedAt||"",
+    artworkUpdatedBy:item?.artworkUpdatedBy||""
   };
 }
 
@@ -23664,6 +23867,147 @@ function erpProductSummary(order,limit=2){
   if(parts.length<=limit)return parts.join(" | ");
   return parts.slice(0,limit).join(" | ")+` | +${parts.length-limit} modelo(s)`;
 }
+
+
+function erpOrderType(order){
+  const raw=String(order?.orderType||order?.type||"WISENT").trim().toUpperCase();
+  return raw.includes("PRIVATE")?"PRIVATE LABEL":"WISENT";
+}
+
+function erpOrderTypeClass(order){
+  return erpOrderType(order)==="PRIVATE LABEL"?"private":"wisent";
+}
+
+function erpProductHasArtwork(product){
+  return !!String(product?.artworkImage||"").trim();
+}
+
+function erpArtworkLabel(product){
+  return product?.artworkName||"Estampa anexada";
+}
+
+function erpCompressArtworkFile(file,maxSize=1100,quality=.72){
+  return new Promise((resolve,reject)=>{
+    if(!file){
+      reject(new Error("Arquivo não informado."));
+      return;
+    }
+
+    if(!String(file.type||"").startsWith("image/")){
+      reject(new Error("Envie uma imagem válida da estampa."));
+      return;
+    }
+
+    const reader=new FileReader();
+
+    reader.onerror=()=>reject(new Error("Não foi possível ler a imagem."));
+    reader.onload=()=>{
+      const img=new Image();
+
+      img.onerror=()=>reject(new Error("Não foi possível carregar a prévia da imagem."));
+      img.onload=()=>{
+        const scale=Math.min(1,maxSize/Math.max(img.width,img.height));
+        const width=Math.max(1,Math.round(img.width*scale));
+        const height=Math.max(1,Math.round(img.height*scale));
+        const canvas=document.createElement("canvas");
+        canvas.width=width;
+        canvas.height=height;
+        const ctx=canvas.getContext("2d",{alpha:false});
+        ctx.fillStyle="#fff";
+        ctx.fillRect(0,0,width,height);
+        ctx.drawImage(img,0,0,width,height);
+
+        const dataUrl=canvas.toDataURL("image/jpeg",quality);
+        const kb=Math.round((dataUrl.length*3/4)/1024);
+
+        if(kb>900){
+          reject(new Error(`Imagem ainda ficou pesada (${kb} KB). Use uma imagem menor da estampa.`));
+          return;
+        }
+
+        resolve({
+          dataUrl,
+          kb,
+          width,
+          height,
+          name:file.name||"estampa.jpg"
+        });
+      };
+
+      img.src=reader.result;
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+function refreshErpArtworkPreview(row){
+  if(!row)return;
+  const img=row.querySelector("[data-erp-artwork-preview]");
+  const name=row.querySelector("[data-erp-artwork-name]");
+  const remove=row.querySelector("[data-erp-artwork-remove]");
+  const artwork=row.dataset.artworkImage||"";
+  const artworkName=row.dataset.artworkName||"";
+
+  if(img){
+    img.src=artwork||"";
+    img.style.display=artwork?"block":"none";
+  }
+
+  if(name){
+    name.textContent=artwork?artworkName||"Estampa anexada":"Nenhuma estampa anexada";
+    name.classList.toggle("hasArtwork",!!artwork);
+  }
+
+  if(remove)remove.style.display=artwork?"inline-flex":"none";
+}
+
+async function handleErpProductArtworkUpload(input){
+  const row=input?.closest(".erpProductItem");
+  const file=input?.files?.[0];
+
+  if(!row||!file)return;
+
+  const status=row.querySelector("[data-erp-artwork-status]");
+  if(status)status.textContent="Processando imagem...";
+
+  try{
+    const result=await erpCompressArtworkFile(file);
+    const audit=currentAuditInfo();
+
+    row.dataset.artworkImage=result.dataUrl;
+    row.dataset.artworkName=result.name;
+    row.dataset.artworkUpdatedAt=audit.at||new Date().toISOString();
+    row.dataset.artworkUpdatedBy=audit.name||"Não registrado";
+
+    refreshErpArtworkPreview(row);
+
+    if(status)status.textContent=`Estampa vinculada ao modelo • ${result.kb} KB`;
+    updateErpProductBuilderTotals();
+  }catch(e){
+    if(status)status.textContent=String(e.message||e);
+    alert(String(e.message||e));
+  }finally{
+    input.value="";
+  }
+}
+
+function removeErpProductArtwork(button){
+  const row=button?.closest(".erpProductItem");
+  if(!row)return;
+
+  row.dataset.artworkImage="";
+  row.dataset.artworkName="";
+  row.dataset.artworkUpdatedAt="";
+  row.dataset.artworkUpdatedBy="";
+
+  refreshErpArtworkPreview(row);
+
+  const status=row.querySelector("[data-erp-artwork-status]");
+  if(status)status.textContent="Estampa removida deste modelo.";
+  updateErpProductBuilderTotals();
+}
+
 
 function erpProductionDate(order){
   return order?.productionDue||order?.dueDate||today();
@@ -23705,7 +24049,7 @@ function updateErpProductBuilderTotals(){
 
 function bindErpProductItemEvents(row){
   if(!row)return;
-  row.querySelectorAll("input").forEach(input=>{
+  row.querySelectorAll("input:not([type='file'])").forEach(input=>{
     input.addEventListener("input",updateErpProductBuilderTotals);
   });
 }
@@ -23723,6 +24067,10 @@ function duplicateErpProductItem(button){
     model:row.querySelector("[data-erp-product-model]")?.value||"",
     color:row.querySelector("[data-erp-product-color]")?.value||"",
     sewingWorker:row.querySelector("[data-erp-product-sewing]")?.value||"",
+    artworkImage:row.dataset.artworkImage||"",
+    artworkName:row.dataset.artworkName||"",
+    artworkUpdatedAt:row.dataset.artworkUpdatedAt||"",
+    artworkUpdatedBy:row.dataset.artworkUpdatedBy||"",
     sizes
   });
 }
@@ -23735,6 +24083,10 @@ function addErpProductItem(item=null){
   const row=document.createElement("div");
   row.className="erpProductItem";
   row.dataset.productId=product.id;
+  row.dataset.artworkImage=product.artworkImage||"";
+  row.dataset.artworkName=product.artworkName||"";
+  row.dataset.artworkUpdatedAt=product.artworkUpdatedAt||"";
+  row.dataset.artworkUpdatedBy=product.artworkUpdatedBy||"";
 
   row.innerHTML=`<div class="erpProductItemTop">
     <span class="erpProductNumber" data-erp-product-number>Modelo</span>
@@ -23749,16 +24101,34 @@ function addErpProductItem(item=null){
     <label>Cor<input data-erp-product-color placeholder="Ex.: Preto" value="${esc(product.color||"")}"></label>
     <label>Responsável costura<input data-erp-product-sewing placeholder="Ex.: Marcelo" value="${esc(product.sewingWorker||"")}"></label>
   </div>
+
+  <div class="erpArtworkUploadBox">
+    <div class="erpArtworkPreviewWrap">
+      <img data-erp-artwork-preview alt="Prévia da estampa" style="display:none">
+      <div>
+        <strong>Foto da estampa deste modelo</strong>
+        <span data-erp-artwork-name>Nenhuma estampa anexada</span>
+        <small data-erp-artwork-status>Imagem vinculada apenas a este card de modelo.</small>
+      </div>
+    </div>
+    <div class="erpArtworkActions">
+      <label class="erpArtworkUploadBtn">Upar estampa
+        <input type="file" accept="image/*" onchange="handleErpProductArtworkUpload(this)">
+      </label>
+      <button type="button" class="small danger" data-erp-artwork-remove onclick="removeErpProductArtwork(this)" style="display:none">Remover estampa</button>
+    </div>
+  </div>
+
   <div class="erpSizeGrid">
     ${ERP_SIZES.map(size=>`<label>${size}<input data-erp-size="${size}" type="number" min="0" step="1" value="${Number(product.sizes?.[size]||0)}"></label>`).join("")}
   </div>`;
 
   wrap.appendChild(row);
+  refreshErpArtworkPreview(row);
   bindErpProductItemEvents(row);
   erpRenumberProductItems();
   updateErpProductBuilderTotals();
 }
-
 function removeErpProductItem(button){
   const wrap=$("erpProductItems");
   const row=button?.closest(".erpProductItem");
@@ -23782,6 +24152,10 @@ function readErpProductItemsFromForm(){
       model:row.querySelector("[data-erp-product-model]")?.value||"",
       color:row.querySelector("[data-erp-product-color]")?.value||"",
       sewingWorker:row.querySelector("[data-erp-product-sewing]")?.value||"",
+      artworkImage:row.dataset.artworkImage||"",
+      artworkName:row.dataset.artworkName||"",
+      artworkUpdatedAt:row.dataset.artworkUpdatedAt||"",
+      artworkUpdatedBy:row.dataset.artworkUpdatedBy||"",
       sizes
     });
   }).filter(item=>item.model!=="Modelo não informado"||item.color||erpProductQty(item)>0);
@@ -24238,6 +24612,7 @@ function resetErpOrderForm(){
   if(!form)return;
   form.reset();
   if($("erpOrderId"))$("erpOrderId").value="";
+  if($("erpOrderType"))$("erpOrderType").value="WISENT";
   if($("erpOrderDue"))$("erpOrderDue").value=today();
   if($("erpOrderProductionDue"))$("erpOrderProductionDue").value=today();
   populateErpStageSelect();
@@ -24254,7 +24629,7 @@ function populateErpStageSelect(){
 
 function erpOrderMatchesSearch(order,query){
   if(!query)return true;
-  const text=[order.number,order.client,order.phone,erpProductSummary(order,10),order.stage,order.priority,order.notes,erpProductionDate(order)].join(" ").toLowerCase();
+  const text=[order.number,erpOrderType(order),order.client,order.phone,erpProductSummary(order,10),order.stage,order.priority,order.notes,erpProductionDate(order)].join(" ").toLowerCase();
   return text.includes(query.toLowerCase());
 }
 
@@ -24279,6 +24654,7 @@ function saveErpOrderFromForm(e){
   const order={
     id,
     number:$("erpOrderNumber")?.value||`WIS-${String(data.orders.length+1).padStart(4,"0")}`,
+    orderType:$("erpOrderType")?.value||"WISENT",
     client:$("erpOrderClient")?.value||"Cliente não informado",
     phone:$("erpOrderPhone")?.value||"",
     dueDate,
@@ -24325,6 +24701,7 @@ function editErpOrder(id){
   showErpModule("pedidos");
   $("erpOrderId").value=order.id;
   $("erpOrderNumber").value=order.number||"";
+  if($("erpOrderType"))$("erpOrderType").value=erpOrderType(order);
   $("erpOrderClient").value=order.client||"";
   $("erpOrderPhone").value=order.phone||"";
   $("erpOrderDue").value=order.dueDate||today();
@@ -24591,6 +24968,7 @@ function erpProductBoxes(order,limit=3){
         <span>${erpProductQty(product)} peça(s)</span>
       </div>
       <small>${esc(product.color||"Sem cor")}</small>
+      ${erpProductHasArtwork(product)?`<div class="erpArtworkChip"><img src="${esc(product.artworkImage)}" alt="Estampa"><span>${esc(erpArtworkLabel(product))}</span></div>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
       <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
       ${isCostura?`<div class="erpSewingAssignment">
         <span><b>Costura</b>${esc(product.sewingWorker||"Sem responsável")}</span>
@@ -24612,6 +24990,7 @@ function showErpOrderProductsDetail(orderId){
 
   const lines=[
     `Pedido: ${order.number||"-"}`,
+    `Tipo: ${erpOrderType(order)}`,
     `Cliente: ${order.client||"-"}`,
     `Prazo produção: ${dateBR(erpProductionDate(order))}`,
     `Entrega: ${dateBR(order.dueDate)}`,
@@ -24632,6 +25011,7 @@ function showErpOrderProductsDetail(orderId){
     lines.push(`Cor: ${product.color||"Sem cor"}`);
     lines.push(`Quantidade: ${erpProductQty(product)} peça(s)`);
     lines.push(`Grade: ${grade}`);
+    lines.push(`Foto da estampa: ${erpProductHasArtwork(product)?erpArtworkLabel(product):"Não anexada"}`);
     if((order.stage||"Pedido")==="Costura")lines.push(`Responsável costura: ${product.sewingWorker||"Sem responsável"}`);
   });
 
@@ -24678,7 +25058,10 @@ function erpRenderOrderCard(order,stage,restricted){
   return `<article class="erpOrderCard ${erpOrderLate(order)?"late":""} urgency-${urgency} ${erpIsStandby(order)?"isStandby":""}">
     <div class="erpOrderTop">
       <strong>${esc(order.number||"-")}</strong>
-      <span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span>
+      <div class="erpOrderBadges">
+        <span class="erpOrderTypeBadge ${erpOrderTypeClass(order)}">${esc(erpOrderType(order))}</span>
+        <span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span>
+      </div>
     </div>
     <p>${esc(order.client||"-")}</p>
     <div class="erpOrderMetaGrid">
@@ -24900,7 +25283,7 @@ function erpProductPdfText(order){
       .map(size=>`${size}: ${Number(product.sizes[size]||0)}`)
       .join(" | ")||"Sem grade";
 
-    return `${index+1}. ${product.model||"Modelo não informado"}${product.color?` - ${product.color}`:""} (${erpProductQty(product)} peça(s)) - ${grade}${product.sewingWorker?` - Costura: ${product.sewingWorker}`:""}`;
+    return `${index+1}. ${product.model||"Modelo não informado"}${product.color?` - ${product.color}`:""} (${erpProductQty(product)} peça(s)) - ${grade}${erpProductHasArtwork(product)?` - Estampa: ${erpArtworkLabel(product)}`:""}${product.sewingWorker?` - Costura: ${product.sewingWorker}`:""}`;
   }).join(" / ");
 }
 
@@ -24958,7 +25341,7 @@ function renderErpReportPDF(){
   if($("erpReportPdfOrderRows")){
     $("erpReportPdfOrderRows").innerHTML=orders.length?orders.map(order=>`<tr>
       <td><strong>${esc(order.number||"-")}</strong></td>
-      <td>${esc(order.client||"-")}</td>
+      <td>${esc(order.client||"-")}<br><small>${esc(erpOrderType(order))}</small></td>
       <td>${esc(order.stage||"Pedido")}</td>
       <td>${dateBR(erpProductionDate(order))}</td>
       <td>${esc(erpProductPdfText(order))}</td>
@@ -25016,8 +25399,8 @@ function exportErpReportCSV(){
     ["Data",dateBR(today())],
     ["Mês produção",erpSelectedReportMonth()],
     [],
-    ["Pedido","Cliente","Etapa","Prioridade","Prazo produção","Entrega","Modelos/cores/grade","Quantidade total","Valor"],
-    ...orders.map(o=>[o.number,o.client,o.stage,o.priority,erpProductionDate(o),o.dueDate,erpProductSummary(o,10),erpOrderQtyTotal(o),o.value]),
+    ["Pedido","Tipo","Cliente","Etapa","Prioridade","Prazo produção","Entrega","Modelos/cores/grade/estampas","Quantidade total","Valor"],
+    ...orders.map(o=>[o.number,erpOrderType(o),o.client,o.stage,o.priority,erpProductionDate(o),o.dueDate,erpProductPdfText(o),erpOrderQtyTotal(o),o.value]),
     [],
     ["Peças produzidas/movimentadas por data"],
     ["Data","Peças","Pedidos","Alterações do dia"],
@@ -25041,6 +25424,7 @@ function renderErpLabel(){
       <div>
         <h3>${esc(order.client)}</h3>
         <p><b>Pedido:</b> ${esc(order.number)}</p>
+        <p><b>Tipo:</b> ${esc(erpOrderType(order))}</p>
         <p><b>Modelos:</b> ${esc(erpProductSummary(order,4))}</p>
         <p><b>Quantidade:</b> ${erpOrderQtyTotal(order)}</p>
         <p><b>Prazo produção:</b> ${dateBR(erpProductionDate(order))}</p>
