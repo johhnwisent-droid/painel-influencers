@@ -11230,6 +11230,21 @@ body.erpStandbyModalOpen{
   white-space:normal!important;
 }
 
+
+/* ===== V158 CORREÇÃO SALVANDO PRESO ===== */
+#cloudStatus{
+  min-height:24px!important;
+}
+
+#cloudStatus.cloudStatusPending{
+  animation:cloudPendingPulse 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes cloudPendingPulse{
+  from{opacity:.78}
+  to{opacity:1}
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -11312,7 +11327,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V157</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V158</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13003,7 +13018,7 @@ let cloudSaveRetryTimer=null;
 let cloudSaveRetryAttempt=0;
 let cloudSaveStartedAt=0;
 let cloudLocalSavedAt=null;
-const CLOUD_SAVE_WATCHDOG_MS=28000;
+const CLOUD_SAVE_WATCHDOG_MS=12000;
 const CLOUD_PAYLOAD_SOFT_LIMIT=620000;
 const SHARED_SAVE_PENDING_KEY=KEY+"_shared_save_pending_v157";
 const SHARED_SAVE_ACK_KEY=KEY+"_shared_save_ack_v157";
@@ -13015,6 +13030,7 @@ let latestSharedSaveToken="";
 let cloudOfficialSourceChecked=false;
 let cloudOfficialSourceReachable=false;
 let cloudLastVerifiedToken="";
+let cloudLastSaveResultAt=0;
 
 /*
   V119 — salvamento robusto dos lançamentos com cupom/influencer.
@@ -13138,8 +13154,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V157";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v157";
+const APP_BUILD_VERSION="V158";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v158";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -13178,7 +13194,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=157");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=158");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -14306,7 +14322,11 @@ async function flushCriticalRecordQueues(){
 
 async function flushStrictSharedSave(){
   if(strictSharedFlushBusy)return false;
+
+  const tokenAtStart=latestSharedSaveToken||readSharedSavePending()?.token||"";
+
   if(navigator.onLine===false){
+    setSaveUiState("offline","alteração preservada; será enviada ao reconectar",true);
     updateStrictSharedStatus();
     return false;
   }
@@ -14314,24 +14334,38 @@ async function flushStrictSharedSave(){
   strictSharedFlushBusy=true;
 
   try{
-    const recordsOk=await flushCriticalRecordQueues();
+    setSaveUiState("saving","enviando para Supabase",true);
+
     const stateOk=await cloudSaveNow();
 
-    if(recordsOk&&stateOk){
-      setSaveUiState("saved","Supabase confirmou persistência e filas críticas foram enviadas");
-      updateCloudDebug("confirmação rígida V157: painel_state verificado + filas críticas sincronizadas");
+    if(tokenAtStart&&latestSharedSaveToken&&String(tokenAtStart)!==String(latestSharedSaveToken)){
+      markSharedSavePending("painel","há alteração mais recente aguardando envio",latestSharedSaveToken);
+      setSaveUiState("retrying","nova alteração detectada; salvando versão mais recente",true);
+      scheduleCloudSaveRetry();
+      return false;
+    }
+
+    const recordsOk=await flushCriticalRecordQueues();
+
+    if(stateOk&&recordsOk){
+      markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
+      setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
+      updateCloudDebug("confirmação rígida V158: painel_state verificado + filas críticas sincronizadas");
       return true;
     }
 
-    markSharedSavePending("painel","nuvem ou filas críticas ainda pendentes",latestSharedSaveToken);
-    setSaveUiState("retrying","nuvem ou filas críticas ainda pendentes",true);
+    const reason=stateOk
+      ?"painel_state confirmado, mas há filas críticas pendentes"
+      :"painel_state ainda não foi confirmado no Supabase";
+
+    markSharedSavePending("painel",reason,tokenAtStart||latestSharedSaveToken);
+    setSaveUiState("retrying",reason,true);
     scheduleCloudSaveRetry();
     return false;
   }finally{
     strictSharedFlushBusy=false;
   }
 }
-
 function installStrictSharedSaveWatchers(){
   if(strictSharedSaveWatchersInstalled)return;
   strictSharedSaveWatchersInstalled=true;
@@ -15841,6 +15875,18 @@ function runLocalSystemAudit(){
     auditAdd(report,"error","SUPABASE_OFFICIAL_SAVE_V157","Não foi possível confirmar a regra Supabase-first V157.");
   }
 
+  if(
+    String(parseSupabaseStoredValue).includes("JSON.parse")&&
+    String(cloudSaveNow).includes("return=representation")&&
+    String(cloudSaveNow).includes("timeout de segurança")&&
+    String(flushStrictSharedSave).includes("painel_state ainda não foi confirmado")&&
+    String(startApp).includes("não executa save automático na inicialização")
+  ){
+    auditAdd(report,"pass","SAVE_UNSTUCK_V158","Corrigido travamento em 'Salvando...': retorno do Supabase é tratado, timeout é menor, save inicial não sobrescreve e status sempre avança para salvo/falha/retry.");
+  }else{
+    auditAdd(report,"error","SAVE_UNSTUCK_V158","Não foi possível confirmar a correção anti-travamento do salvamento.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -15974,7 +16020,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v157-${today()}.json`;
+  a.download=`auditoria-painel-v158-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -16004,7 +16050,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V157",
+    "AUDITORIA DO SISTEMA — V158",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -16032,7 +16078,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V157: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V158: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -17021,7 +17067,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V157 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V158 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -17119,7 +17165,7 @@ async function cloudLoad(){
 function scheduleCloudSaveRetry(){
   clearTimeout(cloudSaveRetryTimer);
 
-  const delay=Math.min(60000,2000*Math.pow(2,Math.min(cloudSaveRetryAttempt,5)));
+  const delay=Math.min(20000,1500*Math.pow(2,Math.min(cloudSaveRetryAttempt,4)));
   cloudSaveRetryAttempt+=1;
 
   cloudSaveRetryTimer=setTimeout(()=>{
@@ -17281,8 +17327,60 @@ function cloudSaveTimeoutPromise(){
 }
 
 
-async function verifyCloudStateSaved(expectedToken){
+
+function parseSupabaseStoredValue(value){
+  if(value===null||value===undefined)return null;
+
+  if(typeof value==="object")return value;
+
+  if(typeof value==="string"){
+    try{
+      const first=JSON.parse(value);
+      if(typeof first==="string"){
+        try{return JSON.parse(first);}catch(e){return first;}
+      }
+      return first;
+    }catch(e){
+      return null;
+    }
+  }
+
+  return null;
+}
+
+function cloudTokenFromStoredValue(value){
+  const parsed=parseSupabaseStoredValue(value);
+  if(parsed&&typeof parsed==="object"){
+    return parsed?._syncMeta?.strictSaveToken||"";
+  }
+  return "";
+}
+
+function tokenFromSupabaseResponseText(text){
+  if(!text)return "";
+
+  try{
+    const parsed=JSON.parse(text);
+    const row=Array.isArray(parsed)?parsed[0]:parsed;
+    if(!row)return "";
+
+    if(row.valor!==undefined)return cloudTokenFromStoredValue(row.valor);
+
+    return row?._syncMeta?.strictSaveToken||"";
+  }catch(e){
+    return "";
+  }
+}
+
+
+async function verifyCloudStateSaved(expectedToken,responseText=""){
   if(!expectedToken)return false;
+
+  const responseToken=tokenFromSupabaseResponseText(responseText);
+  if(responseToken&&String(responseToken)===String(expectedToken)){
+    cloudLastVerifiedToken=responseToken;
+    return true;
+  }
 
   try{
     const url=SUPABASE_URL+
@@ -17293,16 +17391,22 @@ async function verifyCloudStateSaved(expectedToken){
     const response=await fetchWithTimeout(url,{
       method:"GET",
       headers:cloudHeaders()
-    },10000);
+    },7000);
 
-    if(!response.ok)return false;
+    if(!response.ok){
+      const text=await response.text().catch(()=>"");
+      updateCloudDebug(`verificação pós-gravação: leitura HTTP ${response.status} ${text.slice(0,120)}`);
+      return false;
+    }
 
     const rows=await response.json();
     const row=Array.isArray(rows)?rows[0]:null;
-    if(!row||!row.valor)return false;
+    if(!row||row.valor===undefined){
+      updateCloudDebug("verificação pós-gravação: painel_state não retornou valor");
+      return false;
+    }
 
-    const parsed=typeof row.valor==="string"?JSON.parse(row.valor):row.valor;
-    const token=parsed?._syncMeta?.strictSaveToken||"";
+    const token=cloudTokenFromStoredValue(row.valor);
 
     if(String(token)===String(expectedToken)){
       cloudLastVerifiedToken=token;
@@ -17317,17 +17421,16 @@ async function verifyCloudStateSaved(expectedToken){
   }
 }
 
-
 async function cloudSaveNow(){
   if(cloudSaveInFlight){
     if(cloudSaveStale()){
-      console.warn("cloudSaveInFlight antigo descartado pelo watchdog V155");
+      console.warn("cloudSaveInFlight antigo descartado pelo watchdog V158");
       cloudSaveInFlight=null;
       cloudSaveStartedAt=0;
       markSharedSavePending("painel","watchdog liberou salvamento travado",latestSharedSaveToken);
       updateStrictMutationStatus(latestSharedSaveToken,"retrying","watchdog liberou salvamento travado");
       setSaveUiState("retrying","salvamento anterior travou; nova tentativa agendada",true);
-      updateCloudDebug("watchdog liberou salvamento travado; dados locais preservados");
+      updateCloudDebug("watchdog V158 liberou salvamento travado; dados locais preservados");
       scheduleCloudSaveRetry();
     }else{
       return cloudSaveInFlight;
@@ -17337,7 +17440,7 @@ async function cloudSaveNow(){
   cloudSaveStartedAt=Date.now();
 
   const task=(async()=>{
-    setSaveUiState("saving","enviando alteração para o Supabase e aguardando confirmação real",true);
+    setSaveUiState("saving","enviando alteração para o Supabase",true);
     updateCloudDebug("preparando painel_state leve e seguro para Supabase");
 
     try{
@@ -17346,7 +17449,8 @@ async function cloudSaveNow(){
       const expectedToken=savePackage.token||latestSharedSaveToken||"";
 
       if(expectedToken&&latestSharedSaveToken&&String(expectedToken)!==String(latestSharedSaveToken)){
-        updateStrictMutationStatus(expectedToken,"failed","resposta antiga ignorada por haver alteração mais recente");
+        updateStrictMutationStatus(expectedToken,"retrying","resposta antiga ignorada por haver alteração mais recente");
+        setSaveUiState("retrying","nova alteração detectada; salvamento anterior não será usado",true);
         return false;
       }
 
@@ -17356,47 +17460,42 @@ async function cloudSaveNow(){
 
       const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
         method:"POST",
-        headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
+        headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=representation"}),
         body:JSON.stringify({
           chave:CLOUD_STATE_KEY,
           valor:statePayload
         })
-      },14000);
+      },9000);
 
+      const responseText=await response.text().catch(()=>"");
       updateCloudDebug("resposta do Supabase no salvamento: HTTP "+response.status);
 
       if(!response.ok){
-        const text=await response.text();
-        console.error("Erro ao salvar Supabase:",text);
+        console.error("Erro ao salvar Supabase:",responseText);
         markSharedSavePending("painel","Supabase recusou envio; nova tentativa automática",expectedToken);
-        updateStrictMutationStatus(expectedToken,"failed",text);
+        updateStrictMutationStatus(expectedToken,"failed",responseText);
         setSaveUiState("failed","Supabase recusou o envio; alteração preservada e será reenviada",true);
-        updateCloudDebug("Supabase recusou o salvamento; fila/local preservados. Detalhe: "+text.slice(0,180));
+        updateCloudDebug("Supabase recusou o salvamento; fila/local preservados. Detalhe: "+responseText.slice(0,180));
         scheduleCloudSaveRetry();
         return false;
       }
 
-      const verified=await verifyCloudStateSaved(expectedToken);
-      const criticalOk=await flushCriticalRecordQueues();
+      const verified=await verifyCloudStateSaved(expectedToken,responseText);
 
       clearTimeout(cloudSaveRetryTimer);
       cloudSaveRetryAttempt=0;
       cloudLastSavedAt=new Date();
+      cloudLastSaveResultAt=Date.now();
 
-      if(verified&&criticalOk&&(!latestSharedSaveToken||String(expectedToken)===String(latestSharedSaveToken))){
-        updateStrictMutationStatus(expectedToken,"confirmed","");
-        markSharedSaveConfirmed("painel",expectedToken);
-        setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
+      if(verified&&(!latestSharedSaveToken||String(expectedToken)===String(latestSharedSaveToken))){
+        updateStrictMutationStatus(expectedToken,"cloud_state_confirmed","");
         updateCloudDebug(
-          `último compartilhamento confirmado: ${cloudLastSavedAt.toLocaleTimeString("pt-BR")} • token ${expectedToken} • painel_state ${savePackage.emergency?"emergencial":"leve"} ${savePackage.info.kb} KB • filas críticas OK`
+          `painel_state confirmado no Supabase: ${cloudLastSavedAt.toLocaleTimeString("pt-BR")} • token ${expectedToken} • ${savePackage.info.kb} KB`
         );
         return true;
       }
 
-      const reason=!verified
-        ?"Supabase recebeu a requisição, mas a leitura de confirmação não retornou o token salvo"
-        :"painel_state confirmado, mas há filas críticas pendentes";
-
+      const reason="Supabase respondeu, mas a leitura de confirmação não retornou o token esperado";
       updateStrictMutationStatus(expectedToken,"retrying",reason);
       markSharedSavePending("painel",reason,expectedToken);
       setSaveUiState("retrying",reason,true);
@@ -17421,10 +17520,10 @@ async function cloudSaveNow(){
       const result=await Promise.race([task,cloudSaveTimeoutPromise()]);
 
       if(result&&result.timeout){
-        markSharedSavePending("painel","nuvem demorou demais; tentando depois",latestSharedSaveToken);
-        updateStrictMutationStatus(latestSharedSaveToken,"retrying","timeout do watchdog");
-        setSaveUiState("retrying","timeout de segurança; alteração pendente será reenviada",true);
-        updateCloudDebug("watchdog V155: salvamento na nuvem ultrapassou "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; local confirmado e retry agendado");
+        markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
+        updateStrictMutationStatus(latestSharedSaveToken,"retrying","timeout do watchdog V158");
+        setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
+        updateCloudDebug("watchdog V158: salvamento ultrapassou "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; retry agendado");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -17536,11 +17635,14 @@ async function startApp(){
     }
 
     try{
-      if(cloudOfficialSourceReachable){
-        save();
+      if(readSharedSavePending()){
+        flushStrictSharedSave();
+      }else if(cloudOfficialSourceReachable){
+        setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
+        updateCloudDebug("V158 não executa save automático na inicialização para evitar sobrescrever a nuvem");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
-        updateCloudDebug("V157 bloqueou salvamento inicial automático porque a leitura oficial do Supabase falhou");
+        updateCloudDebug("V158 bloqueou salvamento inicial automático porque a leitura oficial do Supabase falhou");
       }
     }catch(e){
       console.warn("Salvamento inicial ignorado:",e);
