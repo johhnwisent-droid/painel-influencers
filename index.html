@@ -10338,6 +10338,140 @@ body[data-page="erpTest"] .main{
   }
 }
 
+
+/* ===== V148 ERP RELATÓRIO PDF ===== */
+.erpPdfBadge{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  border-radius:999px!important;
+  padding:8px 12px!important;
+  background:#111827!important;
+  color:#facc15!important;
+  font-weight:1000!important;
+  font-size:12px!important;
+  border:1px solid #374151!important;
+  white-space:nowrap!important;
+}
+
+.erpPdfSectionTitle{
+  margin:24px 0 10px!important;
+  font-size:18px!important;
+  color:#111827!important;
+}
+
+.erpPdfTable{
+  width:100%!important;
+  border-collapse:collapse!important;
+  background:#fff!important;
+  margin-bottom:12px!important;
+}
+
+.erpPdfTable th,
+.erpPdfTable td{
+  border:1px solid #e5e7eb!important;
+  padding:8px!important;
+  color:#111827!important;
+  background:#fff!important;
+  white-space:normal!important;
+  vertical-align:top!important;
+  font-size:11px!important;
+  line-height:1.35!important;
+}
+
+.erpPdfTable th{
+  background:#f9fafb!important;
+  color:#374151!important;
+  text-transform:uppercase!important;
+  letter-spacing:.04em!important;
+  font-size:10px!important;
+}
+
+.erpPdfOrdersTable td:nth-child(5){
+  min-width:240px!important;
+}
+
+@media print{
+  body.print-erp-report .side,
+  body.print-erp-report .top,
+  body.print-erp-report .noPrint,
+  body.print-erp-report .menu,
+  body.print-erp-report .view{
+    display:none!important;
+  }
+
+  body.print-erp-report,
+  body.print-erp-report .app,
+  body.print-erp-report .main{
+    display:block!important;
+    background:white!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.print-erp-report #erpTest{
+    display:block!important;
+  }
+
+  body.print-erp-report #erpTest > .erpHero,
+  body.print-erp-report #erpTest > .erpRestoreBox,
+  body.print-erp-report #erpTest > .erpModuleTabs,
+  body.print-erp-report #erpTest > .erpModule:not([data-erp-panel="relatorios"]){
+    display:none!important;
+  }
+
+  body.print-erp-report [data-erp-panel="relatorios"]{
+    display:block!important;
+  }
+
+  body.print-erp-report [data-erp-panel="relatorios"] > .panel:not(.erpReportPrintPanel){
+    display:none!important;
+  }
+
+  body.print-erp-report .erpReportPrintPanel.printOnly{
+    display:block!important;
+    border:0!important;
+    box-shadow:none!important;
+    padding:0!important;
+    margin:0!important;
+  }
+
+  body.print-erp-report .erpReportPdf{
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    padding:20px!important;
+    min-height:auto!important;
+  }
+
+  body.print-erp-report .pdfCleanHeader h1{
+    font-size:24px!important;
+  }
+
+  body.print-erp-report .pdfThreeCards{
+    grid-template-columns:repeat(3,1fr)!important;
+    gap:8px!important;
+  }
+
+  body.print-erp-report .pdfBox{
+    padding:10px!important;
+    border-radius:12px!important;
+  }
+
+  body.print-erp-report .pdfBox strong{
+    font-size:17px!important;
+  }
+
+  body.print-erp-report .erpPdfTable{
+    page-break-inside:auto!important;
+  }
+
+  body.print-erp-report .erpPdfTable tr{
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -10420,7 +10554,7 @@ body[data-page="erpTest"] .main{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V147</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V148</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -11764,7 +11898,8 @@ body[data-page="erpTest"] .main{
         <div><h3>Relatórios ERP teste</h3><span class="muted">Resumo operacional calculado com os dados de teste.</span></div>
         <div class="filters">
           <label class="erpMonthMini">Mês produção<input id="erpReportMonth" type="month" onchange="renderErpTest()"></label>
-          <button class="secondary" onclick="exportErpReportCSV()">Exportar relatório CSV</button>
+          <button class="secondary" onclick="exportErpReportCSV()">Exportar CSV</button>
+          <button class="primary" onclick="exportErpReportPDF()">Exportar PDF</button>
         </div>
       </div>
       <div class="grid erpStatsGrid">
@@ -11797,6 +11932,52 @@ body[data-page="erpTest"] .main{
             <tbody id="erpMonthlyProductionRows"></tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <div class="panel printPanel erpReportPrintPanel printOnly">
+      <div class="printArea erpReportPdf">
+        <img id="erpReportPdfWatermark" class="reportWatermark" alt="">
+        <div class="pdfCleanHeader">
+          <div>
+            <img id="erpReportPdfLogo" class="printLogo" alt="Logo" style="display:none">
+            <h1>Relatório de Produção - WISENT ERP</h1>
+            <p id="erpReportPdfSubtitle">Mês de produção</p>
+          </div>
+          <div class="erpPdfBadge">ERP TESTE</div>
+        </div>
+
+        <div class="pdfThreeCards erpPdfMetrics">
+          <div class="pdfBox"><small>Peças no mês</small><strong id="erpReportPdfTotalPieces">0</strong></div>
+          <div class="pdfBox"><small>Pedidos</small><strong id="erpReportPdfOrderCount">0</strong></div>
+          <div class="pdfBox"><small>Faturamento</small><strong id="erpReportPdfRevenue">R$ 0,00</strong></div>
+        </div>
+
+        <div class="pdfThreeCards erpPdfMetrics">
+          <div class="pdfBox"><small>Pedidos atrasados</small><strong id="erpReportPdfLate">0</strong></div>
+          <div class="pdfBox"><small>Estoque baixo</small><strong id="erpReportPdfLowStock">0</strong></div>
+          <div class="pdfBox"><small>Gerado em</small><strong id="erpReportPdfGenerated">-</strong></div>
+        </div>
+
+        <h2 class="erpPdfSectionTitle">Resumo por etapa</h2>
+        <table class="erpPdfTable">
+          <thead><tr><th>Etapa</th><th>Pedidos</th><th>Peças</th><th>Valor</th></tr></thead>
+          <tbody id="erpReportPdfStageRows"></tbody>
+        </table>
+
+        <h2 class="erpPdfSectionTitle">Peças produzidas por data</h2>
+        <table class="erpPdfTable">
+          <thead><tr><th>Data</th><th>Peças</th><th>Pedidos</th><th>Alterações do dia</th></tr></thead>
+          <tbody id="erpReportPdfDailyRows"></tbody>
+        </table>
+
+        <h2 class="erpPdfSectionTitle">Pedidos do mês</h2>
+        <table class="erpPdfTable erpPdfOrdersTable">
+          <thead><tr><th>Pedido</th><th>Cliente</th><th>Etapa</th><th>Prazo produção</th><th>Modelos / Cores / Grade</th><th>Peças</th></tr></thead>
+          <tbody id="erpReportPdfOrderRows"></tbody>
+        </table>
+
+        <div class="pdfFooterClean" id="erpReportPdfFooter">Relatório gerado automaticamente pelo painel.</div>
       </div>
     </div>
   </div>
@@ -12088,8 +12269,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V147";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v147";
+const APP_BUILD_VERSION="V148";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v148";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -12128,7 +12309,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=147");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=148");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -13890,7 +14071,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V147",
+    version:"V148",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -14335,6 +14516,19 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_KANBAN_PRODUCT_CARDS_V147","Não foi possível confirmar cards de modelos ilimitados e Kanban mobile avançado.");
   }
 
+  if(
+    $("erpReportPdfStageRows")&&
+    $("erpReportPdfDailyRows")&&
+    $("erpReportPdfOrderRows")&&
+    String(renderErpReportPDF).includes("erpProductPdfText")&&
+    String(exportErpReportPDF).includes("print-erp-report")&&
+    String(document.querySelector("style")?.textContent||"").includes("V148 ERP RELATÓRIO PDF")
+  ){
+    auditAdd(report,"pass","ERP_REPORT_PDF_V148","Relatório do WISENT ERP teste pode ser exportado em PDF com resumo por etapa, produção por data e pedidos/modelos.");
+  }else{
+    auditAdd(report,"warn","ERP_REPORT_PDF_V148","Não foi possível confirmar a exportação PDF do relatório ERP.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -14454,7 +14648,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v147-${today()}.json`;
+  a.download=`auditoria-painel-v148-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -14484,7 +14678,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V147",
+    "AUDITORIA DO SISTEMA — V148",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -14512,7 +14706,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V147: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V148: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -15499,7 +15693,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V147 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V148 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -21827,6 +22021,135 @@ function renderErpReports(data){
     }).join("");
   }
 }
+
+
+function erpReportOrdersForMonth(data,month=erpSelectedReportMonth()){
+  return (data.orders||[]).filter(order=>{
+    const dates=[
+      String(order.createdAt||"").slice(0,7),
+      String(order.updatedAt||"").slice(0,7),
+      String(order.productionDue||"").slice(0,7),
+      String(order.dueDate||"").slice(0,7)
+    ];
+
+    if(dates.includes(month))return true;
+
+    return erpOrderStageHistory(order).some(h=>String(h.date||h.at||"").slice(0,7)===month);
+  });
+}
+
+function erpProductPdfText(order){
+  return erpNormalizeOrderProducts(order).map((product,index)=>{
+    const grade=ERP_SIZES
+      .filter(size=>Number(product.sizes?.[size]||0)>0)
+      .map(size=>`${size}: ${Number(product.sizes[size]||0)}`)
+      .join(" | ")||"Sem grade";
+
+    return `${index+1}. ${product.model||"Modelo não informado"}${product.color?` - ${product.color}`:""} (${erpProductQty(product)} peça(s)) - ${grade}`;
+  }).join(" / ");
+}
+
+function renderErpReportPDF(){
+  const data=readErpTestData();
+  const month=erpSelectedReportMonth();
+  const productionRows=erpMonthlyProductionRows(data,month);
+  const monthlyPieces=productionRows.reduce((sum,row)=>sum+Number(row.qty||0),0);
+  const orders=erpReportOrdersForMonth(data,month);
+  const revenue=orders.reduce((sum,order)=>sum+Number(order.value||0),0);
+  const late=orders.filter(erpOrderLate).length;
+  const lowStock=(data.stock||[]).filter(s=>Number(s.current||0)<=Number(s.min||0)).length;
+  const generated=new Date().toLocaleString("pt-BR");
+
+  const pdfLogo=state.settings.pdfLogo||state.settings.logo||"";
+  if($("erpReportPdfLogo")){
+    $("erpReportPdfLogo").style.display=pdfLogo?"block":"none";
+    if(pdfLogo)$("erpReportPdfLogo").src=pdfLogo;
+  }
+
+  if(typeof applyPdfWatermark==="function")applyPdfWatermark("erpReportPdfWatermark");
+
+  if($("erpReportPdfSubtitle"))$("erpReportPdfSubtitle").textContent=`Mês de produção: ${month} • ${orders.length} pedido(s)`;
+  if($("erpReportPdfTotalPieces"))$("erpReportPdfTotalPieces").textContent=monthlyPieces;
+  if($("erpReportPdfOrderCount"))$("erpReportPdfOrderCount").textContent=orders.length;
+  if($("erpReportPdfRevenue"))$("erpReportPdfRevenue").textContent=money(revenue);
+  if($("erpReportPdfLate"))$("erpReportPdfLate").textContent=late;
+  if($("erpReportPdfLowStock"))$("erpReportPdfLowStock").textContent=lowStock;
+  if($("erpReportPdfGenerated"))$("erpReportPdfGenerated").textContent=generated;
+
+  if($("erpReportPdfStageRows")){
+    $("erpReportPdfStageRows").innerHTML=ERP_STAGES.map(stage=>{
+      const rows=orders.filter(o=>(o.stage||"Pedido")===stage);
+      const qty=rows.reduce((sum,o)=>sum+erpOrderQtyTotal(o),0);
+      const value=rows.reduce((sum,o)=>sum+Number(o.value||0),0);
+
+      return `<tr>
+        <td><strong>${esc(stage)}</strong></td>
+        <td>${rows.length}</td>
+        <td>${qty}</td>
+        <td>${money(value)}</td>
+      </tr>`;
+    }).join("");
+  }
+
+  if($("erpReportPdfDailyRows")){
+    $("erpReportPdfDailyRows").innerHTML=productionRows.length?productionRows.map(row=>`<tr>
+      <td>${dateBR(row.date)}</td>
+      <td><strong>${Number(row.qty||0)}</strong></td>
+      <td>${esc([...row.orders].join(", "))}</td>
+      <td>${esc(row.details.join(" | "))}</td>
+    </tr>`).join(""):`<tr><td colspan="4">Nenhuma produção registrada neste mês.</td></tr>`;
+  }
+
+  if($("erpReportPdfOrderRows")){
+    $("erpReportPdfOrderRows").innerHTML=orders.length?orders.map(order=>`<tr>
+      <td><strong>${esc(order.number||"-")}</strong></td>
+      <td>${esc(order.client||"-")}</td>
+      <td>${esc(order.stage||"Pedido")}</td>
+      <td>${dateBR(erpProductionDate(order))}</td>
+      <td>${esc(erpProductPdfText(order))}</td>
+      <td><strong>${erpOrderQtyTotal(order)}</strong></td>
+    </tr>`).join(""):`<tr><td colspan="6">Nenhum pedido encontrado no mês selecionado.</td></tr>`;
+  }
+
+  if($("erpReportPdfFooter")){
+    $("erpReportPdfFooter").textContent=state.settings.pdfFooter||`Relatório gerado automaticamente pelo painel WISENT ERP teste em ${generated}.`;
+  }
+}
+
+function exportErpReportPDF(){
+  const data=readErpTestData();
+  const month=erpSelectedReportMonth();
+  const productionRows=erpMonthlyProductionRows(data,month);
+  const orders=erpReportOrdersForMonth(data,month);
+
+  if(!productionRows.length&&!orders.length){
+    alert("Não há dados de produção para exportar no mês selecionado.");
+    return;
+  }
+
+  renderErpReportPDF();
+
+  const oldTitle=document.title;
+  document.title=`Relatório ERP ${month}`;
+
+  document.body.classList.remove(
+    "print-report",
+    "print-accumulation",
+    "print-wholesale",
+    "print-wholesale-list",
+    "print-launches-list",
+    "print-collab-sales"
+  );
+
+  document.body.classList.add("print-erp-report");
+  window.print();
+
+  setTimeout(()=>{
+    document.body.classList.remove("print-erp-report");
+    document.title=oldTitle;
+  },700);
+}
+
 
 function exportErpReportCSV(){
   const data=readErpTestData();
