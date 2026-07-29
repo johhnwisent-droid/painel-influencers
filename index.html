@@ -9439,6 +9439,58 @@ body.erpSectorRestricted .top{
   border-bottom:1px solid rgba(212,175,55,.18)!important;
 }
 
+
+/* ===== V143 STATUS DA NUVEM MENOS INTRUSIVO ===== */
+#cloudStatus.cloudStatusNeutral{
+  color:#64748b!important;
+  font-weight:800!important;
+}
+
+#cloudDebug{
+  opacity:.76!important;
+}
+
+
+/* ===== V144 DIAGNÓSTICO REAL DA NUVEM ===== */
+.cloudDiagLine{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  flex-wrap:wrap!important;
+}
+
+.copyCloudDiagBtn{
+  border:1px solid #d1d5db!important;
+  background:#f8fafc!important;
+  color:#374151!important;
+  border-radius:999px!important;
+  padding:5px 9px!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  cursor:pointer!important;
+}
+
+.copyCloudDiagBtn:hover{
+  border-color:#2563eb!important;
+  color:#1d4ed8!important;
+  background:#eff6ff!important;
+}
+
+#cloudStatus.cloudStatusError{
+  font-weight:900!important;
+}
+
+@media(max-width:760px){
+  .cloudDiagLine{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .copyCloudDiagBtn{
+    width:max-content!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9521,7 +9573,7 @@ body.erpSectorRestricted .top{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V142</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V144</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -11153,8 +11205,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V142";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v142";
+const APP_BUILD_VERSION="V144";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v144";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -11193,7 +11245,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=142");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=144");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12096,6 +12148,11 @@ function save(){
     updateCloudDebug("armazenamento local indisponível ou sem espaço");
   }
 
+  /*
+    V144:
+    Salvamento local não troca o status da nuvem.
+    Assim, se houver erro real no Supabase, ele permanece visível para diagnóstico.
+  */
   if(!cloudBooting)scheduleCloudSave();
   updateUndoButtons();
   return localSaved;
@@ -12163,13 +12220,42 @@ function preserveMediaFromLegacy(targetState){
 function updateCloudStatus(text,isError=false){
   const el=$("cloudStatus");
   if(!el)return;
-  el.textContent=text;
+
+  /*
+    V144:
+    O status principal volta a mostrar o problema real da nuvem.
+    Isso facilita copiar a mensagem exata do diagnóstico e corrigir a causa.
+  */
+  el.textContent=String(text||"");
   el.style.color=isError?"#dc2626":"#6b7280";
+  el.classList.toggle("cloudStatusError",!!isError);
 }
 
 function updateCloudDebug(text){
   const el=$("cloudDebug");
   if(el)el.textContent="Diagnóstico: "+text;
+}
+
+async function copyCloudDiagnostics(){
+  const status=$("cloudStatus")?.textContent||"";
+  const debug=$("cloudDebug")?.textContent||"";
+  const version=APP_BUILD_VERSION||"";
+  const online=navigator.onLine?"online":"offline";
+  const payload=[
+    "DIAGNÓSTICO DA NUVEM",
+    `Versão: ${version}`,
+    `Status navegador: ${online}`,
+    `Status: ${status}`,
+    debug,
+    `Data/hora: ${new Date().toLocaleString("pt-BR")}`
+  ].join("\n");
+
+  try{
+    await navigator.clipboard.writeText(payload);
+    showUndoToast("Diagnóstico da nuvem copiado.");
+  }catch(e){
+    prompt("Copie o diagnóstico abaixo:",payload);
+  }
 }
 
 function cloudHeaders(extra={}){
@@ -12921,7 +13007,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V142",
+    version:"V144",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -13315,6 +13401,17 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_SECTOR_KANBAN_LOGIN","Não foi possível confirmar toda a restrição de login setorial do ERP.");
   }
 
+  if(
+    String(updateCloudStatus).includes("cloudStatusError")&&
+    String(copyCloudDiagnostics).includes("DIAGNÓSTICO DA NUVEM")&&
+    String(save).includes("Salvamento local não troca o status da nuvem")&&
+    String(cloudSaveNow).includes("Nuvem instável. Dados locais preservados")
+  ){
+    auditAdd(report,"pass","CLOUD_DIAGNOSTIC_VISIBLE_V144","Status real da nuvem permanece visível e o diagnóstico pode ser copiado para correção.");
+  }else{
+    auditAdd(report,"warn","CLOUD_DIAGNOSTIC_VISIBLE_V144","Não foi possível confirmar status real/cópia de diagnóstico da nuvem.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -13434,7 +13531,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v142-${today()}.json`;
+  a.download=`auditoria-painel-v144-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -13464,7 +13561,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V142",
+    "AUDITORIA DO SISTEMA — V144",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -13492,7 +13589,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V142: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V144: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -14479,7 +14576,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V142 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V144 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -14495,7 +14592,7 @@ async function cloudLoad(){
       const text=await response.text();
       console.error("Erro ao carregar Supabase:",text);
       updateCloudStatus("Erro ao carregar dados da nuvem.",true);
-      updateCloudDebug("verifique RLS/policies da tabela personalizacao. Detalhe: "+text.slice(0,160));
+      updateCloudDebug("erro ao carregar Supabase; verifique RLS/policies da tabela personalizacao. Detalhe: "+text.slice(0,160));
       return false;
     }
 
@@ -14683,7 +14780,7 @@ async function cloudSaveNow(){
         const text=await response.text();
         console.error("Erro ao salvar Supabase:",text);
         updateCloudStatus("Erro ao salvar na nuvem. Os dados locais foram preservados.",true);
-        updateCloudDebug("nova tentativa automática agendada. Detalhe: "+text.slice(0,160));
+        updateCloudDebug("Supabase recusou o salvamento; nova tentativa automática agendada. Detalhe: "+text.slice(0,160));
         scheduleCloudSaveRetry();
         return false;
       }
@@ -14702,7 +14799,7 @@ async function cloudSaveNow(){
       updateCloudStatus("Nuvem instável. Dados locais preservados e nova tentativa agendada.",true);
       updateCloudDebug(
         (e.name==="AbortError"?"tempo esgotado no Supabase":"erro de salvamento: "+(e.message||e))+
-        " • dados locais, filas e snapshots preservados"
+        " • dados locais, filas e snapshots preservados; nova tentativa automática agendada"
       );
       scheduleCloudSaveRetry();
       return false;
@@ -14744,7 +14841,7 @@ async function startApp(){
     const loaded=await cloudLoad().catch(e=>{
       console.error("Falha controlada no cloudLoad:",e);
       updateCloudStatus("Painel aberto em modo local. A nuvem será sincronizada ao reconectar.",true);
-      updateCloudDebug(e.message||String(e));
+      updateCloudDebug("cloudLoad adiado: "+(e.message||String(e)));
       return false;
     });
 
