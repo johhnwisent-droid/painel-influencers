@@ -10603,6 +10603,194 @@ body[data-page="erpTest"] .main{
   }
 }
 
+
+/* ===== V150 ERP STANDBY POR ETAPA COM LEQUE ===== */
+.erpTestView{
+  --erp-standby:#dc2626;
+  --erp-standby-2:#ef4444;
+  --erp-standby-soft:rgba(220,38,38,.12);
+  --erp-standby-border:rgba(248,113,113,.34);
+}
+
+.erpKanbanList{
+  display:grid!important;
+  gap:12px!important;
+}
+
+.erpKanbanDemandSection{
+  display:grid!important;
+  gap:9px!important;
+  border-radius:18px!important;
+  padding:8px!important;
+  background:rgba(255,255,255,.025)!important;
+  border:1px solid rgba(255,255,255,.07)!important;
+}
+
+.erpKanbanDemandSection.standbySection{
+  background:
+    radial-gradient(circle at top right,rgba(220,38,38,.12),transparent 34%),
+    rgba(127,29,29,.10)!important;
+  border-color:var(--erp-standby-border)!important;
+}
+
+.erpKanbanSectionToggle{
+  width:100%!important;
+  min-height:42px!important;
+  display:grid!important;
+  grid-template-columns:auto 1fr auto!important;
+  align-items:center!important;
+  gap:8px!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  background:#0f172a!important;
+  color:#f8fafc!important;
+  border-radius:14px!important;
+  padding:8px 10px!important;
+  cursor:pointer!important;
+  text-align:left!important;
+}
+
+.erpKanbanSectionToggle:hover{
+  border-color:rgba(212,175,55,.28)!important;
+}
+
+.erpKanbanSectionToggle.standbyToggle{
+  background:linear-gradient(180deg,rgba(220,38,38,.17),rgba(127,29,29,.16))!important;
+  border-color:var(--erp-standby-border)!important;
+}
+
+.erpChevron{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:26px!important;
+  height:26px!important;
+  border-radius:10px!important;
+  background:rgba(255,255,255,.07)!important;
+  color:#facc15!important;
+  font-weight:1000!important;
+}
+
+.standbyToggle .erpChevron{
+  color:#fecaca!important;
+  background:rgba(220,38,38,.22)!important;
+}
+
+.erpSectionTitleText{
+  color:#fff!important;
+  font-weight:1000!important;
+  line-height:1.15!important;
+}
+
+.erpKanbanSectionToggle small{
+  color:#94a3b8!important;
+  font-size:11px!important;
+  font-weight:900!important;
+  white-space:nowrap!important;
+}
+
+.standbyToggle small{
+  color:#fecaca!important;
+}
+
+.erpKanbanSectionBody{
+  display:grid!important;
+  gap:10px!important;
+}
+
+.erpKanbanDemandSection.collapsed .erpKanbanSectionBody{
+  display:none!important;
+}
+
+.erpOrderCard.isStandby{
+  border-color:rgba(220,38,38,.58)!important;
+  background:
+    radial-gradient(circle at 90% 0,rgba(220,38,38,.18),transparent 30%),
+    linear-gradient(180deg,rgba(127,29,29,.20),rgba(17,24,39,.98)),
+    #111827!important;
+}
+
+.erpOrderCard.isStandby::before{
+  background:linear-gradient(180deg,#ef4444,#991b1b)!important;
+}
+
+.erpOrderCard.isStandby::after{
+  background:rgba(220,38,38,.18)!important;
+  color:#fecaca!important;
+  border-color:rgba(248,113,113,.42)!important;
+}
+
+.erpStandbyBox{
+  border-color:rgba(248,113,113,.38)!important;
+  background:
+    linear-gradient(180deg,rgba(220,38,38,.15),rgba(127,29,29,.12))!important;
+}
+
+.erpStandbyBox strong{
+  color:#fecaca!important;
+}
+
+.erpStandbyBox span{
+  color:#fff1f2!important;
+}
+
+.erpStandbyBox small{
+  color:#fca5a5!important;
+}
+
+.standbyBtn{
+  border-color:rgba(248,113,113,.42)!important;
+  color:#fecaca!important;
+  background:rgba(220,38,38,.14)!important;
+}
+
+.standbyBtn:hover{
+  background:rgba(220,38,38,.22)!important;
+}
+
+@media(max-width:900px){
+  .erpKanbanDemandSection{
+    padding:7px!important;
+  }
+
+  .erpKanbanSectionToggle{
+    grid-template-columns:auto 1fr!important;
+  }
+
+  .erpKanbanSectionToggle small{
+    grid-column:1/-1!important;
+    white-space:normal!important;
+    padding-left:34px!important;
+  }
+
+  .erpKanbanSectionBody{
+    gap:9px!important;
+  }
+
+  .erpOrderCard.isStandby::after{
+    margin-left:0!important;
+  }
+}
+
+@media(max-width:520px){
+  .erpKanbanDemandSection{
+    border-radius:16px!important;
+  }
+
+  .erpKanbanSectionToggle{
+    min-height:46px!important;
+    border-radius:13px!important;
+  }
+
+  .erpChevron{
+    width:30px!important;
+    height:30px!important;
+  }
+
+  .erpSectionTitleText{
+    font-size:14px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -10685,7 +10873,7 @@ body[data-page="erpTest"] .main{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V149</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V150</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -12402,8 +12590,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V149";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v149";
+const APP_BUILD_VERSION="V150";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v150";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -12442,7 +12630,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=149");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=150");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -14204,7 +14392,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V149",
+    version:"V150",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -14675,6 +14863,19 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_STANDBY_SEWING_V149","Não foi possível confirmar standby/costura por modelo.");
   }
 
+  if(
+    String(erpRenderKanbanSection).includes("standbySection")&&
+    String(toggleErpKanbanSection).includes("ERP_KANBAN_COLLAPSE_KEY")&&
+    String(renderErpKanban).includes("activeOrders")&&
+    String(renderErpKanban).includes("standbyOrders")&&
+    String(erpRenderOrderCard).includes("setErpOrderStandby")&&
+    String(document.querySelector("style")?.textContent||"").includes("V150 ERP STANDBY POR ETAPA")
+  ){
+    auditAdd(report,"pass","ERP_STANDBY_ACCORDION_V150","Standby fica separado abaixo das demandas da etapa, com seções minimizáveis e estratégia visual vermelha.");
+  }else{
+    auditAdd(report,"warn","ERP_STANDBY_ACCORDION_V150","Não foi possível confirmar standby separado/minimizável por etapa.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -14794,7 +14995,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v149-${today()}.json`;
+  a.download=`auditoria-painel-v150-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -14824,7 +15025,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V149",
+    "AUDITORIA DO SISTEMA — V150",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -14852,7 +15053,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V149: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V150: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -15839,7 +16040,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V149 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V150 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -21492,6 +21693,62 @@ function setErpProductItemsInForm(products=[]){
 
 
 
+
+const ERP_KANBAN_COLLAPSE_KEY=KEY+"_erp_kanban_collapse_v150";
+
+function readErpKanbanCollapseState(){
+  try{
+    const raw=localStorage.getItem(ERP_KANBAN_COLLAPSE_KEY);
+    const parsed=raw?JSON.parse(raw):{};
+    return parsed&&typeof parsed==="object"?parsed:{};
+  }catch(e){
+    return {};
+  }
+}
+
+function writeErpKanbanCollapseState(data){
+  try{localStorage.setItem(ERP_KANBAN_COLLAPSE_KEY,JSON.stringify(data||{}));}catch(e){}
+}
+
+function erpKanbanSectionKey(stage,type){
+  return `${erpStageKey(stage)}:${type}`;
+}
+
+function erpKanbanSectionCollapsed(stage,type){
+  const data=readErpKanbanCollapseState();
+  return data[erpKanbanSectionKey(stage,type)]===true;
+}
+
+function toggleErpKanbanSection(stage,type){
+  const data=readErpKanbanCollapseState();
+  const key=erpKanbanSectionKey(stage,type);
+  data[key]=!data[key];
+  writeErpKanbanCollapseState(data);
+  renderErpTest();
+}
+
+function erpSectionChevron(stage,type){
+  return erpKanbanSectionCollapsed(stage,type)?"▸":"▾";
+}
+
+function erpRenderKanbanSection(stage,type,title,orders,restricted){
+  const collapsed=erpKanbanSectionCollapsed(stage,type);
+  const isStandby=type==="standby";
+  const pieces=(orders||[]).reduce((sum,order)=>sum+erpOrderQtyTotal(order),0);
+
+  return `<div class="erpKanbanDemandSection ${isStandby?"standbySection":"activeSection"} ${collapsed?"collapsed":""}">
+    <button type="button" class="erpKanbanSectionToggle ${isStandby?"standbyToggle":""}" onclick="toggleErpKanbanSection('${esc(stage)}','${esc(type)}')">
+      <span class="erpChevron">${erpSectionChevron(stage,type)}</span>
+      <span class="erpSectionTitleText">${esc(title)}</span>
+      <small>${orders.length} pedido(s) • ${pieces} peça(s)</small>
+    </button>
+    <div class="erpKanbanSectionBody">
+      ${orders.length?orders.map(order=>erpRenderOrderCard(order,stage,restricted)).join(""):`<div class="erpEmptyCol">${isStandby?"Nenhum pedido em standby nesta etapa.":"Nenhuma demanda ativa nesta etapa."}</div>`}
+    </div>
+  </div>`;
+}
+
+
 function erpOrderStandby(order){
   const standby=order?.standby||{};
   return {
@@ -22168,6 +22425,43 @@ function renderErpKanbanMobileSummary(orders,stages){
 }
 
 
+function erpRenderOrderCard(order,stage,restricted){
+  const restrictedStage=erpRestrictedStage();
+  const canAdvance=stage!=="Finalizado"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
+  const urgency=erpProductionUrgencyClass(order);
+  const products=erpNormalizeOrderProducts(order);
+
+  return `<article class="erpOrderCard ${erpOrderLate(order)?"late":""} urgency-${urgency} ${erpIsStandby(order)?"isStandby":""}">
+    <div class="erpOrderTop">
+      <strong>${esc(order.number||"-")}</strong>
+      <span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span>
+    </div>
+    <p>${esc(order.client||"-")}</p>
+    <div class="erpOrderMetaGrid">
+      <span><b>Peças</b>${erpOrderQtyTotal(order)}</span>
+      <span><b>Modelos</b>${products.length}</span>
+      <span><b>Prazo</b>${dateBR(erpProductionDate(order))}</span>
+      <span><b>Etapa</b>${esc(stage)}</span>
+    </div>
+    ${erpProductBoxes(order,3)}
+    <div class="erpDeadlineRow">
+      <span class="erpDeadlineBadge ${urgency}">${esc(erpProductionUrgencyLabel(order))}</span>
+      <small>Entrega: ${dateBR(order.dueDate)}</small>
+    </div>
+    ${erpIsStandby(order)?`<div class="erpStandbyBox"><strong>Standby</strong><span>${esc(erpOrderStandby(order).reason||"Sem motivo")}</span><small>${esc(erpStandbyLabel(order))}</small></div>`:""}
+    <small class="erpLastChange">Última alteração: ${esc(erpLastStageChange(order))}</small>
+    <div class="erpOrderActions">
+      <button class="small secondary" onclick="showErpOrderProductsDetail('${order.id}')">Ver grade</button>
+      ${erpIsStandby(order)
+        ?`<button class="small primary" onclick="clearErpOrderStandby('${order.id}')">Retomar</button>`
+        :`<button class="small secondary standbyBtn" onclick="setErpOrderStandby('${order.id}')">Standby</button>`}
+      ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
+      ${canAdvance&&!erpIsStandby(order)?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
+      ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
+    </div>
+  </article>`;
+}
+
 function renderErpKanban(data){
   const target=$("erpKanban");
   if(!target)return;
@@ -22175,7 +22469,6 @@ function renderErpKanban(data){
   populateErpKanbanStageFilter();
 
   const restricted=isErpSectorRestrictedUser();
-  const restrictedStage=erpRestrictedStage();
   const stages=erpVisibleKanbanStages();
   const query=$("erpSearch")?.value||"";
   const orders=(data.orders||[]).filter(order=>erpOrderMatchesSearch(order,query));
@@ -22187,6 +22480,8 @@ function renderErpKanban(data){
 
   target.innerHTML=stages.map(stage=>{
     const stageOrders=orders.filter(o=>(o.stage||"Pedido")===stage);
+    const activeOrders=stageOrders.filter(order=>!erpIsStandby(order));
+    const standbyOrders=stageOrders.filter(erpIsStandby);
     const stageKey=erpStageKey(stage);
     const stagePieces=stageOrders.reduce((sum,order)=>sum+erpOrderQtyTotal(order),0);
 
@@ -22196,41 +22491,8 @@ function renderErpKanban(data){
         <span class="erpStageCount">${stageOrders.length}</span>
       </div>
       <div class="erpKanbanList">
-        ${stageOrders.length?stageOrders.map(order=>{
-          const canAdvance=stage!=="Finalizado"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
-          const urgency=erpProductionUrgencyClass(order);
-          const products=erpNormalizeOrderProducts(order);
-
-          return `<article class="erpOrderCard ${erpOrderLate(order)?"late":""} urgency-${urgency} ${erpIsStandby(order)?"isStandby":""}">
-            <div class="erpOrderTop">
-              <strong>${esc(order.number||"-")}</strong>
-              <span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span>
-            </div>
-            <p>${esc(order.client||"-")}</p>
-            <div class="erpOrderMetaGrid">
-              <span><b>Peças</b>${erpOrderQtyTotal(order)}</span>
-              <span><b>Modelos</b>${products.length}</span>
-              <span><b>Prazo</b>${dateBR(erpProductionDate(order))}</span>
-              <span><b>Etapa</b>${esc(stage)}</span>
-            </div>
-            ${erpProductBoxes(order,3)}
-            <div class="erpDeadlineRow">
-              <span class="erpDeadlineBadge ${urgency}">${esc(erpProductionUrgencyLabel(order))}</span>
-              <small>Entrega: ${dateBR(order.dueDate)}</small>
-            </div>
-            ${erpIsStandby(order)?`<div class="erpStandbyBox"><strong>Standby</strong><span>${esc(erpOrderStandby(order).reason||"Sem motivo")}</span><small>${esc(erpStandbyLabel(order))}</small></div>`:""}
-            <small class="erpLastChange">Última alteração: ${esc(erpLastStageChange(order))}</small>
-            <div class="erpOrderActions">
-              <button class="small secondary" onclick="showErpOrderProductsDetail('${order.id}')">Ver grade</button>
-              ${erpIsStandby(order)
-                ?`<button class="small primary" onclick="clearErpOrderStandby('${order.id}')">Retomar</button>`
-                :`<button class="small secondary standbyBtn" onclick="setErpOrderStandby('${order.id}')">Standby</button>`}
-              ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
-              ${canAdvance&&!erpIsStandby(order)?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
-              ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
-            </div>
-          </article>`;
-        }).join(""):`<div class="erpEmptyCol">${restricted?`Nenhum pedido em ${esc(stage)}`:"Sem pedidos"}</div>`}
+        ${erpRenderKanbanSection(stage,"active",`Demandas de ${stage}`,activeOrders,restricted)}
+        ${erpRenderKanbanSection(stage,"standby",`Standby de ${stage}`,standbyOrders,restricted)}
       </div>
     </div>`;
   }).join("");
