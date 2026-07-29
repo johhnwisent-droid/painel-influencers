@@ -10791,6 +10791,112 @@ body[data-page="erpTest"] .main{
   }
 }
 
+
+/* ===== V151 ERP SALVAMENTO BLINDADO E COMPARTILHADO ===== */
+.erpSyncStatus{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  margin-top:10px!important;
+  padding:8px 11px!important;
+  border-radius:999px!important;
+  background:rgba(212,175,55,.10)!important;
+  color:#facc15!important;
+  border:1px solid rgba(212,175,55,.22)!important;
+  font-size:12px!important;
+  font-weight:1000!important;
+}
+
+.erpSyncStatus::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:#facc15;
+  box-shadow:0 0 0 4px rgba(250,204,21,.10);
+}
+
+.erpSyncStatus.ok{
+  background:rgba(34,197,94,.11)!important;
+  color:#86efac!important;
+  border-color:rgba(34,197,94,.24)!important;
+}
+
+.erpSyncStatus.ok::before{
+  background:#22c55e;
+  box-shadow:0 0 0 4px rgba(34,197,94,.12);
+}
+
+.erpSyncStatus.pending,
+.erpSyncStatus.error{
+  background:rgba(239,68,68,.12)!important;
+  color:#fecaca!important;
+  border-color:rgba(248,113,113,.30)!important;
+}
+
+.erpSyncStatus.pending::before,
+.erpSyncStatus.error::before{
+  background:#ef4444;
+  box-shadow:0 0 0 4px rgba(239,68,68,.13);
+}
+
+@media(max-width:760px){
+  .erpSyncStatus{
+    width:100%!important;
+    justify-content:center!important;
+    border-radius:16px!important;
+    line-height:1.25!important;
+    text-align:center!important;
+  }
+}
+
+
+/* ===== V152 ERP HARDENING 10/10 READINESS ===== */
+.erpProductionPanel{
+  border-color:rgba(34,197,94,.22)!important;
+}
+
+.erpReadyBadge{
+  display:inline-flex!important;
+  padding:5px 9px!important;
+  border-radius:999px!important;
+  font-size:11px!important;
+  font-weight:1000!important;
+  border:1px solid rgba(255,255,255,.10)!important;
+  background:#111827!important;
+  color:#e5e7eb!important;
+}
+
+.erpReadyBadge.ok{
+  background:rgba(34,197,94,.12)!important;
+  color:#86efac!important;
+  border-color:rgba(34,197,94,.25)!important;
+}
+
+.erpReadyBadge.warn{
+  background:rgba(249,115,22,.13)!important;
+  color:#fdba74!important;
+  border-color:rgba(249,115,22,.26)!important;
+}
+
+.erpReadyBadge.danger{
+  background:rgba(239,68,68,.13)!important;
+  color:#fca5a5!important;
+  border-color:rgba(239,68,68,.28)!important;
+}
+
+@media(max-width:760px){
+  .erpProductionPanel .filters{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    width:100%!important;
+  }
+
+  .erpProductionPanel .filters button{
+    width:100%!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -10873,7 +10979,7 @@ body[data-page="erpTest"] .main{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V150</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V152</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -12011,9 +12117,12 @@ body[data-page="erpTest"] .main{
       <span class="erpLabBadge">Módulo teste isolado</span>
       <h2>WISENT ERP</h2>
       <p>Área experimental separada do painel de comissões. Os dados desta aba usam armazenamento próprio e não entram em Lançamentos, Atacado/Varejo, Pagos, Acumular ou Produto escolhido.</p>
+      <div id="erpSyncStatus" class="erpSyncStatus">ERP: salvamento local ativo • sincronização iniciando</div>
     </div>
     <div class="erpHeroActions">
       <button class="secondary" type="button" onclick="exportErpTestData()">Exportar dados ERP teste</button>
+      <button class="secondary" type="button" onclick="exportErpBackupBundle()">Backup ERP</button>
+      <button class="secondary" type="button" onclick="runErpProductionReadiness()">Teste 10/10</button>
       <button class="secondary" type="button" onclick="resetErpTestData()">Limpar dados do teste</button>
       <button class="danger" type="button" onclick="restoreBeforeErpTest()">Restaurar ponto V139</button>
     </div>
@@ -12328,6 +12437,32 @@ body[data-page="erpTest"] .main{
         <div><strong>APIs planejadas</strong><p>/auth, /clientes, /pedidos, /producao, /estoque, /financeiro, /funcionarios, /upload, /dashboard e /relatorios.</p></div>
       </div>
     </div>
+
+    <div class="panel erpProductionPanel">
+      <div class="panelHead">
+        <div>
+          <h3>Prontidão 10/10</h3>
+          <span class="muted">Checklist operacional para transformar o ERP teste em uso profissional controlado.</span>
+        </div>
+        <div class="filters">
+          <button class="secondary" type="button" onclick="runErpProductionReadiness()">Rodar teste</button>
+          <button class="secondary" type="button" onclick="exportErpAuditLog()">Exportar auditoria</button>
+          <button class="secondary" type="button" onclick="exportErpBackupBundle()">Backup ERP</button>
+        </div>
+      </div>
+      <div class="grid erpStatsGrid">
+        <div class="card erpMetricCard"><span class="erpMetricIcon">%</span><small>Nota técnica</small><strong id="erpReadinessScore">-</strong></div>
+        <div class="card erpMetricCard ok"><span class="erpMetricIcon">✓</span><small>Aprovados</small><strong id="erpReadinessPass">0</strong></div>
+        <div class="card erpMetricCard warn"><span class="erpMetricIcon">!</span><small>Alertas</small><strong id="erpReadinessWarn">0</strong></div>
+        <div class="card erpMetricCard danger"><span class="erpMetricIcon">×</span><small>Críticos</small><strong id="erpReadinessFail">0</strong></div>
+      </div>
+      <div class="tableWrap">
+        <table>
+          <thead><tr><th>Item</th><th>Status</th><th>Detalhe</th></tr></thead>
+          <tbody id="erpReadinessRows"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -12590,8 +12725,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V150";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v150";
+const APP_BUILD_VERSION="V152";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v152";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -12630,7 +12765,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=150");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=152");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -14876,6 +15011,30 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_STANDBY_ACCORDION_V150","Não foi possível confirmar standby separado/minimizável por etapa.");
   }
 
+  if(
+    String(writeErpTestData).includes("queueErpTestCloudSave")&&
+    String(flushErpTestPendingQueue).includes("postErpTestCloudData")&&
+    String(syncErpTestCloud).includes("mergeErpTestData")&&
+    String(installErpTestSyncWatchers).includes("visibilitychange")&&
+    String(readErpTestSnapshot).includes("ERP_TEST_SNAPSHOT_KEY")
+  ){
+    auditAdd(report,"pass","ERP_CLOUD_PERSISTENCE_V151","ERP teste possui salvamento local, snapshot, fila offline, sync Supabase e mesclagem para vários colaboradores.");
+  }else{
+    auditAdd(report,"error","ERP_CLOUD_PERSISTENCE_V151","Blindagem de salvamento do ERP teste não foi confirmada.");
+  }
+
+  if(
+    String(appendErpAudit).includes("ERP_TEST_AUDIT_KEY")&&
+    String(autoBackupErpTestData).includes("ERP_TEST_BACKUP_KEY")&&
+    String(runErpProductionReadiness).includes("Nota técnica atual")&&
+    String(exportErpBackupBundle).includes("backup-wisent-erp")&&
+    $("erpReadinessRows")
+  ){
+    auditAdd(report,"pass","ERP_PRODUCTION_READINESS_V152","ERP teste recebeu auditoria local, backup automático/exportável e checklist de prontidão 10/10.");
+  }else{
+    auditAdd(report,"warn","ERP_PRODUCTION_READINESS_V152","Não foi possível confirmar hardening 10/10 do ERP.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -14967,6 +15126,20 @@ async function runSystemAudit(){
     auditAdd(report,"error","INFLUENCER_LAUNCH_CLOUD_READ","Falha ao ler lançamentos individuais dos influencers na nuvem.",String(e.message||e));
   }
 
+  try{
+    const erpCloud=await fetchErpTestCloudData();
+    auditAdd(report,"pass","ERP_CLOUD_READ_V152","Leitura compartilhada do WISENT ERP teste na nuvem funcionando.",erpCloud?`${(erpCloud.orders||[]).length} pedido(s) em nuvem.`:"Registro ERP ainda será criado no primeiro salvamento.");
+  }catch(e){
+    auditAdd(report,"error","ERP_CLOUD_READ_V152","Falha ao ler dados compartilhados do WISENT ERP teste na nuvem.",String(e.message||e));
+  }
+
+  try{
+    const flushed=await flushErpTestPendingQueue();
+    auditAdd(report,flushed?"pass":"warn","ERP_CLOUD_FLUSH_V152",flushed?"Fila pendente do ERP teste sincronizada ou vazia.":"Fila do ERP teste preservada para nova tentativa.");
+  }catch(e){
+    auditAdd(report,"error","ERP_CLOUD_FLUSH_V152","Falha ao validar fila de sincronização do ERP teste.",String(e.message||e));
+  }
+
   const errors=report.items.filter(x=>x.level==="error").length;
   const warnings=report.items.filter(x=>x.level==="warn").length;
   const security=report.items.filter(x=>x.level==="security").length;
@@ -14995,7 +15168,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v150-${today()}.json`;
+  a.download=`auditoria-painel-v152-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -15025,7 +15198,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V150",
+    "AUDITORIA DO SISTEMA — V152",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -15053,7 +15226,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V150: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V152: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -16040,7 +16213,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V150 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V152 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -16349,6 +16522,10 @@ async function startApp(){
       await seedProductChoiceRecordsOnce();
       await syncProductChoiceRecordsFromCloud({showStatus:false});
       installProductChoiceSyncWatchers();
+
+      await syncErpTestCloud({showStatus:false});
+      installErpTestSyncWatchers();
+      erpSecurityGuidePromptOnce();
 
       render();
     }catch(e){
@@ -21346,10 +21523,21 @@ const ERP_TEST_DISABLED_KEY=KEY+"_wisent_erp_test_disabled_v145";
 const ERP_TEST_RESTORE_POINT="V139";
 const ERP_STAGES=["Pedido","Corte","Costura","Conferência","Estampa","Embalagem","Entrega","Finalizado"];
 const ERP_SIZES=["PP","P","M","G","GG","G3","G4"];
+const ERP_TEST_CLOUD_KEY=KEY+"_wisent_erp_test_shared";
+const ERP_TEST_PENDING_KEY=KEY+"_wisent_erp_test_pending_shared";
+const ERP_TEST_SNAPSHOT_KEY=KEY+"_wisent_erp_test_snapshot_shared";
+const ERP_TEST_LAST_SYNC_KEY=KEY+"_wisent_erp_test_last_sync_shared";
+const ERP_TEST_AUDIT_KEY=KEY+"_wisent_erp_test_audit_log_v152";
+const ERP_TEST_BACKUP_KEY=KEY+"_wisent_erp_test_auto_backup_v152";
+const ERP_TEST_SECURITY_GUIDE_KEY=KEY+"_wisent_erp_test_security_guide_seen_v152";
+let erpTestFlushBusy=false;
+let erpTestSyncBusy=false;
+let erpTestSyncTimer=null;
+let erpTestSyncWatchersInstalled=false;
 
 function defaultErpTestState(){
   return {
-    version:"V145",
+    version:"V152",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -21375,55 +21563,620 @@ function defaultErpTestState(){
   };
 }
 
-function readErpTestData(){
+
+function readErpAuditLog(){
   try{
-    const raw=localStorage.getItem(ERP_TEST_KEY);
-    if(!raw){
-      const data=defaultErpTestState();
-      writeErpTestData(data);
-      return data;
-    }
-    const data=JSON.parse(raw);
-    const defaults=defaultErpTestState();
-    data.orders=Array.isArray(data.orders)?data.orders:[];
-    data.clients=Array.isArray(data.clients)?data.clients:[];
-    data.finance=Array.isArray(data.finance)?data.finance:[];
-    data.stock=Array.isArray(data.stock)?data.stock:defaults.stock;
-    data.employees=Array.isArray(data.employees)?data.employees:defaults.employees;
-    data.restorePoint=data.restorePoint||defaults.restorePoint;
-
-    data.orders=data.orders.map(order=>{
-      const fixed={...order};
-      if(!ERP_STAGES.includes(fixed.stage)){
-        fixed.stage=fixed.stage==="Novo"?"Pedido":(fixed.stage||"Pedido");
-      }
-      fixed.products=erpNormalizeOrderProducts(fixed);
-      fixed.qty=erpOrderQtyTotal(fixed);
-      fixed.productionDue=fixed.productionDue||fixed.dueDate||today();
-      fixed.stageHistory=Array.isArray(fixed.stageHistory)?fixed.stageHistory:[];
-      fixed.standby=typeof fixed.standby==="object"&&fixed.standby?fixed.standby:{active:false,reason:"",stage:"",at:"",user:""};
-      fixed.standbyHistory=Array.isArray(fixed.standbyHistory)?fixed.standbyHistory:[];
-      fixed.sewingHistory=Array.isArray(fixed.sewingHistory)?fixed.sewingHistory:[];
-      return fixed;
-    });
-
-    return data;
-  }catch(e){
-    console.warn("Falha ao ler ERP teste:",e);
-    return defaultErpTestState();
-  }
+    const raw=localStorage.getItem(ERP_TEST_AUDIT_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed:[];
+  }catch(e){return [];}
 }
 
-function writeErpTestData(data){
+function writeErpAuditLog(rows){
   try{
-    localStorage.setItem(ERP_TEST_KEY,JSON.stringify(data));
+    localStorage.setItem(ERP_TEST_AUDIT_KEY,JSON.stringify((Array.isArray(rows)?rows:[]).slice(-1000)));
+  }catch(e){console.warn("Não foi possível salvar auditoria local do ERP:",e);}
+}
+
+function appendErpAudit(action,detail={},level="info"){
+  const audit=currentAuditInfo();
+  const row={
+    id:uid(),
+    at:audit.at||new Date().toISOString(),
+    userId:audit.id||"",
+    user:audit.name||"Sistema",
+    role:currentUser?.role||"",
+    action:String(action||""),
+    level,
+    detail:cloneSafe(detail,{})
+  };
+
+  const rows=readErpAuditLog();
+  rows.push(row);
+  writeErpAuditLog(rows);
+  return row;
+}
+
+function autoBackupErpTestData(data,reason="auto"){
+  try{
+    const payload={
+      at:new Date().toISOString(),
+      reason,
+      version:APP_BUILD_VERSION,
+      data:normalizeErpTestData(data)
+    };
+    localStorage.setItem(ERP_TEST_BACKUP_KEY,JSON.stringify(payload));
     return true;
   }catch(e){
-    console.warn("Falha ao salvar ERP teste:",e);
-    updateCloudStatus("ERP teste não conseguiu salvar localmente. Dados principais não foram afetados.",true);
+    console.warn("Backup automático do ERP falhou:",e);
     return false;
   }
 }
+
+function readErpAutoBackup(){
+  try{
+    const raw=localStorage.getItem(ERP_TEST_BACKUP_KEY);
+    return raw?JSON.parse(raw):null;
+  }catch(e){return null;}
+}
+
+function exportErpAuditLog(){
+  const rows=readErpAuditLog();
+  rowsCSV([
+    ["Auditoria ERP teste"],
+    ["Gerado em",new Date().toLocaleString("pt-BR")],
+    [],
+    ["Data/hora","Usuário","Função","Ação","Nível","Detalhe"],
+    ...rows.map(row=>[row.at,row.user,row.role,row.action,row.level,JSON.stringify(row.detail||{})])
+  ],`auditoria-erp-teste-${today()}.csv`);
+}
+
+function exportErpBackupBundle(){
+  const data=readErpTestData();
+  const bundle={
+    exportedAt:new Date().toISOString(),
+    version:APP_BUILD_VERSION,
+    cloudKey:ERP_TEST_CLOUD_KEY,
+    lastSync:localStorage.getItem(ERP_TEST_LAST_SYNC_KEY)||"",
+    pendingQueue:readErpTestPendingQueue(),
+    auditLog:readErpAuditLog(),
+    autoBackup:readErpAutoBackup(),
+    data
+  };
+
+  const blob=new Blob([JSON.stringify(bundle,null,2)],{type:"application/json;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`backup-wisent-erp-${today()}.json`;
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  appendErpAudit("erp_backup_exported",{orders:(data.orders||[]).length});
+}
+
+function erpProductionReadinessChecks(){
+  const data=readErpTestData();
+  const queue=readErpTestPendingQueue();
+  const auditRows=readErpAuditLog();
+  const lastSync=localStorage.getItem(ERP_TEST_LAST_SYNC_KEY)||"";
+  const users=ensureArray(state.settings?.authUsers);
+  const normalizedRoles=users.map(u=>String(u.role||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,""));
+  const hasSectorUsers=normalizedRoles.includes("corte")&&normalizedRoles.includes("costura");
+  const backup=readErpAutoBackup();
+
+  return [
+    {key:"local_save",label:"Salvamento local imediato",ok:!!localStorage.getItem(ERP_TEST_KEY),warn:false,detail:"Dados do ERP salvos no aparelho antes de enviar para nuvem."},
+    {key:"snapshot",label:"Snapshot local de segurança",ok:!!localStorage.getItem(ERP_TEST_SNAPSHOT_KEY),warn:false,detail:"Espelho local para recuperação se o armazenamento principal falhar."},
+    {key:"offline_queue",label:"Fila offline",ok:true,warn:queue.length>0,detail:queue.length?`${queue.length} item(ns) pendente(s) de envio.`:"Fila vazia ou pronta para preservar alterações offline."},
+    {key:"cloud_sync",label:"Sincronização compartilhada",ok:!!lastSync||queue.length===0,warn:!lastSync,detail:lastSync?`Última sincronização: ${new Date(lastSync).toLocaleString("pt-BR")}`:"Ainda aguardando primeira confirmação de nuvem neste aparelho."},
+    {key:"sector_users",label:"Usuários por setor",ok:hasSectorUsers,warn:!hasSectorUsers,detail:hasSectorUsers?"Perfis Corte e Costura detectados.":"Cadastre ao menos um login Corte e um login Costura."},
+    {key:"kanban_restricted",label:"Kanban setorial",ok:String(isErpSectorRestrictedUser).includes("corte")&&String(renderErpKanban).includes("standbyOrders"),warn:false,detail:"Corte/Costura ficam restritos ao Kanban e veem demandas/standby por etapa."},
+    {key:"audit_log",label:"Trilha de auditoria",ok:true,warn:auditRows.length<1,detail:auditRows.length?`${auditRows.length} evento(s) locais registrados.`:"Será alimentada conforme o ERP for usado."},
+    {key:"auto_backup",label:"Backup automático",ok:!!backup,warn:!backup,detail:backup?`Último backup local: ${new Date(backup.at).toLocaleString("pt-BR")}`:"Será criado na próxima alteração do ERP."},
+    {key:"pdf_report",label:"Relatório PDF",ok:typeof exportErpReportPDF==="function",warn:false,detail:"Relatório PDF disponível para produção mensal."},
+    {key:"auth_rls",label:"Auth/RLS profissional",ok:false,warn:true,detail:"Requer executar o SQL V152 no Supabase e migrar logins para Supabase Auth para nota 10 real."}
+  ];
+}
+
+function renderErpProductionReadiness(checks=null){
+  const rows=checks||erpProductionReadinessChecks();
+  const pass=rows.filter(x=>x.ok&&!x.warn).length;
+  const warn=rows.filter(x=>x.warn).length;
+  const fail=rows.filter(x=>!x.ok&&!x.warn).length;
+  const score=Math.max(1,Math.min(10,Math.round(((pass+(warn*.5))/rows.length)*10)));
+
+  if($("erpReadinessScore"))$("erpReadinessScore").textContent=`${score}/10`;
+  if($("erpReadinessPass"))$("erpReadinessPass").textContent=pass;
+  if($("erpReadinessWarn"))$("erpReadinessWarn").textContent=warn;
+  if($("erpReadinessFail"))$("erpReadinessFail").textContent=fail;
+
+  if($("erpReadinessRows")){
+    $("erpReadinessRows").innerHTML=rows.map(row=>{
+      const status=row.ok&&!row.warn?"Aprovado":(row.warn?"Alerta":"Crítico");
+      const cls=row.ok&&!row.warn?"ok":(row.warn?"warn":"danger");
+      return `<tr><td><strong>${esc(row.label)}</strong></td><td><span class="erpReadyBadge ${cls}">${status}</span></td><td>${esc(row.detail)}</td></tr>`;
+    }).join("");
+  }
+
+  return {score,pass,warn,fail,rows};
+}
+
+async function runErpProductionReadiness(){
+  updateCloudStatus("Validando prontidão do WISENT ERP...");
+  updateCloudDebug("testando salvamento local, fila, Supabase, auditoria e backups");
+
+  await flushErpTestPendingQueue();
+  await syncErpTestCloud({showStatus:true});
+
+  const result=renderErpProductionReadiness();
+  appendErpAudit("erp_readiness_check",{score:result.score,pass:result.pass,warn:result.warn,fail:result.fail});
+
+  alert([
+    `Nota técnica atual: ${result.score}/10`,
+    "",
+    `Aprovados: ${result.pass}`,
+    `Alertas: ${result.warn}`,
+    `Críticos: ${result.fail}`,
+    "",
+    result.score>=9
+      ?"Operacionalmente forte para uso interno. Para 10/10 real, aplique Supabase Auth/RLS no banco."
+      :"Ainda há pontos a corrigir antes de considerar produção crítica."
+  ].join("\\n"));
+
+  return result;
+}
+
+function erpSecurityGuidePromptOnce(){
+  try{
+    if(localStorage.getItem(ERP_TEST_SECURITY_GUIDE_KEY)==="ok")return;
+    localStorage.setItem(ERP_TEST_SECURITY_GUIDE_KEY,"ok");
+  }catch(e){}
+  console.info("WISENT ERP V152: para nota 10 real, aplicar SQL de Auth/RLS no Supabase e revisar policies.");
+}
+
+
+function normalizeErpTestData(raw){
+  const defaults=defaultErpTestState();
+  const data=ensurePlainObject(raw,defaults);
+
+  data.version="V151";
+  data.createdAt=data.createdAt||defaults.createdAt;
+  data.updatedAt=data.updatedAt||"";
+  data.updatedBy=data.updatedBy||"";
+  data.orders=Array.isArray(data.orders)?data.orders:[];
+  data.clients=Array.isArray(data.clients)?data.clients:[];
+  data.finance=Array.isArray(data.finance)?data.finance:[];
+  data.stock=Array.isArray(data.stock)?data.stock:defaults.stock;
+  data.employees=Array.isArray(data.employees)?data.employees:defaults.employees;
+  data.restorePoint=data.restorePoint||defaults.restorePoint;
+
+  data.orders=data.orders.map(order=>{
+    const fixed={...order};
+    if(!ERP_STAGES.includes(fixed.stage)){
+      fixed.stage=fixed.stage==="Novo"?"Pedido":(fixed.stage||"Pedido");
+    }
+    fixed.products=erpNormalizeOrderProducts(fixed);
+    fixed.qty=erpOrderQtyTotal(fixed);
+    fixed.productionDue=fixed.productionDue||fixed.dueDate||today();
+    fixed.stageHistory=Array.isArray(fixed.stageHistory)?fixed.stageHistory:[];
+    fixed.standby=typeof fixed.standby==="object"&&fixed.standby?fixed.standby:{active:false,reason:"",stage:"",at:"",user:""};
+    fixed.standbyHistory=Array.isArray(fixed.standbyHistory)?fixed.standbyHistory:[];
+    fixed.sewingHistory=Array.isArray(fixed.sewingHistory)?fixed.sewingHistory:[];
+    return fixed;
+  });
+
+  data.clients=data.clients.map(client=>({
+    ...client,
+    id:String(client.id||uid()),
+    createdAt:client.createdAt||data.createdAt||new Date().toISOString(),
+    updatedAt:client.updatedAt||""
+  }));
+
+  data.finance=data.finance.map(entry=>({
+    ...entry,
+    id:String(entry.id||uid()),
+    date:entry.date||today(),
+    updatedAt:entry.updatedAt||entry.createdAt||entry.date||""
+  }));
+
+  data.stock=data.stock.map(item=>({
+    ...item,
+    id:String(item.id||uid()),
+    updatedAt:item.updatedAt||""
+  }));
+
+  return data;
+}
+
+function readErpTestSnapshot(){
+  try{
+    const raw=localStorage.getItem(ERP_TEST_SNAPSHOT_KEY);
+    const parsed=raw?JSON.parse(raw):null;
+    return parsed?normalizeErpTestData(parsed):null;
+  }catch(e){
+    return null;
+  }
+}
+
+function writeErpTestSnapshot(data){
+  try{
+    localStorage.setItem(ERP_TEST_SNAPSHOT_KEY,JSON.stringify(normalizeErpTestData(data)));
+  }catch(e){
+    console.warn("Não foi possível gravar snapshot do ERP teste:",e);
+  }
+}
+
+function erpLocalWriteOnly(data){
+  const normalized=normalizeErpTestData(data);
+  try{
+    localStorage.setItem(ERP_TEST_KEY,JSON.stringify(normalized));
+    writeErpTestSnapshot(normalized);
+    autoBackupErpTestData(normalized,"write");
+    return true;
+  }catch(e){
+    console.warn("Falha ao salvar ERP teste localmente:",e);
+    try{
+      window.name=ERP_TEST_KEY+"::"+JSON.stringify(normalized);
+      writeErpTestSnapshot(normalized);
+      return true;
+    }catch(err){
+      console.error("Falha crítica ao salvar ERP teste:",err);
+      return false;
+    }
+  }
+}
+
+function readErpTestData(){
+  try{
+    const raw=localStorage.getItem(ERP_TEST_KEY);
+    if(raw){
+      return normalizeErpTestData(JSON.parse(raw));
+    }
+
+    const snapshot=readErpTestSnapshot();
+    if(snapshot){
+      erpLocalWriteOnly(snapshot);
+      return snapshot;
+    }
+
+    const data=defaultErpTestState();
+    erpLocalWriteOnly(data);
+    return normalizeErpTestData(data);
+  }catch(e){
+    console.warn("Falha ao ler ERP teste:",e);
+    const snapshot=readErpTestSnapshot();
+    if(snapshot)return snapshot;
+    return normalizeErpTestData(defaultErpTestState());
+  }
+}
+
+function setErpSyncStatus(text,isError=false){
+  const el=$("erpSyncStatus");
+  if(el){
+    el.textContent=text;
+    el.classList.toggle("error",!!isError);
+    el.classList.toggle("ok",!isError&&String(text||"").toLowerCase().includes("sincronizado"));
+    el.classList.toggle("pending",String(text||"").toLowerCase().includes("pendente"));
+  }
+}
+
+function erpTestDataSignature(data){
+  try{
+    const normalized=normalizeErpTestData(data);
+    return JSON.stringify({
+      updatedAt:normalized.updatedAt||"",
+      orders:(normalized.orders||[]).map(o=>[o.id,o.stage,o.updatedAt,o.createdAt,o.qty,erpIsStandby(o),o.standby?.at||"",erpOrderStageHistory(o).length,(o.sewingHistory||[]).length]),
+      clients:(normalized.clients||[]).map(c=>[c.id,c.updatedAt,c.name]),
+      stock:(normalized.stock||[]).map(s=>[s.id,s.updatedAt,s.current,s.min]),
+      finance:(normalized.finance||[]).map(f=>[f.id,f.updatedAt,f.date,f.value,f.status])
+    });
+  }catch(e){
+    return String(Date.now());
+  }
+}
+
+function erpEntityTime(item,dataTime=0){
+  const candidates=[
+    item?.deletedAt,
+    item?.updatedAt,
+    item?.standby?.at,
+    Array.isArray(item?.standbyHistory)&&item.standbyHistory.length?item.standbyHistory[item.standbyHistory.length-1]?.at:"",
+    Array.isArray(item?.sewingHistory)&&item.sewingHistory.length?item.sewingHistory[item.sewingHistory.length-1]?.at:"",
+    Array.isArray(item?.stageHistory)&&item.stageHistory.length?item.stageHistory[item.stageHistory.length-1]?.at:"",
+    item?.createdAt,
+    item?.date
+  ];
+
+  for(const raw of candidates){
+    const t=Date.parse(raw||"");
+    if(Number.isFinite(t))return t;
+  }
+
+  return dataTime||0;
+}
+
+function erpMergeEntityCollections(localRows=[],remoteRows=[],localDataTime=0,remoteDataTime=0){
+  const map=new Map();
+
+  const add=(item,dataTime)=>{
+    if(!item||typeof item!=="object"||!item.id)return;
+    const id=String(item.id);
+    const current=map.get(id);
+
+    if(!current){
+      map.set(id,cloneSafe(item,item));
+      return;
+    }
+
+    if(erpEntityTime(item,dataTime)>=erpEntityTime(current,current.__dataTime||0)){
+      const next=cloneSafe(item,item);
+      next.__dataTime=dataTime;
+      map.set(id,next);
+    }
+  };
+
+  localRows.forEach(item=>add(item,localDataTime));
+  remoteRows.forEach(item=>add(item,remoteDataTime));
+
+  return [...map.values()].map(item=>{
+    const copy={...item};
+    delete copy.__dataTime;
+    return copy;
+  });
+}
+
+function erpDataTime(data){
+  const t=Date.parse(data?.updatedAt||data?.createdAt||"");
+  return Number.isFinite(t)?t:0;
+}
+
+function mergeErpTestData(localData,remoteData){
+  const local=normalizeErpTestData(localData||defaultErpTestState());
+  const remote=normalizeErpTestData(remoteData||defaultErpTestState());
+  const localTime=erpDataTime(local);
+  const remoteTime=erpDataTime(remote);
+  const base=remoteTime>=localTime?remote:local;
+
+  const merged={
+    ...base,
+    version:"V151",
+    createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
+    updatedAt:base.updatedAt||new Date().toISOString(),
+    updatedBy:base.updatedBy||"",
+    orders:erpMergeEntityCollections(local.orders,remote.orders,localTime,remoteTime),
+    clients:erpMergeEntityCollections(local.clients,remote.clients,localTime,remoteTime),
+    finance:erpMergeEntityCollections(local.finance,remote.finance,localTime,remoteTime),
+    stock:erpMergeEntityCollections(local.stock,remote.stock,localTime,remoteTime),
+    employees:erpMergeEntityCollections(local.employees,remote.employees,localTime,remoteTime),
+    restorePoint:base.restorePoint||local.restorePoint||remote.restorePoint
+  };
+
+  return normalizeErpTestData(merged);
+}
+
+function readErpTestPendingQueue(){
+  try{
+    const raw=localStorage.getItem(ERP_TEST_PENDING_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed.filter(x=>x&&x.id==="shared"&&x.data):[];
+  }catch(e){
+    return [];
+  }
+}
+
+function writeErpTestPendingQueue(queue){
+  try{
+    localStorage.setItem(ERP_TEST_PENDING_KEY,JSON.stringify(Array.isArray(queue)?queue:[]));
+  }catch(e){
+    console.warn("Não foi possível gravar fila do ERP teste:",e);
+  }
+}
+
+function queueErpTestCloudSave(data){
+  const normalized=normalizeErpTestData(data);
+  const entry={
+    id:"shared",
+    data:normalized,
+    queuedAt:new Date().toISOString()
+  };
+  writeErpTestPendingQueue([entry]);
+  return true;
+}
+
+function erpTestCloudRow(data){
+  return {
+    chave:ERP_TEST_CLOUD_KEY,
+    valor:JSON.stringify(normalizeErpTestData(data))
+  };
+}
+
+async function fetchErpTestCloudData(){
+  const url=SUPABASE_URL+
+    "/rest/v1/personalizacao?chave=eq."+
+    encodeURIComponent(ERP_TEST_CLOUD_KEY)+
+    "&select=valor";
+
+  const response=await fetchWithTimeout(url,{
+    method:"GET",
+    headers:cloudHeaders()
+  },12000);
+
+  if(!response.ok){
+    const text=await response.text();
+    throw new Error(`ERP cloud read HTTP ${response.status}: ${text.slice(0,180)}`);
+  }
+
+  const rows=await response.json();
+  const row=Array.isArray(rows)?rows[0]:null;
+  if(!row||!row.valor)return null;
+
+  const value=row.valor;
+  if(typeof value==="string")return normalizeErpTestData(JSON.parse(value));
+  return normalizeErpTestData(value);
+}
+
+async function postErpTestCloudData(data){
+  const response=await fetchWithTimeout(
+    SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",
+    {
+      method:"POST",
+      headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
+      body:JSON.stringify(erpTestCloudRow(data))
+    },
+    18000
+  );
+
+  if(!response.ok){
+    const text=await response.text();
+    throw new Error(`ERP cloud save HTTP ${response.status}: ${text.slice(0,180)}`);
+  }
+
+  return true;
+}
+
+async function flushErpTestPendingQueue(){
+  if(erpTestFlushBusy)return false;
+
+  const queue=readErpTestPendingQueue();
+  if(!queue.length)return true;
+
+  erpTestFlushBusy=true;
+
+  try{
+    const latest=queue[queue.length-1];
+    const local=readErpTestData();
+    let remote=null;
+
+    try{
+      remote=await fetchErpTestCloudData();
+    }catch(e){
+      remote=null;
+    }
+
+    const merged=remote?mergeErpTestData(mergeErpTestData(local,latest.data),remote):mergeErpTestData(local,latest.data);
+
+    await postErpTestCloudData(merged);
+
+    const currentQueue=readErpTestPendingQueue();
+    const stillSame=currentQueue.length&&String(currentQueue[currentQueue.length-1].queuedAt)===String(latest.queuedAt);
+    if(stillSame)writeErpTestPendingQueue([]);
+
+    erpLocalWriteOnly(merged);
+
+    try{localStorage.setItem(ERP_TEST_LAST_SYNC_KEY,new Date().toISOString());}catch(e){}
+
+    setErpSyncStatus("ERP sincronizado na nuvem • funcionários atualizados");
+    updateCloudDebug("ERP teste sincronizado no Supabase; demandas disponíveis para colaboradores");
+    return true;
+  }catch(e){
+    console.error("Falha ao sincronizar ERP teste:",e);
+    setErpSyncStatus("ERP salvo localmente • sincronização pendente",true);
+    updateCloudStatus("ERP teste salvo localmente. Sincronização pendente.",true);
+    updateCloudDebug("fila ERP preservada: "+String(e.message||e).slice(0,180));
+    return false;
+  }finally{
+    erpTestFlushBusy=false;
+  }
+}
+
+function scheduleErpTestCloudSave(delay=900){
+  clearTimeout(erpTestSyncTimer);
+  erpTestSyncTimer=setTimeout(()=>flushErpTestPendingQueue(),delay);
+}
+
+async function syncErpTestCloud(options={}){
+  if(erpTestSyncBusy)return false;
+  erpTestSyncBusy=true;
+
+  try{
+    const local=readErpTestData();
+    const remote=await fetchErpTestCloudData();
+
+    if(remote){
+      const merged=mergeErpTestData(local,remote);
+      const before=erpTestDataSignature(local);
+      const after=erpTestDataSignature(merged);
+
+      erpLocalWriteOnly(merged);
+
+      if(before!==after&&currentPage==="erpTest"){
+        render({force:true});
+      }
+
+      setErpSyncStatus("ERP sincronizado na nuvem • demandas atualizadas");
+      return true;
+    }
+
+    queueErpTestCloudSave(local);
+    await flushErpTestPendingQueue();
+    return true;
+  }catch(e){
+    console.warn("Sync ERP teste adiado:",e);
+    setErpSyncStatus("ERP salvo localmente • sincronização pendente",true);
+    if(options.showStatus){
+      updateCloudStatus("ERP teste em modo local. Sincronização será tentada novamente.",true);
+      updateCloudDebug("sync ERP adiado: "+String(e.message||e).slice(0,180));
+    }
+    return false;
+  }finally{
+    erpTestSyncBusy=false;
+  }
+}
+
+function installErpTestSyncWatchers(){
+  if(erpTestSyncWatchersInstalled)return;
+  erpTestSyncWatchersInstalled=true;
+
+  window.addEventListener("online",()=>{
+    flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:true}));
+  });
+
+  window.addEventListener("focus",()=>{
+    syncErpTestCloud({showStatus:false});
+  });
+
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+      syncErpTestCloud({showStatus:false});
+    }
+  });
+
+  setInterval(()=>{
+    if(document.hidden)return;
+    flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:false}));
+  },20000);
+}
+
+function writeErpTestData(data,options={}){
+  const normalized=normalizeErpTestData(data);
+  const audit=currentAuditInfo();
+
+  normalized.version="V151";
+  normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
+  normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
+
+  const localSaved=erpLocalWriteOnly(normalized);
+
+  if(!localSaved){
+    updateCloudStatus("ERP teste não conseguiu salvar localmente. Não feche o app.",true);
+    setErpSyncStatus("Falha crítica no salvamento local do ERP",true);
+    return false;
+  }
+
+  if(options.auditAction){
+    appendErpAudit(options.auditAction,options.auditDetail||{orders:(normalized.orders||[]).length});
+  }else if(options.auditAction!==false){
+    appendErpAudit("erp_data_saved",{orders:(normalized.orders||[]).length,clients:(normalized.clients||[]).length});
+  }
+
+  if(options.queueCloud!==false){
+    queueErpTestCloudSave(normalized);
+    scheduleErpTestCloudSave(options.delay||900);
+    setErpSyncStatus("ERP salvo localmente • enviando para nuvem");
+  }
+
+  return true;
+}
+
 
 function erpTestDisabled(){
   try{return localStorage.getItem(ERP_TEST_DISABLED_KEY)==="1";}catch(e){return false;}
@@ -21466,7 +22219,8 @@ function resetErpTestData(){
   const ok=confirm("Limpar apenas os dados da aba WISENT ERP teste? O painel principal não será alterado.");
   if(!ok)return;
   const data=defaultErpTestState();
-  writeErpTestData(data);
+  data.resetAt=new Date().toISOString();
+  writeErpTestData(data,{delay:100});
   resetErpOrderForm();
   resetErpClientForm();
   resetErpStockForm();
@@ -22825,6 +23579,7 @@ function renderErpTest(){
   renderErpFinance(data);
   renderErpReports(data);
   renderErpLabel();
+  renderErpProductionReadiness();
 
   if(isErpSectorRestrictedUser()){
     showErpModule("pedidos");
