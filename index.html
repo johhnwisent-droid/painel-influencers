@@ -10472,6 +10472,137 @@ body[data-page="erpTest"] .main{
   }
 }
 
+
+/* ===== V149 ERP STANDBY E RESPONSÁVEL DA COSTURA ===== */
+.erpOrderCard.isStandby{
+  opacity:.94!important;
+  border-color:rgba(249,115,22,.55)!important;
+  background:
+    radial-gradient(circle at 90% 0,rgba(249,115,22,.16),transparent 28%),
+    #111827!important;
+}
+
+.erpOrderCard.isStandby::after{
+  content:"STANDBY";
+  position:absolute;
+  top:10px;
+  right:10px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:rgba(249,115,22,.16);
+  color:#fed7aa;
+  border:1px solid rgba(249,115,22,.32);
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.04em;
+}
+
+.erpStandbyBox{
+  display:grid!important;
+  gap:3px!important;
+  margin:10px 0!important;
+  padding:10px!important;
+  border-radius:14px!important;
+  border:1px solid rgba(249,115,22,.28)!important;
+  background:rgba(249,115,22,.10)!important;
+}
+
+.erpStandbyBox strong{
+  color:#fed7aa!important;
+  font-size:12px!important;
+  text-transform:uppercase!important;
+  letter-spacing:.04em!important;
+}
+
+.erpStandbyBox span{
+  color:#fff7ed!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+}
+
+.erpStandbyBox small{
+  color:#fdba74!important;
+  font-size:11px!important;
+}
+
+.standbyBtn{
+  border-color:rgba(249,115,22,.32)!important;
+  color:#fed7aa!important;
+  background:rgba(249,115,22,.10)!important;
+}
+
+.erpSewingAssignment{
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin-top:8px!important;
+  padding-top:8px!important;
+  border-top:1px solid rgba(255,255,255,.07)!important;
+}
+
+.erpSewingAssignment span{
+  display:grid!important;
+  gap:2px!important;
+  color:#fff!important;
+  font-weight:950!important;
+  font-size:12px!important;
+}
+
+.erpSewingAssignment span b{
+  color:#c4b5fd!important;
+  font-size:10px!important;
+  text-transform:uppercase!important;
+  letter-spacing:.05em!important;
+}
+
+.erpSewingAssignment button{
+  flex:0 0 auto!important;
+  min-height:32px!important;
+}
+
+.erpKanbanProductBox.missingSewing{
+  border-color:rgba(167,139,250,.38)!important;
+  background:linear-gradient(180deg,rgba(167,139,250,.10),rgba(255,255,255,.035))!important;
+}
+
+.erpProductMain{
+  grid-template-columns:1fr 1fr 1fr!important;
+}
+
+@media(max-width:900px){
+  .erpProductMain{
+    grid-template-columns:1fr!important;
+  }
+
+  .erpSewingAssignment{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpSewingAssignment button{
+    width:100%!important;
+    min-height:40px!important;
+  }
+
+  .erpOrderCard.isStandby::after{
+    position:static!important;
+    display:inline-flex!important;
+    width:max-content!important;
+    margin:8px 0 0!important;
+  }
+}
+
+@media(max-width:520px){
+  .erpStandbyBox{
+    padding:9px!important;
+  }
+
+  .erpOrderActions .standbyBtn{
+    order:2!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -10554,7 +10685,7 @@ body[data-page="erpTest"] .main{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V148</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V149</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -11729,6 +11860,8 @@ body[data-page="erpTest"] .main{
       <div class="card erpMetricCard danger"><span class="erpMetricIcon">↓</span><small>Estoque baixo</small><strong id="erpEstoqueBaixo">0</strong></div>
       <div class="card erpMetricCard danger"><span class="erpMetricIcon">⚡</span><small>Pedidos urgentes</small><strong id="erpPedidosUrgentes">0</strong></div>
       <div class="card erpMetricCard warn"><span class="erpMetricIcon">R$</span><small>Financeiro pendente</small><strong id="erpFinanceiroPendente">R$ 0,00</strong></div>
+      <div class="card erpMetricCard warn"><span class="erpMetricIcon">Ⅱ</span><small>Pedidos em standby</small><strong id="erpPedidosStandby">0</strong></div>
+      <div class="card erpMetricCard"><span class="erpMetricIcon">⌁</span><small>Costura sem responsável</small><strong id="erpCosturaSemResponsavel">0</strong></div>
     </div>
   </div>
 
@@ -11824,7 +11957,7 @@ body[data-page="erpTest"] .main{
         <label>Etapa no celular<select id="erpKanbanStageFilter" onchange="renderErpTest()"><option value="">Todas as etapas</option></select></label>
         <span id="erpKanbanMobileSummary">0 pedidos • 0 peças</span>
       </div>
-      <div class="erpKanbanMobileHint">No celular, use o filtro de etapa ou deslize para o lado. Toque em “Ver grade” para abrir todos os modelos do pedido.</div>
+      <div class="erpKanbanMobileHint">No celular, use o filtro de etapa ou deslize para o lado. Use “Standby” para pausar com motivo e “Costura” para alterar o responsável de cada modelo.</div>
       <div id="erpKanban" class="erpKanban"></div>
     </div>
   </div>
@@ -12269,8 +12402,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V148";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v148";
+const APP_BUILD_VERSION="V149";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v149";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -12309,7 +12442,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=148");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=149");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -14071,7 +14204,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V148",
+    version:"V149",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -14529,6 +14662,19 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_REPORT_PDF_V148","Não foi possível confirmar a exportação PDF do relatório ERP.");
   }
 
+  if(
+    String(setErpOrderStandby).includes("Motivo do standby")&&
+    String(clearErpOrderStandby).includes("Retomar")&&
+    String(assignErpSewingWorker).includes("Quem está costurando")&&
+    String(erpProductBoxes).includes("erpSewingAssignment")&&
+    String(renderErpKanban).includes("isStandby")&&
+    String(document.querySelector("style")?.textContent||"").includes("V149 ERP STANDBY")
+  ){
+    auditAdd(report,"pass","ERP_STANDBY_SEWING_V149","ERP teste possui standby com motivo por pedido/etapa e responsável de costura por modelo.");
+  }else{
+    auditAdd(report,"warn","ERP_STANDBY_SEWING_V149","Não foi possível confirmar standby/costura por modelo.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -14648,7 +14794,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v148-${today()}.json`;
+  a.download=`auditoria-painel-v149-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -14678,7 +14824,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V148",
+    "AUDITORIA DO SISTEMA — V149",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -14706,7 +14852,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V148: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V149: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -15693,7 +15839,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V148 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V149 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -21054,6 +21200,9 @@ function readErpTestData(){
       fixed.qty=erpOrderQtyTotal(fixed);
       fixed.productionDue=fixed.productionDue||fixed.dueDate||today();
       fixed.stageHistory=Array.isArray(fixed.stageHistory)?fixed.stageHistory:[];
+      fixed.standby=typeof fixed.standby==="object"&&fixed.standby?fixed.standby:{active:false,reason:"",stage:"",at:"",user:""};
+      fixed.standbyHistory=Array.isArray(fixed.standbyHistory)?fixed.standbyHistory:[];
+      fixed.sewingHistory=Array.isArray(fixed.sewingHistory)?fixed.sewingHistory:[];
       return fixed;
     });
 
@@ -21162,7 +21311,10 @@ function erpNormalizeProductItem(item){
     id:String(item?.id||uid()),
     model:String(item?.model||"Modelo não informado").trim()||"Modelo não informado",
     color:String(item?.color||"").trim(),
-    sizes
+    sizes,
+    sewingWorker:String(item?.sewingWorker||"").trim(),
+    sewingUpdatedAt:item?.sewingUpdatedAt||"",
+    sewingUpdatedBy:item?.sewingUpdatedBy||""
   };
 }
 
@@ -21260,6 +21412,7 @@ function duplicateErpProductItem(button){
   addErpProductItem({
     model:row.querySelector("[data-erp-product-model]")?.value||"",
     color:row.querySelector("[data-erp-product-color]")?.value||"",
+    sewingWorker:row.querySelector("[data-erp-product-sewing]")?.value||"",
     sizes
   });
 }
@@ -21284,6 +21437,7 @@ function addErpProductItem(item=null){
   <div class="erpProductMain">
     <label>Modelo<input data-erp-product-model placeholder="Ex.: Camiseta Oversized" value="${esc(product.model==="Modelo não informado"?"":product.model)}"></label>
     <label>Cor<input data-erp-product-color placeholder="Ex.: Preto" value="${esc(product.color||"")}"></label>
+    <label>Responsável costura<input data-erp-product-sewing placeholder="Ex.: Marcelo" value="${esc(product.sewingWorker||"")}"></label>
   </div>
   <div class="erpSizeGrid">
     ${ERP_SIZES.map(size=>`<label>${size}<input data-erp-size="${size}" type="number" min="0" step="1" value="${Number(product.sizes?.[size]||0)}"></label>`).join("")}
@@ -21317,6 +21471,7 @@ function readErpProductItemsFromForm(){
       id:row.dataset.productId||uid(),
       model:row.querySelector("[data-erp-product-model]")?.value||"",
       color:row.querySelector("[data-erp-product-color]")?.value||"",
+      sewingWorker:row.querySelector("[data-erp-product-sewing]")?.value||"",
       sizes
     });
   }).filter(item=>item.model!=="Modelo não informado"||item.color||erpProductQty(item)>0);
@@ -21333,6 +21488,172 @@ function setErpProductItemsInForm(products=[]){
   normalized.forEach(item=>addErpProductItem(item));
   erpRenumberProductItems();
   updateErpProductBuilderTotals();
+}
+
+
+
+function erpOrderStandby(order){
+  const standby=order?.standby||{};
+  return {
+    active:!!standby.active,
+    reason:String(standby.reason||"").trim(),
+    stage:String(standby.stage||order?.stage||"Pedido"),
+    at:standby.at||"",
+    user:standby.user||""
+  };
+}
+
+function erpIsStandby(order){
+  return !!erpOrderStandby(order).active;
+}
+
+function erpStandbyLabel(order){
+  const standby=erpOrderStandby(order);
+  if(!standby.active)return "";
+  const date=standby.at?dateBR(String(standby.at).slice(0,10)):"";
+  return `${standby.stage}${date?` • ${date}`:""}${standby.user?` • ${standby.user}`:""}`;
+}
+
+function setErpOrderStandby(orderId){
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
+  if(!order)return;
+
+  const reason=prompt(`Motivo do standby para o pedido ${order.number||""}:`,order?.standby?.reason||"");
+  if(reason===null)return;
+
+  const cleanReason=String(reason||"").trim();
+  if(!cleanReason){
+    alert("Informe o motivo do standby.");
+    return;
+  }
+
+  const audit=currentAuditInfo();
+  order.standby={
+    active:true,
+    reason:cleanReason,
+    stage:order.stage||"Pedido",
+    at:audit.at||new Date().toISOString(),
+    user:audit.name||"Não registrado"
+  };
+  order.standbyHistory=Array.isArray(order.standbyHistory)?order.standbyHistory:[];
+  order.standbyHistory.push({...order.standby,id:uid(),type:"standby"});
+  order.updatedAt=audit.at||new Date().toISOString();
+  order.updatedBy=audit.name||"Não registrado";
+
+  writeErpTestData(data);
+  renderErpTest();
+  showUndoToast("Pedido colocado em standby.");
+}
+
+function clearErpOrderStandby(orderId){
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
+  if(!order)return;
+
+  const standby=erpOrderStandby(order);
+  const ok=confirm(`Retomar o pedido ${order.number||""}?\\n\\nMotivo atual: ${standby.reason||"-"}`);
+  if(!ok)return;
+
+  const audit=currentAuditInfo();
+  order.standbyHistory=Array.isArray(order.standbyHistory)?order.standbyHistory:[];
+  order.standbyHistory.push({
+    id:uid(),
+    type:"resumed",
+    active:false,
+    reason:standby.reason,
+    stage:order.stage||standby.stage||"Pedido",
+    at:audit.at||new Date().toISOString(),
+    user:audit.name||"Não registrado"
+  });
+  order.standby={active:false,reason:"",stage:"",at:"",user:""};
+  order.updatedAt=audit.at||new Date().toISOString();
+  order.updatedBy=audit.name||"Não registrado";
+
+  writeErpTestData(data);
+  renderErpTest();
+  showUndoToast("Pedido retomado.");
+}
+
+function erpCosturaCollaborators(){
+  const data=readErpTestData();
+  const names=new Set();
+
+  (data.employees||[])
+    .filter(e=>String(e.role||"").toLowerCase().includes("costura")||String(e.name||"").toLowerCase().includes("costura"))
+    .forEach(e=>names.add(String(e.name||"").replace(/^Funcionário\\s+/i,"").trim()));
+
+  (state.authUsers||[])
+    .filter(u=>String(u.role||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")==="costura")
+    .forEach(u=>names.add(String(u.name||u.username||"").trim()));
+
+  (data.orders||[]).forEach(order=>{
+    erpNormalizeOrderProducts(order).forEach(product=>{
+      if(product.sewingWorker)names.add(String(product.sewingWorker).trim());
+    });
+  });
+
+  ["Marcelo","Stefany"].forEach(name=>names.add(name));
+
+  return [...names].filter(Boolean).sort((a,b)=>a.localeCompare(b,"pt-BR"));
+}
+
+function assignErpSewingWorker(orderId,productId){
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
+
+  if(!order){
+    alert("Pedido não encontrado.");
+    return;
+  }
+
+  const products=erpNormalizeOrderProducts(order);
+  const product=products.find(p=>String(p.id)===String(productId));
+
+  if(!product){
+    alert("Modelo não encontrado.");
+    return;
+  }
+
+  const list=erpCosturaCollaborators();
+  const current=product.sewingWorker||"";
+  const suggestion=list.length?`\\n\\nSugestões: ${list.join(", ")}`:"";
+  const name=prompt(`Quem está costurando este modelo?\\n\\nModelo: ${product.model}\\nCor: ${product.color||"Sem cor"}${suggestion}`,current);
+
+  if(name===null)return;
+
+  const clean=String(name||"").trim();
+  const audit=currentAuditInfo();
+
+  product.sewingWorker=clean;
+  product.sewingUpdatedAt=audit.at||new Date().toISOString();
+  product.sewingUpdatedBy=audit.name||"Não registrado";
+
+  order.products=products.map(p=>String(p.id)===String(productId)?product:p);
+  order.qty=erpOrderQtyTotal(order);
+  order.updatedAt=audit.at||new Date().toISOString();
+  order.updatedBy=audit.name||"Não registrado";
+
+  order.sewingHistory=Array.isArray(order.sewingHistory)?order.sewingHistory:[];
+  order.sewingHistory.push({
+    id:uid(),
+    productId,
+    productModel:product.model,
+    productColor:product.color,
+    worker:clean,
+    at:audit.at||new Date().toISOString(),
+    user:audit.name||"Não registrado"
+  });
+
+  writeErpTestData(data);
+  renderErpTest();
+  showUndoToast(clean?"Responsável da costura atualizado.":"Responsável da costura removido.");
+}
+
+function erpCosturaMissingCount(data){
+  return (data.orders||[])
+    .filter(order=>(order.stage||"Pedido")==="Costura")
+    .reduce((sum,order)=>sum+erpNormalizeOrderProducts(order).filter(product=>!String(product.sewingWorker||"").trim()).length,0);
 }
 
 
@@ -21469,6 +21790,9 @@ function saveErpOrderFromForm(e){
     qty,
     stage,
     notes:$("erpOrderNotes")?.value||"",
+    standby:existing?.standby||{active:false,reason:"",stage:"",at:"",user:""},
+    standbyHistory:Array.isArray(existing?.standbyHistory)?existing.standbyHistory:[],
+    sewingHistory:Array.isArray(existing?.sewingHistory)?existing.sewingHistory:[],
     stageHistory:erpOrderStageHistory(existing),
     createdAt:existing?.createdAt||audit.at||new Date().toISOString(),
     createdBy:existing?.createdBy||audit.name||"Não registrado",
@@ -21515,6 +21839,12 @@ function advanceErpOrder(id){
   const data=readErpTestData();
   const order=data.orders.find(o=>String(o.id)===String(id));
   if(!order)return;
+
+  if(erpIsStandby(order)){
+    alert("Este pedido está em standby. Retome o pedido antes de avançar a etapa.");
+    return;
+  }
+
   const next=erpNextStage(order.stage);
   if(next===order.stage)return;
   const audit=currentAuditInfo();
@@ -21725,6 +22055,8 @@ function renderErpStats(data){
   const lowStock=(data.stock||[]).filter(s=>Number(s.current||0)<=Number(s.min||0)).length;
   const urgent=orders.filter(erpOrderUrgent).length;
   const pendingValue=orders.filter(o=>o.stage!=="Finalizado").reduce((sum,o)=>sum+Number(o.value||0),0);
+  const standbyCount=orders.filter(erpIsStandby).length;
+  const costuraMissing=erpCosturaMissingCount(data);
   if($("erpPedidosHoje"))$("erpPedidosHoje").textContent=todayOrders;
   if($("erpPedidosAtrasados"))$("erpPedidosAtrasados").textContent=late;
   if($("erpProducaoHoje"))$("erpProducaoHoje").textContent=productionToday;
@@ -21733,6 +22065,8 @@ function renderErpStats(data){
   if($("erpEstoqueBaixo"))$("erpEstoqueBaixo").textContent=lowStock;
   if($("erpPedidosUrgentes"))$("erpPedidosUrgentes").textContent=urgent;
   if($("erpFinanceiroPendente"))$("erpFinanceiroPendente").textContent=money(pendingValue);
+  if($("erpPedidosStandby"))$("erpPedidosStandby").textContent=standbyCount;
+  if($("erpCosturaSemResponsavel"))$("erpCosturaSemResponsavel").textContent=costuraMissing;
 }
 
 
@@ -21747,15 +22081,20 @@ function erpProductBoxes(order,limit=3){
   const products=erpNormalizeOrderProducts(order);
   const visible=products.slice(0,limit);
   const extra=products.length-visible.length;
+  const isCostura=(order.stage||"Pedido")==="Costura";
 
   return `<div class="erpKanbanProductBoxes">
-    ${visible.map((product,index)=>`<div class="erpKanbanProductBox">
+    ${visible.map((product,index)=>`<div class="erpKanbanProductBox ${isCostura&&!product.sewingWorker?"missingSewing":""}">
       <div class="erpKanbanProductTop">
         <strong>${esc(product.model||`Modelo ${index+1}`)}</strong>
         <span>${erpProductQty(product)} peça(s)</span>
       </div>
       <small>${esc(product.color||"Sem cor")}</small>
       <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
+      ${isCostura?`<div class="erpSewingAssignment">
+        <span><b>Costura</b>${esc(product.sewingWorker||"Sem responsável")}</span>
+        <button type="button" class="small secondary" onclick="assignErpSewingWorker('${order.id}','${product.id}')">Alterar</button>
+      </div>`:""}
     </div>`).join("")}
     ${extra>0?`<div class="erpKanbanProductMore">+${extra} modelo(s) neste pedido</div>`:""}
   </div>`;
@@ -21776,9 +22115,10 @@ function showErpOrderProductsDetail(orderId){
     `Prazo produção: ${dateBR(erpProductionDate(order))}`,
     `Entrega: ${dateBR(order.dueDate)}`,
     `Total: ${erpOrderQtyTotal(order)} peça(s)`,
+    erpIsStandby(order)?`Standby: ${erpOrderStandby(order).reason}`:"",
     "",
     "MODELOS / CORES / GRADE"
-  ];
+  ].filter(line=>line!==undefined);
 
   erpNormalizeOrderProducts(order).forEach((product,index)=>{
     const grade=ERP_SIZES
@@ -21791,6 +22131,7 @@ function showErpOrderProductsDetail(orderId){
     lines.push(`Cor: ${product.color||"Sem cor"}`);
     lines.push(`Quantidade: ${erpProductQty(product)} peça(s)`);
     lines.push(`Grade: ${grade}`);
+    if((order.stage||"Pedido")==="Costura")lines.push(`Responsável costura: ${product.sewingWorker||"Sem responsável"}`);
   });
 
   alert(lines.join("\\n"));
@@ -21860,7 +22201,7 @@ function renderErpKanban(data){
           const urgency=erpProductionUrgencyClass(order);
           const products=erpNormalizeOrderProducts(order);
 
-          return `<article class="erpOrderCard ${erpOrderLate(order)?"late":""} urgency-${urgency}">
+          return `<article class="erpOrderCard ${erpOrderLate(order)?"late":""} urgency-${urgency} ${erpIsStandby(order)?"isStandby":""}">
             <div class="erpOrderTop">
               <strong>${esc(order.number||"-")}</strong>
               <span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span>
@@ -21877,11 +22218,15 @@ function renderErpKanban(data){
               <span class="erpDeadlineBadge ${urgency}">${esc(erpProductionUrgencyLabel(order))}</span>
               <small>Entrega: ${dateBR(order.dueDate)}</small>
             </div>
+            ${erpIsStandby(order)?`<div class="erpStandbyBox"><strong>Standby</strong><span>${esc(erpOrderStandby(order).reason||"Sem motivo")}</span><small>${esc(erpStandbyLabel(order))}</small></div>`:""}
             <small class="erpLastChange">Última alteração: ${esc(erpLastStageChange(order))}</small>
             <div class="erpOrderActions">
               <button class="small secondary" onclick="showErpOrderProductsDetail('${order.id}')">Ver grade</button>
+              ${erpIsStandby(order)
+                ?`<button class="small primary" onclick="clearErpOrderStandby('${order.id}')">Retomar</button>`
+                :`<button class="small secondary standbyBtn" onclick="setErpOrderStandby('${order.id}')">Standby</button>`}
               ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
-              ${canAdvance?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
+              ${canAdvance&&!erpIsStandby(order)?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
               ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
             </div>
           </article>`;
@@ -22045,7 +22390,7 @@ function erpProductPdfText(order){
       .map(size=>`${size}: ${Number(product.sizes[size]||0)}`)
       .join(" | ")||"Sem grade";
 
-    return `${index+1}. ${product.model||"Modelo não informado"}${product.color?` - ${product.color}`:""} (${erpProductQty(product)} peça(s)) - ${grade}`;
+    return `${index+1}. ${product.model||"Modelo não informado"}${product.color?` - ${product.color}`:""} (${erpProductQty(product)} peça(s)) - ${grade}${product.sewingWorker?` - Costura: ${product.sewingWorker}`:""}`;
   }).join(" / ");
 }
 
