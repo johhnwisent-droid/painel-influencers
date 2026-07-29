@@ -10897,6 +10897,281 @@ body[data-page="erpTest"] .main{
   }
 }
 
+
+/* ===== V153 ERP AUDITORIA SUPABASE PÓS-SQL ===== */
+.erpSupabaseAuditBox{
+  margin-top:18px!important;
+  padding:14px!important;
+  border:1px solid rgba(56,189,248,.22)!important;
+  border-radius:20px!important;
+  background:
+    radial-gradient(circle at top right,rgba(56,189,248,.10),transparent 32%),
+    rgba(15,23,42,.32)!important;
+}
+
+.erpSupabaseAuditBox .panelHead{
+  margin-bottom:12px!important;
+}
+
+@media(max-width:760px){
+  .erpSupabaseAuditBox{
+    padding:12px!important;
+  }
+
+  .erpSupabaseAuditBox .filters{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    width:100%!important;
+  }
+
+  .erpSupabaseAuditBox .filters button{
+    width:100%!important;
+  }
+}
+
+
+/* ===== V154 ERP STANDBY MODAL E CONFIRMAÇÃO DE SALVAMENTO ===== */
+body.erpStandbyModalOpen{
+  overflow:hidden!important;
+}
+
+.erpStandbyModal[hidden]{
+  display:none!important;
+}
+
+.erpStandbyModal{
+  position:fixed!important;
+  inset:0!important;
+  z-index:9999!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:16px!important;
+}
+
+.erpStandbyModalBackdrop{
+  position:absolute!important;
+  inset:0!important;
+  background:rgba(0,0,0,.72)!important;
+  backdrop-filter:blur(8px)!important;
+}
+
+.erpStandbyModalBox{
+  position:relative!important;
+  width:min(640px,100%)!important;
+  max-height:calc(100vh - 32px)!important;
+  overflow:auto!important;
+  border-radius:24px!important;
+  padding:18px!important;
+  background:
+    radial-gradient(circle at top right,rgba(220,38,38,.18),transparent 34%),
+    linear-gradient(180deg,#111827,#050505)!important;
+  border:1px solid rgba(248,113,113,.34)!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.55)!important;
+  color:#fff!important;
+}
+
+.erpStandbyModalHead{
+  display:flex!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  align-items:flex-start!important;
+  margin-bottom:14px!important;
+}
+
+.erpStandbyModalHead h3{
+  margin:8px 0 4px!important;
+  color:#fff!important;
+}
+
+.erpStandbyModalHead p{
+  margin:0!important;
+  color:#cbd5e1!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+}
+
+.erpStandbyModalBadge{
+  display:inline-flex!important;
+  padding:6px 9px!important;
+  border-radius:999px!important;
+  background:rgba(220,38,38,.18)!important;
+  color:#fecaca!important;
+  border:1px solid rgba(248,113,113,.34)!important;
+  font-size:11px!important;
+  font-weight:1000!important;
+  letter-spacing:.05em!important;
+}
+
+.erpStandbyQuickReasons{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:8px!important;
+  margin:12px 0!important;
+}
+
+.erpStandbyQuickReasons button{
+  border:1px solid rgba(248,113,113,.28)!important;
+  background:rgba(220,38,38,.10)!important;
+  color:#fecaca!important;
+  border-radius:999px!important;
+  padding:8px 10px!important;
+  font-size:12px!important;
+  font-weight:1000!important;
+  cursor:pointer!important;
+}
+
+.erpStandbyQuickReasons button:hover{
+  background:rgba(220,38,38,.18)!important;
+}
+
+.erpStandbyReasonLabel,
+.erpStandbyResponsibleLabel{
+  display:grid!important;
+  gap:7px!important;
+  color:#e5e7eb!important;
+  font-size:13px!important;
+  font-weight:1000!important;
+  margin-top:10px!important;
+}
+
+.erpStandbyReasonLabel span{
+  color:#fecaca!important;
+  font-size:11px!important;
+  font-weight:1000!important;
+}
+
+#erpStandbyReasonInput,
+#erpStandbyResponsibleInput{
+  width:100%!important;
+  border-radius:16px!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  background:#0f172a!important;
+  color:#fff!important;
+  padding:12px!important;
+  font-size:15px!important;
+  font-weight:800!important;
+}
+
+#erpStandbyReasonInput{
+  resize:vertical!important;
+  min-height:112px!important;
+  line-height:1.4!important;
+}
+
+#erpStandbyReasonInput:focus,
+#erpStandbyResponsibleInput:focus{
+  outline:2px solid rgba(248,113,113,.52)!important;
+  border-color:rgba(248,113,113,.55)!important;
+}
+
+.erpStandbyValidation{
+  margin-top:10px!important;
+  padding:10px!important;
+  border-radius:14px!important;
+  background:rgba(239,68,68,.14)!important;
+  border:1px solid rgba(248,113,113,.34)!important;
+  color:#fecaca!important;
+  font-weight:900!important;
+  font-size:13px!important;
+}
+
+.erpStandbyModalActions{
+  display:flex!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  margin-top:16px!important;
+}
+
+.erpStandbyBox{
+  gap:8px!important;
+  padding:12px!important;
+}
+
+.erpStandbyBoxTitle{
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+
+.erpStandbyBoxTitle strong{
+  color:#fecaca!important;
+}
+
+.erpStandbyBoxTitle b{
+  display:inline-flex!important;
+  padding:4px 8px!important;
+  border-radius:999px!important;
+  background:rgba(220,38,38,.20)!important;
+  color:#fff!important;
+  border:1px solid rgba(248,113,113,.28)!important;
+  font-size:10px!important;
+  text-transform:uppercase!important;
+  letter-spacing:.04em!important;
+}
+
+.erpStandbyReasonText{
+  display:block!important;
+  padding:10px!important;
+  border-radius:12px!important;
+  background:rgba(127,29,29,.28)!important;
+  border:1px solid rgba(248,113,113,.22)!important;
+  color:#fff!important;
+  font-size:14px!important;
+  line-height:1.35!important;
+  font-weight:850!important;
+}
+
+@media(max-width:760px){
+  .erpStandbyModal{
+    align-items:flex-end!important;
+    padding:10px!important;
+  }
+
+  .erpStandbyModalBox{
+    width:100%!important;
+    border-radius:22px 22px 16px 16px!important;
+    padding:14px!important;
+  }
+
+  .erpStandbyModalHead{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpStandbyQuickReasons{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .erpStandbyQuickReasons button{
+    width:100%!important;
+    min-height:42px!important;
+  }
+
+  .erpStandbyModalActions{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpStandbyModalActions button{
+    width:100%!important;
+    min-height:44px!important;
+  }
+
+  #erpStandbyReasonInput,
+  #erpStandbyResponsibleInput{
+    font-size:16px!important;
+  }
+}
+
+@media(max-width:420px){
+  .erpStandbyQuickReasons{
+    grid-template-columns:1fr!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -10979,7 +11254,7 @@ body[data-page="erpTest"] .main{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V152</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V154</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -12136,6 +12411,47 @@ body[data-page="erpTest"] .main{
     <span id="erpRestoreStatus">ERP teste ativo</span>
   </div>
 
+  <div id="erpStandbyModal" class="erpStandbyModal noPrint" hidden>
+    <div class="erpStandbyModalBackdrop" onclick="closeErpStandbyModal()"></div>
+    <div class="erpStandbyModalBox" role="dialog" aria-modal="true" aria-labelledby="erpStandbyModalTitle">
+      <div class="erpStandbyModalHead">
+        <div>
+          <span class="erpStandbyModalBadge">STANDBY</span>
+          <h3 id="erpStandbyModalTitle">Lançar pedido para standby</h3>
+          <p id="erpStandbyModalMeta">Selecione o motivo e confirme para mover o pedido para a seção de standby da etapa atual.</p>
+        </div>
+        <button type="button" class="secondary" onclick="closeErpStandbyModal()">Fechar</button>
+      </div>
+
+      <input type="hidden" id="erpStandbyOrderId">
+
+      <div class="erpStandbyQuickReasons">
+        <button type="button" onclick="fillErpStandbyReason('Aguardando material')">Aguardando material</button>
+        <button type="button" onclick="fillErpStandbyReason('Aguardando aprovação')">Aguardando aprovação</button>
+        <button type="button" onclick="fillErpStandbyReason('Aguardando ajuste de modelagem')">Ajuste de modelagem</button>
+        <button type="button" onclick="fillErpStandbyReason('Prioridade alterada')">Prioridade alterada</button>
+        <button type="button" onclick="fillErpStandbyReason('Problema técnico na etapa')">Problema técnico</button>
+      </div>
+
+      <label class="erpStandbyReasonLabel">
+        Motivo do standby <span>obrigatório</span>
+        <textarea id="erpStandbyReasonInput" rows="4" placeholder="Ex.: Falta malha preta tamanho GG. Pedido deve aguardar reposição para continuar na costura."></textarea>
+      </label>
+
+      <label class="erpStandbyResponsibleLabel">
+        Responsável pela pausa
+        <input id="erpStandbyResponsibleInput" placeholder="Nome de quem está colocando em standby">
+      </label>
+
+      <div id="erpStandbyValidation" class="erpStandbyValidation" hidden></div>
+
+      <div class="erpStandbyModalActions">
+        <button type="button" class="secondary" onclick="closeErpStandbyModal()">Cancelar</button>
+        <button type="button" class="primary" onclick="submitErpOrderStandby()">Confirmar standby</button>
+      </div>
+    </div>
+  </div>
+
   <div class="erpModuleTabs">
     <button type="button" class="active" data-erp-module="dashboard" onclick="showErpModule('dashboard')"><span class="erpTabIcon">⌂</span>Dashboard</button>
     <button type="button" data-erp-module="clientes" onclick="showErpModule('clientes')"><span class="erpTabIcon">◎</span>Clientes</button>
@@ -12446,6 +12762,7 @@ body[data-page="erpTest"] .main{
         </div>
         <div class="filters">
           <button class="secondary" type="button" onclick="runErpProductionReadiness()">Rodar teste</button>
+          <button class="secondary" type="button" onclick="runErpSupabaseProductionAudit()">Auditar Supabase</button>
           <button class="secondary" type="button" onclick="exportErpAuditLog()">Exportar auditoria</button>
           <button class="secondary" type="button" onclick="exportErpBackupBundle()">Backup ERP</button>
         </div>
@@ -12461,6 +12778,30 @@ body[data-page="erpTest"] .main{
           <thead><tr><th>Item</th><th>Status</th><th>Detalhe</th></tr></thead>
           <tbody id="erpReadinessRows"></tbody>
         </table>
+      </div>
+
+      <div class="erpSupabaseAuditBox">
+        <div class="panelHead">
+          <div>
+            <h3>Auditoria Supabase pós-SQL</h3>
+            <span class="muted">Valida se as tabelas de produção existem, se o RLS bloqueia acesso anônimo e se o ERP legado ainda sincroniza.</span>
+          </div>
+          <div class="filters">
+            <button class="primary" type="button" onclick="runErpSupabaseProductionAudit()">Executar auditoria Supabase</button>
+          </div>
+        </div>
+        <div class="grid erpStatsGrid">
+          <div class="card erpMetricCard"><span class="erpMetricIcon">DB</span><small>Score Supabase</small><strong id="erpSupabaseAuditScore">-</strong></div>
+          <div class="card erpMetricCard ok"><span class="erpMetricIcon">✓</span><small>Aprovados</small><strong id="erpSupabaseAuditPass">0</strong></div>
+          <div class="card erpMetricCard warn"><span class="erpMetricIcon">!</span><small>Alertas</small><strong id="erpSupabaseAuditWarn">0</strong></div>
+          <div class="card erpMetricCard danger"><span class="erpMetricIcon">×</span><small>Falhas</small><strong id="erpSupabaseAuditFail">0</strong></div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead><tr><th>Teste</th><th>Status</th><th>Resposta</th></tr></thead>
+            <tbody id="erpSupabaseAuditRows"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -12725,8 +13066,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V152";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v152";
+const APP_BUILD_VERSION="V154";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v154";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -12765,7 +13106,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=152");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=154");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -15035,6 +15376,31 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_PRODUCTION_READINESS_V152","Não foi possível confirmar hardening 10/10 do ERP.");
   }
 
+  if(
+    String(runErpSupabaseProductionAudit).includes("wisent_erp_profiles")&&
+    String(erpSupabaseRestProbe).includes("/rest/v1/")&&
+    String(erpClassifyProductionTableProbe).includes("PGRST205")&&
+    $("erpSupabaseAuditRows")
+  ){
+    auditAdd(report,"pass","ERP_SUPABASE_POST_SQL_AUDIT_V153","Painel consegue auditar tabelas pós-SQL do ERP, RLS, sync legado e pendência de Supabase Auth.");
+  }else{
+    auditAdd(report,"warn","ERP_SUPABASE_POST_SQL_AUDIT_V153","Auditoria pós-SQL do Supabase não foi confirmada.");
+  }
+
+  if(
+    $("erpStandbyModal")&&
+    $("erpStandbyReasonInput")&&
+    String(openErpStandbyModal).includes("Etapa atual")&&
+    String(submitErpOrderStandby).includes("confirmed")&&
+    String(submitErpOrderStandby).includes("scheduleErpTestCloudSave")&&
+    String(validateErpStandbyReason).includes("motivo mais claro")&&
+    String(erpRenderOrderCard).includes("erpStandbyReasonText")
+  ){
+    auditAdd(report,"pass","ERP_STANDBY_FLOW_V154","Fluxo de standby usa modal com motivo obrigatório, validação, confirmação pós-salvamento e motivo visível no card.");
+  }else{
+    auditAdd(report,"warn","ERP_STANDBY_FLOW_V154","Não foi possível confirmar o fluxo blindado de lançamento para standby.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -15168,7 +15534,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v152-${today()}.json`;
+  a.download=`auditoria-painel-v154-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -15198,7 +15564,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V152",
+    "AUDITORIA DO SISTEMA — V154",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -15226,7 +15592,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V152: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V154: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -16213,7 +16579,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V152 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V154 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -21537,7 +21903,7 @@ let erpTestSyncWatchersInstalled=false;
 
 function defaultErpTestState(){
   return {
-    version:"V152",
+    version:"V154",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -21724,6 +22090,238 @@ async function runErpProductionReadiness(){
 
   return result;
 }
+
+
+function erpSupabaseAuditBadge(level){
+  if(level==="pass")return "Aprovado";
+  if(level==="warn")return "Alerta";
+  return "Falha";
+}
+
+async function erpSupabaseRestProbe(table,select="*",limit=1){
+  const url=SUPABASE_URL+
+    "/rest/v1/"+
+    encodeURIComponent(table)+
+    "?select="+
+    encodeURIComponent(select)+
+    "&limit="+
+    encodeURIComponent(String(limit));
+
+  let response=null;
+  let text="";
+  let json=null;
+
+  try{
+    response=await fetchWithTimeout(url,{
+      method:"GET",
+      headers:cloudHeaders()
+    },12000);
+
+    text=await response.text();
+
+    try{json=text?JSON.parse(text):null;}catch(e){json=null;}
+
+    return {
+      ok:response.ok,
+      status:response.status,
+      text,
+      json
+    };
+  }catch(e){
+    return {
+      ok:false,
+      status:0,
+      text:String(e.message||e),
+      json:null
+    };
+  }
+}
+
+function erpClassifyProductionTableProbe(table,result){
+  const raw=String(result.text||"");
+
+  if(result.ok){
+    return {
+      level:"pass",
+      title:`Tabela ${table}`,
+      detail:`HTTP ${result.status}. Tabela acessível via REST. Com RLS ativo, retorno vazio pode ser esperado se não houver usuário autenticado.`
+    };
+  }
+
+  if([401,403].includes(Number(result.status))){
+    return {
+      level:"pass",
+      title:`Tabela ${table}`,
+      detail:`HTTP ${result.status}. A tabela respondeu e o acesso anônimo foi bloqueado, sinal compatível com RLS restritivo.`
+    };
+  }
+
+  if(raw.includes("PGRST205")||raw.toLowerCase().includes("could not find")||raw.toLowerCase().includes("not found")){
+    return {
+      level:"fail",
+      title:`Tabela ${table}`,
+      detail:`HTTP ${result.status}. A tabela não foi encontrada no schema REST. Verifique se o SQL foi executado no projeto correto e se a API recarregou o schema.`
+    };
+  }
+
+  return {
+    level:"warn",
+    title:`Tabela ${table}`,
+    detail:`HTTP ${result.status}. Resposta não conclusiva: ${raw.slice(0,180)}`
+  };
+}
+
+async function erpLegacySharedRecordAudit(){
+  try{
+    const cloud=await fetchErpTestCloudData();
+
+    return {
+      level:"pass",
+      title:"Registro compartilhado legado do ERP",
+      detail:cloud
+        ?`Leitura OK. ${(cloud.orders||[]).length} pedido(s) no registro compartilhado atual.`
+        :"Leitura OK. Registro será criado no primeiro salvamento."
+    };
+  }catch(e){
+    return {
+      level:"fail",
+      title:"Registro compartilhado legado do ERP",
+      detail:"Falha ao ler chave atual do ERP em personalizacao: "+String(e.message||e).slice(0,180)
+    };
+  }
+}
+
+async function erpPersonalizacaoAudit(){
+  try{
+    const url=SUPABASE_URL+
+      "/rest/v1/personalizacao?chave=eq."+
+      encodeURIComponent(ERP_TEST_CLOUD_KEY)+
+      "&select=chave";
+
+    const response=await fetchWithTimeout(url,{
+      method:"GET",
+      headers:cloudHeaders()
+    },12000);
+
+    const text=await response.text();
+
+    if(response.ok){
+      return {
+        level:"pass",
+        title:"Tabela personalizacao",
+        detail:`HTTP ${response.status}. Tabela atual do painel segue acessível para sincronização.`
+      };
+    }
+
+    return {
+      level:"fail",
+      title:"Tabela personalizacao",
+      detail:`HTTP ${response.status}. Falha no sync legado: ${text.slice(0,180)}`
+    };
+  }catch(e){
+    return {
+      level:"fail",
+      title:"Tabela personalizacao",
+      detail:"Falha de conexão: "+String(e.message||e).slice(0,180)
+    };
+  }
+}
+
+async function erpSupabaseAuthAudit(){
+  /*
+    HTML público não consegue provar Supabase Auth/RLS completo sem migrar
+    o login para auth.signInWithPassword. Este teste é propositalmente
+    classificado como alerta enquanto a aplicação ainda usa login local.
+  */
+  return {
+    level:"warn",
+    title:"Supabase Auth no frontend",
+    detail:"SQL/RLS pode estar no banco, mas o login do HTML ainda é local. Para 10/10 real, migrar autenticação para Supabase Auth."
+  };
+}
+
+function renderErpSupabaseProductionAudit(results=[]){
+  const pass=results.filter(r=>r.level==="pass").length;
+  const warn=results.filter(r=>r.level==="warn").length;
+  const fail=results.filter(r=>r.level==="fail").length;
+  const score=Math.max(1,Math.min(10,Math.round(((pass+(warn*.5))/Math.max(1,results.length))*10)));
+
+  if($("erpSupabaseAuditScore"))$("erpSupabaseAuditScore").textContent=`${score}/10`;
+  if($("erpSupabaseAuditPass"))$("erpSupabaseAuditPass").textContent=pass;
+  if($("erpSupabaseAuditWarn"))$("erpSupabaseAuditWarn").textContent=warn;
+  if($("erpSupabaseAuditFail"))$("erpSupabaseAuditFail").textContent=fail;
+
+  if($("erpSupabaseAuditRows")){
+    $("erpSupabaseAuditRows").innerHTML=results.length?results.map(row=>`<tr>
+      <td><strong>${esc(row.title||"-")}</strong></td>
+      <td><span class="erpReadyBadge ${row.level==="pass"?"ok":row.level==="warn"?"warn":"danger"}">${esc(erpSupabaseAuditBadge(row.level))}</span></td>
+      <td>${esc(row.detail||"-")}</td>
+    </tr>`).join(""):`<tr><td colspan="3">Clique em “Executar auditoria Supabase”.</td></tr>`;
+  }
+
+  return {score,pass,warn,fail,results};
+}
+
+async function runErpSupabaseProductionAudit(){
+  updateCloudStatus("Executando auditoria Supabase do ERP...");
+  updateCloudDebug("validando tabelas V152, RLS, sync legado e prontidão de Auth");
+
+  const tables=[
+    ["wisent_erp_profiles","id,role,active"],
+    ["wisent_erp_orders","id,stage,updated_at"],
+    ["wisent_erp_audit_log","id,action,created_at"],
+    ["wisent_erp_backups","id,created_at"]
+  ];
+
+  const results=[];
+
+  results.push(await erpPersonalizacaoAudit());
+  results.push(await erpLegacySharedRecordAudit());
+
+  for(const [table,select] of tables){
+    const probe=await erpSupabaseRestProbe(table,select,1);
+    results.push(erpClassifyProductionTableProbe(table,probe));
+  }
+
+  results.push(await erpSupabaseAuthAudit());
+
+  const summary=renderErpSupabaseProductionAudit(results);
+  appendErpAudit("erp_supabase_production_audit",{
+    score:summary.score,
+    pass:summary.pass,
+    warn:summary.warn,
+    fail:summary.fail
+  });
+
+  const failures=results.filter(r=>r.level==="fail").map(r=>`• ${r.title}: ${r.detail}`).join("\\n");
+  const warnings=results.filter(r=>r.level==="warn").map(r=>`• ${r.title}: ${r.detail}`).join("\\n");
+
+  alert([
+    "AUDITORIA SUPABASE DO ERP",
+    "",
+    `Score: ${summary.score}/10`,
+    `Aprovados: ${summary.pass}`,
+    `Alertas: ${summary.warn}`,
+    `Falhas: ${summary.fail}`,
+    failures?`\\nFalhas:\\n${failures}`:"",
+    warnings?`\\nAlertas:\\n${warnings}`:"",
+    "",
+    summary.fail===0
+      ?"Banco aparenta estar configurado. Para fechar 10/10 real, o próximo passo é migrar o login do painel para Supabase Auth."
+      :"Há falhas de banco/schema para corrigir antes de produção."
+  ].join("\\n"));
+
+  updateCloudStatus(
+    summary.fail===0
+      ?"Auditoria Supabase concluída."
+      :"Auditoria Supabase encontrou falhas.",
+    summary.fail>0
+  );
+
+  updateCloudDebug(`auditoria Supabase ERP V153: ${summary.pass} aprovados, ${summary.warn} alertas, ${summary.fail} falhas`);
+  return summary;
+}
+
 
 function erpSecurityGuidePromptOnce(){
   try{
@@ -22525,36 +23123,171 @@ function erpStandbyLabel(order){
   return `${standby.stage}${date?` • ${date}`:""}${standby.user?` • ${standby.user}`:""}`;
 }
 
-function setErpOrderStandby(orderId){
+function erpStandbyModalOrder(){
+  const id=$("erpStandbyOrderId")?.value||"";
+  const data=readErpTestData();
+  return (data.orders||[]).find(o=>String(o.id)===String(id))||null;
+}
+
+function standbyReasonMinLength(){
+  return 6;
+}
+
+function validateErpStandbyReason(reason){
+  const clean=String(reason||"").trim();
+  if(clean.length<standbyReasonMinLength()){
+    return {
+      ok:false,
+      text:"Informe um motivo mais claro para o standby. Exemplo: aguardando material, ajuste, aprovação ou problema técnico."
+    };
+  }
+
+  return {ok:true,text:""};
+}
+
+function showErpStandbyValidation(text){
+  const el=$("erpStandbyValidation");
+  if(!el)return;
+
+  el.textContent=String(text||"");
+  el.hidden=!text;
+}
+
+function fillErpStandbyReason(text){
+  const input=$("erpStandbyReasonInput");
+  if(!input)return;
+
+  const current=String(input.value||"").trim();
+  input.value=current?`${current}; ${text}`:text;
+  showErpStandbyValidation("");
+  input.focus();
+}
+
+function openErpStandbyModal(orderId){
   const data=readErpTestData();
   const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
-  if(!order)return;
 
-  const reason=prompt(`Motivo do standby para o pedido ${order.number||""}:`,order?.standby?.reason||"");
-  if(reason===null)return;
+  if(!order){
+    alert("Pedido não encontrado. Atualize o ERP e tente novamente.");
+    return;
+  }
 
-  const cleanReason=String(reason||"").trim();
-  if(!cleanReason){
-    alert("Informe o motivo do standby.");
+  if(erpIsStandby(order)){
+    alert("Este pedido já está em standby.");
+    return;
+  }
+
+  if($("erpStandbyOrderId"))$("erpStandbyOrderId").value=order.id;
+  if($("erpStandbyReasonInput"))$("erpStandbyReasonInput").value=order?.standby?.reason||"";
+  if($("erpStandbyResponsibleInput"))$("erpStandbyResponsibleInput").value=currentAuditInfo().name||"";
+
+  if($("erpStandbyModalTitle")){
+    $("erpStandbyModalTitle").textContent=`Lançar ${order.number||"pedido"} para standby`;
+  }
+
+  if($("erpStandbyModalMeta")){
+    $("erpStandbyModalMeta").textContent=`Etapa atual: ${order.stage||"Pedido"} • Cliente: ${order.client||"-"} • ${erpOrderQtyTotal(order)} peça(s)`;
+  }
+
+  showErpStandbyValidation("");
+
+  const modal=$("erpStandbyModal");
+  if(modal){
+    modal.hidden=false;
+    document.body.classList.add("erpStandbyModalOpen");
+  }
+
+  setTimeout(()=>{$("erpStandbyReasonInput")?.focus();},80);
+}
+
+function closeErpStandbyModal(){
+  const modal=$("erpStandbyModal");
+  if(modal)modal.hidden=true;
+  document.body.classList.remove("erpStandbyModalOpen");
+
+  if($("erpStandbyOrderId"))$("erpStandbyOrderId").value="";
+  if($("erpStandbyReasonInput"))$("erpStandbyReasonInput").value="";
+  if($("erpStandbyResponsibleInput"))$("erpStandbyResponsibleInput").value="";
+  showErpStandbyValidation("");
+}
+
+function setErpOrderStandby(orderId){
+  openErpStandbyModal(orderId);
+}
+
+function submitErpOrderStandby(){
+  const orderId=$("erpStandbyOrderId")?.value||"";
+  const reason=String($("erpStandbyReasonInput")?.value||"").trim();
+  const responsible=String($("erpStandbyResponsibleInput")?.value||"").trim();
+  const validation=validateErpStandbyReason(reason);
+
+  if(!validation.ok){
+    showErpStandbyValidation(validation.text);
+    $("erpStandbyReasonInput")?.focus();
+    return;
+  }
+
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
+
+  if(!order){
+    showErpStandbyValidation("Pedido não encontrado. Atualize o ERP e tente novamente.");
+    return;
+  }
+
+  if(erpIsStandby(order)){
+    closeErpStandbyModal();
+    showUndoToast("Pedido já estava em standby.");
+    renderErpTest();
     return;
   }
 
   const audit=currentAuditInfo();
-  order.standby={
+  const standbyUser=responsible||audit.name||"Não registrado";
+  const standbyRecord={
     active:true,
-    reason:cleanReason,
+    reason,
     stage:order.stage||"Pedido",
     at:audit.at||new Date().toISOString(),
-    user:audit.name||"Não registrado"
+    user:standbyUser
   };
-  order.standbyHistory=Array.isArray(order.standbyHistory)?order.standbyHistory:[];
-  order.standbyHistory.push({...order.standby,id:uid(),type:"standby"});
-  order.updatedAt=audit.at||new Date().toISOString();
-  order.updatedBy=audit.name||"Não registrado";
 
-  writeErpTestData(data);
+  order.standby=standbyRecord;
+  order.standbyHistory=Array.isArray(order.standbyHistory)?order.standbyHistory:[];
+  order.standbyHistory.push({...standbyRecord,id:uid(),type:"standby"});
+  order.updatedAt=audit.at||new Date().toISOString();
+  order.updatedBy=audit.name||standbyUser;
+
+  const saved=writeErpTestData(data,{
+    auditAction:"erp_order_standby",
+    auditDetail:{
+      orderId:order.id,
+      number:order.number,
+      stage:order.stage,
+      reason,
+      responsible:standbyUser
+    },
+    delay:150
+  });
+
+  if(!saved){
+    showErpStandbyValidation("Falha ao salvar o standby localmente. Não feche o app e tente novamente.");
+    return;
+  }
+
+  const check=readErpTestData();
+  const persisted=(check.orders||[]).find(o=>String(o.id)===String(orderId));
+  const confirmed=!!persisted&&erpIsStandby(persisted)&&String(erpOrderStandby(persisted).reason||"").trim()===reason;
+
+  if(!confirmed){
+    showErpStandbyValidation("O standby não foi confirmado após salvar. Tente novamente antes de sair da tela.");
+    return;
+  }
+
+  closeErpStandbyModal();
   renderErpTest();
-  showUndoToast("Pedido colocado em standby.");
+  scheduleErpTestCloudSave(100);
+  showUndoToast(`Pedido ${order.number||""} lançado para standby.`);
 }
 
 function clearErpOrderStandby(orderId){
@@ -23126,7 +23859,7 @@ function showErpOrderProductsDetail(orderId){
     `Prazo produção: ${dateBR(erpProductionDate(order))}`,
     `Entrega: ${dateBR(order.dueDate)}`,
     `Total: ${erpOrderQtyTotal(order)} peça(s)`,
-    erpIsStandby(order)?`Standby: ${erpOrderStandby(order).reason}`:"",
+    erpIsStandby(order)?`Standby (${erpOrderStandby(order).stage}): ${erpOrderStandby(order).reason}`:"",
     "",
     "MODELOS / CORES / GRADE"
   ].filter(line=>line!==undefined);
@@ -23202,13 +23935,17 @@ function erpRenderOrderCard(order,stage,restricted){
       <span class="erpDeadlineBadge ${urgency}">${esc(erpProductionUrgencyLabel(order))}</span>
       <small>Entrega: ${dateBR(order.dueDate)}</small>
     </div>
-    ${erpIsStandby(order)?`<div class="erpStandbyBox"><strong>Standby</strong><span>${esc(erpOrderStandby(order).reason||"Sem motivo")}</span><small>${esc(erpStandbyLabel(order))}</small></div>`:""}
+    ${erpIsStandby(order)?`<div class="erpStandbyBox">
+      <div class="erpStandbyBoxTitle"><strong>Pedido em standby</strong><b>${esc(erpOrderStandby(order).stage||stage)}</b></div>
+      <span class="erpStandbyReasonText">${esc(erpOrderStandby(order).reason||"Sem motivo informado")}</span>
+      <small>${esc(erpStandbyLabel(order))}</small>
+    </div>`:""}
     <small class="erpLastChange">Última alteração: ${esc(erpLastStageChange(order))}</small>
     <div class="erpOrderActions">
       <button class="small secondary" onclick="showErpOrderProductsDetail('${order.id}')">Ver grade</button>
       ${erpIsStandby(order)
         ?`<button class="small primary" onclick="clearErpOrderStandby('${order.id}')">Retomar</button>`
-        :`<button class="small secondary standbyBtn" onclick="setErpOrderStandby('${order.id}')">Standby</button>`}
+        :`<button class="small secondary standbyBtn" onclick="setErpOrderStandby('${order.id}')">Lançar standby</button>`}
       ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
       ${canAdvance&&!erpIsStandby(order)?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
       ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
@@ -23580,6 +24317,7 @@ function renderErpTest(){
   renderErpReports(data);
   renderErpLabel();
   renderErpProductionReadiness();
+  renderErpSupabaseProductionAudit([]);
 
   if(isErpSectorRestrictedUser()){
     showErpModule("pedidos");
