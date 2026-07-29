@@ -9195,6 +9195,47 @@ textarea{
   text-overflow:ellipsis!important;
 }
 
+
+/* ===== V140 WISENT ERP TESTE ISOLADO ===== */
+.erpTestView{--erp-text:#f8fafc;--erp-gold:#d4af37;}
+body[data-page="erpTest"]{background:#050505!important;}
+body[data-page="erpTest"] .top,.erpTestView .panel,.erpTestView .card{background:linear-gradient(180deg,#111,#080808)!important;color:var(--erp-text)!important;border-color:rgba(212,175,55,.22)!important;}
+body[data-page="erpTest"] .top h2,.erpTestView h2,.erpTestView h3,.erpTestView h4,.erpTestView strong{color:#fff!important;}
+.erpHero{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:22px;border-radius:26px;background:radial-gradient(circle at top right,rgba(212,175,55,.20),transparent 34%),linear-gradient(135deg,#111,#050505);border:1px solid rgba(212,175,55,.28);box-shadow:0 24px 70px rgba(0,0,0,.24);margin-bottom:16px;}
+.erpHero h2{font-size:34px;margin:8px 0 8px;letter-spacing:-.05em;}
+.erpHero p{margin:0;color:#cbd5e1;max-width:760px;line-height:1.55;}
+.erpLabBadge{display:inline-flex;border:1px solid rgba(212,175,55,.55);color:#facc15;background:rgba(212,175,55,.10);padding:7px 10px;border-radius:999px;font-weight:1000;font-size:12px;}
+.erpHeroActions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.erpRestoreBox{display:flex;justify-content:space-between;align-items:center;gap:16px;}
+.erpRestoreBox p{margin:6px 0 0;color:#cbd5e1;}
+#erpRestoreStatus{display:inline-flex;padding:8px 12px;border-radius:999px;background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.25);font-weight:950;white-space:nowrap;}
+.erpStatsGrid{grid-template-columns:repeat(4,minmax(0,1fr));}
+.erpOrderForm input,.erpOrderForm select{background:#0f172a!important;color:#fff!important;border-color:#334155!important;}
+.erpKanban{display:grid;grid-template-columns:repeat(8,minmax(220px,1fr));gap:12px;overflow:auto;padding-bottom:8px;}
+.erpKanbanCol{min-width:220px;background:#0b0b0b;border:1px solid #262626;border-radius:18px;padding:10px;}
+.erpKanbanHead{display:flex;justify-content:space-between;align-items:center;color:#fff;margin-bottom:10px;}
+.erpKanbanHead span{display:inline-flex;width:28px;height:28px;border-radius:999px;align-items:center;justify-content:center;background:#1f2937;color:#facc15;font-weight:1000;}
+.erpKanbanList{display:grid;gap:9px;}
+.erpOrderCard{background:#111827;border:1px solid #263041;border-radius:16px;padding:12px;color:#e5e7eb;}
+.erpOrderCard.late{border-color:#ef4444;box-shadow:0 0 0 1px rgba(239,68,68,.16);}
+.erpOrderTop,.erpOrderActions{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;}
+.erpOrderCard p{margin:8px 0 4px;color:#fff;font-weight:900;}
+.erpOrderCard small{display:block;color:#a3a3a3;margin-top:3px;}
+.erpOrderActions{margin-top:10px;justify-content:flex-start;}
+.erpPriority{padding:5px 8px;border-radius:999px;background:#1f2937;color:#cbd5e1;font-size:11px;font-weight:950;}
+.erpPriority.urgent{background:rgba(239,68,68,.16);color:#fecaca;}
+.erpEmptyCol{color:#737373;border:1px dashed #333;border-radius:14px;padding:16px;text-align:center;font-weight:800;}
+.erpTwoCols{grid-template-columns:1fr 1fr;}
+.erpSubPanel{min-width:0;background:#0b0b0b;border:1px solid #262626;border-radius:18px;padding:14px;}
+.erpStatusBadge{display:inline-flex;padding:6px 9px;border-radius:999px;font-weight:950;font-size:12px;}
+.erpStatusBadge.ok{background:rgba(34,197,94,.12);color:#86efac;}
+.erpStatusBadge.danger{background:rgba(239,68,68,.14);color:#fecaca;}
+.erpSpecGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.erpSpecGrid div{background:#0b0b0b;border:1px solid #262626;border-radius:18px;padding:14px;}
+.erpSpecGrid p{margin:7px 0 0;color:#cbd5e1;line-height:1.45;}
+@media(max-width:1180px){.erpStatsGrid,.erpSpecGrid{grid-template-columns:repeat(2,minmax(0,1fr));}.erpTwoCols{grid-template-columns:1fr;}}
+@media(max-width:760px){.erpHero,.erpRestoreBox{display:grid;grid-template-columns:1fr;}.erpHero h2{font-size:28px;}.erpHeroActions,.erpHeroActions button{width:100%;}.erpStatsGrid,.erpSpecGrid{grid-template-columns:1fr;}.erpKanban{grid-template-columns:repeat(8,82vw);}}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9272,11 +9313,12 @@ textarea{
       <button data-page="pix">Chaves PIX</button>
       <button data-page="reports">Relatório PDF</button>
       <button data-page="collaborators">Colaboradores</button>
+      <button data-page="erpTest" data-erp-test-nav>WISENT ERP teste</button>
       <button data-page="settings">Personalizar</button>
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V139</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V140</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -9289,6 +9331,7 @@ textarea{
         <button type="button" class="secondary small wholesaleRecoverBtn" onclick="recoverWholesaleLaunchesDeepScan();closeProfileMenu();">Recuperação profunda</button>
         <button type="button" class="secondary small launchRecoverBtn" onclick="recoverInfluencerLaunchesDeepScan();closeProfileMenu();">Recuperar lançamentos influencers</button>
         <button type="button" class="secondary small systemAuditBtn" onclick="runSystemAuditAndShow();closeProfileMenu();">Auditoria do sistema</button>
+        <button type="button" class="secondary small erpRestoreMenuBtn" onclick="toggleErpTestModuleFromMenu();closeProfileMenu();">Ativar/Restaurar ERP teste</button>
         <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Resetar testes</button>
         <button type="button" class="secondary small" onclick="logoutUser();closeProfileMenu();">Sair</button>
       </div>
@@ -10403,6 +10446,86 @@ textarea{
       </div>
     </section>
 
+
+<section id="erpTest" class="view erpTestView">
+  <div class="erpHero">
+    <div>
+      <span class="erpLabBadge">Módulo teste isolado</span>
+      <h2>WISENT ERP</h2>
+      <p>Área experimental separada do painel de comissões. Os dados desta aba usam armazenamento próprio e não entram em Lançamentos, Atacado/Varejo, Pagos, Acumular ou Produto escolhido.</p>
+    </div>
+    <div class="erpHeroActions">
+      <button class="secondary" type="button" onclick="exportErpTestData()">Exportar dados ERP teste</button>
+      <button class="secondary" type="button" onclick="resetErpTestData()">Limpar dados do teste</button>
+      <button class="danger" type="button" onclick="restoreBeforeErpTest()">Restaurar ponto V139</button>
+    </div>
+  </div>
+
+  <div class="panel erpRestoreBox">
+    <div>
+      <strong>Ponto de restauração criado</strong>
+      <p>Referência: <b>V139 — antes da aba WISENT ERP teste</b>. O botão “Restaurar ponto V139” desativa visualmente este módulo experimental e volta para o painel principal sem apagar os dados salvos do sistema atual.</p>
+    </div>
+    <span id="erpRestoreStatus">ERP teste ativo</span>
+  </div>
+
+  <div class="grid erpStatsGrid">
+    <div class="card"><small>Pedidos hoje</small><strong id="erpPedidosHoje">0</strong></div>
+    <div class="card"><small>Pedidos atrasados</small><strong id="erpPedidosAtrasados">0</strong></div>
+    <div class="card"><small>Produção hoje</small><strong id="erpProducaoHoje">0</strong></div>
+    <div class="card"><small>Peças produzidas</small><strong id="erpPecasProduzidas">0</strong></div>
+    <div class="card"><small>Funcionários online</small><strong id="erpFuncionariosOnline">0</strong></div>
+    <div class="card"><small>Estoque baixo</small><strong id="erpEstoqueBaixo">0</strong></div>
+    <div class="card"><small>Pedidos urgentes</small><strong id="erpPedidosUrgentes">0</strong></div>
+    <div class="card"><small>Financeiro pendente</small><strong id="erpFinanceiroPendente">R$ 0,00</strong></div>
+  </div>
+
+  <div class="panel">
+    <div class="panelHead"><div><h3>Novo pedido ERP teste</h3><span class="muted">Formulário simplificado para testar fluxo de produção sem misturar com o painel principal.</span></div></div>
+    <form id="erpOrderForm" class="form erpOrderForm">
+      <input type="hidden" id="erpOrderId">
+      <label>Número do pedido<input id="erpOrderNumber" placeholder="Ex.: WIS-0001"></label>
+      <label>Cliente<input id="erpOrderClient" placeholder="Nome do cliente"></label>
+      <label>Telefone<input id="erpOrderPhone" placeholder="(00) 00000-0000"></label>
+      <label>Data entrega<input id="erpOrderDue" type="date"></label>
+      <label>Prioridade<select id="erpOrderPriority"><option>Normal</option><option>Urgente</option><option>Alta</option></select></label>
+      <label>Valor<input id="erpOrderValue" type="number" step="0.01" min="0"></label>
+      <label>Modelo<input id="erpOrderModel" placeholder="Ex.: Camiseta Oversized"></label>
+      <label>Cor<input id="erpOrderColor" placeholder="Ex.: Preto"></label>
+      <label>Quantidade<input id="erpOrderQty" type="number" min="1" step="1" value="1"></label>
+      <label>Etapa<select id="erpOrderStage"></select></label>
+      <label class="two">Observações<input id="erpOrderNotes" placeholder="Detalhes do pedido, estampa, prazo, acabamento..."></label>
+      <div class="actions two"><button class="primary" type="submit">Salvar pedido ERP teste</button><button class="secondary" type="button" onclick="resetErpOrderForm()">Cancelar</button></div>
+    </form>
+  </div>
+
+  <div class="panel">
+    <div class="panelHead">
+      <div><h3>Kanban de produção</h3><span class="muted">Fluxo: Novo → Corte → Estampa → Costura → Conferência → Embalagem → Entrega → Finalizado.</span></div>
+      <div class="filters"><input id="erpSearch" placeholder="Pesquisar cliente, pedido, modelo, status..." oninput="renderErpTest()"></div>
+    </div>
+    <div id="erpKanban" class="erpKanban"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panelHead"><div><h3>Estoque e financeiro — teste</h3><span class="muted">Visão inicial para validar estrutura do ERP antes de criar projeto separado em Next.js/Supabase.</span></div></div>
+    <div class="grid erpTwoCols">
+      <div class="erpSubPanel"><h4>Estoque mínimo</h4><div class="tableWrap"><table><thead><tr><th>Item</th><th>Categoria</th><th>Atual</th><th>Mínimo</th><th>Status</th></tr></thead><tbody id="erpStockRows"></tbody></table></div></div>
+      <div class="erpSubPanel"><h4>Financeiro</h4><div class="tableWrap"><table><thead><tr><th>Indicador</th><th>Valor</th></tr></thead><tbody id="erpFinanceRows"></tbody></table></div></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panelHead"><div><h3>Mapa técnico do projeto</h3><span class="muted">Resumo da especificação recebida para orientar o ERP definitivo.</span></div></div>
+    <div class="erpSpecGrid">
+      <div><strong>Stack final</strong><p>Next.js 15, React 19, TypeScript, TailwindCSS, shadcn/ui, Supabase, PostgreSQL, Prisma, Supabase Storage e Vercel.</p></div>
+      <div><strong>Permissões</strong><p>Administrador, Gerente e funcionários por etapa: Corte, Estampa, Costura, Conferência e Embalagem.</p></div>
+      <div><strong>Domínios</strong><p>Clientes, Pedidos, Produção, Kanban, Estoque, Financeiro, Relatórios, QR Code, Etiquetas, Notificações, Auditoria e Pesquisa.</p></div>
+      <div><strong>APIs planejadas</strong><p>/auth, /clientes, /pedidos, /producao, /estoque, /financeiro, /funcionarios, /upload, /dashboard e /relatorios.</p></div>
+    </div>
+  </div>
+</section>
+
 <section id="settings" class="view">
       <div class="panel">
         <div class="panelHead">
@@ -10662,8 +10785,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V139";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v139";
+const APP_BUILD_VERSION="V140";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v140";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -10702,7 +10825,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=139");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=140");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -12418,7 +12541,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V139",
+    version:"V140",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -12785,6 +12908,17 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","CLOUD_LIGHT_STATE","Não foi possível confirmar o salvamento leve da nuvem.");
   }
 
+  if(
+    $("erpTest")&&
+    String(readErpTestData).includes("ERP_TEST_KEY")&&
+    String(restoreBeforeErpTest).includes("ERP_TEST_DISABLED_KEY")&&
+    String(renderErpTest).includes("renderErpKanban")
+  ){
+    auditAdd(report,"pass","ERP_TEST_ISOLATED_MODULE","Aba WISENT ERP teste foi criada isolada do estado principal, com ponto de restauração V139.");
+  }else{
+    auditAdd(report,"warn","ERP_TEST_ISOLATED_MODULE","Não foi possível confirmar isolamento/restauração da aba WISENT ERP teste.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -12904,7 +13038,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v139-${today()}.json`;
+  a.download=`auditoria-painel-v140-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -12934,7 +13068,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V139",
+    "AUDITORIA DO SISTEMA — V140",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -12962,7 +13096,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V139: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V140: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -13949,7 +14083,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V139 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V140 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -19098,9 +19232,16 @@ function initMobileEnhancements(){
 
 function showPage(id){
   const nextPage=id||"dashboard";
-  const samePage=currentPage===nextPage&&$(nextPage)?.classList.contains("active");
 
-  currentPage=nextPage;
+  if(nextPage==="erpTest"&&erpTestDisabled()){
+    alert("A aba WISENT ERP teste está desativada pelo ponto de restauração V139. Use o menu do perfil para reativar, se necessário.");
+    id = "dashboard";
+  }
+
+  const resolvedPage=id||"dashboard";
+  const samePage=currentPage===resolvedPage&&$(resolvedPage)?.classList.contains("active");
+
+  currentPage=resolvedPage;
   window.currentPage=currentPage;
   setPageClass(currentPage);
 
@@ -19158,6 +19299,220 @@ function renderSharedShell(){
   syncMonthInputs();
   applyTheme();
   populateIfNeeded();
+  applyErpTestVisibility();
+}
+
+
+const ERP_TEST_KEY=KEY+"_wisent_erp_test_v140";
+const ERP_TEST_DISABLED_KEY=KEY+"_wisent_erp_test_disabled_v140";
+const ERP_TEST_RESTORE_POINT="V139";
+const ERP_STAGES=["Novo","Corte","Estampa","Costura","Conferência","Embalagem","Entrega","Finalizado"];
+
+function defaultErpTestState(){
+  return {
+    version:"V140",
+    createdAt:new Date().toISOString(),
+    orders:[],
+    stock:[
+      {id:"malha-preta",name:"Malha preta",category:"Malhas",current:42,min:25},
+      {id:"tinta-branca",name:"Tinta branca",category:"Tintas",current:8,min:10},
+      {id:"filme-dtf",name:"Filme DTF",category:"Filmes",current:14,min:12},
+      {id:"etiqueta-wisent",name:"Etiqueta Wisent",category:"Etiquetas",current:120,min:80},
+      {id:"sacola",name:"Sacolas",category:"Embalagem",current:35,min:50}
+    ],
+    employees:[
+      {id:"corte",name:"Funcionário Corte",role:"Funcionário Corte",online:true},
+      {id:"estampa",name:"Funcionário Estampa",role:"Funcionário Estampa",online:true},
+      {id:"costura",name:"Funcionário Costura",role:"Funcionário Costura",online:false},
+      {id:"conferencia",name:"Funcionário Conferência",role:"Funcionário Conferência",online:true}
+    ],
+    restorePoint:{baseVersion:ERP_TEST_RESTORE_POINT,createdAt:new Date().toISOString(),note:"Módulo ERP teste isolado."}
+  };
+}
+function readErpTestData(){
+  try{
+    const raw=localStorage.getItem(ERP_TEST_KEY);
+    if(!raw){const data=defaultErpTestState();writeErpTestData(data);return data;}
+    const data=JSON.parse(raw);
+    data.orders=Array.isArray(data.orders)?data.orders:[];
+    data.stock=Array.isArray(data.stock)?data.stock:defaultErpTestState().stock;
+    data.employees=Array.isArray(data.employees)?data.employees:defaultErpTestState().employees;
+    data.restorePoint=data.restorePoint||defaultErpTestState().restorePoint;
+    return data;
+  }catch(e){console.warn("Falha ao ler ERP teste:",e);return defaultErpTestState();}
+}
+function writeErpTestData(data){
+  try{localStorage.setItem(ERP_TEST_KEY,JSON.stringify(data));return true;}
+  catch(e){console.warn("Falha ao salvar ERP teste:",e);updateCloudStatus("ERP teste não conseguiu salvar localmente. Dados principais não foram afetados.",true);return false;}
+}
+function erpTestDisabled(){try{return localStorage.getItem(ERP_TEST_DISABLED_KEY)==="1";}catch(e){return false;}}
+function applyErpTestVisibility(){
+  const disabled=erpTestDisabled();
+  document.querySelectorAll("[data-erp-test-nav]").forEach(btn=>{btn.style.display=disabled?"none":"";});
+  const status=$("erpRestoreStatus");
+  if(status)status.textContent=disabled?"ERP teste desativado — ponto V139 preservado":"ERP teste ativo";
+}
+function toggleErpTestModuleFromMenu(){
+  if(erpTestDisabled()){
+    try{localStorage.removeItem(ERP_TEST_DISABLED_KEY);}catch(e){}
+    applyErpTestVisibility();
+    showUndoToast("ERP teste reativado. Os dados do painel principal não foram alterados.");
+    showPage("erpTest");
+    return;
+  }
+  restoreBeforeErpTest();
+}
+function restoreBeforeErpTest(){
+  const ok=confirm(["Restaurar ponto V139 e desativar a aba WISENT ERP teste?","","Isso apenas oculta/desativa o módulo experimental.","Os dados do painel principal, Supabase, Lançamentos, Pagos, Acumular e Atacado/Varejo não serão apagados.","Os dados de teste do ERP ficam preservados em chave separada para eventual reativação."].join("\n"));
+  if(!ok)return;
+  try{localStorage.setItem(ERP_TEST_DISABLED_KEY,"1");}catch(e){}
+  applyErpTestVisibility();
+  showUndoToast("Ponto V139 restaurado visualmente. ERP teste desativado sem afetar dados salvos.");
+  if(currentPage==="erpTest")showPage("dashboard");
+}
+function resetErpTestData(){
+  const ok=confirm("Limpar apenas os dados da aba WISENT ERP teste? O painel principal não será alterado.");
+  if(!ok)return;
+  const data=defaultErpTestState();
+  writeErpTestData(data);
+  resetErpOrderForm();
+  renderErpTest();
+  showUndoToast("Dados do ERP teste limpos. Dados principais preservados.");
+}
+function exportErpTestData(){
+  const data=readErpTestData();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`wisent-erp-teste-${today()}.json`;
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+function resetErpOrderForm(){
+  const form=$("erpOrderForm");if(!form)return;
+  form.reset();
+  if($("erpOrderId"))$("erpOrderId").value="";
+  if($("erpOrderDue"))$("erpOrderDue").value=today();
+  if($("erpOrderQty"))$("erpOrderQty").value=1;
+  populateErpStageSelect();
+}
+function populateErpStageSelect(){
+  const el=$("erpOrderStage");if(!el)return;
+  const current=el.value||"Novo";
+  el.innerHTML=ERP_STAGES.map(stage=>`<option value="${esc(stage)}">${esc(stage)}</option>`).join("");
+  el.value=ERP_STAGES.includes(current)?current:"Novo";
+}
+function erpOrderMatchesSearch(order,query){
+  if(!query)return true;
+  const text=[order.number,order.client,order.phone,order.model,order.color,order.stage,order.priority,order.notes].join(" ").toLowerCase();
+  return text.includes(query.toLowerCase());
+}
+function erpOrderToday(order){return String(order.createdAt||"").slice(0,10)===today();}
+function erpOrderLate(order){return !!(order.dueDate&&order.stage!=="Finalizado"&&order.dueDate<today());}
+function erpOrderUrgent(order){return String(order.priority||"").toLowerCase().includes("urgente");}
+function erpNextStage(stage){const idx=ERP_STAGES.indexOf(stage);return idx<0||idx>=ERP_STAGES.length-1?stage:ERP_STAGES[idx+1];}
+function saveErpOrderFromForm(e){
+  e.preventDefault();
+  const data=readErpTestData();
+  const id=$("erpOrderId")?.value||uid();
+  const existing=data.orders.find(o=>String(o.id)===String(id));
+  const audit=currentAuditInfo();
+  const order={
+    id,
+    number:$("erpOrderNumber")?.value||`WIS-${String(data.orders.length+1).padStart(4,"0")}`,
+    client:$("erpOrderClient")?.value||"Cliente não informado",
+    phone:$("erpOrderPhone")?.value||"",
+    dueDate:$("erpOrderDue")?.value||today(),
+    priority:$("erpOrderPriority")?.value||"Normal",
+    value:Math.max(0,finiteNumber($("erpOrderValue")?.value,0)),
+    model:$("erpOrderModel")?.value||"Modelo não informado",
+    color:$("erpOrderColor")?.value||"",
+    qty:Math.max(1,Math.round(finiteNumber($("erpOrderQty")?.value,1))),
+    stage:$("erpOrderStage")?.value||"Novo",
+    notes:$("erpOrderNotes")?.value||"",
+    createdAt:existing?.createdAt||audit.at||new Date().toISOString(),
+    createdBy:existing?.createdBy||audit.name||"Não registrado",
+    updatedAt:existing?audit.at||new Date().toISOString():"",
+    updatedBy:existing?audit.name||"":""
+  };
+  const idx=data.orders.findIndex(o=>String(o.id)===String(id));
+  if(idx>=0)data.orders[idx]=order;else data.orders.push(order);
+  writeErpTestData(data);resetErpOrderForm();renderErpTest();showUndoToast("Pedido ERP teste salvo em armazenamento separado.");
+}
+function editErpOrder(id){
+  const data=readErpTestData();
+  const order=data.orders.find(o=>String(o.id)===String(id));if(!order)return;
+  showPage("erpTest");
+  $("erpOrderId").value=order.id;$("erpOrderNumber").value=order.number||"";$("erpOrderClient").value=order.client||"";$("erpOrderPhone").value=order.phone||"";$("erpOrderDue").value=order.dueDate||today();$("erpOrderPriority").value=order.priority||"Normal";$("erpOrderValue").value=order.value||0;$("erpOrderModel").value=order.model||"";$("erpOrderColor").value=order.color||"";$("erpOrderQty").value=order.qty||1;$("erpOrderStage").value=order.stage||"Novo";$("erpOrderNotes").value=order.notes||"";
+}
+function advanceErpOrder(id){
+  const data=readErpTestData();
+  const order=data.orders.find(o=>String(o.id)===String(id));if(!order)return;
+  const next=erpNextStage(order.stage);if(next===order.stage)return;
+  const audit=currentAuditInfo();
+  order.stage=next;order.updatedAt=audit.at||new Date().toISOString();order.updatedBy=audit.name||"Não registrado";
+  writeErpTestData(data);renderErpTest();
+}
+function deleteErpOrder(id){
+  const ok=confirm("Excluir apenas este pedido do ERP teste?");if(!ok)return;
+  const data=readErpTestData();
+  data.orders=data.orders.filter(o=>String(o.id)!==String(id));
+  writeErpTestData(data);renderErpTest();
+}
+function renderErpStats(data){
+  const orders=data.orders||[];
+  const todayOrders=orders.filter(erpOrderToday).length;
+  const late=orders.filter(erpOrderLate).length;
+  const productionToday=orders.filter(o=>String(o.updatedAt||o.createdAt||"").slice(0,10)===today()).length;
+  const pieces=orders.reduce((sum,o)=>sum+Number(o.qty||0),0);
+  const online=(data.employees||[]).filter(e=>e.online).length;
+  const lowStock=(data.stock||[]).filter(s=>Number(s.current||0)<=Number(s.min||0)).length;
+  const urgent=orders.filter(erpOrderUrgent).length;
+  const pendingValue=orders.filter(o=>o.stage!=="Finalizado").reduce((sum,o)=>sum+Number(o.value||0),0);
+  if($("erpPedidosHoje"))$("erpPedidosHoje").textContent=todayOrders;
+  if($("erpPedidosAtrasados"))$("erpPedidosAtrasados").textContent=late;
+  if($("erpProducaoHoje"))$("erpProducaoHoje").textContent=productionToday;
+  if($("erpPecasProduzidas"))$("erpPecasProduzidas").textContent=pieces;
+  if($("erpFuncionariosOnline"))$("erpFuncionariosOnline").textContent=online;
+  if($("erpEstoqueBaixo"))$("erpEstoqueBaixo").textContent=lowStock;
+  if($("erpPedidosUrgentes"))$("erpPedidosUrgentes").textContent=urgent;
+  if($("erpFinanceiroPendente"))$("erpFinanceiroPendente").textContent=money(pendingValue);
+}
+function renderErpKanban(data){
+  const target=$("erpKanban");if(!target)return;
+  const query=$("erpSearch")?.value||"";
+  const orders=(data.orders||[]).filter(order=>erpOrderMatchesSearch(order,query));
+  target.innerHTML=ERP_STAGES.map(stage=>{
+    const stageOrders=orders.filter(o=>(o.stage||"Novo")===stage);
+    return `<div class="erpKanbanCol"><div class="erpKanbanHead"><strong>${esc(stage)}</strong><span>${stageOrders.length}</span></div><div class="erpKanbanList">${stageOrders.length?stageOrders.map(order=>`<article class="erpOrderCard ${erpOrderLate(order)?"late":""}"><div class="erpOrderTop"><strong>${esc(order.number||"-")}</strong><span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span></div><p>${esc(order.client||"-")}</p><small>${esc(order.model||"-")} ${order.color?`• ${esc(order.color)}`:""} • ${Number(order.qty||0)} peça(s)</small><small>Entrega: ${dateBR(order.dueDate)}</small><div class="erpOrderActions"><button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>${stage!=="Finalizado"?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">Avançar</button>`:""}<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button></div></article>`).join(""):`<div class="erpEmptyCol">Sem pedidos</div>`}</div></div>`;
+  }).join("");
+}
+function renderErpStock(data){
+  if($("erpStockRows")){
+    $("erpStockRows").innerHTML=(data.stock||[]).map(item=>{
+      const low=Number(item.current||0)<=Number(item.min||0);
+      return `<tr><td>${esc(item.name)}</td><td>${esc(item.category)}</td><td>${Number(item.current||0)}</td><td>${Number(item.min||0)}</td><td><span class="erpStatusBadge ${low?"danger":"ok"}">${low?"Estoque baixo":"OK"}</span></td></tr>`;
+    }).join("");
+  }
+  const orders=data.orders||[];
+  const revenue=orders.reduce((sum,o)=>sum+Number(o.value||0),0);
+  const pending=orders.filter(o=>o.stage!=="Finalizado").reduce((sum,o)=>sum+Number(o.value||0),0);
+  const finished=orders.filter(o=>o.stage==="Finalizado").reduce((sum,o)=>sum+Number(o.value||0),0);
+  if($("erpFinanceRows")){
+    $("erpFinanceRows").innerHTML=[["Entradas previstas",money(revenue)],["Pedidos pendentes",money(pending)],["Pedidos finalizados",money(finished)],["Fluxo de caixa",money(finished-pending)]].map(r=>`<tr><td>${esc(r[0])}</td><td><strong>${esc(r[1])}</strong></td></tr>`).join("");
+  }
+}
+function renderErpTest(){
+  if(!$("erpTest"))return;
+  applyErpTestVisibility();
+  if(erpTestDisabled()){
+    if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="ERP teste desativado — use o menu do perfil para reativar";
+    return;
+  }
+  populateErpStageSelect();
+  const data=readErpTestData();
+  renderErpStats(data);renderErpKanban(data);renderErpStock(data);
+  if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="ERP teste ativo • dados isolados";
 }
 
 function renderCurrentPageOnly(){
@@ -19207,6 +19562,10 @@ function renderCurrentPageOnly(){
 
     case "collaborators":
       renderAuthUsers();
+      break;
+
+    case "erpTest":
+      renderErpTest();
       break;
 
     case "settings":
@@ -19660,6 +20019,7 @@ if($("wholesaleForm")){
 
 
 $("productInfluencer").addEventListener("change",renderProductCalc);$("productValue").addEventListener("input",renderProductCalc);$("productUsed").addEventListener("input",renderProductCalc);
+if($("erpOrderForm"))$("erpOrderForm").addEventListener("submit",saveErpOrderFromForm);
 $("productForm").addEventListener("submit",e=>{
   e.preventDefault();
   const id=$("productId").value||uid();
