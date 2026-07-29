@@ -9351,6 +9351,94 @@ body[data-page="erpTest"] .main{
   }
 }
 
+
+/* ===== V142 LOGIN SETORIAL ERP KANBAN ===== */
+body.erpSectorRestricted .sidebar,
+body.erpSectorRestricted .menu button:not([data-page="erpTest"]),
+body.erpSectorRestricted .mobileBottomNav,
+body.erpSectorRestricted .topMonthBox,
+body.erpSectorRestricted .profileMenu .systemAuditBtn,
+body.erpSectorRestricted .profileMenu .resetTestBtn,
+body.erpSectorRestricted .profileMenu .erpRestoreMenuBtn{
+  display:none!important;
+}
+
+body.erpSectorRestricted .app{
+  grid-template-columns:1fr!important;
+}
+
+body.erpSectorRestricted .main{
+  background:#050505!important;
+  max-width:100%!important;
+  width:100%!important;
+}
+
+body.erpSectorRestricted #erpTest{
+  display:block!important;
+}
+
+body.erpSectorRestricted .erpModuleTabs{
+  grid-template-columns:1fr!important;
+}
+
+body.erpSectorRestricted .erpModuleTabs button:not([data-erp-module="pedidos"]){
+  display:none!important;
+}
+
+body.erpSectorRestricted .erpModuleTabs button[data-erp-module="pedidos"]{
+  display:flex!important;
+  justify-content:center!important;
+  width:100%!important;
+}
+
+body.erpSectorRestricted .erpHeroActions,
+body.erpSectorRestricted .erpRestoreBox,
+body.erpSectorRestricted .erpOrderCreatePanel{
+  display:none!important;
+}
+
+.erpSectorAccessNotice{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  margin-bottom:12px;
+  padding:12px 14px;
+  border-radius:18px;
+  border:1px solid rgba(212,175,55,.32);
+  background:rgba(212,175,55,.10);
+  color:#f8fafc;
+}
+
+.erpSectorAccessNotice strong{
+  color:#facc15!important;
+  font-weight:1000;
+}
+
+.erpSectorAccessNotice span{
+  color:#cbd5e1;
+  font-size:13px;
+  line-height:1.4;
+}
+
+.erpKanban.restricted{
+  grid-template-columns:minmax(280px,520px)!important;
+  justify-content:start!important;
+}
+
+.erpKanbanCol.sectorOnly{
+  border-color:rgba(212,175,55,.42)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.24)!important;
+}
+
+body.erpSectorRestricted .erpOrderCard .erpOrderActions .danger,
+body.erpSectorRestricted .erpOrderCard .erpOrderActions .secondary{
+  display:none!important;
+}
+
+body.erpSectorRestricted .top{
+  border-bottom:1px solid rgba(212,175,55,.18)!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -9433,7 +9521,7 @@ body[data-page="erpTest"] .main{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V141</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><div class="versionBadge"><span></span> VERSÃO V142</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -10511,7 +10599,7 @@ body[data-page="erpTest"] .main{
           <div class="authManagerHead">
             <div>
               <h4>Cadastro de colaborador</h4>
-              <p>Cada lançamento de Atacado e Varejo salva automaticamente o colaborador logado como responsável.</p>
+              <p>Cada lançamento salva o colaborador logado. Perfis Corte/Costura entram somente no Kanban de produção do ERP teste.</p>
             </div>
             <span class="badge">Rastreamento</span>
           </div>
@@ -10532,6 +10620,8 @@ body[data-page="erpTest"] .main{
               <select id="authRole">
                 <option value="Admin">Admin</option>
                 <option value="Equipe">Equipe</option>
+                <option value="Corte">Setor Corte — Kanban ERP</option>
+                <option value="Costura">Setor Costura — Kanban ERP</option>
               </select>
             </label>
             <label>Status
@@ -10654,7 +10744,7 @@ body[data-page="erpTest"] .main{
   </div>
 
   <div class="erpModule" data-erp-panel="pedidos" hidden>
-    <div class="panel">
+    <div class="panel erpOrderCreatePanel">
       <div class="panelHead">
         <div>
           <h3>Novo pedido ERP teste</h3>
@@ -10683,6 +10773,7 @@ body[data-page="erpTest"] .main{
         <div><h3>Kanban de produção</h3><span class="muted">Fluxo: Novo → Corte → Estampa → Costura → Conferência → Embalagem → Entrega → Finalizado.</span></div>
         <div class="filters"><input id="erpSearch" placeholder="Pesquisar cliente, pedido, modelo, status..." oninput="renderErpTest()"></div>
       </div>
+      <div id="erpSectorAccessNotice" class="erpSectorAccessNotice" hidden></div>
       <div id="erpKanban" class="erpKanban"></div>
     </div>
   </div>
@@ -11062,8 +11153,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V141";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v141";
+const APP_BUILD_VERSION="V142";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v142";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -11102,7 +11193,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=141");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=142");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -11697,7 +11788,12 @@ function initAuthUi(){
   if(session){
     setSessionUser(session);
     hideLoginScreen();
-    setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
+
+    if(isErpSectorRestrictedUser()){
+      setTimeout(()=>{showPage("erpTest");showErpModule("pedidos");},80);
+    }else{
+      setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
+    }
   }else{
     setSessionUser(null);
     showLoginScreen("Use seu usuário interno para entrar.");
@@ -11720,8 +11816,15 @@ function handleLoginSubmit(e){
   setSessionUser(user);
   if($("loginPassword"))$("loginPassword").value="";
   hideLoginScreen();
-  setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
-  showUndoToast("Login salvo neste aparelho.");
+
+  if(isErpSectorRestrictedUser()){
+    showPage("erpTest");
+    showErpModule("pedidos");
+    showUndoToast(`Login de ${erpRestrictedRoleLabel()} liberado somente para o Kanban de produção.`);
+  }else{
+    setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
+    showUndoToast("Login salvo neste aparelho.");
+  }
 }
 
 function logoutUser(){
@@ -12818,7 +12921,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V141",
+    version:"V142",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -13200,6 +13303,18 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_TEST_ISOLATED_MODULE","Não foi possível confirmar isolamento/restauração da aba WISENT ERP teste.");
   }
 
+  if(
+    String(isErpSectorRestrictedUser).includes("corte")&&
+    String(isErpSectorRestrictedUser).includes("costura")&&
+    String(showPage).includes("nextPage=\"erpTest\"")&&
+    String(showErpModule).includes("isErpSectorRestrictedUser()?\"pedidos\"")&&
+    String(renderErpKanban).includes("restrictedStage")
+  ){
+    auditAdd(report,"pass","ERP_SECTOR_KANBAN_LOGIN","Perfis Corte e Costura ficam restritos ao Kanban ERP da própria etapa.");
+  }else{
+    auditAdd(report,"warn","ERP_SECTOR_KANBAN_LOGIN","Não foi possível confirmar toda a restrição de login setorial do ERP.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -13319,7 +13434,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v141-${today()}.json`;
+  a.download=`auditoria-painel-v142-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -13349,7 +13464,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V141",
+    "AUDITORIA DO SISTEMA — V142",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -13377,7 +13492,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V141: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V142: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -14364,7 +14479,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V141 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V142 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -19511,12 +19626,91 @@ function initMobileEnhancements(){
   mobileTableObserver.observe(main,{childList:true,subtree:true});
 }
 
+
+function erpUserRole(){
+  return String(currentUser?.role||"").trim();
+}
+
+function erpUserRoleNormalized(){
+  return erpUserRole()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"");
+}
+
+function isErpSectorRestrictedUser(){
+  const role=erpUserRoleNormalized();
+  return role==="corte"||role==="costura";
+}
+
+function erpRestrictedStage(){
+  const role=erpUserRoleNormalized();
+  if(role==="corte")return "Corte";
+  if(role==="costura")return "Costura";
+  return "";
+}
+
+function erpRestrictedRoleLabel(){
+  const stage=erpRestrictedStage();
+  return stage?`Setor ${stage}`:"";
+}
+
+function applyErpSectorAccessControl(){
+  const restricted=isErpSectorRestrictedUser();
+  const stage=erpRestrictedStage();
+
+  document.body.classList.toggle("erpSectorRestricted",restricted);
+
+  if(restricted){
+    document.querySelectorAll(".menu button").forEach(btn=>{
+      btn.style.display=btn.dataset.page==="erpTest"?"":"none";
+    });
+
+    document.querySelectorAll("[data-erp-module]").forEach(btn=>{
+      btn.style.display=btn.dataset.erpModule==="pedidos"?"":"none";
+      btn.classList.toggle("active",btn.dataset.erpModule==="pedidos");
+    });
+
+    document.querySelectorAll("[data-erp-panel]").forEach(panel=>{
+      panel.hidden=panel.dataset.erpPanel!=="pedidos";
+    });
+
+    if($("pageTitle"))$("pageTitle").textContent=`WISENT ERP — ${erpRestrictedRoleLabel()}`;
+  }else{
+    document.querySelectorAll(".menu button").forEach(btn=>{
+      btn.style.display="";
+    });
+
+    document.querySelectorAll("[data-erp-module]").forEach(btn=>{
+      btn.style.display="";
+    });
+  }
+
+  document.querySelectorAll(".erpOrderCreatePanel,.erpHeroActions,.erpRestoreBox").forEach(el=>{
+    el.style.display=restricted?"none":"";
+  });
+
+  const notice=$("erpSectorAccessNotice");
+  if(notice){
+    notice.hidden=!restricted;
+    notice.innerHTML=restricted
+      ? `<strong>Acesso restrito — ${esc(erpRestrictedRoleLabel())}</strong><span>Este login visualiza apenas o Kanban da própria etapa. Não acessa clientes, estoque, financeiro, relatórios, configurações ou demais áreas do painel.</span>`
+      : "";
+  }
+}
+
+
 function showPage(id){
-  const nextPage=id||"dashboard";
+  let nextPage=id||"dashboard";
+
+  if(isErpSectorRestrictedUser()&&nextPage!=="erpTest"){
+    nextPage="erpTest";
+    id="erpTest";
+  }
 
   if(nextPage==="erpTest"&&erpTestDisabled()){
     alert("A aba WISENT ERP teste está desativada pelo ponto de restauração V139. Use o menu do perfil para reativar, se necessário.");
-    id = "dashboard";
+    id = isErpSectorRestrictedUser()?"erpTest":"dashboard";
   }
 
   const resolvedPage=id||"dashboard";
@@ -19581,6 +19775,7 @@ function renderSharedShell(){
   applyTheme();
   populateIfNeeded();
   applyErpTestVisibility();
+  applyErpSectorAccessControl();
 }
 
 
@@ -19713,9 +19908,13 @@ function exportErpTestData(){
 }
 
 function showErpModule(module){
-  const target=module||"dashboard";
+  const target=isErpSectorRestrictedUser()?"pedidos":(module||"dashboard");
+
   document.querySelectorAll("[data-erp-panel]").forEach(panel=>{panel.hidden=panel.dataset.erpPanel!==target;});
   document.querySelectorAll("[data-erp-module]").forEach(btn=>{btn.classList.toggle("active",btn.dataset.erpModule===target);});
+
+  applyErpSectorAccessControl();
+
   if(target==="etiquetas")renderErpLabel();
   if(target==="relatorios")renderErpReports(readErpTestData());
 }
@@ -20019,20 +20218,36 @@ function renderErpStats(data){
 function renderErpKanban(data){
   const target=$("erpKanban");
   if(!target)return;
+
+  const restricted=isErpSectorRestrictedUser();
+  const restrictedStage=erpRestrictedStage();
+  const stages=restricted?[restrictedStage]:ERP_STAGES;
   const query=$("erpSearch")?.value||"";
   const orders=(data.orders||[]).filter(order=>erpOrderMatchesSearch(order,query));
-  target.innerHTML=ERP_STAGES.map(stage=>{
+
+  target.classList.toggle("restricted",restricted);
+
+  target.innerHTML=stages.map(stage=>{
     const stageOrders=orders.filter(o=>(o.stage||"Novo")===stage);
-    return `<div class="erpKanbanCol">
+
+    return `<div class="erpKanbanCol ${restricted?"sectorOnly":""}">
       <div class="erpKanbanHead"><strong>${esc(stage)}</strong><span>${stageOrders.length}</span></div>
       <div class="erpKanbanList">
-        ${stageOrders.length?stageOrders.map(order=>`<article class="erpOrderCard ${erpOrderLate(order)?"late":""}">
-          <div class="erpOrderTop"><strong>${esc(order.number||"-")}</strong><span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span></div>
-          <p>${esc(order.client||"-")}</p>
-          <small>${esc(order.model||"-")} ${order.color?`• ${esc(order.color)}`:""} • ${Number(order.qty||0)} peça(s)</small>
-          <small>Entrega: ${dateBR(order.dueDate)}</small>
-          <div class="erpOrderActions"><button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>${stage!=="Finalizado"?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">Avançar</button>`:""}<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button></div>
-        </article>`).join(""):`<div class="erpEmptyCol">Sem pedidos</div>`}
+        ${stageOrders.length?stageOrders.map(order=>{
+          const canAdvance=stage!=="Finalizado"&&(!restricted||(order.stage||"Novo")===restrictedStage);
+
+          return `<article class="erpOrderCard ${erpOrderLate(order)?"late":""}">
+            <div class="erpOrderTop"><strong>${esc(order.number||"-")}</strong><span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span></div>
+            <p>${esc(order.client||"-")}</p>
+            <small>${esc(order.model||"-")} ${order.color?`• ${esc(order.color)}`:""} • ${Number(order.qty||0)} peça(s)</small>
+            <small>Entrega: ${dateBR(order.dueDate)}</small>
+            <div class="erpOrderActions">
+              ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
+              ${canAdvance?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
+              ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
+            </div>
+          </article>`;
+        }).join(""):`<div class="erpEmptyCol">${restricted?`Nenhum pedido em ${esc(stage)}`:"Sem pedidos"}</div>`}
       </div>
     </div>`;
   }).join("");
@@ -20153,7 +20368,15 @@ function renderErpTest(){
   renderErpFinance(data);
   renderErpReports(data);
   renderErpLabel();
-  if(!document.querySelector("[data-erp-module].active"))showErpModule("dashboard");
+
+  if(isErpSectorRestrictedUser()){
+    showErpModule("pedidos");
+  }else if(!document.querySelector("[data-erp-module].active")){
+    showErpModule("dashboard");
+  }
+
+  applyErpSectorAccessControl();
+
   if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="ERP teste ativo • dados isolados";
 }
 
