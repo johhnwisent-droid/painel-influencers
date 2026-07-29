@@ -11172,6 +11172,45 @@ body.erpStandbyModalOpen{
   }
 }
 
+
+/* ===== V155 SALVAMENTO SEM TRAVAR NA NUVEM ===== */
+#cloudStatus{
+  transition:color .18s ease,opacity .18s ease!important;
+}
+
+#cloudStatus.cloudStatusError{
+  color:#b91c1c!important;
+}
+
+.cloudDebug{
+  word-break:break-word!important;
+}
+
+
+/* ===== V156 REGRA RÍGIDA DE SALVAMENTO COMPARTILHADO ===== */
+#cloudStatus.cloudStatusPending{
+  color:#b45309!important;
+  font-weight:1000!important;
+}
+
+#cloudStatus.cloudStatusPending::before{
+  content:"● ";
+  color:#f59e0b;
+}
+
+.erpSyncStatus.pending,
+.erpSyncStatus.error{
+  color:#fbbf24!important;
+  border-color:rgba(245,158,11,.35)!important;
+  background:rgba(245,158,11,.12)!important;
+}
+
+.erpSyncStatus.pending::before,
+.erpSyncStatus.error::before{
+  background:#f59e0b!important;
+  box-shadow:0 0 0 4px rgba(245,158,11,.12)!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -11254,7 +11293,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V154</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V156</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -12943,6 +12982,14 @@ let wholesaleSubmitLocked=false;
 let cloudSaveInFlight=null;
 let cloudSaveRetryTimer=null;
 let cloudSaveRetryAttempt=0;
+let cloudSaveStartedAt=0;
+let cloudLocalSavedAt=null;
+const CLOUD_SAVE_WATCHDOG_MS=28000;
+const CLOUD_PAYLOAD_SOFT_LIMIT=620000;
+const SHARED_SAVE_PENDING_KEY=KEY+"_shared_save_pending_v156";
+const SHARED_SAVE_ACK_KEY=KEY+"_shared_save_ack_v156";
+let strictSharedSaveWatchersInstalled=false;
+let strictSharedFlushBusy=false;
 
 /*
   V119 — salvamento robusto dos lançamentos com cupom/influencer.
@@ -13066,8 +13113,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V154";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v154";
+const APP_BUILD_VERSION="V156";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v156";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -13106,7 +13153,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=154");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=156");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -13971,6 +14018,164 @@ function idleCallback(fn,timeout=1600){
 }
 
 
+
+function readSharedSavePending(){
+  try{
+    const raw=localStorage.getItem(SHARED_SAVE_PENDING_KEY);
+    const parsed=raw?JSON.parse(raw):null;
+    return parsed&&typeof parsed==="object"?parsed:null;
+  }catch(e){
+    return null;
+  }
+}
+
+function writeSharedSavePending(data){
+  try{
+    localStorage.setItem(SHARED_SAVE_PENDING_KEY,JSON.stringify(data||{}));
+  }catch(e){
+    console.warn("Não foi possível gravar status de sync compartilhado:",e);
+  }
+}
+
+function clearSharedSavePending(scope="painel"){
+  const pending=readSharedSavePending();
+  if(pending&&(!scope||pending.scope===scope)){
+    try{localStorage.removeItem(SHARED_SAVE_PENDING_KEY);}catch(e){}
+  }
+}
+
+function markSharedSavePending(scope="painel",reason="aguardando confirmação da nuvem"){
+  const existing=readSharedSavePending()||{};
+  const ticket={
+    id:existing.id||uid(),
+    scope,
+    reason,
+    deviceId:getDeviceId(),
+    createdAt:existing.createdAt||new Date().toISOString(),
+    updatedAt:new Date().toISOString(),
+    updatedBy:currentUser?.name||"Sistema"
+  };
+
+  writeSharedSavePending(ticket);
+  return ticket;
+}
+
+function markSharedSaveConfirmed(scope="painel"){
+  const ack={
+    scope,
+    deviceId:getDeviceId(),
+    confirmedAt:new Date().toISOString(),
+    confirmedBy:currentUser?.name||"Sistema"
+  };
+
+  try{
+    localStorage.setItem(SHARED_SAVE_ACK_KEY,JSON.stringify(ack));
+    clearSharedSavePending(scope);
+  }catch(e){}
+
+  return ack;
+}
+
+function sharedSavePendingLabel(){
+  const pending=readSharedSavePending();
+  if(!pending)return "";
+
+  const when=pending.updatedAt?new Date(pending.updatedAt).toLocaleTimeString("pt-BR"):"";
+  return `Compartilhamento pendente desde ${when||"agora"} • ${pending.reason||"aguardando nuvem"}`;
+}
+
+function updateStrictSharedStatus(){
+  const pending=readSharedSavePending();
+  if(!pending)return false;
+
+  updateCloudStatus("Salvo neste aparelho. Aguardando confirmação da nuvem para todos verem.",true);
+  updateCloudDebug(sharedSavePendingLabel()+" • dados preservados em local/snapshot/fila");
+  return true;
+}
+
+function timeoutBool(promise,ms=12000){
+  return Promise.race([
+    Promise.resolve(promise).then(v=>v!==false).catch(()=>false),
+    new Promise(resolve=>setTimeout(()=>resolve(false),ms))
+  ]);
+}
+
+async function flushCriticalRecordQueues(){
+  /*
+    V156:
+    O painel só deve afirmar que está compartilhado quando as filas críticas
+    também forem enviadas. O painel_state leve não basta para todas as áreas.
+  */
+  const tasks=[];
+
+  if(typeof flushWholesalePendingQueue==="function"){
+    tasks.push(timeoutBool(flushWholesalePendingQueue(),15000));
+  }
+
+  if(typeof flushInfluencerLaunchPendingQueue==="function"){
+    tasks.push(timeoutBool(flushInfluencerLaunchPendingQueue(),15000));
+  }
+
+  if(typeof flushProductChoicePendingQueue==="function"){
+    tasks.push(timeoutBool(flushProductChoicePendingQueue(),15000));
+  }
+
+  if(typeof flushErpTestPendingQueue==="function"){
+    tasks.push(timeoutBool(flushErpTestPendingQueue(),18000));
+  }
+
+  if(!tasks.length)return true;
+
+  const results=await Promise.all(tasks);
+  return results.every(Boolean);
+}
+
+async function flushStrictSharedSave(){
+  if(strictSharedFlushBusy)return false;
+  if(navigator.onLine===false){
+    updateStrictSharedStatus();
+    return false;
+  }
+
+  strictSharedFlushBusy=true;
+
+  try{
+    const recordsOk=await flushCriticalRecordQueues();
+    const stateOk=await cloudSaveNow();
+
+    if(recordsOk&&stateOk){
+      markSharedSaveConfirmed("painel");
+      updateCloudStatus("Dados confirmados na nuvem. Todos os usuários podem ver.");
+      updateCloudDebug("confirmação rígida V156: painel_state + filas críticas sincronizadas");
+      return true;
+    }
+
+    markSharedSavePending("painel","nuvem ou filas críticas ainda pendentes");
+    updateStrictSharedStatus();
+    scheduleCloudSaveRetry();
+    return false;
+  }finally{
+    strictSharedFlushBusy=false;
+  }
+}
+
+function installStrictSharedSaveWatchers(){
+  if(strictSharedSaveWatchersInstalled)return;
+  strictSharedSaveWatchersInstalled=true;
+
+  window.addEventListener("online",()=>flushStrictSharedSave());
+  window.addEventListener("focus",()=>{if(readSharedSavePending())flushStrictSharedSave();});
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"&&readSharedSavePending())flushStrictSharedSave();
+  });
+
+  setInterval(()=>{
+    if(document.hidden)return;
+    if(readSharedSavePending())flushStrictSharedSave();
+  },12000);
+}
+
+
 function save(){
   repairStateStructure();
 
@@ -14007,14 +14212,20 @@ function save(){
   if(!localSaved){
     updateCloudStatus("Atenção: falha ao salvar localmente. Não feche o app.",true);
     updateCloudDebug("armazenamento local indisponível ou sem espaço");
+  }else{
+    /*
+      V156:
+      Regra rígida: local salva contra perda, mas só a nuvem confirma que
+      todos os usuários conseguirão ver. Enquanto não confirmar, o sistema
+      mostra pendência de compartilhamento.
+    */
+    cloudLocalSavedAt=new Date();
+    markSharedSavePending("painel","novo salvamento aguardando nuvem");
+    updateCloudStatus("Salvo neste aparelho. Aguardando confirmação da nuvem para todos verem.",true);
+    updateCloudDebug("local confirmado às "+cloudLocalSavedAt.toLocaleTimeString("pt-BR")+"; ainda não marcado como compartilhado até Supabase confirmar");
   }
 
-  /*
-    V144:
-    Salvamento local não troca o status da nuvem.
-    Assim, se houver erro real no Supabase, ele permanece visível para diagnóstico.
-  */
-  if(!cloudBooting)scheduleCloudSave();
+  if(!cloudBooting)scheduleCloudSave(250);
   updateUndoButtons();
   return localSaved;
 }
@@ -14087,9 +14298,12 @@ function updateCloudStatus(text,isError=false){
     O status principal volta a mostrar o problema real da nuvem.
     Isso facilita copiar a mensagem exata do diagnóstico e corrigir a causa.
   */
-  el.textContent=String(text||"");
-  el.style.color=isError?"#dc2626":"#6b7280";
-  el.classList.toggle("cloudStatusError",!!isError);
+  const raw=String(text||"");
+  el.textContent=raw;
+  const pending=raw.toLowerCase().includes("aguardando")||raw.toLowerCase().includes("pendente");
+  el.style.color=isError?(pending?"#b45309":"#dc2626"):"#6b7280";
+  el.classList.toggle("cloudStatusError",!!isError&&!pending);
+  el.classList.toggle("cloudStatusPending",!!pending);
 }
 
 function updateCloudDebug(text){
@@ -15401,6 +15615,32 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_STANDBY_FLOW_V154","Não foi possível confirmar o fluxo blindado de lançamento para standby.");
   }
 
+  if(
+    String(save).includes("Aguardando confirmação da nuvem para todos verem")&&
+    String(stringifyForCloudSave).includes("Não stringify o state inteiro primeiro")&&
+    String(cloudSaveNow).includes("cloudSaveTimeoutPromise")&&
+    String(cloudSaveNow).includes("filas críticas OK")&&
+    String(scheduleCloudSave).includes("Sem internet; ainda não está visível para todos")&&
+    String(cloudEmergencyStateForSave).includes("mediaOmittedFromCloud")
+  ){
+    auditAdd(report,"pass","GLOBAL_SAVE_WATCHDOG_V155","Salvamento global confirma local primeiro, usa painel_state leve, watchdog de nuvem e retry sem travar em 'Salvando na nuvem'.");
+  }else{
+    auditAdd(report,"error","GLOBAL_SAVE_WATCHDOG_V155","Não foi possível confirmar blindagem do salvamento global.");
+  }
+
+  if(
+    String(markSharedSavePending).includes("SHARED_SAVE_PENDING_KEY")&&
+    String(markSharedSaveConfirmed).includes("SHARED_SAVE_ACK_KEY")&&
+    String(flushCriticalRecordQueues).includes("flushErpTestPendingQueue")&&
+    String(cloudSaveNow).includes("filas críticas OK")&&
+    String(save).includes("não marcado como compartilhado até Supabase confirmar")&&
+    String(installStrictSharedSaveWatchers).includes("setInterval")
+  ){
+    auditAdd(report,"pass","STRICT_SHARED_SAVE_V156","Sistema diferencia salvo localmente de compartilhado na nuvem e só confirma para todos após Supabase + filas críticas.");
+  }else{
+    auditAdd(report,"error","STRICT_SHARED_SAVE_V156","Regra rígida de compartilhamento não foi confirmada.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -15534,7 +15774,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v154-${today()}.json`;
+  a.download=`auditoria-painel-v156-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -15564,7 +15804,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V154",
+    "AUDITORIA DO SISTEMA — V156",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -15592,7 +15832,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V154: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V156: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -16579,7 +16819,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V154 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V156 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -16678,7 +16918,8 @@ function scheduleCloudSaveRetry(){
       scheduleCloudSaveRetry();
       return;
     }
-    cloudSaveNow();
+    if(readSharedSavePending())flushStrictSharedSave();
+    else cloudSaveNow();
   },delay);
 }
 
@@ -16722,6 +16963,58 @@ function cloudPayloadInfo(payload){
   };
 }
 
+function cloudStripHeavyMedia(value){
+  if(typeof value==="string"){
+    if(value.startsWith("data:image")||value.startsWith("data:video")||value.startsWith("data:application")){
+      return "";
+    }
+    return value;
+  }
+
+  if(Array.isArray(value)){
+    return value.map(cloudStripHeavyMedia);
+  }
+
+  if(value&&typeof value==="object"){
+    const out={};
+
+    Object.keys(value).forEach(key=>{
+      const lower=String(key).toLowerCase();
+      const shouldStrip=
+        lower.includes("logo")||
+        lower.includes("watermark")||
+        lower.includes("image")||
+        lower.includes("foto")||
+        lower.includes("photo");
+
+      if(shouldStrip&&typeof value[key]==="string"&&String(value[key]).startsWith("data:")){
+        out[key]="";
+      }else{
+        out[key]=cloudStripHeavyMedia(value[key]);
+      }
+    });
+
+    return out;
+  }
+
+  return value;
+}
+
+function cloudEmergencyStateForSave(reason="payload pesado"){
+  const compact=cloudStateForSave();
+  const light=cloudStripHeavyMedia(compact);
+
+  light._syncMeta={
+    ...ensurePlainObject(light._syncMeta,{}),
+    emergencyCloudState:true,
+    emergencyReason:reason,
+    emergencyAt:new Date().toISOString(),
+    mediaOmittedFromCloud:true
+  };
+
+  return light;
+}
+
 function shouldUseCompactCloudState(fullPayload){
   const info=cloudPayloadInfo(fullPayload);
   return info.bytes>650000;
@@ -16729,43 +17022,80 @@ function shouldUseCompactCloudState(fullPayload){
 
 async function stringifyForCloudSave(){
   return await new Promise(resolve=>{
-    idleCallback(()=>{
-      let payload=JSON.stringify(state);
-      let compact=false;
+    let finished=false;
 
-      if(shouldUseCompactCloudState(payload)){
-        payload=JSON.stringify(cloudStateForSave());
-        compact=true;
+    const finish=()=>{
+      if(finished)return;
+      finished=true;
+
+      try{
+        /*
+          V155:
+          Não stringify o state inteiro primeiro.
+          Isso evitava a tela ficar presa em "Salvando na nuvem" quando o
+          payload tinha imagens/base64 ou listas grandes. A nuvem recebe o
+          painel_state leve; dados críticos têm linhas/fila próprias.
+        */
+        let payload=JSON.stringify(cloudStateForSave());
+        let compact=true;
+        let emergency=false;
+        let info=cloudPayloadInfo(payload);
+
+        if(info.bytes>CLOUD_PAYLOAD_SOFT_LIMIT){
+          payload=JSON.stringify(cloudEmergencyStateForSave("payload acima do limite seguro"));
+          emergency=true;
+          info=cloudPayloadInfo(payload);
+        }
+
+        resolve({payload,compact,emergency,info});
+      }catch(e){
+        const payload=JSON.stringify(cloudEmergencyStateForSave(e.message||"erro ao montar payload"));
+        resolve({payload,compact:true,emergency:true,info:cloudPayloadInfo(payload)});
       }
+    };
 
-      resolve({
-        payload,
-        compact,
-        info:cloudPayloadInfo(payload)
-      });
-    },1600);
+    idleCallback(finish,700);
+    setTimeout(finish,1200);
   });
 }
 
+function cloudSaveStale(){
+  return cloudSaveStartedAt&&Date.now()-cloudSaveStartedAt>CLOUD_SAVE_WATCHDOG_MS;
+}
+
+function cloudSaveTimeoutPromise(){
+  return new Promise(resolve=>{
+    setTimeout(()=>resolve({timeout:true}),CLOUD_SAVE_WATCHDOG_MS);
+  });
+}
 
 async function cloudSaveNow(){
-  if(cloudSaveInFlight)return cloudSaveInFlight;
+  if(cloudSaveInFlight){
+    if(cloudSaveStale()){
+      console.warn("cloudSaveInFlight antigo descartado pelo watchdog V155");
+      cloudSaveInFlight=null;
+      cloudSaveStartedAt=0;
+      markSharedSavePending("painel","watchdog liberou salvamento travado");
+      updateCloudStatus("Salvo neste aparelho. Nuvem pendente; ainda não está visível para todos.",true);
+      updateCloudDebug("watchdog liberou salvamento travado; dados locais preservados");
+      scheduleCloudSaveRetry();
+    }else{
+      return cloudSaveInFlight;
+    }
+  }
 
-  cloudSaveInFlight=(async()=>{
-    updateCloudStatus("Salvando na nuvem...");
-    updateCloudDebug("preparando salvamento leve para personalizacao/painel_state");
+  cloudSaveStartedAt=Date.now();
+
+  const task=(async()=>{
+    updateCloudStatus("Dados salvos neste aparelho. Sincronizando nuvem em segundo plano.");
+    updateCloudDebug("preparando painel_state leve e seguro para Supabase");
 
     try{
-      /*
-        Antes o painel_state inteiro era enviado sempre.
-        Agora, se o payload ficar pesado, o painel_state vira leve e as
-        listas grandes ficam protegidas pelas linhas individuais.
-      */
       const savePackage=await stringifyForCloudSave();
       const statePayload=savePackage.payload;
 
       updateCloudDebug(
-        `enviando painel_state ${savePackage.compact?"compacto":"completo"} • ${savePackage.info.kb} KB`
+        `enviando painel_state ${savePackage.emergency?"emergencial":"leve"} • ${savePackage.info.kb} KB`
       );
 
       const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
@@ -16775,50 +17105,91 @@ async function cloudSaveNow(){
           chave:CLOUD_STATE_KEY,
           valor:statePayload
         })
-      },25000);
+      },14000);
 
       updateCloudDebug("resposta do Supabase no salvamento: HTTP "+response.status);
 
       if(!response.ok){
         const text=await response.text();
         console.error("Erro ao salvar Supabase:",text);
-        updateCloudStatus("Erro ao salvar na nuvem. Os dados locais foram preservados.",true);
-        updateCloudDebug("Supabase recusou o salvamento; nova tentativa automática agendada. Detalhe: "+text.slice(0,160));
+        markSharedSavePending("painel","Supabase recusou envio; nova tentativa automática");
+        updateCloudStatus("Salvo neste aparelho. Nuvem recusou; ainda não está visível para todos.",true);
+        updateCloudDebug("Supabase recusou o salvamento; fila/local preservados. Detalhe: "+text.slice(0,180));
         scheduleCloudSaveRetry();
         return false;
       }
+
+      const criticalOk=await flushCriticalRecordQueues();
 
       clearTimeout(cloudSaveRetryTimer);
       cloudSaveRetryAttempt=0;
       cloudLastSavedAt=new Date();
 
-      updateCloudStatus("Nuvem salva automaticamente.");
+      if(criticalOk){
+        markSharedSaveConfirmed("painel");
+        updateCloudStatus("Dados confirmados na nuvem. Todos os usuários podem ver.");
+        updateCloudDebug(
+          `último compartilhamento confirmado: ${cloudLastSavedAt.toLocaleTimeString("pt-BR")} • painel_state ${savePackage.emergency?"emergencial":"leve"} ${savePackage.info.kb} KB • filas críticas OK`
+        );
+        return true;
+      }
+
+      markSharedSavePending("painel","painel_state enviado, mas há filas críticas pendentes");
+      updateCloudStatus("Salvo neste aparelho. Ainda aguardando filas críticas para todos verem.",true);
       updateCloudDebug(
-        `último salvamento: ${cloudLastSavedAt.toLocaleTimeString("pt-BR")} • painel_state ${savePackage.compact?"leve":"completo"} ${savePackage.info.kb} KB`
+        `painel_state enviado às ${cloudLastSavedAt.toLocaleTimeString("pt-BR")}, mas alguma fila individual/ERP ainda está pendente`
       );
-      return true;
+      scheduleCloudSaveRetry();
+      return false;
     }catch(e){
       console.error("Falha ao salvar na nuvem:",e);
-      updateCloudStatus("Nuvem instável. Dados locais preservados e nova tentativa agendada.",true);
+      markSharedSavePending("painel","nuvem instável; nova tentativa agendada");
+      updateCloudStatus("Salvo neste aparelho. Nuvem instável; ainda não está visível para todos.",true);
       updateCloudDebug(
         (e.name==="AbortError"?"tempo esgotado no Supabase":"erro de salvamento: "+(e.message||e))+
-        " • dados locais, filas e snapshots preservados; nova tentativa automática agendada"
+        " • dados locais, filas e snapshots preservados"
       );
       scheduleCloudSaveRetry();
       return false;
     }
   })();
 
-  try{
-    return await cloudSaveInFlight;
-  }finally{
-    cloudSaveInFlight=null;
-  }
+  cloudSaveInFlight=(async()=>{
+    try{
+      const result=await Promise.race([task,cloudSaveTimeoutPromise()]);
+
+      if(result&&result.timeout){
+        markSharedSavePending("painel","nuvem demorou demais; tentando depois");
+        updateCloudStatus("Salvo neste aparelho. Nuvem demorou; ainda não está visível para todos.",true);
+        updateCloudDebug("watchdog V155: salvamento na nuvem ultrapassou "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; local confirmado e retry agendado");
+        scheduleCloudSaveRetry();
+        return false;
+      }
+
+      return result;
+    }finally{
+      cloudSaveInFlight=null;
+      cloudSaveStartedAt=0;
+    }
+  })();
+
+  return cloudSaveInFlight;
 }
 
-function scheduleCloudSave(delay=2200){
+function scheduleCloudSave(delay=1600){
   clearTimeout(cloudSaveTimer);
-  cloudSaveTimer=setTimeout(()=>cloudSaveNow(),delay);
+
+  if(navigator.onLine===false){
+    markSharedSavePending("painel","sem internet; nuvem pendente");
+    updateCloudStatus("Salvo neste aparelho. Sem internet; ainda não está visível para todos.",true);
+    updateCloudDebug("offline detectado; salvamento local confirmado e sincronização será retomada ao reconectar");
+    scheduleCloudSaveRetry();
+    return;
+  }
+
+  cloudSaveTimer=setTimeout(()=>{
+    flushStrictSharedSave();
+  },delay);
 }
 
 async function startApp(){
@@ -16891,7 +17262,9 @@ async function startApp(){
 
       await syncErpTestCloud({showStatus:false});
       installErpTestSyncWatchers();
+      installStrictSharedSaveWatchers();
       erpSecurityGuidePromptOnce();
+      updateStrictSharedStatus();
 
       render();
     }catch(e){
@@ -21903,7 +22276,7 @@ let erpTestSyncWatchersInstalled=false;
 
 function defaultErpTestState(){
   return {
-    version:"V154",
+    version:"V155",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -22662,12 +23035,14 @@ async function flushErpTestPendingQueue(){
 
     try{localStorage.setItem(ERP_TEST_LAST_SYNC_KEY,new Date().toISOString());}catch(e){}
 
-    setErpSyncStatus("ERP sincronizado na nuvem • funcionários atualizados");
-    updateCloudDebug("ERP teste sincronizado no Supabase; demandas disponíveis para colaboradores");
+    markSharedSaveConfirmed("erp");
+    setErpSyncStatus("ERP confirmado na nuvem • funcionários podem ver");
+    updateCloudDebug("ERP teste confirmado no Supabase; demandas disponíveis para colaboradores");
     return true;
   }catch(e){
     console.error("Falha ao sincronizar ERP teste:",e);
-    setErpSyncStatus("ERP salvo localmente • sincronização pendente",true);
+    markSharedSavePending("erp","ERP pendente de nuvem");
+    setErpSyncStatus("ERP salvo neste aparelho • ainda não confirmado para todos",true);
     updateCloudStatus("ERP teste salvo localmente. Sincronização pendente.",true);
     updateCloudDebug("fila ERP preservada: "+String(e.message||e).slice(0,180));
     return false;
@@ -22741,7 +23116,7 @@ function installErpTestSyncWatchers(){
   setInterval(()=>{
     if(document.hidden)return;
     flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:false}));
-  },20000);
+  },10000);
 }
 
 function writeErpTestData(data,options={}){
@@ -22767,9 +23142,10 @@ function writeErpTestData(data,options={}){
   }
 
   if(options.queueCloud!==false){
+    markSharedSavePending("erp","alteração do ERP aguardando nuvem");
     queueErpTestCloudSave(normalized);
-    scheduleErpTestCloudSave(options.delay||900);
-    setErpSyncStatus("ERP salvo localmente • enviando para nuvem");
+    scheduleErpTestCloudSave(options.delay||300);
+    setErpSyncStatus("ERP salvo neste aparelho • aguardando nuvem para todos verem");
   }
 
   return true;
