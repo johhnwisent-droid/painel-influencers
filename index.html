@@ -10036,6 +10036,308 @@ body[data-page="erpTest"] .main{
   }
 }
 
+
+/* ===== V147 ERP KANBAN MOBILE AVANÇADO E MODELOS ILIMITADOS ===== */
+.erpProductBuilderActions{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-end!important;
+}
+
+#erpProductBuilderTotal{
+  display:inline-flex!important;
+  padding:7px 10px!important;
+  border-radius:999px!important;
+  background:rgba(212,175,55,.10)!important;
+  color:#facc15!important;
+  border:1px solid rgba(212,175,55,.22)!important;
+  font-size:12px!important;
+  font-weight:1000!important;
+}
+
+.erpProductItem{
+  position:relative!important;
+  overflow:hidden!important;
+}
+
+.erpProductItemTop{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:10px!important;
+  margin-bottom:10px!important;
+  padding-bottom:10px!important;
+  border-bottom:1px solid rgba(255,255,255,.07)!important;
+}
+
+.erpProductNumber{
+  display:inline-flex!important;
+  padding:6px 10px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.06)!important;
+  color:#f8fafc!important;
+  font-weight:1000!important;
+  font-size:12px!important;
+}
+
+.erpProductItemTop strong{
+  color:#86efac!important;
+  font-size:12px!important;
+  white-space:nowrap!important;
+}
+
+.erpProductItemActions{
+  display:flex!important;
+  gap:7px!important;
+  flex-wrap:wrap!important;
+  justify-content:flex-end!important;
+}
+
+.erpProductMain{
+  grid-template-columns:1fr 1fr!important;
+}
+
+.erpKanbanToolbar{
+  display:flex!important;
+  justify-content:space-between!important;
+  align-items:center!important;
+  gap:10px!important;
+  margin-bottom:10px!important;
+  padding:10px!important;
+  border-radius:18px!important;
+  background:#080808!important;
+  border:1px solid rgba(212,175,55,.18)!important;
+}
+
+.erpKanbanToolbar label{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  color:#cbd5e1!important;
+  font-size:12px!important;
+  font-weight:1000!important;
+}
+
+.erpKanbanToolbar select{
+  min-width:170px!important;
+  background:#0f172a!important;
+  color:#fff!important;
+  border:1px solid #334155!important;
+  border-radius:12px!important;
+  padding:9px 10px!important;
+  font-weight:900!important;
+}
+
+#erpKanbanMobileSummary{
+  display:inline-flex!important;
+  padding:8px 11px!important;
+  border-radius:999px!important;
+  background:rgba(255,255,255,.06)!important;
+  color:#f8fafc!important;
+  font-weight:1000!important;
+  font-size:12px!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+}
+
+.erpStageTitle small{
+  display:block!important;
+  color:#94a3b8!important;
+  font-size:11px!important;
+  margin-top:2px!important;
+  font-weight:850!important;
+}
+
+.erpKanban.singleStage{
+  justify-content:flex-start!important;
+}
+
+.erpKanban.singleStage .erpKanbanCol{
+  flex-basis:min(520px,100%)!important;
+  min-width:min(520px,100%)!important;
+  max-width:520px!important;
+}
+
+.erpKanbanProductBoxes{
+  display:grid!important;
+  gap:8px!important;
+  margin:10px 0!important;
+}
+
+.erpKanbanProductBox{
+  background:rgba(255,255,255,.045)!important;
+  border:1px solid rgba(255,255,255,.08)!important;
+  border-radius:14px!important;
+  padding:9px!important;
+}
+
+.erpKanbanProductTop{
+  display:flex!important;
+  justify-content:space-between!important;
+  gap:8px!important;
+  align-items:flex-start!important;
+}
+
+.erpKanbanProductTop strong{
+  color:#fff!important;
+  font-size:12px!important;
+  line-height:1.25!important;
+}
+
+.erpKanbanProductTop span{
+  flex:0 0 auto!important;
+  color:#86efac!important;
+  font-size:11px!important;
+  font-weight:1000!important;
+}
+
+.erpKanbanProductBox small{
+  display:block!important;
+  color:#94a3b8!important;
+  margin-top:3px!important;
+}
+
+.erpKanbanGrade{
+  display:flex!important;
+  flex-wrap:wrap!important;
+  gap:5px!important;
+  margin-top:7px!important;
+}
+
+.erpKanbanGrade span{
+  display:inline-flex!important;
+  gap:4px!important;
+  align-items:center!important;
+  padding:4px 7px!important;
+  border-radius:999px!important;
+  background:rgba(212,175,55,.10)!important;
+  color:#facc15!important;
+  font-size:10px!important;
+  font-weight:1000!important;
+  border:1px solid rgba(212,175,55,.18)!important;
+}
+
+.erpKanbanGrade span b{
+  color:#fff!important;
+}
+
+.erpKanbanGrade em{
+  color:#64748b!important;
+  font-size:11px!important;
+  font-style:normal!important;
+}
+
+.erpKanbanProductMore{
+  text-align:center!important;
+  color:#facc15!important;
+  border:1px dashed rgba(212,175,55,.28)!important;
+  border-radius:12px!important;
+  padding:8px!important;
+  font-size:12px!important;
+  font-weight:1000!important;
+  background:rgba(212,175,55,.06)!important;
+}
+
+@media(max-width:900px){
+  .erpProductBuilderHead{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpProductBuilderActions{
+    justify-content:stretch!important;
+  }
+
+  .erpProductBuilderActions button,
+  #erpProductBuilderTotal{
+    width:100%!important;
+    justify-content:center!important;
+  }
+
+  .erpProductItemTop{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpProductItemActions{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+  }
+
+  .erpProductItemActions button{
+    width:100%!important;
+    min-height:40px!important;
+  }
+
+  .erpKanbanToolbar{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpKanbanToolbar label{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpKanbanToolbar select,
+  #erpKanbanMobileSummary{
+    width:100%!important;
+    justify-content:center!important;
+  }
+
+  .erpKanban.singleStage .erpKanbanCol,
+  .erpKanbanCol{
+    flex-basis:calc(100vw - 34px)!important;
+    min-width:calc(100vw - 34px)!important;
+    max-width:calc(100vw - 34px)!important;
+  }
+
+  .erpKanbanProductBoxes{
+    gap:9px!important;
+  }
+
+  .erpKanbanProductBox{
+    padding:10px!important;
+  }
+
+  .erpOrderMetaGrid{
+    grid-template-columns:1fr 1fr!important;
+  }
+}
+
+@media(max-width:520px){
+  .erpProductMain{
+    grid-template-columns:1fr!important;
+  }
+
+  .erpSizeGrid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  }
+
+  .erpOrderMetaGrid{
+    grid-template-columns:1fr 1fr!important;
+    gap:7px!important;
+  }
+
+  .erpKanbanProductTop{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+  }
+
+  .erpOrderCard{
+    border-radius:18px!important;
+  }
+
+  .erpOrderCard p{
+    font-size:16px!important;
+  }
+
+  .erpOrderActions{
+    gap:8px!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -10118,7 +10420,7 @@ body[data-page="erpTest"] .main{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V146</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V147</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -11364,9 +11666,12 @@ body[data-page="erpTest"] .main{
           <div class="erpProductBuilderHead">
             <div>
               <h4>Modelos, cores e grade</h4>
-              <p>Adicione quantos modelos precisar. Cada modelo pode ter cor e quantidades por tamanho: PP, P, M, G, GG, G3 e G4.</p>
+              <p>Adicione quantos cards de modelo precisar. Cada card tem cor própria e quantidades por tamanho: PP, P, M, G, GG, G3 e G4.</p>
             </div>
-            <button type="button" class="secondary" onclick="addErpProductItem()">Adicionar modelo</button>
+            <div class="erpProductBuilderActions">
+              <span id="erpProductBuilderTotal">0 modelos • 0 peças</span>
+              <button type="button" class="secondary" onclick="addErpProductItem()">Adicionar modelo</button>
+            </div>
           </div>
           <div id="erpProductItems"></div>
         </div>
@@ -11381,7 +11686,11 @@ body[data-page="erpTest"] .main{
         <div class="filters"><input id="erpSearch" placeholder="Pesquisar cliente, pedido, modelo, status..." oninput="renderErpTest()"></div>
       </div>
       <div id="erpSectorAccessNotice" class="erpSectorAccessNotice" hidden></div>
-      <div class="erpKanbanMobileHint">Deslize para o lado para acompanhar as etapas da produção.</div>
+      <div class="erpKanbanToolbar">
+        <label>Etapa no celular<select id="erpKanbanStageFilter" onchange="renderErpTest()"><option value="">Todas as etapas</option></select></label>
+        <span id="erpKanbanMobileSummary">0 pedidos • 0 peças</span>
+      </div>
+      <div class="erpKanbanMobileHint">No celular, use o filtro de etapa ou deslize para o lado. Toque em “Ver grade” para abrir todos os modelos do pedido.</div>
       <div id="erpKanban" class="erpKanban"></div>
     </div>
   </div>
@@ -11779,8 +12088,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V146";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v146";
+const APP_BUILD_VERSION="V147";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v147";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -11819,7 +12128,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=146");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=147");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -13581,7 +13890,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V146",
+    version:"V147",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -14013,6 +14322,19 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_UI_MOBILE_V146","Não foi possível confirmar toda a melhoria visual/mobile do ERP teste.");
   }
 
+  if(
+    String(addErpProductItem).includes("Duplicar")&&
+    String(updateErpProductBuilderTotals).includes("modelo(s)")&&
+    String(erpProductBoxes).includes("erpKanbanProductBox")&&
+    String(showErpOrderProductsDetail).includes("MODELOS / CORES / GRADE")&&
+    String(populateErpKanbanStageFilter).includes("Todas as etapas")&&
+    String(renderErpKanban).includes("singleStage")
+  ){
+    auditAdd(report,"pass","ERP_KANBAN_PRODUCT_CARDS_V147","Kanban ERP mostra modelos em caixas por pedido, permite cards ilimitados/duplicáveis e melhora filtro mobile por etapa.");
+  }else{
+    auditAdd(report,"warn","ERP_KANBAN_PRODUCT_CARDS_V147","Não foi possível confirmar cards de modelos ilimitados e Kanban mobile avançado.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -14132,7 +14454,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v146-${today()}.json`;
+  a.download=`auditoria-painel-v147-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -14162,7 +14484,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V146",
+    "AUDITORIA DO SISTEMA — V147",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -14190,7 +14512,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V146: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V147: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -15177,7 +15499,7 @@ function installProductChoiceSyncWatchers(){
 
 
 async function cloudLoad(){
-  updateCloudStatus("VERSÃO V146 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V147 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao");
 
   try{
@@ -20698,6 +21020,56 @@ function syncErpProductionDueFromDelivery(){
   }
 }
 
+function erpRenumberProductItems(){
+  document.querySelectorAll("#erpProductItems .erpProductItem").forEach((row,index)=>{
+    const number=row.querySelector("[data-erp-product-number]");
+    if(number)number.textContent=`Modelo ${index+1}`;
+  });
+}
+
+function updateErpProductBuilderTotals(){
+  const products=readErpProductItemsFromForm();
+  const models=products.length;
+  const pieces=products.reduce((sum,item)=>sum+erpProductQty(item),0);
+
+  if($("erpProductBuilderTotal")){
+    $("erpProductBuilderTotal").textContent=`${models} modelo(s) • ${pieces} peça(s)`;
+  }
+
+  document.querySelectorAll("#erpProductItems .erpProductItem").forEach(row=>{
+    const sizes={};
+    ERP_SIZES.forEach(size=>{
+      sizes[size]=Math.max(0,Math.round(finiteNumber(row.querySelector(`[data-erp-size="${size}"]`)?.value,0)));
+    });
+    const total=ERP_SIZES.reduce((sum,size)=>sum+Number(sizes[size]||0),0);
+    const totalEl=row.querySelector("[data-erp-product-total]");
+    if(totalEl)totalEl.textContent=`${total} peça(s)`;
+  });
+}
+
+function bindErpProductItemEvents(row){
+  if(!row)return;
+  row.querySelectorAll("input").forEach(input=>{
+    input.addEventListener("input",updateErpProductBuilderTotals);
+  });
+}
+
+function duplicateErpProductItem(button){
+  const row=button?.closest(".erpProductItem");
+  if(!row)return;
+
+  const sizes={};
+  ERP_SIZES.forEach(size=>{
+    sizes[size]=Math.max(0,Math.round(finiteNumber(row.querySelector(`[data-erp-size="${size}"]`)?.value,0)));
+  });
+
+  addErpProductItem({
+    model:row.querySelector("[data-erp-product-model]")?.value||"",
+    color:row.querySelector("[data-erp-product-color]")?.value||"",
+    sizes
+  });
+}
+
 function addErpProductItem(item=null){
   const wrap=$("erpProductItems");
   if(!wrap)return;
@@ -20707,16 +21079,26 @@ function addErpProductItem(item=null){
   row.className="erpProductItem";
   row.dataset.productId=product.id;
 
-  row.innerHTML=`<div class="erpProductMain">
+  row.innerHTML=`<div class="erpProductItemTop">
+    <span class="erpProductNumber" data-erp-product-number>Modelo</span>
+    <strong data-erp-product-total>0 peça(s)</strong>
+    <div class="erpProductItemActions">
+      <button type="button" class="small secondary" onclick="duplicateErpProductItem(this)">Duplicar</button>
+      <button type="button" class="small danger" onclick="removeErpProductItem(this)">Remover</button>
+    </div>
+  </div>
+  <div class="erpProductMain">
     <label>Modelo<input data-erp-product-model placeholder="Ex.: Camiseta Oversized" value="${esc(product.model==="Modelo não informado"?"":product.model)}"></label>
     <label>Cor<input data-erp-product-color placeholder="Ex.: Preto" value="${esc(product.color||"")}"></label>
-    <button type="button" class="small danger" onclick="removeErpProductItem(this)">Remover</button>
   </div>
   <div class="erpSizeGrid">
     ${ERP_SIZES.map(size=>`<label>${size}<input data-erp-size="${size}" type="number" min="0" step="1" value="${Number(product.sizes?.[size]||0)}"></label>`).join("")}
   </div>`;
 
   wrap.appendChild(row);
+  bindErpProductItemEvents(row);
+  erpRenumberProductItems();
+  updateErpProductBuilderTotals();
 }
 
 function removeErpProductItem(button){
@@ -20724,6 +21106,8 @@ function removeErpProductItem(button){
   const row=button?.closest(".erpProductItem");
   if(row)row.remove();
   if(wrap&&!wrap.children.length)addErpProductItem();
+  erpRenumberProductItems();
+  updateErpProductBuilderTotals();
 }
 
 function readErpProductItemsFromForm(){
@@ -20753,6 +21137,8 @@ function setErpProductItemsInForm(products=[]){
   wrap.innerHTML="";
   const normalized=Array.isArray(products)&&products.length?products:[erpBlankProductItem()];
   normalized.forEach(item=>addErpProductItem(item));
+  erpRenumberProductItems();
+  updateErpProductBuilderTotals();
 }
 
 
@@ -21155,32 +21541,130 @@ function renderErpStats(data){
   if($("erpFinanceiroPendente"))$("erpFinanceiroPendente").textContent=money(pendingValue);
 }
 
+
+function erpProductGradeChips(product){
+  return ERP_SIZES
+    .filter(size=>Number(product?.sizes?.[size]||0)>0)
+    .map(size=>`<span>${esc(size)} <b>${Number(product.sizes[size]||0)}</b></span>`)
+    .join("");
+}
+
+function erpProductBoxes(order,limit=3){
+  const products=erpNormalizeOrderProducts(order);
+  const visible=products.slice(0,limit);
+  const extra=products.length-visible.length;
+
+  return `<div class="erpKanbanProductBoxes">
+    ${visible.map((product,index)=>`<div class="erpKanbanProductBox">
+      <div class="erpKanbanProductTop">
+        <strong>${esc(product.model||`Modelo ${index+1}`)}</strong>
+        <span>${erpProductQty(product)} peça(s)</span>
+      </div>
+      <small>${esc(product.color||"Sem cor")}</small>
+      <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
+    </div>`).join("")}
+    ${extra>0?`<div class="erpKanbanProductMore">+${extra} modelo(s) neste pedido</div>`:""}
+  </div>`;
+}
+
+function showErpOrderProductsDetail(orderId){
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
+
+  if(!order){
+    alert("Pedido não encontrado.");
+    return;
+  }
+
+  const lines=[
+    `Pedido: ${order.number||"-"}`,
+    `Cliente: ${order.client||"-"}`,
+    `Prazo produção: ${dateBR(erpProductionDate(order))}`,
+    `Entrega: ${dateBR(order.dueDate)}`,
+    `Total: ${erpOrderQtyTotal(order)} peça(s)`,
+    "",
+    "MODELOS / CORES / GRADE"
+  ];
+
+  erpNormalizeOrderProducts(order).forEach((product,index)=>{
+    const grade=ERP_SIZES
+      .filter(size=>Number(product.sizes?.[size]||0)>0)
+      .map(size=>`${size}: ${Number(product.sizes[size]||0)}`)
+      .join(" | ")||"Sem grade";
+
+    lines.push("");
+    lines.push(`${index+1}. ${product.model||"Modelo não informado"}`);
+    lines.push(`Cor: ${product.color||"Sem cor"}`);
+    lines.push(`Quantidade: ${erpProductQty(product)} peça(s)`);
+    lines.push(`Grade: ${grade}`);
+  });
+
+  alert(lines.join("\\n"));
+}
+
+function populateErpKanbanStageFilter(){
+  const select=$("erpKanbanStageFilter");
+  if(!select)return;
+
+  const current=select.value||"";
+  const options=['<option value="">Todas as etapas</option>',...ERP_STAGES.map(stage=>`<option value="${esc(stage)}">${esc(stage)}</option>`)];
+  select.innerHTML=options.join("");
+
+  if(ERP_STAGES.includes(current))select.value=current;
+}
+
+function erpVisibleKanbanStages(){
+  const restricted=isErpSectorRestrictedUser();
+  if(restricted)return [erpRestrictedStage()];
+
+  const selected=$("erpKanbanStageFilter")?.value||"";
+  if(selected&&ERP_STAGES.includes(selected))return [selected];
+
+  return ERP_STAGES;
+}
+
+function renderErpKanbanMobileSummary(orders,stages){
+  const filtered=(orders||[]).filter(order=>stages.includes(order.stage||"Pedido"));
+  const pieces=filtered.reduce((sum,order)=>sum+erpOrderQtyTotal(order),0);
+
+  if($("erpKanbanMobileSummary")){
+    $("erpKanbanMobileSummary").textContent=`${filtered.length} pedido(s) • ${pieces} peça(s)`;
+  }
+}
+
+
 function renderErpKanban(data){
   const target=$("erpKanban");
   if(!target)return;
 
+  populateErpKanbanStageFilter();
+
   const restricted=isErpSectorRestrictedUser();
   const restrictedStage=erpRestrictedStage();
-  const stages=restricted?[restrictedStage]:ERP_STAGES;
+  const stages=erpVisibleKanbanStages();
   const query=$("erpSearch")?.value||"";
   const orders=(data.orders||[]).filter(order=>erpOrderMatchesSearch(order,query));
 
+  renderErpKanbanMobileSummary(orders,stages);
+
   target.classList.toggle("restricted",restricted);
+  target.classList.toggle("singleStage",stages.length===1);
 
   target.innerHTML=stages.map(stage=>{
     const stageOrders=orders.filter(o=>(o.stage||"Pedido")===stage);
     const stageKey=erpStageKey(stage);
+    const stagePieces=stageOrders.reduce((sum,order)=>sum+erpOrderQtyTotal(order),0);
 
     return `<div class="erpKanbanCol ${restricted?"sectorOnly":""} stage-${stageKey}">
       <div class="erpKanbanHead">
-        <div class="erpStageTitle"><span class="erpStageIcon">${esc(erpStageIcon(stage))}</span><strong>${esc(stage)}</strong></div>
+        <div class="erpStageTitle"><span class="erpStageIcon">${esc(erpStageIcon(stage))}</span><div><strong>${esc(stage)}</strong><small>${stagePieces} peça(s)</small></div></div>
         <span class="erpStageCount">${stageOrders.length}</span>
       </div>
       <div class="erpKanbanList">
         ${stageOrders.length?stageOrders.map(order=>{
           const canAdvance=stage!=="Finalizado"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
           const urgency=erpProductionUrgencyClass(order);
-          const productSummary=erpProductSummary(order);
+          const products=erpNormalizeOrderProducts(order);
 
           return `<article class="erpOrderCard ${erpOrderLate(order)?"late":""} urgency-${urgency}">
             <div class="erpOrderTop">
@@ -21190,15 +21674,18 @@ function renderErpKanban(data){
             <p>${esc(order.client||"-")}</p>
             <div class="erpOrderMetaGrid">
               <span><b>Peças</b>${erpOrderQtyTotal(order)}</span>
+              <span><b>Modelos</b>${products.length}</span>
               <span><b>Prazo</b>${dateBR(erpProductionDate(order))}</span>
+              <span><b>Etapa</b>${esc(stage)}</span>
             </div>
-            <small class="erpProductSummary">${esc(productSummary)}</small>
+            ${erpProductBoxes(order,3)}
             <div class="erpDeadlineRow">
               <span class="erpDeadlineBadge ${urgency}">${esc(erpProductionUrgencyLabel(order))}</span>
               <small>Entrega: ${dateBR(order.dueDate)}</small>
             </div>
             <small class="erpLastChange">Última alteração: ${esc(erpLastStageChange(order))}</small>
             <div class="erpOrderActions">
+              <button class="small secondary" onclick="showErpOrderProductsDetail('${order.id}')">Ver grade</button>
               ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
               ${canAdvance?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
               ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
