@@ -11545,7 +11545,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V163</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V164</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13100,6 +13100,31 @@ body.erpStandbyModalOpen{
         </div>
       </div>
 
+      <div class="erpSupabaseAuditBox erpRelationalBox">
+        <div class="panelHead">
+          <div>
+            <h3>ERP V2 isolado — Fase 1</h3>
+            <span class="muted">Estrutura paralela com UUID, versionamento, soft delete e auditoria. Nesta fase o ERP atual continua visível e nenhum dado legado é apagado.</span>
+          </div>
+          <div class="filters">
+            <button class="secondary" type="button" onclick="runErpV2Audit()">Auditar V2</button>
+            <button class="primary" type="button" onclick="migrateErpTestToV2()">Migrar cópia para V2</button>
+          </div>
+        </div>
+        <div class="grid erpStatsGrid">
+          <div class="card erpMetricCard"><span class="erpMetricIcon">V2</span><small>Estrutura</small><strong id="erpV2StructureStatus">Não auditada</strong></div>
+          <div class="card erpMetricCard"><span class="erpMetricIcon">↥</span><small>Operações locais V2</small><strong id="erpV2OutboxCount">0</strong></div>
+          <div class="card erpMetricCard"><span class="erpMetricIcon">DB</span><small>Registros migrados</small><strong id="erpV2MigratedCount">0</strong></div>
+          <div class="card erpMetricCard"><span class="erpMetricIcon">✓</span><small>Última migração</small><strong id="erpV2LastMigration">-</strong></div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead><tr><th>Tabela V2</th><th>Status</th><th>Registros</th></tr></thead>
+            <tbody id="erpV2AuditRows"><tr><td colspan="3">Aplique o SQL V164 e execute a auditoria V2.</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
       <div class="erpSupabaseAuditBox">
         <div class="panelHead">
           <div>
@@ -13277,6 +13302,10 @@ const ERP_RELATIONAL_DELETE_KEY=KEY+"_erp_relational_delete_v161";
 const ERP_RELATIONAL_LAST_SYNC_KEY=KEY+"_erp_relational_last_sync_v161";
 let erpRelationalSyncTimer=null;
 let erpRelationalSyncBusy=false;
+const ERP_V2_OUTBOX_DB="wisent_erp_v2_outbox_v164";
+const ERP_V2_OUTBOX_STORE="operations";
+const ERP_V2_MIGRATION_STATUS_KEY=KEY+"_erp_v2_migration_status_v164";
+let erpV2MigrationBusy=false;
 const PERSONALIZACAO_HEALTH_KEY=KEY+"_personalizacao_health_v162";
 const SHARED_SAVE_PENDING_KEY=KEY+"_shared_save_pending_v157";
 const SHARED_SAVE_ACK_KEY=KEY+"_shared_save_ack_v157";
@@ -13412,7 +13441,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V163";
+const APP_BUILD_VERSION="V164";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -13452,7 +13481,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=163");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=164");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -17384,7 +17413,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V163 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V164 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -23843,6 +23872,481 @@ function erpTestCloudRow(data){
 }
 
 
+const ERP_V2_TABLES=[
+  "wisent_erp_v2_orders",
+  "wisent_erp_v2_products",
+  "wisent_erp_v2_clients",
+  "wisent_erp_v2_inventory",
+  "wisent_erp_v2_finance",
+  "wisent_erp_v2_employees",
+  "wisent_erp_v2_settings",
+  "wisent_erp_v2_stage_events",
+  "wisent_erp_v2_standby_events",
+  "wisent_erp_v2_sewing_events",
+  "wisent_erp_v2_operations",
+  "wisent_erp_v2_audit_log"
+];
+
+function erpV2OutboxOpen(){
+  return new Promise((resolve,reject)=>{
+    if(!window.indexedDB){
+      reject(new Error("IndexedDB indisponível"));
+      return;
+    }
+    const request=indexedDB.open(ERP_V2_OUTBOX_DB,1);
+    request.onupgradeneeded=()=>{
+      const db=request.result;
+      if(!db.objectStoreNames.contains(ERP_V2_OUTBOX_STORE)){
+        const store=db.createObjectStore(ERP_V2_OUTBOX_STORE,{keyPath:"operationId"});
+        store.createIndex("status","status",{unique:false});
+        store.createIndex("createdAt","createdAt",{unique:false});
+      }
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error||new Error("Falha ao abrir fila V2"));
+  });
+}
+
+async function erpV2OutboxList(){
+  const db=await erpV2OutboxOpen();
+  return await new Promise((resolve,reject)=>{
+    const tx=db.transaction(ERP_V2_OUTBOX_STORE,"readonly");
+    const request=tx.objectStore(ERP_V2_OUTBOX_STORE).getAll();
+    request.onsuccess=()=>resolve(Array.isArray(request.result)?request.result:[]);
+    request.onerror=()=>reject(request.error||new Error("Falha ao ler fila V2"));
+    tx.oncomplete=()=>db.close();
+  });
+}
+
+async function erpV2EnqueueOperation(operation){
+  const row={
+    operationId:String(operation?.operationId||crypto.randomUUID()),
+    entityType:String(operation?.entityType||""),
+    entityId:operation?.entityId||null,
+    action:String(operation?.action||"update"),
+    baseVersion:Number.isFinite(Number(operation?.baseVersion))?Number(operation.baseVersion):null,
+    patch:ensurePlainObject(operation?.patch,{}),
+    status:"pending",
+    attempts:0,
+    createdAt:new Date().toISOString(),
+    userName:currentAuditInfo().name||"Sistema",
+    deviceId:getDeviceId()
+  };
+  const db=await erpV2OutboxOpen();
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction(ERP_V2_OUTBOX_STORE,"readwrite");
+    tx.objectStore(ERP_V2_OUTBOX_STORE).put(row);
+    tx.oncomplete=()=>resolve(true);
+    tx.onerror=()=>reject(tx.error||new Error("Falha ao gravar fila V2"));
+  });
+  db.close();
+  await renderErpV2Status();
+  return row;
+}
+
+function erpV2ReadMigrationStatus(){
+  try{
+    const raw=localStorage.getItem(ERP_V2_MIGRATION_STATUS_KEY);
+    const parsed=raw?JSON.parse(raw):null;
+    return parsed&&typeof parsed==="object"?parsed:null;
+  }catch(e){
+    return null;
+  }
+}
+
+function erpV2WriteMigrationStatus(status){
+  try{localStorage.setItem(ERP_V2_MIGRATION_STATUS_KEY,JSON.stringify(status||{}));}catch(e){}
+}
+
+async function renderErpV2Status(){
+  const status=erpV2ReadMigrationStatus();
+  let outboxCount=0;
+  try{
+    const rows=await erpV2OutboxList();
+    outboxCount=rows.filter(row=>row.status!=="applied").length;
+  }catch(e){}
+  if($("erpV2OutboxCount"))$("erpV2OutboxCount").textContent=String(outboxCount);
+  if($("erpV2MigratedCount"))$("erpV2MigratedCount").textContent=String(status?.total||0);
+  if($("erpV2LastMigration")){
+    $("erpV2LastMigration").textContent=status?.at
+      ?new Date(status.at).toLocaleString("pt-BR")
+      :"-";
+  }
+}
+
+function erpV2ParseCount(response){
+  const range=response.headers.get("content-range")||"";
+  const total=range.includes("/")?Number(range.split("/").pop()):0;
+  return Number.isFinite(total)?total:0;
+}
+
+async function erpV2ProbeTable(table){
+  try{
+    const response=await fetchWithTimeout(
+      SUPABASE_URL+"/rest/v1/"+encodeURIComponent(table)+"?select=id&limit=1",
+      {method:"GET",headers:cloudHeaders({"Prefer":"count=exact"})},
+      9000
+    );
+    if(!response.ok){
+      const text=await response.text().catch(()=>"");
+      return {table,ok:false,count:0,detail:`HTTP ${response.status}: ${text.slice(0,140)}`};
+    }
+    return {table,ok:true,count:erpV2ParseCount(response),detail:"Tabela acessível"};
+  }catch(e){
+    return {table,ok:false,count:0,detail:String(e.message||e).slice(0,160)};
+  }
+}
+
+async function runErpV2Audit(options={}){
+  const rows=[];
+  for(const table of ERP_V2_TABLES)rows.push(await erpV2ProbeTable(table));
+  const failures=rows.filter(row=>!row.ok).length;
+
+  if($("erpV2AuditRows")){
+    $("erpV2AuditRows").innerHTML=rows.map(row=>`<tr>
+      <td><strong>${esc(row.table)}</strong></td>
+      <td><span class="erpReadyBadge ${row.ok?"ok":"danger"}">${row.ok?"Aprovada":"Falha"}</span></td>
+      <td>${row.ok?`${row.count} registro(s)`:esc(row.detail)}</td>
+    </tr>`).join("");
+  }
+  if($("erpV2StructureStatus")){
+    $("erpV2StructureStatus").textContent=failures?"Incompleta":"Pronta";
+  }
+  await renderErpV2Status();
+  if(options.showAlert!==false){
+    alert(failures
+      ?`ERP V2 ainda não está pronto: ${failures} tabela(s) falharam. Aplique o SQL V164 completo.`
+      :"Estrutura ERP V2 aprovada. A migração pode ser executada sem apagar o legado.");
+  }
+  return {rows,failures};
+}
+
+function erpV2FallbackUuid(seed){
+  const text=String(seed||"");
+  const words=[2166136261,2246822519,3266489917,668265263];
+  for(let w=0;w<words.length;w++){
+    let hash=words[w]>>>0;
+    for(let i=0;i<text.length;i++){
+      hash^=text.charCodeAt(i)+(w*131);
+      hash=Math.imul(hash,16777619)>>>0;
+    }
+    words[w]=hash;
+  }
+  const bytes=[];
+  words.forEach(word=>{
+    bytes.push((word>>>24)&255,(word>>>16)&255,(word>>>8)&255,word&255);
+  });
+  bytes[6]=(bytes[6]&15)|80;
+  bytes[8]=(bytes[8]&63)|128;
+  const hex=bytes.map(byte=>byte.toString(16).padStart(2,"0")).join("");
+  return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+}
+
+async function erpV2Uuid(kind,legacyId){
+  const seed=`wisent-erp-v2:${kind}:${String(legacyId||"sem-id")}`;
+  try{
+    if(crypto?.subtle){
+      const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(seed));
+      const bytes=[...new Uint8Array(digest).slice(0,16)];
+      bytes[6]=(bytes[6]&15)|80;
+      bytes[8]=(bytes[8]&63)|128;
+      const hex=bytes.map(byte=>byte.toString(16).padStart(2,"0")).join("");
+      return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+    }
+  }catch(e){}
+  return erpV2FallbackUuid(seed);
+}
+
+function erpV2Timestamp(value,fallback=new Date().toISOString()){
+  const parsed=Date.parse(value||"");
+  return Number.isFinite(parsed)?new Date(parsed).toISOString():fallback;
+}
+
+async function erpV2BuildMigrationPackage(data){
+  const normalized=normalizeErpTestData(data||readErpTestData());
+  const audit=currentAuditInfo();
+  const now=new Date().toISOString();
+  const actor=audit.name||"Sistema";
+  const device=getDeviceId();
+  const pkg={
+    orders:[],products:[],clients:[],inventory:[],finance:[],employees:[],settings:[],
+    stageEvents:[],standbyEvents:[],sewingEvents:[]
+  };
+
+  for(const order of normalized.orders||[]){
+    const legacyOrderId=String(order.id||uid());
+    const orderId=await erpV2Uuid("order",legacyOrderId);
+    const createdAt=erpV2Timestamp(order.createdAt,now);
+    const updatedAt=erpV2Timestamp(order.updatedAt,createdAt);
+    const products=erpNormalizeOrderProducts(order);
+
+    pkg.orders.push({
+      id:orderId,
+      legacy_id:legacyOrderId,
+      number:String(order.number||""),
+      order_type:erpOrderType(order),
+      client_name:String(order.client||""),
+      phone:String(order.phone||""),
+      due_date:order.dueDate||null,
+      production_due:erpProductionDate(order)||null,
+      priority:String(order.priority||"Normal"),
+      value:Number(order.value||0),
+      stage:String(order.stage||"Pedido"),
+      notes:String(order.notes||""),
+      qty:erpOrderQtyTotal(order),
+      standby_active:erpIsStandby(order),
+      standby_reason:String(erpOrderStandby(order).reason||""),
+      created_at:createdAt,
+      updated_at:updatedAt,
+      created_by:String(order.createdBy||actor),
+      updated_by:String(order.updatedBy||actor),
+      device_id:device,
+      source_version:APP_BUILD_VERSION
+    });
+
+    const productMap=new Map();
+    for(let index=0;index<products.length;index++){
+      const product=products[index];
+      const legacyProductId=String(product.id||`${legacyOrderId}-product-${index}`);
+      const productId=await erpV2Uuid("product",legacyProductId);
+      productMap.set(legacyProductId,productId);
+      pkg.products.push({
+        id:productId,
+        legacy_id:legacyProductId,
+        order_id:orderId,
+        model:String(product.model||""),
+        color:String(product.color||""),
+        sizes:ensurePlainObject(product.sizes,{}),
+        qty:erpProductQty(product),
+        sewing_worker:String(product.sewingWorker||""),
+        sewing_updated_at:product.sewingUpdatedAt?erpV2Timestamp(product.sewingUpdatedAt,updatedAt):null,
+        sewing_updated_by:String(product.sewingUpdatedBy||""),
+        artwork_name:String(product.artworkName||""),
+        artwork_url:String(product.artworkUrl||product.artworkURL||""),
+        artwork_storage_path:String(product.artworkStoragePath||""),
+        position:index,
+        created_at:createdAt,
+        updated_at:updatedAt,
+        created_by:String(order.createdBy||actor),
+        updated_by:String(order.updatedBy||actor),
+        device_id:device
+      });
+    }
+
+    const stageRows=erpOrderStageHistory(order);
+    for(let index=0;index<stageRows.length;index++){
+      const row=stageRows[index];
+      const legacyId=String(row.id||`${legacyOrderId}-stage-${index}`);
+      pkg.stageEvents.push({
+        id:await erpV2Uuid("stage",legacyId),
+        legacy_id:legacyId,
+        order_id:orderId,
+        from_stage:String(row.from||""),
+        to_stage:String(row.to||row.stage||""),
+        stage:String(row.stage||row.to||order.stage||"Pedido"),
+        qty:Number(row.qty||erpOrderQtyTotal(order)||0),
+        event_at:erpV2Timestamp(row.at||row.date,updatedAt),
+        production_due:row.productionDue||erpProductionDate(order)||null,
+        created_by:String(row.user||order.updatedBy||actor),
+        updated_by:String(row.user||order.updatedBy||actor),
+        device_id:device
+      });
+    }
+
+    const standbyRows=Array.isArray(order.standbyHistory)?order.standbyHistory:[];
+    for(let index=0;index<standbyRows.length;index++){
+      const row=standbyRows[index];
+      const legacyId=String(row.id||`${legacyOrderId}-standby-${index}`);
+      pkg.standbyEvents.push({
+        id:await erpV2Uuid("standby",legacyId),
+        legacy_id:legacyId,
+        order_id:orderId,
+        event_type:String(row.type||"standby"),
+        reason:String(row.reason||""),
+        stage:String(row.stage||order.stage||"Pedido"),
+        active:!!row.active,
+        event_at:erpV2Timestamp(row.at,updatedAt),
+        created_by:String(row.user||order.updatedBy||actor),
+        updated_by:String(row.user||order.updatedBy||actor),
+        device_id:device
+      });
+    }
+
+    const sewingRows=Array.isArray(order.sewingHistory)?order.sewingHistory:[];
+    for(let index=0;index<sewingRows.length;index++){
+      const row=sewingRows[index];
+      const legacyId=String(row.id||`${legacyOrderId}-sewing-${index}`);
+      const legacyProductId=String(row.productId||"");
+      pkg.sewingEvents.push({
+        id:await erpV2Uuid("sewing",legacyId),
+        legacy_id:legacyId,
+        order_id:orderId,
+        product_id:productMap.get(legacyProductId)||null,
+        worker:String(row.worker||""),
+        event_at:erpV2Timestamp(row.at,updatedAt),
+        created_by:String(row.user||order.updatedBy||actor),
+        updated_by:String(row.user||order.updatedBy||actor),
+        device_id:device
+      });
+    }
+  }
+
+  for(const client of normalized.clients||[]){
+    const legacyId=String(client.id||uid());
+    const createdAt=erpV2Timestamp(client.createdAt,now);
+    pkg.clients.push({
+      id:await erpV2Uuid("client",legacyId),
+      legacy_id:legacyId,
+      name:String(client.name||""),
+      phone:String(client.phone||""),
+      email:String(client.email||""),
+      document:String(client.doc||""),
+      address:String(client.address||""),
+      city:String(client.city||""),
+      state:String(client.state||""),
+      notes:String(client.notes||""),
+      created_at:createdAt,
+      updated_at:erpV2Timestamp(client.updatedAt,createdAt),
+      created_by:actor,
+      updated_by:actor,
+      device_id:device
+    });
+  }
+
+  for(const item of normalized.stock||[]){
+    const legacyId=String(item.id||uid());
+    pkg.inventory.push({
+      id:await erpV2Uuid("inventory",legacyId),
+      legacy_id:legacyId,
+      name:String(item.name||""),
+      category:String(item.category||""),
+      current_qty:Number(item.current||0),
+      minimum_qty:Number(item.min||0),
+      created_at:now,
+      updated_at:erpV2Timestamp(item.updatedAt,now),
+      created_by:actor,
+      updated_by:actor,
+      device_id:device
+    });
+  }
+
+  for(const entry of normalized.finance||[]){
+    const legacyId=String(entry.id||uid());
+    pkg.finance.push({
+      id:await erpV2Uuid("finance",legacyId),
+      legacy_id:legacyId,
+      entry_date:entry.date||null,
+      entry_type:String(entry.type||""),
+      description:String(entry.description||""),
+      value:Number(entry.value||0),
+      status:String(entry.status||""),
+      created_at:erpV2Timestamp(entry.createdAt||entry.date,now),
+      updated_at:erpV2Timestamp(entry.updatedAt||entry.date,now),
+      created_by:actor,
+      updated_by:actor,
+      device_id:device
+    });
+  }
+
+  for(const employee of normalized.employees||[]){
+    const legacyId=String(employee.id||uid());
+    pkg.employees.push({
+      id:await erpV2Uuid("employee",legacyId),
+      legacy_id:legacyId,
+      name:String(employee.name||""),
+      role:String(employee.role||""),
+      online:!!employee.online,
+      created_at:now,
+      updated_at:now,
+      created_by:actor,
+      updated_by:actor,
+      device_id:device
+    });
+  }
+
+  pkg.settings.push({
+    id:await erpV2Uuid("setting","module"),
+    legacy_id:"module",
+    setting_key:"module",
+    value:{
+      restorePoint:normalized.restorePoint||null,
+      legacyVersion:normalized.version||"",
+      migratedFrom:"WISENT ERP TESTE",
+      migratedAt:now
+    },
+    created_at:now,
+    updated_at:now,
+    created_by:actor,
+    updated_by:actor,
+    device_id:device
+  });
+
+  return pkg;
+}
+
+async function erpV2UpsertChunks(table,rows,chunkSize=100){
+  if(!Array.isArray(rows)||!rows.length)return 0;
+  for(let offset=0;offset<rows.length;offset+=chunkSize){
+    const chunk=rows.slice(offset,offset+chunkSize);
+    const response=await fetchWithTimeout(
+      SUPABASE_URL+"/rest/v1/"+encodeURIComponent(table)+"?on_conflict=legacy_id",
+      {
+        method:"POST",
+        headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
+        body:JSON.stringify(chunk)
+      },
+      18000
+    );
+    if(!response.ok){
+      const text=await response.text().catch(()=>"");
+      throw new Error(`${table} HTTP ${response.status}: ${text.slice(0,220)}`);
+    }
+  }
+  return rows.length;
+}
+
+async function migrateErpTestToV2(){
+  if(erpV2MigrationBusy)return false;
+  const audit=await runErpV2Audit({showAlert:false});
+  if(audit.failures){
+    alert("Migração V2 bloqueada. Aplique primeiro o SQL V164 completo e execute a auditoria novamente.");
+    return false;
+  }
+  if(!confirm("Copiar o WISENT ERP TESTE atual para a estrutura V2?\n\nO ERP legado continuará intacto e continuará sendo a fonte visível nesta fase."))return false;
+
+  erpV2MigrationBusy=true;
+  if($("erpV2StructureStatus"))$("erpV2StructureStatus").textContent="Migrando...";
+  try{
+    const pkg=await erpV2BuildMigrationPackage(readErpTestData());
+    let total=0;
+    total+=await erpV2UpsertChunks("wisent_erp_v2_orders",pkg.orders);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_products",pkg.products);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_clients",pkg.clients);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_inventory",pkg.inventory);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_finance",pkg.finance);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_employees",pkg.employees);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_settings",pkg.settings);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_stage_events",pkg.stageEvents);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_standby_events",pkg.standbyEvents);
+    total+=await erpV2UpsertChunks("wisent_erp_v2_sewing_events",pkg.sewingEvents);
+
+    const status={at:new Date().toISOString(),total,sourceVersion:APP_BUILD_VERSION};
+    erpV2WriteMigrationStatus(status);
+    await runErpV2Audit({showAlert:false});
+    await renderErpV2Status();
+    if($("erpV2StructureStatus"))$("erpV2StructureStatus").textContent="Migrada";
+    alert(`Migração V2 concluída: ${total} registro(s) copiados. O ERP legado não foi apagado nem desativado.`);
+    return true;
+  }catch(e){
+    console.error("Falha na migração ERP V2:",e);
+    if($("erpV2StructureStatus"))$("erpV2StructureStatus").textContent="Falha";
+    alert("A migração V2 foi interrompida sem apagar o legado.\n\n"+String(e.message||e).slice(0,400));
+    return false;
+  }finally{
+    erpV2MigrationBusy=false;
+  }
+}
+
 function erpRelationalEnabled(){
   try{return localStorage.getItem(ERP_RELATIONAL_ENABLED_KEY)==="1";}catch(e){return false;}
 }
@@ -26107,6 +26611,7 @@ function renderErpTest(){
   renderErpProductionReadiness();
   renderErpSupabaseProductionAudit([]);
   renderErpRelationalStatus();
+  renderErpV2Status();
 
   if(isErpSectorRestrictedUser()){
     showErpModule("pedidos");
