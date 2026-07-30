@@ -11429,6 +11429,17 @@ body.erpStandbyModalOpen{
   }
 }
 
+
+/* ===== V160 CORREÇÃO PAYLOAD SUPABASE 44MB ===== */
+.erpArtworkChip.pending{
+  background:rgba(245,158,11,.10)!important;
+  border-color:rgba(245,158,11,.26)!important;
+}
+
+.erpArtworkChip.pending span{
+  color:#fde68a!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -11511,7 +11522,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V159</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V160</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13204,7 +13215,11 @@ let cloudSaveRetryAttempt=0;
 let cloudSaveStartedAt=0;
 let cloudLocalSavedAt=null;
 const CLOUD_SAVE_WATCHDOG_MS=12000;
-const CLOUD_PAYLOAD_SOFT_LIMIT=620000;
+const CLOUD_PAYLOAD_SOFT_LIMIT=420000;
+const CLOUD_PAYLOAD_HARD_LIMIT=900000;
+const CLOUD_STRING_HARD_LIMIT=120000;
+const ERP_ARTWORK_CLOUD_BUDGET=420000;
+const ERP_ARTWORK_SINGLE_CLOUD_LIMIT=90000;
 const SHARED_SAVE_PENDING_KEY=KEY+"_shared_save_pending_v157";
 const SHARED_SAVE_ACK_KEY=KEY+"_shared_save_ack_v157";
 const STRICT_MUTATION_QUEUE_KEY=KEY+"_strict_mutation_queue_v157";
@@ -13339,8 +13354,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V159";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v159";
+const APP_BUILD_VERSION="V160";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v160";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -13379,7 +13394,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=159");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=160");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -16085,6 +16100,19 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_ORDER_TYPE_ARTWORK_V159","Não foi possível confirmar tipo do pedido e estampa por modelo.");
   }
 
+  if(
+    String(cloudStripHeavyMedia).includes("data:image")&&
+    String(ultraLightCloudStateForSave).includes("forcedTinyState")&&
+    String(stringifyForCloudSave).includes("Nunca envie payload gigante")&&
+    String(erpCloudSafeData).includes("ERP_ARTWORK_CLOUD_BUDGET")&&
+    String(erpTestCloudRow).includes("forcedArtworkOmit")&&
+    String(erpCompressArtworkFile).includes("kb>120")
+  ){
+    auditAdd(report,"pass","SUPABASE_PAYLOAD_CAP_V160","Corrigido payload gigante: painel_state tem limite rígido/ultraleve e ERP não envia imagens pesadas no JSON do Supabase.");
+  }else{
+    auditAdd(report,"error","SUPABASE_PAYLOAD_CAP_V160","Não foi possível confirmar correção do payload gigante do Supabase.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -16218,7 +16246,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v159-${today()}.json`;
+  a.download=`auditoria-painel-v160-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -16248,7 +16276,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V159",
+    "AUDITORIA DO SISTEMA — V160",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -16276,7 +16304,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V159: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V160: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -17265,7 +17293,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V159 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V160 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -17418,16 +17446,30 @@ function cloudPayloadInfo(payload){
   };
 }
 
-function cloudStripHeavyMedia(value){
+function cloudStripHeavyMedia(value,path=""){
   if(typeof value==="string"){
-    if(value.startsWith("data:image")||value.startsWith("data:video")||value.startsWith("data:application")){
+    const lower=value.slice(0,120).toLowerCase();
+
+    if(
+      lower.startsWith("data:image")||
+      lower.startsWith("data:video")||
+      lower.startsWith("data:application")||
+      value.includes("data:image")||
+      value.includes("data:video")||
+      value.includes("data:application")
+    ){
       return "";
     }
+
+    if(value.length>CLOUD_STRING_HARD_LIMIT){
+      return `[conteúdo grande omitido da nuvem: ${Math.round(value.length/1024)} KB]`;
+    }
+
     return value;
   }
 
   if(Array.isArray(value)){
-    return value.map(cloudStripHeavyMedia);
+    return value.map((item,index)=>cloudStripHeavyMedia(item,`${path}[${index}]`));
   }
 
   if(value&&typeof value==="object"){
@@ -17435,17 +17477,26 @@ function cloudStripHeavyMedia(value){
 
     Object.keys(value).forEach(key=>{
       const lower=String(key).toLowerCase();
-      const shouldStrip=
+      const shouldStripKey=
         lower.includes("logo")||
         lower.includes("watermark")||
         lower.includes("image")||
         lower.includes("foto")||
-        lower.includes("photo");
+        lower.includes("photo")||
+        lower.includes("artwork")||
+        lower.includes("backup")||
+        lower.includes("snapshot");
 
-      if(shouldStrip&&typeof value[key]==="string"&&String(value[key]).startsWith("data:")){
+      const raw=value[key];
+
+      if(shouldStripKey&&typeof raw==="string"&&(
+        raw.startsWith("data:")||
+        raw.length>CLOUD_STRING_HARD_LIMIT||
+        raw.includes("data:image")
+      )){
         out[key]="";
       }else{
-        out[key]=cloudStripHeavyMedia(value[key]);
+        out[key]=cloudStripHeavyMedia(raw,path?`${path}.${key}`:key);
       }
     });
 
@@ -17453,6 +17504,39 @@ function cloudStripHeavyMedia(value){
   }
 
   return value;
+}
+
+function cloudMinimalArray(rows,limit=1500){
+  if(!Array.isArray(rows))return [];
+  return rows.slice(-limit).map(item=>cloudStripHeavyMedia(item));
+}
+
+function ultraLightCloudStateForSave(reason="payload ainda pesado"){
+  const safeSettings=cloudStripHeavyMedia(state.settings||{});
+  const safeState={
+    version:APP_BUILD_VERSION,
+    settings:safeSettings,
+    influencers:cloudMinimalArray(state.influencers||[],2000),
+    collaborators:cloudMinimalArray(state.collaborators||[],1000),
+    paidAdjustments:cloudMinimalArray(state.paidAdjustments||[],1200),
+    cashPayments:cloudMinimalArray(state.cashPayments||[],1200),
+    accumulationHistory:cloudMinimalArray(state.accumulationHistory||[],2000),
+    _syncMeta:{
+      ...ensurePlainObject(state._syncMeta,{}),
+      compactCloudState:true,
+      ultraLightCloudState:true,
+      strictSaveToken:latestSharedSaveToken||state?._syncMeta?.strictSaveToken||"",
+      officialSource:"supabase",
+      reason,
+      generatedAt:new Date().toISOString(),
+      omittedLargeMedia:true,
+      wholesaleCount:(state.wholesaleRetail||[]).length,
+      launchesCount:(state.launches||[]).length,
+      productChoiceCount:(state.redemptions||[]).length
+    }
+  };
+
+  return cloudStripHeavyMedia(safeState);
 }
 
 function cloudEmergencyStateForSave(reason="payload pesado"){
@@ -17464,8 +17548,14 @@ function cloudEmergencyStateForSave(reason="payload pesado"){
     emergencyCloudState:true,
     emergencyReason:reason,
     emergencyAt:new Date().toISOString(),
-    mediaOmittedFromCloud:true
+    mediaOmittedFromCloud:true,
+    strictSaveToken:latestSharedSaveToken||light?._syncMeta?.strictSaveToken||""
   };
+
+  const emergencyPayload=JSON.stringify(light);
+  if(cloudPayloadInfo(emergencyPayload).bytes>CLOUD_PAYLOAD_HARD_LIMIT){
+    return ultraLightCloudStateForSave("emergency ainda acima do limite seguro");
+  }
 
   return light;
 }
@@ -17485,32 +17575,61 @@ async function stringifyForCloudSave(){
 
       try{
         /*
-          V155:
-          Não stringify o state inteiro primeiro.
-          Isso evitava a tela ficar presa em "Salvando na nuvem" quando o
-          payload tinha imagens/base64 ou listas grandes. A nuvem recebe o
-          painel_state leve; dados críticos têm linhas/fila próprias.
+          V160:
+          Nunca envie payload gigante para painel_state.
+          O diagnóstico de 44 MB era causado por mídia/base64 ou snapshots
+          serializados. A nuvem recebe sempre estado leve; fotos grandes ficam
+          fora do painel_state e o ERP limita imagem por modelo.
         */
-        let payload=JSON.stringify(cloudStateForSave());
+        let cloudObject=cloudStripHeavyMedia(cloudStateForSave());
+        let payload=JSON.stringify(cloudObject);
         let compact=true;
         let emergency=false;
+        let ultra=false;
         let info=cloudPayloadInfo(payload);
 
         if(info.bytes>CLOUD_PAYLOAD_SOFT_LIMIT){
-          payload=JSON.stringify(cloudEmergencyStateForSave("payload acima do limite seguro"));
+          cloudObject=cloudEmergencyStateForSave("payload acima do limite seguro");
+          payload=JSON.stringify(cloudObject);
           emergency=true;
           info=cloudPayloadInfo(payload);
         }
 
-        resolve({payload,compact,emergency,info,token:latestSharedSaveToken||ensurePlainObject(JSON.parse(payload)._syncMeta,{}).strictSaveToken||""});
+        if(info.bytes>CLOUD_PAYLOAD_HARD_LIMIT){
+          cloudObject=ultraLightCloudStateForSave("payload emergencial acima do limite rígido");
+          payload=JSON.stringify(cloudObject);
+          emergency=true;
+          ultra=true;
+          info=cloudPayloadInfo(payload);
+        }
+
+        if(info.bytes>CLOUD_PAYLOAD_HARD_LIMIT){
+          const token=latestSharedSaveToken||"";
+          payload=JSON.stringify({
+            version:APP_BUILD_VERSION,
+            _syncMeta:{
+              strictSaveToken:token,
+              officialSource:"supabase",
+              ultraLightCloudState:true,
+              forcedTinyState:true,
+              generatedAt:new Date().toISOString(),
+              reason:"payload continuou acima do limite rígido"
+            }
+          });
+          emergency=true;
+          ultra=true;
+          info=cloudPayloadInfo(payload);
+        }
+
+        resolve({payload,compact,emergency,ultra,info,token:latestSharedSaveToken||ensurePlainObject(JSON.parse(payload)._syncMeta,{}).strictSaveToken||""});
       }catch(e){
-        const payload=JSON.stringify(cloudEmergencyStateForSave(e.message||"erro ao montar payload"));
-        resolve({payload,compact:true,emergency:true,info:cloudPayloadInfo(payload),token:latestSharedSaveToken||""});
+        const payload=JSON.stringify(ultraLightCloudStateForSave(e.message||"erro ao montar payload"));
+        resolve({payload,compact:true,emergency:true,ultra:true,info:cloudPayloadInfo(payload),token:latestSharedSaveToken||""});
       }
     };
 
-    idleCallback(finish,700);
-    setTimeout(finish,1200);
+    idleCallback(finish,300);
+    setTimeout(finish,700);
   });
 }
 
@@ -17653,7 +17772,7 @@ async function cloudSaveNow(){
       }
 
       updateCloudDebug(
-        `enviando painel_state ${savePackage.emergency?"emergencial":"leve"} • ${savePackage.info.kb} KB`
+        `enviando painel_state ${savePackage.ultra?"ultraleve":savePackage.emergency?"emergencial":"leve"} • ${savePackage.info.kb} KB`
       );
 
       const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
@@ -23512,6 +23631,43 @@ function writeErpTestPendingQueue(queue){
   }
 }
 
+function erpArtworkIsCloudSafe(dataUrl){
+  return !!dataUrl&&String(dataUrl).startsWith("data:image")&&String(dataUrl).length<=ERP_ARTWORK_SINGLE_CLOUD_LIMIT;
+}
+
+function erpCloudSafeData(data){
+  const safe=normalizeErpTestData(cloneSafe(data,data));
+  let budget=ERP_ARTWORK_CLOUD_BUDGET;
+
+  safe.orders=(safe.orders||[]).map(order=>({
+    ...order,
+    products:erpNormalizeOrderProducts(order).map(product=>{
+      const next={...product};
+      const image=String(next.artworkImage||"");
+
+      if(image&&erpArtworkIsCloudSafe(image)&&image.length<=budget){
+        budget-=image.length;
+        next.artworkOmittedFromCloud=false;
+      }else if(image){
+        next.artworkImage="";
+        next.artworkOmittedFromCloud=true;
+        next.artworkOmittedReason="Imagem pesada demais para linha JSON; usar Supabase Storage na próxima etapa.";
+      }
+
+      return next;
+    })
+  }));
+
+  safe._cloudMediaMeta={
+    artworkBudget:ERP_ARTWORK_CLOUD_BUDGET,
+    artworkBudgetRemaining:budget,
+    generatedAt:new Date().toISOString(),
+    note:"V160 evita salvar imagens pesadas dentro do JSON do Supabase."
+  };
+
+  return safe;
+}
+
 function queueErpTestCloudSave(data){
   const normalized=normalizeErpTestData(data);
   const entry={
@@ -23524,9 +23680,30 @@ function queueErpTestCloudSave(data){
 }
 
 function erpTestCloudRow(data){
+  const safe=erpCloudSafeData(data);
+  let valor=JSON.stringify(safe);
+
+  if(cloudPayloadInfo(valor).bytes>1200000){
+    safe.orders=(safe.orders||[]).map(order=>({
+      ...order,
+      products:erpNormalizeOrderProducts(order).map(product=>({
+        ...product,
+        artworkImage:"",
+        artworkOmittedFromCloud:!!product.artworkImage,
+        artworkOmittedReason:product.artworkImage?"Payload ERP excedeu limite seguro; imagem preservada localmente.":product.artworkOmittedReason||""
+      }))
+    }));
+    safe._cloudMediaMeta={
+      ...(safe._cloudMediaMeta||{}),
+      forcedArtworkOmit:true,
+      forcedAt:new Date().toISOString()
+    };
+    valor=JSON.stringify(safe);
+  }
+
   return {
     chave:ERP_TEST_CLOUD_KEY,
-    valor:JSON.stringify(normalizeErpTestData(data))
+    valor
   };
 }
 
@@ -23882,11 +24059,16 @@ function erpProductHasArtwork(product){
   return !!String(product?.artworkImage||"").trim();
 }
 
+function erpProductHasArtworkReference(product){
+  return erpProductHasArtwork(product)||!!product?.artworkOmittedFromCloud||!!String(product?.artworkName||"").trim();
+}
+
 function erpArtworkLabel(product){
+  if(product?.artworkOmittedFromCloud&&!product?.artworkImage)return `${product?.artworkName||"Estampa anexada"} (imagem pesada omitida da nuvem)`;
   return product?.artworkName||"Estampa anexada";
 }
 
-function erpCompressArtworkFile(file,maxSize=1100,quality=.72){
+function erpCompressArtworkFile(file,maxSize=640,quality=.58){
   return new Promise((resolve,reject)=>{
     if(!file){
       reject(new Error("Arquivo não informado."));
@@ -23920,8 +24102,8 @@ function erpCompressArtworkFile(file,maxSize=1100,quality=.72){
         const dataUrl=canvas.toDataURL("image/jpeg",quality);
         const kb=Math.round((dataUrl.length*3/4)/1024);
 
-        if(kb>900){
-          reject(new Error(`Imagem ainda ficou pesada (${kb} KB). Use uma imagem menor da estampa.`));
+        if(kb>120){
+          reject(new Error(`Imagem ainda ficou pesada (${kb} KB). Use uma imagem menor da estampa ou corte a arte antes de enviar.`));
           return;
         }
 
@@ -24968,7 +25150,7 @@ function erpProductBoxes(order,limit=3){
         <span>${erpProductQty(product)} peça(s)</span>
       </div>
       <small>${esc(product.color||"Sem cor")}</small>
-      ${erpProductHasArtwork(product)?`<div class="erpArtworkChip"><img src="${esc(product.artworkImage)}" alt="Estampa"><span>${esc(erpArtworkLabel(product))}</span></div>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
+      ${erpProductHasArtwork(product)?`<div class="erpArtworkChip"><img src="${esc(product.artworkImage)}" alt="Estampa"><span>${esc(erpArtworkLabel(product))}</span></div>`:erpProductHasArtworkReference(product)?`<div class="erpArtworkChip pending"><span>${esc(erpArtworkLabel(product))}</span></div>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
       <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
       ${isCostura?`<div class="erpSewingAssignment">
         <span><b>Costura</b>${esc(product.sewingWorker||"Sem responsável")}</span>
