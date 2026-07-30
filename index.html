@@ -12116,6 +12116,31 @@ body.erpStandbyModalOpen{
 }
 /* ===== FIM V172 ACESSO ADMIN E ESTAMPA NO CELULAR ===== */
 
+/* ===== V173 ENTREGA CONFIRMADA E DEVOLUÇÃO DE ETAPA ===== */
+.erpOrderActions .returnStageBtn{
+  border:1px solid rgba(245,158,11,.42)!important;
+  background:rgba(245,158,11,.13)!important;
+  color:#fbbf24!important;
+  font-weight:900!important;
+}
+.erpOrderActions .returnStageBtn:hover{
+  background:rgba(245,158,11,.22)!important;
+  border-color:rgba(251,191,36,.7)!important;
+}
+.erpOrderActions .orderDetailBtn{
+  border:1px solid rgba(148,163,184,.28)!important;
+  background:rgba(148,163,184,.10)!important;
+  color:#dbe7f5!important;
+  font-weight:850!important;
+}
+body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
+  display:inline-flex!important;
+}
+@media(max-width:600px){
+  .erpOrderActions .returnStageBtn{min-height:42px!important}
+}
+/* ===== FIM V173 ENTREGA CONFIRMADA E DEVOLUÇÃO DE ETAPA ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -12203,7 +12228,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V172</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V173</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14193,7 +14218,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V172";
+const APP_BUILD_VERSION="V173";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -18196,7 +18221,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V172 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V173 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25643,6 +25668,20 @@ async function erpV2FetchAll(table,pageSize=500){
   return rows;
 }
 
+async function erpV2FetchRowsWhere(table,query){
+  const response=await fetchWithTimeout(
+    SUPABASE_URL+"/rest/v1/"+encodeURIComponent(table)+"?"+query+"&select=*&order=updated_at.asc",
+    {method:"GET",headers:cloudHeaders()},
+    12000
+  );
+  if(!response.ok){
+    const text=await response.text().catch(()=>"");
+    throw new Error(`${table} leitura direcionada HTTP ${response.status}: ${text.slice(0,180)}`);
+  }
+  const rows=await response.json();
+  return Array.isArray(rows)?rows:[];
+}
+
 function erpV2CacheRemoteVersions(collections){
   const cache=erpV2ReadVersionCache();
   Object.values(collections||{}).forEach(rows=>{
@@ -26440,7 +26479,67 @@ function openErpRealtimeArrival(){
   renderErpTest();
 }
 
-function erpRealtimeInspectArrival(eventData){
+async function hydrateErpRealtimeDemand(eventData,expectedStage){
+  const record=eventData?.record||{};
+  const orderUuid=String(record.id||"").trim();
+  if(!orderUuid)return false;
+
+  const encodedId=encodeURIComponent(orderUuid);
+  const local=readErpTestData();
+
+  for(let attempt=0;attempt<4;attempt++){
+    if(attempt)await new Promise(resolve=>setTimeout(resolve,[0,280,700,1400][attempt]));
+    try{
+      const [orders,products,stageEvents,standbyEvents,sewingEvents]=await Promise.all([
+        erpV2FetchRowsWhere("wisent_erp_v2_orders",`id=eq.${encodedId}&deleted_at=is.null`),
+        erpV2FetchRowsWhere("wisent_erp_v2_products",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpV2FetchRowsWhere("wisent_erp_v2_stage_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpV2FetchRowsWhere("wisent_erp_v2_standby_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpV2FetchRowsWhere("wisent_erp_v2_sewing_events",`order_id=eq.${encodedId}&deleted_at=is.null`)
+      ]);
+
+      if(!orders.length||String(orders[0].stage||"")!==String(expectedStage||""))continue;
+
+      const rowsByType={
+        orders,products,stageEvents,standbyEvents,sewingEvents,
+        clients:[],inventory:[],finance:[],employees:[],settings:[]
+      };
+      erpV2CacheRemoteVersions(rowsByType);
+      const partial=erpV2OfficialDataFromRows(rowsByType,local);
+      const incoming=partial.orders?.[0];
+      if(!incoming)continue;
+
+      const current=readErpTestData();
+      const index=(current.orders||[]).findIndex(order=>
+        String(order._v2Id||"")===orderUuid||
+        String(order.id||"")===String(incoming.id||"")
+      );
+      if(index>=0)current.orders[index]=incoming;
+      else current.orders.push(incoming);
+
+      erpLocalWriteOnly(normalizeErpTestData(current));
+      erpRealtimeStageByOrder.set(orderUuid,String(incoming.stage||expectedStage));
+      if(incoming.id)erpRealtimeStageByOrder.set(String(incoming.id),String(incoming.stage||expectedStage));
+
+      if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value=erpRestrictedStage()||expectedStage||"";
+      if($("erpSearch"))$("erpSearch").value="";
+      if(currentPage==="erpTest"){
+        showErpModule("pedidos");
+        renderErpTest();
+      }
+      setErpSyncStatus(`Demanda ${incoming.number||""} recebida e confirmada em ${expectedStage}`);
+      return true;
+    }catch(error){
+      console.warn(`Tentativa ${attempt+1} de carregar demanda recebida:`,error);
+    }
+  }
+
+  setErpSyncStatus(`Aviso recebido em ${expectedStage} • buscando os dados completos do pedido`,true);
+  scheduleErpRealtimeCloudRefresh(600);
+  return false;
+}
+
+async function erpRealtimeInspectArrival(eventData){
   if(eventData.table!=="wisent_erp_v2_orders")return;
   const record=eventData.record||{};
   const key=String(record.id||record.legacy_id||"");
@@ -26458,7 +26557,13 @@ function erpRealtimeInspectArrival(eventData){
   erpRealtimeStageByOrder.set(key,stage);
   if(legacyKey)erpRealtimeStageByOrder.set(legacyKey,stage);
 
-  if(stage!==previous)notifyErpSectorArrival(record,stage,eventData);
+  if(stage!==previous){
+    const targetStage=erpRestrictedStage();
+    if(targetStage&&stage===targetStage){
+      const hydrated=await hydrateErpRealtimeDemand(eventData,stage);
+      if(hydrated)notifyErpSectorArrival(record,stage,eventData);
+    }
+  }
 }
 
 function scheduleErpRealtimeCloudRefresh(delay=180){
@@ -26502,7 +26607,9 @@ function handleErpRealtimeMessage(raw){
 
   if(message.event!=="postgres_changes")return;
   const eventData=erpRealtimeEventData(message);
-  erpRealtimeInspectArrival(eventData);
+  erpRealtimeInspectArrival(eventData).catch(error=>{
+    console.warn("Falha ao confirmar demanda recebida em tempo real:",error);
+  });
   scheduleErpRealtimeCloudRefresh();
 }
 
@@ -27679,6 +27786,7 @@ function erpOrderToday(order){return String(order.createdAt||"").slice(0,10)===t
 function erpOrderLate(order){return !!(order.dueDate&&order.stage!=="Finalizado"&&order.dueDate<today());}
 function erpOrderUrgent(order){return String(order.priority||"").toLowerCase().includes("urgente");}
 function erpNextStage(stage){const idx=ERP_STAGES.indexOf(stage);return idx<0||idx>=ERP_STAGES.length-1?stage:ERP_STAGES[idx+1];}
+function erpPreviousStage(stage){const idx=ERP_STAGES.indexOf(stage);return idx<=0?stage:ERP_STAGES[idx-1];}
 
 function saveErpOrderFromForm(e){
   e.preventDefault();
@@ -27790,6 +27898,62 @@ function advanceErpOrder(id){
   order.updatedBy=audit.name||"Não registrado";
   writeErpTestData(data);
   renderErpTest();
+}
+
+function returnErpOrderToPreviousStage(id){
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(item=>String(item.id)===String(id));
+  if(!order)return;
+
+  if(erpIsStandby(order)){
+    alert("Retome este pedido do standby antes de devolvê-lo para a etapa anterior.");
+    return;
+  }
+
+  const restrictedStage=erpRestrictedStage();
+  if(isErpSectorRestrictedUser()&&String(order.stage||"")!==restrictedStage){
+    alert("Este pedido não pertence mais à etapa do seu setor.");
+    scheduleErpRealtimeCloudRefresh(0);
+    return;
+  }
+
+  const current=String(order.stage||"Pedido");
+  const previous=erpPreviousStage(current);
+  if(previous===current)return;
+
+  const confirmed=confirm([
+    `Devolver o pedido ${order.number||""}?`,
+    "",
+    `Etapa atual: ${current}`,
+    `Nova etapa: ${previous}`,
+    "",
+    "A devolução será sincronizada em tempo real e ficará registrada no histórico."
+  ].join("\n"));
+  if(!confirmed)return;
+
+  const audit=currentAuditInfo();
+  order.products=erpNormalizeOrderProducts(order);
+  order.qty=erpOrderQtyTotal(order);
+  order.stage=previous;
+  order.stageHistory=[
+    ...erpOrderStageHistory(order),
+    {
+      ...erpStageHistoryEntry(current,previous,order),
+      direction:"backward",
+      reason:"Devolvido para a etapa anterior"
+    }
+  ];
+  order.updatedAt=audit.at||new Date().toISOString();
+  order.updatedBy=audit.name||"Não registrado";
+
+  const saved=writeErpTestData(data);
+  if(!saved){
+    alert("Não foi possível registrar a devolução. O pedido permaneceu na etapa atual.");
+    return;
+  }
+
+  renderErpTest();
+  showUndoToast(`Pedido ${order.number||""} devolvido de ${current} para ${previous}.`);
 }
 
 function deleteErpOrder(id){
@@ -28108,6 +28272,7 @@ function renderErpKanbanMobileSummary(orders,stages){
 function erpRenderOrderCard(order,stage,restricted){
   const restrictedStage=erpRestrictedStage();
   const canAdvance=stage!=="Finalizado"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
+  const canReturn=stage!=="Pedido"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
   const urgency=erpProductionUrgencyClass(order);
   const products=erpNormalizeOrderProducts(order);
 
@@ -28138,11 +28303,12 @@ function erpRenderOrderCard(order,stage,restricted){
     </div>`:""}
     <small class="erpLastChange">Última alteração: ${esc(erpLastStageChange(order))}</small>
     <div class="erpOrderActions">
-      <button class="small secondary" onclick="showErpOrderProductsDetail('${order.id}')">Ver grade</button>
+      <button class="small orderDetailBtn" onclick="showErpOrderProductsDetail('${order.id}')">Ver detalhes</button>
       ${erpIsStandby(order)
         ?`<button class="small primary" onclick="clearErpOrderStandby('${order.id}')">Retomar</button>`
         :`<button class="small secondary standbyBtn" onclick="setErpOrderStandby('${order.id}')">Lançar standby</button>`}
       ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
+      ${canReturn&&!erpIsStandby(order)?`<button class="small returnStageBtn" onclick="returnErpOrderToPreviousStage('${order.id}')">${restricted?"Devolver etapa":"Voltar etapa"}</button>`:""}
       ${canAdvance&&!erpIsStandby(order)?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
       ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
     </div>
