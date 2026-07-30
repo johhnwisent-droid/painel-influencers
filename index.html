@@ -12079,6 +12079,43 @@ body.erpStandbyModalOpen{
 }
 /* ===== FIM V171 RELATÓRIO RESPONSIVO E DIRETO ===== */
 
+/* ===== V172 ACESSO ADMIN E ESTAMPA NO CELULAR ===== */
+[data-admin-tool][hidden]{display:none!important}
+.erpArtworkChip.hasImage{
+  width:100%;border:1px solid rgba(34,197,94,.26);cursor:pointer;text-align:left;
+  font:inherit;transition:transform .16s ease,border-color .16s ease,background .16s ease;
+}
+.erpArtworkChip.hasImage:hover{transform:translateY(-1px);border-color:rgba(74,222,128,.55);background:rgba(34,197,94,.14)!important}
+.erpArtworkChip.hasImage::after{
+  content:"Ampliar";margin-left:auto;color:#86efac;font-size:10px;font-weight:1000;text-transform:uppercase;
+}
+.erpArtworkViewer{position:fixed;inset:0;z-index:10080;display:grid;place-items:center;padding:20px}
+.erpArtworkViewer[hidden]{display:none!important}
+.erpArtworkViewerBackdrop{position:absolute;inset:0;background:rgba(0,0,0,.84);backdrop-filter:blur(8px)}
+.erpArtworkViewerBox{
+  position:relative;z-index:1;width:min(760px,100%);max-height:92vh;overflow:auto;
+  padding:18px;border:1px solid rgba(255,255,255,.16);border-radius:22px;background:#080c14;
+  box-shadow:0 30px 90px rgba(0,0,0,.65);
+}
+.erpArtworkViewerHead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.erpArtworkViewerHead small{color:#86efac;font-size:10px;font-weight:1000;letter-spacing:.12em}
+.erpArtworkViewerHead h3{margin:3px 0 0;color:#fff;font-size:18px}
+.erpArtworkViewerBox>img{
+  display:block;width:100%;max-height:68vh;object-fit:contain;border-radius:16px;
+  background:linear-gradient(45deg,#111827 25%,#0b1220 25%,#0b1220 50%,#111827 50%,#111827 75%,#0b1220 75%);
+  background-size:24px 24px;border:1px solid rgba(255,255,255,.1);
+}
+.erpArtworkViewerBox>p{margin:12px 2px 0;color:#a8b5c7;font-size:13px}
+@media(max-width:600px){
+  .erpArtworkChip img{width:64px!important;height:64px!important}
+  .erpArtworkChip span{font-size:12px!important}
+  .erpArtworkViewer{padding:0;align-items:end}
+  .erpArtworkViewerBox{width:100%;max-height:96vh;border-radius:22px 22px 0 0;padding:14px}
+  .erpArtworkViewerBox>img{max-height:72vh;min-height:280px}
+  .erpArtworkViewerHead h3{font-size:16px}
+}
+/* ===== FIM V172 ACESSO ADMIN E ESTAMPA NO CELULAR ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -12166,20 +12203,20 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V171</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V172</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
       </button>
 
       <div class="profileMenuDropdown" id="profileMenuDropdown">
-        <button type="button" class="secondary small undoBtn" data-undo-button onclick="undoLastChange();closeProfileMenu();" disabled>Desfazer alteração</button>
-        <button type="button" class="secondary small backupBtn" onclick="exportFullBackup();closeProfileMenu();">Baixar backup</button>
-        <button type="button" class="secondary small backupRestoreBtn" onclick="triggerBackupImport();closeProfileMenu();">Restaurar backup</button>
-        <button type="button" class="secondary small wholesaleRecoverBtn" onclick="recoverWholesaleLaunchesDeepScan();closeProfileMenu();">Recuperação profunda</button>
-        <button type="button" class="secondary small launchRecoverBtn" onclick="recoverInfluencerLaunchesDeepScan();closeProfileMenu();">Recuperar lançamentos influencers</button>
-        <button type="button" class="secondary small systemAuditBtn" onclick="runSystemAuditAndShow();closeProfileMenu();">Auditoria do sistema</button>
-        <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Limpar dados do painel</button>
+        <button type="button" class="secondary small undoBtn" data-undo-button data-admin-tool onclick="undoLastChange();closeProfileMenu();" disabled>Desfazer alteração</button>
+        <button type="button" class="secondary small backupBtn" data-admin-tool onclick="exportFullBackup();closeProfileMenu();">Baixar backup</button>
+        <button type="button" class="secondary small backupRestoreBtn" data-admin-tool onclick="triggerBackupImport();closeProfileMenu();">Restaurar backup</button>
+        <button type="button" class="secondary small wholesaleRecoverBtn" data-admin-tool onclick="recoverWholesaleLaunchesDeepScan();closeProfileMenu();">Recuperação profunda</button>
+        <button type="button" class="secondary small launchRecoverBtn" data-admin-tool onclick="recoverInfluencerLaunchesDeepScan();closeProfileMenu();">Recuperar lançamentos influencers</button>
+        <button type="button" class="secondary small systemAuditBtn" data-admin-tool onclick="runSystemAuditAndShow();closeProfileMenu();">Auditoria do sistema</button>
+        <button type="button" class="secondary small resetTestBtn" data-admin-tool onclick="resetTestData();closeProfileMenu();">Limpar dados do painel</button>
         <button type="button" class="secondary small" onclick="logoutUser();closeProfileMenu();">Sair</button>
       </div>
     </div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
@@ -13361,6 +13398,18 @@ body.erpStandbyModalOpen{
     </div>
   </div>
 
+  <div id="erpArtworkViewer" class="erpArtworkViewer noPrint" hidden>
+    <div class="erpArtworkViewerBackdrop" onclick="closeErpArtworkViewer()"></div>
+    <div class="erpArtworkViewerBox" role="dialog" aria-modal="true" aria-labelledby="erpArtworkViewerTitle">
+      <div class="erpArtworkViewerHead">
+        <div><small>ESTAMPA DO MODELO</small><h3 id="erpArtworkViewerTitle">Visualização da estampa</h3></div>
+        <button type="button" class="secondary" onclick="closeErpArtworkViewer()">Fechar</button>
+      </div>
+      <img id="erpArtworkViewerImage" alt="Imagem ampliada da estampa">
+      <p id="erpArtworkViewerMeta">Imagem vinculada ao pedido.</p>
+    </div>
+  </div>
+
   <div class="erpModuleTabs">
     <button type="button" class="active" data-erp-module="dashboard" onclick="showErpModule('dashboard')"><span class="erpTabIcon">⌂</span>Dashboard</button>
     <button type="button" data-erp-module="clientes" onclick="showErpModule('clientes')"><span class="erpTabIcon">◎</span>Clientes</button>
@@ -13993,7 +14042,7 @@ const CLOUD_PAYLOAD_SOFT_LIMIT=420000;
 const CLOUD_PAYLOAD_HARD_LIMIT=900000;
 const CLOUD_STRING_HARD_LIMIT=120000;
 const ERP_ARTWORK_CLOUD_BUDGET=420000;
-const ERP_ARTWORK_SINGLE_CLOUD_LIMIT=90000;
+const ERP_ARTWORK_SINGLE_CLOUD_LIMIT=180000;
 const ERP_RELATIONAL_ENABLED_KEY=KEY+"_erp_relational_enabled_v161";
 const ERP_RELATIONAL_PENDING_KEY=KEY+"_erp_relational_pending_v161";
 const ERP_RELATIONAL_DELETE_KEY=KEY+"_erp_relational_delete_v161";
@@ -14144,7 +14193,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V171";
+const APP_BUILD_VERSION="V172";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -14386,6 +14435,7 @@ function backupFileName(){
 }
 
 function exportFullBackup(){
+  if(!requireWisentAdmin("baixar o backup completo"))return;
   try{
     const payload={
       type:"wisent-painel-backup",
@@ -14413,6 +14463,7 @@ function exportFullBackup(){
 }
 
 function triggerBackupImport(){
+  if(!requireWisentAdmin("restaurar um backup"))return;
   const input=$("backupImportInput");
   if(!input){
     alert("Campo de upload de backup não encontrado.");
@@ -14430,6 +14481,10 @@ function validateBackupState(importedState){
 }
 
 function handleBackupImport(event){
+  if(!requireWisentAdmin("restaurar um backup")){
+    if(event?.target)event.target.value="";
+    return;
+  }
   const file=event?.target?.files?.[0];
   if(!file)return;
 
@@ -14491,6 +14546,7 @@ function handleBackupImport(event){
 
 
 function resetTestData(){
+  if(!requireWisentAdmin("limpar os dados do painel"))return;
   const msg1=[
     "Limpar todos os dados do painel?",
     "",
@@ -14563,6 +14619,7 @@ function resetTestData(){
 
 
 function undoLastChange(){
+  if(!requireWisentAdmin("desfazer alterações globais"))return;
   const stack=readUndoStack();
   if(!stack.length){
     alert("Não há alteração para desfazer.");
@@ -14723,6 +14780,7 @@ function setSessionUser(user){
     else clearAuthSessionRaw();
   }catch(e){}
   applyErpTechnicalMapAccess();
+  applyAdminToolAccess();
 }
 
 
@@ -14744,7 +14802,10 @@ document.addEventListener("click",e=>{
 });
 
 document.addEventListener("keydown",e=>{
-  if(e.key==="Escape")closeProfileMenu();
+  if(e.key==="Escape"){
+    closeProfileMenu();
+    if(typeof closeErpArtworkViewer==="function")closeErpArtworkViewer();
+  }
 });
 
 function updateAuthVisuals(){
@@ -16196,6 +16257,7 @@ function recoveredItemsNotInCurrent(candidates){
 }
 
 async function recoverWholesaleLaunchesDeepScan(){
+  if(!requireWisentAdmin("executar a recuperação profunda"))return;
   updateCloudStatus("Fazendo recuperação profunda neste aparelho...");
   updateCloudDebug("varrendo todas as chaves locais, sessão, histórico e filas");
 
@@ -17095,6 +17157,7 @@ function downloadSystemAuditReport(report){
 }
 
 async function runSystemAuditAndShow(){
+  if(!requireWisentAdmin("executar a auditoria administrativa"))return;
   updateCloudStatus("Executando auditoria do sistema...");
   updateCloudDebug("validando interface, cálculos, armazenamento e Supabase");
 
@@ -17701,6 +17764,7 @@ function recoveredInfluencerLaunchesNotInCurrent(candidates){
 }
 
 async function recoverInfluencerLaunchesDeepScan(){
+  if(!requireWisentAdmin("recuperar lançamentos de influencers"))return;
   updateCloudStatus("Fazendo recuperação profunda dos lançamentos de influencers...");
   updateCloudDebug("varrendo storage, sessão, histórico e filas da aba Lançamentos");
 
@@ -18132,7 +18196,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V171 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V172 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -23701,6 +23765,31 @@ function isErpTechnicalMapAdmin(){
   return role==="admin"&&(username==="admin"||userId==="admin");
 }
 
+function isWisentAdmin(){
+  return erpUserRoleNormalized()==="admin";
+}
+
+function applyAdminToolAccess(){
+  const allowed=isWisentAdmin();
+  document.querySelectorAll("[data-admin-tool]").forEach(element=>{
+    element.hidden=!allowed;
+    element.style.display=allowed?"":"none";
+    element.setAttribute("aria-hidden",allowed?"false":"true");
+    element.tabIndex=allowed?0:-1;
+  });
+  document.body.classList.toggle("wisentAdminSession",allowed);
+  document.body.classList.toggle("wisentNonAdminSession",!!currentUser&&!allowed);
+  return allowed;
+}
+
+function requireWisentAdmin(action="usar esta ferramenta"){
+  if(isWisentAdmin())return true;
+  closeProfileMenu();
+  appendErpAudit("admin_tool_denied",{action,user:currentUser?.name||"Sem login",role:currentUser?.role||""},"warn");
+  alert(`Acesso negado. Somente uma conta com perfil Admin pode ${action}.`);
+  return false;
+}
+
 function applyErpTechnicalMapAccess(){
   const allowed=isErpTechnicalMapAdmin();
   const button=document.querySelector("[data-erp-admin-map]");
@@ -23993,6 +24082,7 @@ function exportErpAuditLog(){
 }
 
 function exportErpBackupBundle(){
+  if(!requireWisentAdmin("baixar o backup do ERP"))return;
   const data=readErpTestData();
   const bundle={
     exportedAt:new Date().toISOString(),
@@ -25023,7 +25113,7 @@ async function erpV2BuildMigrationPackage(data){
         sewing_updated_at:product.sewingUpdatedAt?erpV2Timestamp(product.sewingUpdatedAt,updatedAt):null,
         sewing_updated_by:String(product.sewingUpdatedBy||""),
         artwork_name:String(product.artworkName||""),
-        artwork_url:String(product.artworkUrl||product.artworkURL||""),
+        artwork_url:String(product.artworkUrl||product.artworkURL||(erpArtworkIsCloudSafe(product.artworkImage)?product.artworkImage:"")),
         artwork_storage_path:String(product.artworkStoragePath||""),
         position:index,
         created_at:createdAt,
@@ -25620,7 +25710,7 @@ function erpV2OfficialDataFromRows(rowsByType,localData){
       artworkName:row.artwork_name||"",
       artworkUrl:row.artwork_url||"",
       artworkStoragePath:row.artwork_storage_path||"",
-      artworkImage:localArtwork.get(legacyId)||"",
+      artworkImage:localArtwork.get(legacyId)||(String(row.artwork_url||"").startsWith("data:image")?row.artwork_url:""),
       _v2Id:row.id,
       _v2Version:Number(row.version||1),
       _position:Number(row.position||0)
@@ -25866,11 +25956,11 @@ function erpRelationalProductRow(order,product,index=0){
     sewing_updated_at:p.sewingUpdatedAt||null,
     sewing_updated_by:p.sewingUpdatedBy||"",
     artwork_name:String(p.artworkName||""),
-    artwork_url:String(p.artworkUrl||p.artworkURL||""),
+    artwork_url:String(p.artworkUrl||p.artworkURL||(erpArtworkIsCloudSafe(p.artworkImage)?p.artworkImage:"")),
     artwork_storage_path:String(p.artworkStoragePath||""),
     artwork_has_local_image:!!p.artworkImage,
     artwork_omitted_from_json:!!p.artworkImage,
-    artwork_note:p.artworkImage?"Imagem local/base64 não enviada para tabela; próxima fase será Storage.":"",
+    artwork_note:p.artworkImage?(erpArtworkIsCloudSafe(p.artworkImage)?"Imagem compactada sincronizada entre aparelhos.":"Imagem local excede o limite; migrar para Storage."):"",
     position:Number(index||0),
     created_at:order.createdAt||new Date().toISOString(),
     updated_at:order.updatedAt||new Date().toISOString(),
@@ -26646,6 +26736,7 @@ function resetErpTestData(){
 }
 
 function exportErpTestData(){
+  if(!requireWisentAdmin("exportar os dados completos do ERP"))return;
   const data=readErpTestData();
   const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json;charset=utf-8"});
   const url=URL.createObjectURL(blob);
@@ -26674,7 +26765,7 @@ function showErpModule(module){
 
 
 function erpBlankProductItem(){
-  return {id:uid(),model:"",color:"",sizes:{PP:0,P:0,M:0,G:0,GG:0,G3:0,G4:0},artworkImage:"",artworkName:"",artworkUpdatedAt:"",artworkUpdatedBy:""};
+  return {id:uid(),model:"",color:"",sizes:{PP:0,P:0,M:0,G:0,GG:0,G3:0,G4:0},artworkImage:"",artworkUrl:"",artworkStoragePath:"",artworkName:"",artworkUpdatedAt:"",artworkUpdatedBy:""};
 }
 
 function erpNormalizeProductItem(item){
@@ -26692,6 +26783,8 @@ function erpNormalizeProductItem(item){
     sewingUpdatedAt:item?.sewingUpdatedAt||"",
     sewingUpdatedBy:item?.sewingUpdatedBy||"",
     artworkImage:String(item?.artworkImage||""),
+    artworkUrl:String(item?.artworkUrl||item?.artworkURL||""),
+    artworkStoragePath:String(item?.artworkStoragePath||""),
     artworkName:String(item?.artworkName||"").trim(),
     artworkUpdatedAt:item?.artworkUpdatedAt||"",
     artworkUpdatedBy:item?.artworkUpdatedBy||""
@@ -26746,7 +26839,11 @@ function erpOrderTypeClass(order){
 }
 
 function erpProductHasArtwork(product){
-  return !!String(product?.artworkImage||"").trim();
+  return !!erpProductArtworkSrc(product);
+}
+
+function erpProductArtworkSrc(product){
+  return String(product?.artworkImage||product?.artworkUrl||product?.artworkURL||"").trim();
 }
 
 function erpProductHasArtworkReference(product){
@@ -26754,8 +26851,41 @@ function erpProductHasArtworkReference(product){
 }
 
 function erpArtworkLabel(product){
-  if(product?.artworkOmittedFromCloud&&!product?.artworkImage)return `${product?.artworkName||"Estampa anexada"} (imagem pesada omitida da nuvem)`;
+  if(product?.artworkOmittedFromCloud&&!erpProductArtworkSrc(product))return `${product?.artworkName||"Estampa anexada"} (imagem indisponível neste aparelho)`;
   return product?.artworkName||"Estampa anexada";
+}
+
+function openErpArtworkViewer(trigger){
+  const row=trigger?.closest?.(".erpProductItem");
+  const src=String(
+    trigger?.dataset?.artworkSrc||
+    trigger?.currentSrc||
+    trigger?.src||
+    row?.dataset?.artworkImage||
+    row?.dataset?.artworkUrl||
+    ""
+  ).trim();
+  if(!src){
+    alert("A imagem desta estampa ainda não está disponível neste aparelho.");
+    return;
+  }
+  const label=trigger?.dataset?.artworkLabel||row?.dataset?.artworkName||"Estampa vinculada ao modelo";
+  const modal=$("erpArtworkViewer");
+  const image=$("erpArtworkViewerImage");
+  if(!modal||!image)return;
+  image.src=src;
+  if($("erpArtworkViewerTitle"))$("erpArtworkViewerTitle").textContent=label;
+  if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Use o gesto de zoom do celular para conferir os detalhes da arte.";
+  modal.hidden=false;
+  document.body.style.overflow="hidden";
+}
+
+function closeErpArtworkViewer(){
+  const modal=$("erpArtworkViewer");
+  if(modal)modal.hidden=true;
+  const image=$("erpArtworkViewerImage");
+  if(image)image.removeAttribute("src");
+  document.body.style.overflow="";
 }
 
 function erpCompressArtworkFile(file,maxSize=640,quality=.58){
@@ -26818,12 +26948,14 @@ function refreshErpArtworkPreview(row){
   const img=row.querySelector("[data-erp-artwork-preview]");
   const name=row.querySelector("[data-erp-artwork-name]");
   const remove=row.querySelector("[data-erp-artwork-remove]");
-  const artwork=row.dataset.artworkImage||"";
+  const artwork=row.dataset.artworkImage||row.dataset.artworkUrl||"";
   const artworkName=row.dataset.artworkName||"";
 
   if(img){
     img.src=artwork||"";
     img.style.display=artwork?"block":"none";
+    img.style.cursor=artwork?"zoom-in":"";
+    img.title=artwork?"Toque para ampliar a estampa":"";
   }
 
   if(name){
@@ -26848,6 +26980,8 @@ async function handleErpProductArtworkUpload(input){
     const audit=currentAuditInfo();
 
     row.dataset.artworkImage=result.dataUrl;
+    row.dataset.artworkUrl="";
+    row.dataset.artworkStoragePath="";
     row.dataset.artworkName=result.name;
     row.dataset.artworkUpdatedAt=audit.at||new Date().toISOString();
     row.dataset.artworkUpdatedBy=audit.name||"Não registrado";
@@ -26869,6 +27003,8 @@ function removeErpProductArtwork(button){
   if(!row)return;
 
   row.dataset.artworkImage="";
+  row.dataset.artworkUrl="";
+  row.dataset.artworkStoragePath="";
   row.dataset.artworkName="";
   row.dataset.artworkUpdatedAt="";
   row.dataset.artworkUpdatedBy="";
@@ -26940,6 +27076,8 @@ function duplicateErpProductItem(button){
     color:row.querySelector("[data-erp-product-color]")?.value||"",
     sewingWorker:row.querySelector("[data-erp-product-sewing]")?.value||"",
     artworkImage:row.dataset.artworkImage||"",
+    artworkUrl:row.dataset.artworkUrl||"",
+    artworkStoragePath:row.dataset.artworkStoragePath||"",
     artworkName:row.dataset.artworkName||"",
     artworkUpdatedAt:row.dataset.artworkUpdatedAt||"",
     artworkUpdatedBy:row.dataset.artworkUpdatedBy||"",
@@ -26956,6 +27094,8 @@ function addErpProductItem(item=null){
   row.className="erpProductItem";
   row.dataset.productId=product.id;
   row.dataset.artworkImage=product.artworkImage||"";
+  row.dataset.artworkUrl=product.artworkUrl||"";
+  row.dataset.artworkStoragePath=product.artworkStoragePath||"";
   row.dataset.artworkName=product.artworkName||"";
   row.dataset.artworkUpdatedAt=product.artworkUpdatedAt||"";
   row.dataset.artworkUpdatedBy=product.artworkUpdatedBy||"";
@@ -26976,7 +27116,7 @@ function addErpProductItem(item=null){
 
   <div class="erpArtworkUploadBox">
     <div class="erpArtworkPreviewWrap">
-      <img data-erp-artwork-preview alt="Prévia da estampa" style="display:none">
+      <img data-erp-artwork-preview alt="Prévia da estampa" style="display:none" onclick="openErpArtworkViewer(this)">
       <div>
         <strong>Foto da estampa deste modelo</strong>
         <span data-erp-artwork-name>Nenhuma estampa anexada</span>
@@ -27025,6 +27165,8 @@ function readErpProductItemsFromForm(){
       color:row.querySelector("[data-erp-product-color]")?.value||"",
       sewingWorker:row.querySelector("[data-erp-product-sewing]")?.value||"",
       artworkImage:row.dataset.artworkImage||"",
+      artworkUrl:row.dataset.artworkUrl||"",
+      artworkStoragePath:row.dataset.artworkStoragePath||"",
       artworkName:row.dataset.artworkName||"",
       artworkUpdatedAt:row.dataset.artworkUpdatedAt||"",
       artworkUpdatedBy:row.dataset.artworkUpdatedBy||"",
@@ -27880,7 +28022,7 @@ function erpProductBoxes(order,limit=3){
         <span>${erpProductQty(product)} peça(s)</span>
       </div>
       <small>${esc(product.color||"Sem cor")}</small>
-      ${erpProductHasArtwork(product)?`<div class="erpArtworkChip"><img src="${esc(product.artworkImage)}" alt="Estampa"><span>${esc(erpArtworkLabel(product))}</span></div>`:erpProductHasArtworkReference(product)?`<div class="erpArtworkChip pending"><span>${esc(erpArtworkLabel(product))}</span></div>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
+      ${erpProductHasArtwork(product)?`<button type="button" class="erpArtworkChip hasImage" data-artwork-src="${esc(erpProductArtworkSrc(product))}" data-artwork-label="${esc(erpArtworkLabel(product))}" onclick="openErpArtworkViewer(this)"><img src="${esc(erpProductArtworkSrc(product))}" alt="Estampa do modelo ${esc(product.model||"")}"><span>${esc(erpArtworkLabel(product))}</span></button>`:erpProductHasArtworkReference(product)?`<div class="erpArtworkChip pending"><span>${esc(erpArtworkLabel(product))}</span></div>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
       <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
       ${isCostura?`<div class="erpSewingAssignment">
         <span><b>Costura</b>${esc(product.sewingWorker||"Sem responsável")}</span>
@@ -29031,9 +29173,39 @@ function exportReportCSV(){
   ],`relatorio-${inf.coupon}.csv`);
 }
 
-function exportBackup(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="backup-painel-influencers.json";a.click();URL.revokeObjectURL(url);}
-function importBackup(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{state=JSON.parse(r.result);normalize();save();render();alert("Backup importado.");}catch(err){alert("Arquivo inválido.");}};r.readAsText(f);}
+function exportBackup(){
+  if(!requireWisentAdmin("exportar o backup"))return;
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="backup-painel-influencers.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importBackup(e){
+  if(!requireWisentAdmin("importar um backup")){
+    if(e?.target)e.target.value="";
+    return;
+  }
+  const f=e.target.files[0];
+  if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    try{
+      state=JSON.parse(r.result);
+      normalize();
+      save();
+      render();
+      alert("Backup importado.");
+    }catch(err){
+      alert("Arquivo inválido.");
+    }
+  };
+  r.readAsText(f);
+}
 async function clearAll(){
+  if(!requireWisentAdmin("apagar todos os dados"))return;
   if(confirm("Resetar todos os dados salvos neste navegador e na nuvem?")){
     state=structuredClone(INITIAL_STATE);
     normalize();
