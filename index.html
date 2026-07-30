@@ -11440,6 +11440,21 @@ body.erpStandbyModalOpen{
   color:#fde68a!important;
 }
 
+
+/* ===== V161 ERP REAL EM TABELAS SUPABASE ===== */
+.erpRelationalBox{
+  border-color:rgba(34,197,94,.24)!important;
+  background:
+    radial-gradient(circle at top right,rgba(34,197,94,.10),transparent 34%),
+    rgba(15,23,42,.30)!important;
+}
+
+.erpRelationalBox .erpMetricIcon{
+  color:#86efac!important;
+  background:rgba(34,197,94,.12)!important;
+  border-color:rgba(34,197,94,.22)!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -11522,7 +11537,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V160</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V161</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13032,6 +13047,8 @@ body.erpStandbyModalOpen{
         <div class="filters">
           <button class="secondary" type="button" onclick="runErpProductionReadiness()">Rodar teste</button>
           <button class="secondary" type="button" onclick="runErpSupabaseProductionAudit()">Auditar Supabase</button>
+          <button class="secondary" type="button" onclick="runErpRelationalAudit()">Auditar ERP real</button>
+          <button class="secondary" type="button" onclick="migrateErpCurrentDataToRelational()">Migrar ERP real</button>
           <button class="secondary" type="button" onclick="exportErpAuditLog()">Exportar auditoria</button>
           <button class="secondary" type="button" onclick="exportErpBackupBundle()">Backup ERP</button>
         </div>
@@ -13047,6 +13064,32 @@ body.erpStandbyModalOpen{
           <thead><tr><th>Item</th><th>Status</th><th>Detalhe</th></tr></thead>
           <tbody id="erpReadinessRows"></tbody>
         </table>
+      </div>
+
+      <div class="erpSupabaseAuditBox erpRelationalBox">
+        <div class="panelHead">
+          <div>
+            <h3>ERP real em tabelas Supabase</h3>
+            <span class="muted">Fase 1 da migração segura: pedidos e produtos em tabelas próprias, sem imagens/base64 dentro do painel_state.</span>
+          </div>
+          <div class="filters">
+            <button class="secondary" type="button" onclick="runErpRelationalAudit()">Auditar tabelas</button>
+            <button class="primary" type="button" onclick="migrateErpCurrentDataToRelational()">Migrar agora</button>
+            <button class="secondary" type="button" onclick="toggleErpRelationalMode()">Ativar/desativar</button>
+          </div>
+        </div>
+        <div class="grid erpStatsGrid">
+          <div class="card erpMetricCard"><span class="erpMetricIcon">SQL</span><small>Modo relacional</small><strong id="erpRelationalModeStatus">Inativo</strong></div>
+          <div class="card erpMetricCard"><span class="erpMetricIcon">↥</span><small>Pedidos na fila</small><strong id="erpRelationalPendingOrders">0</strong></div>
+          <div class="card erpMetricCard"><span class="erpMetricIcon">▣</span><small>Produtos na fila</small><strong id="erpRelationalPendingProducts">0</strong></div>
+          <div class="card erpMetricCard"><span class="erpMetricIcon">✓</span><small>Último sync</small><strong id="erpRelationalLastSync">-</strong></div>
+        </div>
+        <div class="tableWrap">
+          <table>
+            <thead><tr><th>Item</th><th>Status</th><th>Detalhe</th></tr></thead>
+            <tbody id="erpRelationalAuditRows"><tr><td colspan="3">Execute a auditoria após aplicar o SQL V161.</td></tr></tbody>
+          </table>
+        </div>
       </div>
 
       <div class="erpSupabaseAuditBox">
@@ -13220,6 +13263,12 @@ const CLOUD_PAYLOAD_HARD_LIMIT=900000;
 const CLOUD_STRING_HARD_LIMIT=120000;
 const ERP_ARTWORK_CLOUD_BUDGET=420000;
 const ERP_ARTWORK_SINGLE_CLOUD_LIMIT=90000;
+const ERP_RELATIONAL_ENABLED_KEY=KEY+"_erp_relational_enabled_v161";
+const ERP_RELATIONAL_PENDING_KEY=KEY+"_erp_relational_pending_v161";
+const ERP_RELATIONAL_DELETE_KEY=KEY+"_erp_relational_delete_v161";
+const ERP_RELATIONAL_LAST_SYNC_KEY=KEY+"_erp_relational_last_sync_v161";
+let erpRelationalSyncTimer=null;
+let erpRelationalSyncBusy=false;
 const SHARED_SAVE_PENDING_KEY=KEY+"_shared_save_pending_v157";
 const SHARED_SAVE_ACK_KEY=KEY+"_shared_save_ack_v157";
 const STRICT_MUTATION_QUEUE_KEY=KEY+"_strict_mutation_queue_v157";
@@ -13354,8 +13403,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V160";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v160";
+const APP_BUILD_VERSION="V161";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v161";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -13394,7 +13443,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=160");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=161");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -14512,6 +14561,10 @@ async function flushCriticalRecordQueues(){
 
   if(typeof flushErpTestPendingQueue==="function"){
     tasks.push(timeoutBool(flushErpTestPendingQueue(),18000));
+  }
+
+  if(typeof flushErpRelationalSyncQueue==="function"&&erpRelationalEnabled()){
+    tasks.push(timeoutBool(flushErpRelationalSyncQueue(),18000));
   }
 
   if(!tasks.length)return true;
@@ -16113,6 +16166,18 @@ function runLocalSystemAudit(){
     auditAdd(report,"error","SUPABASE_PAYLOAD_CAP_V160","Não foi possível confirmar correção do payload gigante do Supabase.");
   }
 
+  if(
+    String(erpRelationalUpsert).includes("wisent_erp_orders")&&
+    String(queueErpRelationalSync).includes("ERP_RELATIONAL_PENDING_KEY")&&
+    String(migrateErpCurrentDataToRelational).includes("Migração ERP real")&&
+    String(erpRelationalProductRow).includes("artwork_url")&&
+    $("erpRelationalAuditRows")
+  ){
+    auditAdd(report,"pass","ERP_RELATIONAL_SUPABASE_V161","ERP recebeu primeira camada relacional: tabelas Supabase para pedidos, produtos e históricos, com migração manual e fila própria.");
+  }else{
+    auditAdd(report,"warn","ERP_RELATIONAL_SUPABASE_V161","Não foi possível confirmar a camada relacional V161 do ERP.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -16246,7 +16311,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v160-${today()}.json`;
+  a.download=`auditoria-painel-v161-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -16276,7 +16341,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V160",
+    "AUDITORIA DO SISTEMA — V161",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -16304,7 +16369,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V160: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V161: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -17293,7 +17358,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V160 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V161 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -23707,6 +23772,332 @@ function erpTestCloudRow(data){
   };
 }
 
+
+function erpRelationalEnabled(){
+  try{return localStorage.getItem(ERP_RELATIONAL_ENABLED_KEY)==="1";}catch(e){return false;}
+}
+
+function setErpRelationalEnabled(value){
+  try{localStorage.setItem(ERP_RELATIONAL_ENABLED_KEY,value?"1":"0");}catch(e){}
+}
+
+function erpRelationalHeaders(extra={}){
+  return cloudHeaders(extra);
+}
+
+function erpRelationalReadPending(){
+  try{
+    const raw=localStorage.getItem(ERP_RELATIONAL_PENDING_KEY);
+    const parsed=raw?JSON.parse(raw):null;
+    return parsed&&typeof parsed==="object"?parsed:{orders:[],products:[],stageHistory:[],standbyHistory:[],queuedAt:""};
+  }catch(e){
+    return {orders:[],products:[],stageHistory:[],standbyHistory:[],queuedAt:""};
+  }
+}
+
+function erpRelationalWritePending(pkg){
+  try{
+    localStorage.setItem(ERP_RELATIONAL_PENDING_KEY,JSON.stringify(pkg||{orders:[],products:[],stageHistory:[],standbyHistory:[],queuedAt:""}));
+  }catch(e){
+    console.warn("Não foi possível gravar fila relacional do ERP:",e);
+  }
+}
+
+function erpRelationalReadDeletes(){
+  try{
+    const raw=localStorage.getItem(ERP_RELATIONAL_DELETE_KEY);
+    const parsed=raw?JSON.parse(raw):[];
+    return Array.isArray(parsed)?parsed:[];
+  }catch(e){
+    return [];
+  }
+}
+
+function erpRelationalWriteDeletes(rows){
+  try{localStorage.setItem(ERP_RELATIONAL_DELETE_KEY,JSON.stringify(Array.isArray(rows)?rows:[]));}catch(e){}
+}
+
+function erpRelationalOrderRow(order){
+  const normalized={...order,products:erpNormalizeOrderProducts(order)};
+  const audit=currentAuditInfo();
+
+  return {
+    id:String(normalized.id),
+    number:String(normalized.number||""),
+    order_type:erpOrderType(normalized),
+    client:String(normalized.client||""),
+    phone:String(normalized.phone||""),
+    due_date:normalized.dueDate||null,
+    production_due:erpProductionDate(normalized)||null,
+    priority:String(normalized.priority||"Normal"),
+    value:Number(normalized.value||0),
+    stage:String(normalized.stage||"Pedido"),
+    notes:String(normalized.notes||""),
+    qty:erpOrderQtyTotal(normalized),
+    standby_active:erpIsStandby(normalized),
+    standby_reason:erpOrderStandby(normalized).reason||"",
+    created_at:normalized.createdAt||new Date().toISOString(),
+    created_by:normalized.createdBy||"",
+    updated_at:normalized.updatedAt||new Date().toISOString(),
+    updated_by:normalized.updatedBy||audit.name||"Sistema",
+    source_version:APP_BUILD_VERSION,
+    deleted_at:null
+  };
+}
+
+function erpRelationalProductRow(order,product,index=0){
+  const p=erpNormalizeProductItem(product);
+  const audit=currentAuditInfo();
+
+  return {
+    id:String(p.id),
+    order_id:String(order.id),
+    model:String(p.model||"Modelo não informado"),
+    color:String(p.color||""),
+    sizes:p.sizes||{},
+    qty:erpProductQty(p),
+    sewing_worker:String(p.sewingWorker||""),
+    sewing_updated_at:p.sewingUpdatedAt||null,
+    sewing_updated_by:p.sewingUpdatedBy||"",
+    artwork_name:String(p.artworkName||""),
+    artwork_url:String(p.artworkUrl||p.artworkURL||""),
+    artwork_storage_path:String(p.artworkStoragePath||""),
+    artwork_has_local_image:!!p.artworkImage,
+    artwork_omitted_from_json:!!p.artworkImage,
+    artwork_note:p.artworkImage?"Imagem local/base64 não enviada para tabela; próxima fase será Storage.":"",
+    position:Number(index||0),
+    created_at:order.createdAt||new Date().toISOString(),
+    updated_at:order.updatedAt||new Date().toISOString(),
+    updated_by:order.updatedBy||audit.name||"Sistema",
+    deleted_at:null
+  };
+}
+
+function erpRelationalStageRows(order){
+  return erpOrderStageHistory(order).map((row,index)=>({
+    id:String(row.id||`${order.id}-stage-${index}`),
+    order_id:String(order.id),
+    from_stage:String(row.from||""),
+    to_stage:String(row.to||row.stage||""),
+    stage:String(row.stage||row.to||order.stage||"Pedido"),
+    qty:Number(row.qty||erpOrderQtyTotal(order)||0),
+    event_at:row.at||row.date||order.updatedAt||new Date().toISOString(),
+    user_name:String(row.user||order.updatedBy||""),
+    production_due:row.productionDue||erpProductionDate(order)||null
+  }));
+}
+
+function erpRelationalStandbyRows(order){
+  return (Array.isArray(order.standbyHistory)?order.standbyHistory:[]).map((row,index)=>({
+    id:String(row.id||`${order.id}-standby-${index}`),
+    order_id:String(order.id),
+    type:String(row.type||"standby"),
+    reason:String(row.reason||""),
+    stage:String(row.stage||order.stage||"Pedido"),
+    active:!!row.active,
+    event_at:row.at||order.updatedAt||new Date().toISOString(),
+    user_name:String(row.user||order.updatedBy||"")
+  }));
+}
+
+function erpRelationalPackageFromData(data){
+  const normalized=normalizeErpTestData(data||readErpTestData());
+  const orders=(normalized.orders||[]).map(erpRelationalOrderRow);
+  const products=[];
+  const stageHistory=[];
+  const standbyHistory=[];
+
+  (normalized.orders||[]).forEach(order=>{
+    erpNormalizeOrderProducts(order).forEach((product,index)=>products.push(erpRelationalProductRow(order,product,index)));
+    stageHistory.push(...erpRelationalStageRows(order));
+    standbyHistory.push(...erpRelationalStandbyRows(order));
+  });
+
+  return {queuedAt:new Date().toISOString(),orders,products,stageHistory,standbyHistory};
+}
+
+function queueErpRelationalSync(data,reason="alteração ERP"){
+  if(!erpRelationalEnabled())return false;
+  const pkg=erpRelationalPackageFromData(data);
+  erpRelationalWritePending(pkg);
+  appendErpAudit("erp_relational_sync_queued",{reason,orders:pkg.orders.length,products:pkg.products.length});
+  scheduleErpRelationalFlush(400);
+  renderErpRelationalStatus();
+  return true;
+}
+
+function queueErpRelationalDeleteOrder(order){
+  if(!erpRelationalEnabled()||!order?.id)return false;
+  const queue=erpRelationalReadDeletes();
+  queue.push({id:uid(),orderId:String(order.id),number:String(order.number||""),deletedAt:new Date().toISOString(),deletedBy:currentAuditInfo().name||"Sistema"});
+  erpRelationalWriteDeletes(queue);
+  scheduleErpRelationalFlush(200);
+  return true;
+}
+
+async function erpRelationalUpsert(table,rows){
+  if(!Array.isArray(rows)||!rows.length)return true;
+  const response=await fetchWithTimeout(
+    SUPABASE_URL+"/rest/v1/"+encodeURIComponent(table)+"?on_conflict=id",
+    {method:"POST",headers:erpRelationalHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),body:JSON.stringify(rows)},
+    12000
+  );
+  if(!response.ok){
+    const text=await response.text();
+    throw new Error(`${table} upsert HTTP ${response.status}: ${text.slice(0,180)}`);
+  }
+  return true;
+}
+
+async function erpRelationalPatchDelete(table,query,payload){
+  const response=await fetchWithTimeout(
+    SUPABASE_URL+"/rest/v1/"+encodeURIComponent(table)+"?"+query,
+    {method:"PATCH",headers:erpRelationalHeaders({"Prefer":"return=minimal"}),body:JSON.stringify(payload)},
+    12000
+  );
+  if(!response.ok){
+    const text=await response.text();
+    throw new Error(`${table} delete mark HTTP ${response.status}: ${text.slice(0,180)}`);
+  }
+  return true;
+}
+
+async function flushErpRelationalSyncQueue(){
+  if(!erpRelationalEnabled())return true;
+  if(erpRelationalSyncBusy)return false;
+
+  const pkg=erpRelationalReadPending();
+  const deletes=erpRelationalReadDeletes();
+
+  if(!(pkg.orders||[]).length&&!(pkg.products||[]).length&&!(pkg.stageHistory||[]).length&&!(pkg.standbyHistory||[]).length&&!deletes.length){
+    renderErpRelationalStatus();
+    return true;
+  }
+
+  erpRelationalSyncBusy=true;
+  try{
+    await erpRelationalUpsert("wisent_erp_orders",pkg.orders||[]);
+    await erpRelationalUpsert("wisent_erp_order_products",pkg.products||[]);
+    await erpRelationalUpsert("wisent_erp_stage_history",pkg.stageHistory||[]);
+    await erpRelationalUpsert("wisent_erp_standby_history",pkg.standbyHistory||[]);
+
+    for(const item of deletes){
+      await erpRelationalPatchDelete("wisent_erp_orders","id=eq."+encodeURIComponent(item.orderId),{deleted_at:item.deletedAt,updated_at:item.deletedAt,updated_by:item.deletedBy});
+      await erpRelationalPatchDelete("wisent_erp_order_products","order_id=eq."+encodeURIComponent(item.orderId),{deleted_at:item.deletedAt,updated_at:item.deletedAt,updated_by:item.deletedBy});
+    }
+
+    erpRelationalWritePending({orders:[],products:[],stageHistory:[],standbyHistory:[],queuedAt:""});
+    erpRelationalWriteDeletes([]);
+    try{localStorage.setItem(ERP_RELATIONAL_LAST_SYNC_KEY,new Date().toISOString());}catch(e){}
+    appendErpAudit("erp_relational_sync_confirmed",{orders:(pkg.orders||[]).length,products:(pkg.products||[]).length,deletes:deletes.length});
+    setErpSyncStatus("ERP real sincronizado em tabelas Supabase • pedidos compartilhados");
+    updateCloudDebug("ERP relacional V161 confirmado: pedidos/produtos/históricos gravados em tabelas próprias.");
+    renderErpRelationalStatus();
+    return true;
+  }catch(e){
+    console.error("Falha ERP relacional:",e);
+    appendErpAudit("erp_relational_sync_failed",{error:String(e.message||e).slice(0,220)},"error");
+    setErpSyncStatus("ERP relacional pendente • aplicar SQL V161 ou revisar RLS",true);
+    updateCloudDebug("ERP relacional pendente: "+String(e.message||e).slice(0,180));
+    renderErpRelationalStatus();
+    return false;
+  }finally{
+    erpRelationalSyncBusy=false;
+  }
+}
+
+function scheduleErpRelationalFlush(delay=800){
+  clearTimeout(erpRelationalSyncTimer);
+  erpRelationalSyncTimer=setTimeout(()=>flushErpRelationalSyncQueue(),delay);
+}
+
+function renderErpRelationalStatus(){
+  const pkg=erpRelationalReadPending();
+  const deletes=erpRelationalReadDeletes();
+  const last=(()=>{try{return localStorage.getItem(ERP_RELATIONAL_LAST_SYNC_KEY)||"";}catch(e){return "";}})();
+
+  if($("erpRelationalModeStatus"))$("erpRelationalModeStatus").textContent=erpRelationalEnabled()?"Ativo":"Inativo";
+  if($("erpRelationalPendingOrders"))$("erpRelationalPendingOrders").textContent=(pkg.orders||[]).length+deletes.length;
+  if($("erpRelationalPendingProducts"))$("erpRelationalPendingProducts").textContent=(pkg.products||[]).length;
+  if($("erpRelationalLastSync"))$("erpRelationalLastSync").textContent=last?new Date(last).toLocaleTimeString("pt-BR"):"-";
+}
+
+async function erpRelationalProbeTable(table){
+  try{
+    const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/"+encodeURIComponent(table)+"?select=id&limit=1",{method:"GET",headers:erpRelationalHeaders()},9000);
+    const text=await response.text();
+    if(response.ok)return {table,level:"pass",detail:`HTTP ${response.status}. Tabela acessível.`};
+    if(String(text).includes("PGRST205")||String(text).toLowerCase().includes("not found"))return {table,level:"fail",detail:`HTTP ${response.status}. Tabela não encontrada. Aplique o SQL V161.`};
+    return {table,level:"warn",detail:`HTTP ${response.status}. ${text.slice(0,160)}`};
+  }catch(e){
+    return {table,level:"fail",detail:String(e.message||e).slice(0,180)};
+  }
+}
+
+async function runErpRelationalAudit(){
+  const tables=["wisent_erp_orders","wisent_erp_order_products","wisent_erp_stage_history","wisent_erp_standby_history","wisent_erp_audit_log"];
+  const rows=[];
+  for(const table of tables)rows.push(await erpRelationalProbeTable(table));
+
+  if($("erpRelationalAuditRows")){
+    $("erpRelationalAuditRows").innerHTML=rows.map(row=>`<tr>
+      <td><strong>${esc(row.table)}</strong></td>
+      <td><span class="erpReadyBadge ${row.level==="pass"?"ok":row.level==="warn"?"warn":"danger"}">${row.level==="pass"?"Aprovado":row.level==="warn"?"Alerta":"Falha"}</span></td>
+      <td>${esc(row.detail)}</td>
+    </tr>`).join("");
+  }
+
+  renderErpRelationalStatus();
+
+  const fail=rows.filter(r=>r.level==="fail").length;
+  const warn=rows.filter(r=>r.level==="warn").length;
+
+  alert(["AUDITORIA ERP RELACIONAL V161","",`Aprovados: ${rows.length-fail-warn}`,`Alertas: ${warn}`,`Falhas: ${fail}`,"",fail?"Aplique o SQL V161 antes de ativar o modo relacional.":"Tabelas encontradas. Você pode migrar o ERP atual."].join("\\n"));
+  return {rows,fail,warn};
+}
+
+async function migrateErpCurrentDataToRelational(){
+  const audit=await runErpRelationalAudit();
+  if(audit.fail){
+    alert("Migração bloqueada: aplique primeiro o SQL V161 no Supabase.");
+    return false;
+  }
+
+  const ok=confirm(["Migrar os pedidos atuais do WISENT ERP para tabelas reais do Supabase?","","Isso não apaga o painel_state atual.","A partir da ativação, cada alteração do ERP também será enviada para tabelas próprias.","As imagens/base64 não serão gravadas no JSON da tabela; a próxima fase será Supabase Storage."].join("\\n"));
+  if(!ok)return false;
+
+  setErpRelationalEnabled(true);
+  queueErpRelationalSync(readErpTestData(),"migração manual V161");
+  const sent=await flushErpRelationalSyncQueue();
+  renderErpRelationalStatus();
+  alert(sent?"Migração ERP real concluída.":"Migração ficou pendente. Verifique diagnóstico/RLS e tente novamente.");
+  return sent;
+}
+
+async function toggleErpRelationalMode(){
+  if(erpRelationalEnabled()){
+    const ok=confirm("Desativar envio relacional do ERP? O painel_state continuará funcionando.");
+    if(!ok)return;
+    setErpRelationalEnabled(false);
+    renderErpRelationalStatus();
+    showUndoToast("Modo relacional do ERP desativado.");
+    return;
+  }
+
+  const audit=await runErpRelationalAudit();
+  if(audit.fail){
+    alert("Não ative ainda. Aplique o SQL V161 no Supabase primeiro.");
+    return;
+  }
+
+  setErpRelationalEnabled(true);
+  queueErpRelationalSync(readErpTestData(),"ativação manual V161");
+  flushErpRelationalSyncQueue();
+  renderErpRelationalStatus();
+  showUndoToast("Modo relacional do ERP ativado.");
+}
+
+
 async function fetchErpTestCloudData(){
   const url=SUPABASE_URL+
     "/rest/v1/personalizacao?chave=eq."+
@@ -23863,6 +24254,7 @@ function installErpTestSyncWatchers(){
   setInterval(()=>{
     if(document.hidden)return;
     flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:false}));
+    if(erpRelationalEnabled())flushErpRelationalSyncQueue();
   },10000);
 }
 
@@ -23902,7 +24294,8 @@ function writeErpTestData(data,options={}){
     markSharedSavePending("erp","alteração do ERP aguardando confirmação real da nuvem",erpToken);
     queueErpTestCloudSave(normalized);
     scheduleErpTestCloudSave(options.delay||300);
-    setErpSyncStatus("ERP salvo neste aparelho • aguardando nuvem para todos verem");
+    queueErpRelationalSync(normalized,"alteração ERP");
+    setErpSyncStatus(erpRelationalEnabled()?"ERP salvo • enviando também para tabelas Supabase":"ERP salvo neste aparelho • aguardando nuvem para todos verem");
   }
 
   return true;
@@ -24926,6 +25319,8 @@ function advanceErpOrder(id){
 function deleteErpOrder(id){
   if(!confirm("Excluir apenas este pedido do ERP teste?"))return;
   const data=readErpTestData();
+  const existing=(data.orders||[]).find(o=>String(o.id)===String(id));
+  if(existing)queueErpRelationalDeleteOrder(existing);
   data.orders=data.orders.filter(o=>String(o.id)!==String(id));
   writeErpTestData(data);
   renderErpTest();
@@ -25641,6 +26036,7 @@ function renderErpTest(){
   renderErpLabel();
   renderErpProductionReadiness();
   renderErpSupabaseProductionAudit([]);
+  renderErpRelationalStatus();
 
   if(isErpSectorRestrictedUser()){
     showErpModule("pedidos");
