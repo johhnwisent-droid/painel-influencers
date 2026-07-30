@@ -11545,7 +11545,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V165</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V166</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -12751,7 +12751,7 @@ body.erpStandbyModalOpen{
     <button type="button" data-erp-module="financeiro" onclick="showErpModule('financeiro')"><span class="erpTabIcon">R$</span>Financeiro</button>
     <button type="button" data-erp-module="relatorios" onclick="showErpModule('relatorios')"><span class="erpTabIcon">↗</span>Relatórios</button>
     <button type="button" data-erp-module="etiquetas" onclick="showErpModule('etiquetas')"><span class="erpTabIcon">QR</span>QR/Etiquetas</button>
-    <button type="button" data-erp-module="mapa" onclick="showErpModule('mapa')"><span class="erpTabIcon">⌘</span>Mapa técnico</button>
+      <button type="button" data-erp-module="mapa" data-erp-admin-map onclick="showErpModule('mapa')"><span class="erpTabIcon">⌘</span>Mapa técnico</button>
   </div>
 
   <div class="erpModule" data-erp-panel="dashboard">
@@ -13033,7 +13033,7 @@ body.erpStandbyModalOpen{
     </div>
   </div>
 
-  <div class="erpModule" data-erp-panel="mapa" hidden>
+    <div class="erpModule" data-erp-panel="mapa" data-erp-admin-map-panel hidden>
     <div class="panel">
       <div class="panelHead">
         <div><h3>Mapa técnico do projeto</h3><span class="muted">Resumo da especificação recebida para orientar o ERP definitivo.</span></div>
@@ -13453,7 +13453,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V165";
+const APP_BUILD_VERSION="V166";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -13493,7 +13493,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=165");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=166");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -14031,6 +14031,7 @@ function setSessionUser(user){
     if(user)writeAuthSessionRaw(JSON.stringify(currentUser));
     else clearAuthSessionRaw();
   }catch(e){}
+  applyErpTechnicalMapAccess();
 }
 
 
@@ -17427,7 +17428,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V165 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V166 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -22987,6 +22988,29 @@ function erpUserRoleNormalized(){
     .replace(/[\u0300-\u036f]/g,"");
 }
 
+function isErpTechnicalMapAdmin(){
+  const role=erpUserRoleNormalized();
+  const username=String(currentUser?.username||"").trim().toLowerCase();
+  const userId=String(currentUser?.id||"").trim().toLowerCase();
+  return role==="admin"&&(username==="admin"||userId==="admin");
+}
+
+function applyErpTechnicalMapAccess(){
+  const allowed=isErpTechnicalMapAdmin();
+  const button=document.querySelector("[data-erp-admin-map]");
+  const panel=document.querySelector("[data-erp-admin-map-panel]");
+
+  if(button){
+    button.hidden=!allowed;
+    button.style.display=allowed?"":"none";
+    button.setAttribute("aria-hidden",allowed?"false":"true");
+    button.tabIndex=allowed?0:-1;
+  }
+
+  if(panel&&!allowed)panel.hidden=true;
+  return allowed;
+}
+
 function isErpSectorRestrictedUser(){
   const role=erpUserRoleNormalized();
   return role==="corte"||role==="costura";
@@ -25580,12 +25604,17 @@ function exportErpTestData(){
 }
 
 function showErpModule(module){
-  const target=isErpSectorRestrictedUser()?"pedidos":(module||"dashboard");
+  const requested=module||"dashboard";
+  const mapBlocked=requested==="mapa"&&!isErpTechnicalMapAdmin();
+  const target=isErpSectorRestrictedUser()?"pedidos":(mapBlocked?"dashboard":requested);
+
+  if(mapBlocked)showUndoToast("Área disponível somente para a conta principal de administrador.");
 
   document.querySelectorAll("[data-erp-panel]").forEach(panel=>{panel.hidden=panel.dataset.erpPanel!==target;});
   document.querySelectorAll("[data-erp-module]").forEach(btn=>{btn.classList.toggle("active",btn.dataset.erpModule===target);});
 
   applyErpSectorAccessControl();
+  applyErpTechnicalMapAccess();
 
   if(target==="etiquetas")renderErpLabel();
   if(target==="relatorios")renderErpReports(readErpTestData());
@@ -27236,6 +27265,7 @@ function printErpLabelPreview(){
 function renderErpTest(){
   if(!$("erpTest"))return;
   applyErpTestVisibility();
+  applyErpTechnicalMapAccess();
   if(erpTestDisabled()){
     if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="ERP teste desativado — use o menu do perfil para reativar";
     return;
