@@ -12038,6 +12038,47 @@ body.erpStandbyModalOpen{
   }
 }
 
+/* ===== V171 RELATÓRIO RESPONSIVO E DIRETO ===== */
+.erpReportDisclosure{padding:0;overflow:hidden}
+.erpReportDisclosure summary{
+  list-style:none;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;padding:18px 20px;cursor:pointer;color:#e5edf8;user-select:none;
+}
+.erpReportDisclosure summary::-webkit-details-marker{display:none}
+.erpReportDisclosure summary span{display:grid;gap:4px}
+.erpReportDisclosure summary b{font-size:15px}
+.erpReportDisclosure summary small{color:#8fa2bc;font-size:12px}
+.erpReportDisclosure summary em{color:#8bb8ff;font-style:normal;font-size:12px;font-weight:800}
+.erpReportDisclosure[open] summary{border-bottom:1px solid rgba(148,163,184,.16)}
+.erpReportDisclosure[open] summary em::before{content:"Ocultar "}
+.erpReportDisclosureBody{margin:0;border:0;border-radius:0}
+@media(max-width:760px){
+  .erpReportWorkspace{padding:14px!important}
+  .erpReportExecutiveHead{gap:10px}
+  .erpReportExecutiveHead h3{font-size:22px}
+  .erpReportExecutiveHead p{font-size:13px;line-height:1.45}
+  .erpReportFilterBar{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important;padding:11px!important}
+  .erpReportFilterBar label{font-size:10px}
+  .erpReportFilterBar label:first-child,.erpReportFilterBar label:nth-child(4){grid-column:1/-1}
+  .erpReportFilterBar button{width:100%;min-height:44px}
+  .erpReportKpiGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+  .erpReportKpi{min-height:108px!important;padding:13px!important}
+  .erpReportKpi strong{font-size:22px!important}
+  .erpReportKpi em{font-size:10px!important}
+  .erpReportInsightGrid{grid-template-columns:1fr!important}
+  .erpReportInsight{padding:13px!important}
+  .erpReportSplit{grid-template-columns:1fr!important}
+  .erpReportHighlightGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpReportDisclosure summary{padding:15px}
+  .erpReportTableWrap table{min-width:680px}
+}
+@media(max-width:390px){
+  .erpReportFilterBar{grid-template-columns:1fr!important}
+  .erpReportFilterBar>*{grid-column:1!important}
+  .erpReportHighlightGrid{grid-template-columns:1fr!important}
+}
+/* ===== FIM V171 RELATÓRIO RESPONSIVO E DIRETO ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -12125,7 +12166,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V170</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V171</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13593,31 +13634,31 @@ body.erpStandbyModalOpen{
         </div>
       </div>
 
-      <div class="erpReportSection">
-        <div class="erpReportSectionHead">
-          <div><span>LINHA DO TEMPO</span><h3>Produção e movimentações por data</h3></div>
-          <small>Somente eventos dentro do período escolhido</small>
-        </div>
-        <div class="tableWrap erpReportTableWrap">
+      <details class="erpReportSection erpReportDisclosure">
+        <summary>
+          <span><b>Produção por data</b><small>Movimentações do período</small></span>
+          <em>Ver detalhes</em>
+        </summary>
+        <div class="tableWrap erpReportTableWrap erpReportDisclosureBody">
           <table>
             <thead><tr><th>Data</th><th>Peças movimentadas</th><th>Pedidos</th><th>Alterações registradas</th></tr></thead>
             <tbody id="erpMonthlyProductionRows"></tbody>
           </table>
         </div>
-      </div>
+      </details>
 
-      <div class="erpReportSection">
-        <div class="erpReportSectionHead">
-          <div><span>DETALHAMENTO</span><h3>Pedidos considerados no relatório</h3></div>
-          <small id="erpReportOrderTableHint">0 pedidos encontrados</small>
-        </div>
-        <div class="tableWrap erpReportTableWrap">
+      <details class="erpReportSection erpReportDisclosure">
+        <summary>
+          <span><b>Pedidos do relatório</b><small id="erpReportOrderTableHint">0 pedidos encontrados</small></span>
+          <em>Ver lista</em>
+        </summary>
+        <div class="tableWrap erpReportTableWrap erpReportDisclosureBody">
           <table>
             <thead><tr><th>Pedido</th><th>Cliente</th><th>Etapa</th><th>Prioridade</th><th>Data considerada</th><th>Peças</th><th>Valor</th></tr></thead>
             <tbody id="erpReportOrderRows"></tbody>
           </table>
         </div>
-      </div>
+      </details>
     </div>
 
     <div class="panel printPanel erpReportPrintPanel printOnly">
@@ -13912,6 +13953,7 @@ body.erpStandbyModalOpen{
     </section>
 </main>
 </div>
+<script src="./pdf-lib.min.js"></script>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827", "authUsers": [{"id": "admin", "name": "Administrador", "username": "admin", "password": "1234", "role": "Admin", "active": true}]}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": [], "wholesaleRetail": []};
 const KEY = "painel_influencers_backup_estavel_v60";
@@ -14102,7 +14144,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V170";
+const APP_BUILD_VERSION="V171";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -18090,7 +18132,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V170 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V171 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -18781,6 +18823,7 @@ async function startApp(){
       await syncProductChoiceRecordsFromCloud({showStatus:false});
       installProductChoiceSyncWatchers();
 
+  await ensureErpV2AvailableOnDevice();
   if(erpV2Phase2Enabled()){
     erpV2DetachLegacyQueues();
     await flushErpV2Outbox();
@@ -24738,6 +24781,35 @@ function erpV2SetPhase2Enabled(value){
   try{localStorage.setItem(ERP_V2_PHASE2_ENABLED_KEY,value?"1":"0");}catch(e){}
 }
 
+let erpV2DeviceDetectionPromise=null;
+
+async function ensureErpV2AvailableOnDevice(){
+  if(erpV2Phase2Enabled())return true;
+  if(erpV2DeviceDetectionPromise)return erpV2DeviceDetectionPromise;
+
+  erpV2DeviceDetectionPromise=(async()=>{
+    try{
+      const response=await fetchWithTimeout(
+        SUPABASE_URL+"/rest/v1/wisent_erp_v2_orders?select=id&deleted_at=is.null&limit=1",
+        {method:"GET",headers:cloudHeaders()},
+        9000
+      );
+      if(!response.ok)return false;
+      erpV2SetPhase2Enabled(true);
+      erpV2DetachLegacyQueues();
+      setErpSyncStatus("ERP V2 oficial detectado neste aparelho • sincronizando pedidos");
+      return true;
+    }catch(e){
+      console.warn("Detecção automática do ERP V2 adiada:",e);
+      return false;
+    }finally{
+      erpV2DeviceDetectionPromise=null;
+    }
+  })();
+
+  return erpV2DeviceDetectionPromise;
+}
+
 function erpV2ReadVersionCache(){
   try{
     const raw=localStorage.getItem(ERP_V2_VERSION_CACHE_KEY);
@@ -28219,7 +28291,7 @@ function erpReportBuildInsights(data,orders,productionRows,stats){
   insights.push(stats.lowStock
     ? {level:"danger",icon:"↓",title:`${stats.lowStock} item(ns) com estoque baixo`,text:"Considere reposição para evitar paradas nas próximas etapas."}
     : {level:"good",icon:"✓",title:"Estoque dentro do mínimo",text:"Nenhum item está abaixo do nível mínimo cadastrado."});
-  return insights.slice(0,6);
+  return insights.slice(0,3);
 }
 
 function renderErpReports(data){
@@ -28279,18 +28351,20 @@ function renderErpReports(data){
   }
 
   if($("erpReportStageRows")){
-    $("erpReportStageRows").innerHTML=ERP_STAGES.map(stage=>{
+    const stageRows=ERP_STAGES.map(stage=>{
       const rows=orders.filter(order=>(order.stage||"Pedido")===stage);
       const qty=rows.reduce((sum,order)=>sum+erpOrderQtyTotal(order),0);
       const value=rows.reduce((sum,order)=>sum+Number(order.value||0),0);
       const share=orders.length?Math.round((rows.length/orders.length)*100):0;
-      return `<tr><td><strong>${esc(stage)}</strong></td><td>${rows.length}</td><td>${qty}</td><td>${money(value)}</td><td><div class="erpReportStageBar"><span>${share}%</span><b>${rows.length}</b><i style="--erp-stage-share:${share}%"></i></div></td></tr>`;
-    }).join("");
+      return {stage,rows,qty,value,share};
+    }).filter(row=>row.rows.length);
+    $("erpReportStageRows").innerHTML=stageRows.length?stageRows.map(row=>`<tr><td><strong>${esc(row.stage)}</strong></td><td>${row.rows.length}</td><td>${row.qty}</td><td>${money(row.value)}</td><td><div class="erpReportStageBar"><span>${row.share}%</span><b>${row.rows.length}</b><i style="--erp-stage-share:${row.share}%"></i></div></td></tr>`).join(""):`<tr><td colspan="5">Nenhum pedido no período selecionado.</td></tr>`;
   }
 
   if($("erpReportOrderRows")){
     const sorted=orders.slice().sort((a,b)=>String(erpReportOrderDate(b,basis)).localeCompare(String(erpReportOrderDate(a,basis))));
-    $("erpReportOrderRows").innerHTML=sorted.length?sorted.map(order=>`<tr>
+    const visibleOrders=sorted.slice(0,30);
+    $("erpReportOrderRows").innerHTML=visibleOrders.length?visibleOrders.map(order=>`<tr>
       <td><strong>${esc(order.number||"-")}</strong></td>
       <td>${esc(order.client||"-")}</td>
       <td>${esc(order.stage||"Pedido")}</td>
@@ -28300,7 +28374,7 @@ function renderErpReports(data){
       <td>${money(order.value)}</td>
     </tr>`).join(""):`<tr><td colspan="7">Nenhum pedido encontrado no período e critério escolhidos.</td></tr>`;
   }
-  if($("erpReportOrderTableHint"))$("erpReportOrderTableHint").textContent=`${orders.length} pedido(s) encontrado(s)`;
+  if($("erpReportOrderTableHint"))$("erpReportOrderTableHint").textContent=orders.length>30?`30 de ${orders.length} pedidos • PDF inclui todos`:`${orders.length} pedido(s) encontrado(s)`;
 
   return {range,basis,orders,productionRows,movementPieces,totalPieces,revenue,lowStock,stats,insights};
 }
@@ -28386,21 +28460,13 @@ function renderErpReportPDF(){
   }
 }
 
-function exportErpReportPDF(){
+function printErpReportFallback(){
   const data=readErpTestData();
   const report=renderErpReports(data);
   const {range,productionRows,orders}=report;
-
-  if(!productionRows.length&&!orders.length){
-    alert("Não há dados para gerar o relatório no período e critério selecionados.");
-    return;
-  }
-
   renderErpReportPDF();
-
   const oldTitle=document.title;
   document.title=`Relatório WISENT ERP ${range.start} a ${range.end}`;
-
   document.body.classList.remove(
     "print-report",
     "print-accumulation",
@@ -28412,11 +28478,240 @@ function exportErpReportPDF(){
 
   document.body.classList.add("print-erp-report");
   window.print();
-
   setTimeout(()=>{
     document.body.classList.remove("print-erp-report");
     document.title=oldTitle;
   },700);
+}
+
+function erpPdfSafeText(value){
+  return String(value??"")
+    .replace(/[–—−]/g,"-")
+    .replace(/[“”]/g,'"')
+    .replace(/[‘’]/g,"'")
+    .replace(/[•·]/g,"-")
+    .replace(/[→←↑↓]/g,"-")
+    .replace(/[✓✔]/g,"OK")
+    .replace(/[⚡◆◇▣◉○]/g,"")
+    .replace(/[^\u0009\u000A\u000D\u0020-\u00FF]/g,"");
+}
+
+function erpPdfWrappedLines(text,font,size,maxWidth){
+  const paragraphs=erpPdfSafeText(text).split(/\r?\n/);
+  const lines=[];
+  paragraphs.forEach(paragraph=>{
+    const words=paragraph.split(/\s+/).filter(Boolean);
+    if(!words.length){lines.push("");return;}
+    let line="";
+    words.forEach(word=>{
+      const next=line?`${line} ${word}`:word;
+      if(line&&font.widthOfTextAtSize(next,size)>maxWidth){
+        lines.push(line);
+        line=word;
+      }else{
+        line=next;
+      }
+    });
+    if(line)lines.push(line);
+  });
+  return lines;
+}
+
+async function deliverErpPdf(bytes,fileName){
+  const blob=new Blob([bytes],{type:"application/pdf"});
+  const file=typeof File==="function"?new File([blob],fileName,{type:"application/pdf"}):null;
+  if(file&&navigator.share&&navigator.canShare?.({files:[file]})){
+    try{
+      await navigator.share({title:"Relatório WISENT ERP",text:"Relatório operacional do período selecionado.",files:[file]});
+      return "shared";
+    }catch(error){
+      if(error?.name==="AbortError")return "cancelled";
+      console.warn("Compartilhamento do PDF indisponível; iniciando download.",error);
+    }
+  }
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download=fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+  return "downloaded";
+}
+
+async function exportErpReportPDF(){
+  const data=readErpTestData();
+  const report=renderErpReports(data);
+  const {range,basis,orders,productionRows,movementPieces,totalPieces,revenue,lowStock,stats,insights}=report;
+
+  if(!productionRows.length&&!orders.length){
+    alert("Não há dados para gerar o relatório no período e critério selecionados.");
+    return;
+  }
+  if(!window.PDFLib){
+    alert("O gerador de PDF não foi carregado. Confirme que o arquivo pdf-lib.min.js foi enviado junto com o index.html. Abrirei a impressão como alternativa.");
+    printErpReportFallback();
+    return;
+  }
+
+  const button=document.querySelector(".erpReportPdfBtn");
+  const originalLabel=button?.textContent||"Gerar PDF";
+  if(button){button.disabled=true;button.textContent="Gerando PDF...";}
+
+  try{
+    const {PDFDocument,StandardFonts,rgb}=window.PDFLib;
+    const pdf=await PDFDocument.create();
+    pdf.setTitle(`Relatório WISENT ERP - ${erpReportRangeLabel(range)}`);
+    pdf.setAuthor("WISENT ERP");
+    pdf.setSubject("Relatório operacional");
+    pdf.setCreator(`WISENT ERP ${APP_BUILD_VERSION}`);
+    pdf.setCreationDate(new Date());
+
+    const regular=await pdf.embedFont(StandardFonts.Helvetica);
+    const bold=await pdf.embedFont(StandardFonts.HelveticaBold);
+    const pageSize=[595.28,841.89];
+    const margin=38;
+    const contentWidth=pageSize[0]-(margin*2);
+    const navy=rgb(0.035,0.075,0.14);
+    const blue=rgb(0.12,0.38,0.82);
+    const lightBlue=rgb(0.91,0.95,1);
+    const ink=rgb(0.08,0.12,0.18);
+    const muted=rgb(0.34,0.4,0.48);
+    const lineColor=rgb(0.85,0.88,0.92);
+    const soft=rgb(0.965,0.975,0.988);
+    const danger=rgb(0.76,0.14,0.18);
+    let page;
+    let y;
+    let pageNumber=0;
+
+    function addPage(){
+      page=pdf.addPage(pageSize);
+      pageNumber+=1;
+      y=pageSize[1]-margin;
+      page.drawRectangle({x:0,y:pageSize[1]-8,width:pageSize[0],height:8,color:blue});
+      page.drawText("WISENT ERP",{x:margin,y:20,size:8,font:bold,color:muted});
+      page.drawText(`Página ${pageNumber}`,{x:pageSize[0]-margin-42,y:20,size:8,font:regular,color:muted});
+    }
+
+    function ensureSpace(height){
+      if(y-height<42)addPage();
+    }
+
+    function drawWrapped(text,x,width,size=9,font=regular,color=ink,lineHeight=size+3){
+      const lines=erpPdfWrappedLines(text,font,size,width);
+      lines.forEach(current=>{
+        ensureSpace(lineHeight);
+        page.drawText(current,{x,y,size,font,color});
+        y-=lineHeight;
+      });
+      return lines.length;
+    }
+
+    function drawSectionTitle(title){
+      ensureSpace(31);
+      y-=7;
+      page.drawText(erpPdfSafeText(title).toUpperCase(),{x:margin,y,size:9,font:bold,color:blue});
+      y-=8;
+      page.drawLine({start:{x:margin,y},end:{x:pageSize[0]-margin,y},thickness:1,color:lineColor});
+      y-=15;
+    }
+
+    function drawMetric(x,width,label,value,accent=blue){
+      page.drawRectangle({x,y:y-57,width,height:57,color:soft,borderColor:lineColor,borderWidth:.7});
+      page.drawRectangle({x,y:y-57,width:4,height:57,color:accent});
+      page.drawText(erpPdfSafeText(label),{x:x+12,y:y-18,size:7.5,font:bold,color:muted});
+      const valueLines=erpPdfWrappedLines(value,bold,15,width-24).slice(0,2);
+      valueLines.forEach((current,index)=>page.drawText(current,{x:x+12,y:y-40-(index*14),size:index?10:15,font:bold,color:ink}));
+    }
+
+    addPage();
+    page.drawText("RELATÓRIO OPERACIONAL",{x:margin,y,size:9,font:bold,color:blue});
+    y-=27;
+    page.drawText("WISENT ERP",{x:margin,y,size:25,font:bold,color:navy});
+    y-=20;
+    drawWrapped(`${erpReportRangeLabel(range)} | ${erpReportBasisName(basis)}`,margin,contentWidth,9,regular,muted,12);
+    y-=8;
+
+    const gap=9;
+    const metricWidth=(contentWidth-(gap*2))/3;
+    ensureSpace(61);
+    drawMetric(margin,metricWidth,"PEDIDOS",String(orders.length));
+    drawMetric(margin+metricWidth+gap,metricWidth,"PEÇAS NOS PEDIDOS",String(totalPieces));
+    drawMetric(margin+(metricWidth+gap)*2,metricWidth,"FATURAMENTO",money(revenue));
+    y-=68;
+    ensureSpace(61);
+    drawMetric(margin,metricWidth,"CONCLUSÃO",`${stats.completionRate}%`,rgb(.08,.55,.35));
+    drawMetric(margin+metricWidth+gap,metricWidth,"ATRASADOS",String(stats.late),stats.late?danger:rgb(.08,.55,.35));
+    drawMetric(margin+(metricWidth+gap)*2,metricWidth,"PEÇAS MOVIMENTADAS",String(movementPieces));
+    y-=61;
+
+    drawSectionTitle("Resumo inteligente");
+    insights.slice(0,3).forEach(item=>{
+      ensureSpace(38);
+      page.drawCircle({x:margin+5,y:y-2,size:3,color:item.level==="danger"?danger:item.level==="good"?rgb(.08,.55,.35):blue});
+      page.drawText(erpPdfSafeText(item.title),{x:margin+16,y,size:9.5,font:bold,color:ink});
+      y-=13;
+      drawWrapped(item.text,margin+16,contentWidth-16,8.5,regular,muted,11);
+      y-=8;
+    });
+
+    drawSectionTitle("Distribuição atual por etapa");
+    const activeStages=ERP_STAGES.map(stage=>{
+      const stageOrders=orders.filter(order=>(order.stage||"Pedido")===stage);
+      return {
+        stage,
+        count:stageOrders.length,
+        pieces:stageOrders.reduce((sum,order)=>sum+erpOrderQtyTotal(order),0),
+        value:stageOrders.reduce((sum,order)=>sum+Number(order.value||0),0)
+      };
+    }).filter(row=>row.count>0);
+    const stageRows=activeStages.length?activeStages:[{stage:"Sem pedidos no período",count:0,pieces:0,value:0}];
+    stageRows.forEach((row,index)=>{
+      ensureSpace(25);
+      if(index%2===0)page.drawRectangle({x:margin,y:y-17,width:contentWidth,height:22,color:soft});
+      page.drawText(erpPdfSafeText(row.stage),{x:margin+7,y:y-10,size:8.5,font:bold,color:ink});
+      page.drawText(`${row.count} pedido(s)`,{x:margin+190,y:y-10,size:8.5,font:regular,color:muted});
+      page.drawText(`${row.pieces} peça(s)`,{x:margin+300,y:y-10,size:8.5,font:regular,color:muted});
+      page.drawText(money(row.value),{x:margin+405,y:y-10,size:8.5,font:bold,color:ink});
+      y-=22;
+    });
+
+    drawSectionTitle("Pedidos do período");
+    const sortedOrders=orders.slice().sort((a,b)=>String(erpReportOrderDate(b,basis)).localeCompare(String(erpReportOrderDate(a,basis))));
+    sortedOrders.forEach(order=>{
+      const details=`${order.client||"Sem cliente"} | ${order.stage||"Pedido"} | ${erpOrderQtyTotal(order)} peça(s) | ${money(order.value)}`;
+      const detailLines=erpPdfWrappedLines(details,regular,8.2,contentWidth-12);
+      const blockHeight=23+(detailLines.length*10);
+      ensureSpace(blockHeight);
+      page.drawRectangle({x:margin,y:y-blockHeight+5,width:contentWidth,height:blockHeight,color:soft,borderColor:lineColor,borderWidth:.5});
+      page.drawText(erpPdfSafeText(order.number||"-"),{x:margin+8,y:y-11,size:9,font:bold,color:navy});
+      page.drawText(erpPdfSafeText(dateBR(erpReportOrderDate(order,basis))),{x:pageSize[0]-margin-72,y:y-11,size:8,font:regular,color:muted});
+      y-=25;
+      detailLines.forEach(current=>{
+        page.drawText(current,{x:margin+8,y,size:8.2,font:regular,color:muted});
+        y-=10;
+      });
+      y-=8;
+    });
+
+    drawSectionTitle("Informações de controle");
+    drawWrapped(`Estoque abaixo do mínimo: ${lowStock} item(ns). Pedidos urgentes: ${stats.urgent}. Arquivo gerado em ${new Date().toLocaleString("pt-BR")}.`,margin,contentWidth,8.5,regular,muted,12);
+    y-=5;
+    drawWrapped("Este relatório foi gerado automaticamente a partir dos dados sincronizados no WISENT ERP.",margin,contentWidth,8.5,regular,muted,12);
+
+    const bytes=await pdf.save();
+    const fileName=`relatorio-wisent-erp-${range.start}-a-${range.end}.pdf`;
+    const delivery=await deliverErpPdf(bytes,fileName);
+    if(delivery==="downloaded")setErpSyncStatus(`PDF gerado: ${fileName}`);
+    if(delivery==="shared")setErpSyncStatus("PDF gerado e compartilhado com sucesso");
+  }catch(error){
+    console.error("Falha ao gerar PDF do WISENT ERP:",error);
+    alert("Não foi possível gerar o arquivo PDF automaticamente. Abrirei a versão para impressão como alternativa.");
+    printErpReportFallback();
+  }finally{
+    if(button){button.disabled=false;button.textContent=originalLabel;}
+  }
 }
 
 function renderErpLabel(){
