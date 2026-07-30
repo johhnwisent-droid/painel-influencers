@@ -11558,7 +11558,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V167</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V168</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -12841,7 +12841,7 @@ body.erpStandbyModalOpen{
         <label>Prazo produção<input id="erpOrderProductionDue" type="date"></label>
         <label>Prioridade<select id="erpOrderPriority"><option>Normal</option><option>Urgente</option><option>Alta</option></select></label>
         <label>Valor<input id="erpOrderValue" type="number" step="0.01" min="0"></label>
-        <label>Etapa<select id="erpOrderStage" disabled></select><small>O pedido entra em Pedido e avança somente pelos controles do Kanban.</small></label>
+        <label>Etapa<select id="erpOrderStage"></select><small>Escolha a etapa inicial ou atual do pedido. O padrão é Pedido.</small></label>
         <label class="two">Observações<input id="erpOrderNotes" placeholder="Detalhes do pedido, estampa, prazo, acabamento..."></label>
 
         <div class="erpProductBuilder two">
@@ -13462,7 +13462,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V167";
+const APP_BUILD_VERSION="V168";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -13502,7 +13502,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=167");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=168");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -17438,7 +17438,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V167 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V168 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -23683,18 +23683,45 @@ function writeErpTestSnapshot(data){
   }
 }
 
+function readErpWindowFallback(){
+  try{
+    const prefix=ERP_TEST_KEY+"::";
+    if(!String(window.name||"").startsWith(prefix))return null;
+    const raw=String(window.name).slice(prefix.length);
+    return raw?normalizeErpTestData(JSON.parse(raw)):null;
+  }catch(e){
+    return null;
+  }
+}
+
+function clearErpWindowFallback(){
+  try{
+    if(String(window.name||"").startsWith(ERP_TEST_KEY+"::"))window.name="";
+  }catch(e){}
+}
+
 function erpLocalWriteOnly(data){
   const normalized=normalizeErpTestData(data);
+  const serialized=JSON.stringify(normalized);
   try{
-    localStorage.setItem(ERP_TEST_KEY,JSON.stringify(normalized));
+    localStorage.setItem(ERP_TEST_KEY,serialized);
+    clearErpWindowFallback();
     writeErpTestSnapshot(normalized);
     autoBackupErpTestData(normalized,"write");
     return true;
   }catch(e){
     console.warn("Falha ao salvar WISENT ERP localmente:",e);
     try{
-      window.name=ERP_TEST_KEY+"::"+JSON.stringify(normalized);
+      localStorage.removeItem(ERP_TEST_SNAPSHOT_KEY);
+      localStorage.removeItem(ERP_TEST_BACKUP_KEY);
+      localStorage.setItem(ERP_TEST_KEY,serialized);
+      clearErpWindowFallback();
       writeErpTestSnapshot(normalized);
+      autoBackupErpTestData(normalized,"write-recovered");
+      return true;
+    }catch(retryError){}
+    try{
+      window.name=ERP_TEST_KEY+"::"+serialized;
       return true;
     }catch(err){
       console.error("Falha crítica ao salvar WISENT ERP:",err);
@@ -23705,6 +23732,9 @@ function erpLocalWriteOnly(data){
 
 function readErpTestData(){
   try{
+    const emergency=readErpWindowFallback();
+    if(emergency)return emergency;
+
     const raw=localStorage.getItem(ERP_TEST_KEY);
     if(raw){
       return normalizeErpTestData(JSON.parse(raw));
@@ -23721,6 +23751,8 @@ function readErpTestData(){
     return normalizeErpTestData(data);
   }catch(e){
     console.warn("Falha ao ler WISENT ERP:",e);
+    const emergency=readErpWindowFallback();
+    if(emergency)return emergency;
     const snapshot=readErpTestSnapshot();
     if(snapshot)return snapshot;
     return normalizeErpTestData(defaultErpTestState());
@@ -26472,8 +26504,8 @@ function resetErpOrderForm(){
   if($("erpOrderType"))$("erpOrderType").value="WISENT";
   if($("erpOrderDue"))$("erpOrderDue").value=today();
   if($("erpOrderProductionDue"))$("erpOrderProductionDue").value=today();
-  if($("erpOrderStage"))$("erpOrderStage").disabled=true;
   populateErpStageSelect();
+  if($("erpOrderStage"))$("erpOrderStage").value="Pedido";
   setErpProductItemsInForm([erpBlankProductItem()]);
 }
 
@@ -26505,7 +26537,8 @@ function saveErpOrderFromForm(e){
   const audit=currentAuditInfo();
   const products=readErpProductItemsFromForm();
   const qty=products.reduce((sum,item)=>sum+erpProductQty(item),0);
-  const stage=existing&&ERP_STAGES.includes(existing.stage)?existing.stage:"Pedido";
+  const selectedStage=$("erpOrderStage")?.value||"Pedido";
+  const stage=ERP_STAGES.includes(selectedStage)?selectedStage:"Pedido";
   const dueDate=$("erpOrderDue")?.value||today();
   const productionDue=$("erpOrderProductionDue")?.value||dueDate;
 
@@ -26555,9 +26588,9 @@ function saveErpOrderFromForm(e){
   resetErpOrderForm();
   showErpModule("pedidos");
   if($("erpSearch"))$("erpSearch").value="";
-  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value="Pedido";
+  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value=stage;
   renderErpTest();
-  showUndoToast(existing?"Pedido atualizado.":"Pedido criado e encaminhado para a etapa Pedido.");
+  showUndoToast(existing?`Pedido atualizado na etapa ${stage}.`:`Pedido criado e encaminhado para a etapa ${stage}.`);
 }
 
 function editErpOrder(id){
