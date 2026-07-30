@@ -12199,6 +12199,72 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
 }
 /* ===== FIM V174 ===== */
 
+/* ===== V175 PÁGINAS ISOLADAS E KANBAN RESPONSIVO ===== */
+body[data-page="erpTest"],
+body[data-page="suppliesPage"],
+body[data-page="commissionsPage"]{background:#050505!important}
+body[data-page="suppliesPage"] .top,
+body[data-page="commissionsPage"] .top{background:linear-gradient(180deg,#111,#080808)!important;color:#f8fafc!important;border-color:rgba(212,175,55,.22)!important}
+body[data-page="suppliesPage"] .top h2,
+body[data-page="commissionsPage"] .top h2{color:#fff!important}
+body[data-page="suppliesPage"] .erpHero,
+body[data-page="suppliesPage"] .erpModuleTabs,
+body[data-page="suppliesPage"] .erpRestoreBox,
+body[data-page="commissionsPage"] .erpHero,
+body[data-page="commissionsPage"] .erpModuleTabs,
+body[data-page="commissionsPage"] .erpRestoreBox{display:none!important}
+body[data-page="suppliesPage"] #erpTest,
+body[data-page="commissionsPage"] #erpTest{padding-top:0!important}
+body[data-page="suppliesPage"] #erpTest>.erpModule,
+body[data-page="commissionsPage"] #erpTest>.erpModule{margin-top:0}
+body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="suppliesPage"]{display:flex!important}
+body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="erpTest"]{display:none!important}
+.erpCommissionPeriodLabel{margin:12px 0 0;padding:10px 12px;border:1px solid rgba(96,165,250,.2);border-radius:12px;background:rgba(59,130,246,.08);color:#bfdbfe;font-size:12px;font-weight:850}
+.erpCommissionFilters input[readonly]{opacity:.9;cursor:not-allowed;background:#111827!important}
+.erpKanban,.erpKanban *{box-sizing:border-box}
+.erpKanbanCol{flex-basis:340px!important;min-width:340px!important;max-width:340px!important}
+.erpKanbanList,.erpOrderCard,.erpOrderExpanded,.erpKanbanProductBoxes,.erpKanbanProductBox{min-width:0!important;max-width:100%!important}
+.erpOrderCard{width:100%!important;overflow:hidden!important;padding:14px!important}
+.erpOrderTop{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:start!important;gap:10px!important}
+.erpOrderTop>strong{min-width:0;overflow-wrap:anywhere;font-size:15px;line-height:1.25}
+.erpOrderBadges{max-width:190px!important}
+.erpOrderCard>p{overflow-wrap:anywhere}
+.erpOrderMetaGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.erpOrderMetaGrid span{min-width:0!important;overflow-wrap:anywhere}
+.erpProductColorSummary{display:grid!important;gap:6px!important;margin-top:8px!important}
+.erpProductColorSummary span{display:block!important;min-width:0!important;padding:7px 8px!important;border-radius:9px!important;background:rgba(15,23,42,.72)!important;color:#cbd5e1!important;font-size:10px!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+.erpProductColorSummary b{color:#f8fafc!important}
+.erpArtworkChip{width:100%!important;min-width:0!important}
+.erpArtworkChip span{min-width:0!important;overflow-wrap:anywhere!important}
+.erpSewingAssignment{min-width:0!important}
+.erpSewingAssignment select{max-width:100%!important}
+.erpOrderActions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;align-items:stretch!important}
+.erpOrderActions button{width:100%!important;min-width:0!important;white-space:normal!important;line-height:1.15!important}
+.erpStageProgress{width:100%;min-width:0}
+
+@media(max-width:760px){
+  .erpTestView{max-width:100%!important;overflow-x:hidden!important}
+  .erpKanban{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:14px!important;width:100%!important;margin:0!important;padding:0!important;overflow:visible!important;scroll-snap-type:none!important}
+  .erpKanbanCol,
+  .erpKanban.singleStage .erpKanbanCol,
+  .erpKanban.restricted .erpKanbanCol,
+  body.erpSectorRestricted .erpKanbanCol{width:100%!important;min-width:0!important;max-width:100%!important;flex-basis:auto!important;scroll-snap-align:none!important}
+  .erpKanbanHead{position:static!important}
+  .erpOrderTop{grid-template-columns:1fr!important}
+  .erpOrderBadges{justify-content:flex-start!important;max-width:none!important}
+  .erpOrderMetaGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpOrderActions{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpOrderActions button{min-height:44px!important}
+  .erpSupplyList{grid-template-columns:1fr!important}
+  .erpCommissionFilters{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpCommissionFilters label,.erpCommissionFilters button{min-width:0!important;width:100%!important}
+}
+@media(max-width:390px){
+  .erpOrderMetaGrid,.erpOrderActions,.erpCommissionFilters{grid-template-columns:1fr!important}
+  .erpOrderCard{padding:12px!important}
+}
+/* ===== FIM V175 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -12281,12 +12347,14 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
       <button data-page="pix">Chaves PIX</button>
       <button data-page="reports">Relatório PDF</button>
       <button data-page="collaborators">Colaboradores</button>
-      <button data-page="erpTest" data-erp-test-nav>WISENT ERP</button>
+      <button data-page="erpTest" data-erp-test-nav>Private Label</button>
+      <button data-page="suppliesPage">Insumos para Comprar</button>
+      <button data-page="commissionsPage" data-admin-commission>Gestão de Comissões</button>
       <button data-page="settings">Personalizar</button>
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V174</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V175</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13370,7 +13438,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
           <div class="authManagerHead">
             <div>
               <h4>Cadastro de colaborador</h4>
-              <p>Cada lançamento salva o colaborador logado. Perfis Corte/Costura entram somente no Kanban de produção do WISENT ERP.</p>
+              <p>Cada lançamento salva o colaborador logado. Perfis Corte/Costura entram somente no Kanban de produção do Private Label.</p>
             </div>
             <span class="badge">Rastreamento</span>
           </div>
@@ -13429,7 +13497,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
   <div class="erpHero">
     <div>
       <span class="erpLabBadge">Gestão operacional</span>
-      <h2>WISENT ERP</h2>
+      <h2>Private Label</h2>
       <p>Área de gestão de clientes, pedidos, produção, estoque, financeiro, relatórios e etiquetas.</p>
       <div id="erpSyncStatus" class="erpSyncStatus">ERP: salvamento local ativo • sincronização iniciando</div>
     </div>
@@ -13443,9 +13511,9 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
   <div class="panel erpRestoreBox" hidden>
     <div>
       <strong>Ponto de restauração criado</strong>
-      <p>Referência interna de segurança do WISENT ERP.</p>
+      <p>Referência interna de segurança do Private Label.</p>
     </div>
-    <span id="erpRestoreStatus">WISENT ERP ativo</span>
+    <span id="erpRestoreStatus">Private Label ativo</span>
   </div>
 
   <div id="erpStandbyModal" class="erpStandbyModal noPrint" hidden>
@@ -13508,8 +13576,6 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
     <button type="button" data-erp-module="estoque" onclick="showErpModule('estoque')"><span class="erpTabIcon">▤</span>Estoque</button>
     <button type="button" data-erp-module="financeiro" onclick="showErpModule('financeiro')"><span class="erpTabIcon">R$</span>Financeiro</button>
     <button type="button" data-erp-module="relatorios" onclick="showErpModule('relatorios')"><span class="erpTabIcon">↗</span>Relatórios</button>
-    <button type="button" data-erp-module="insumos" onclick="showErpModule('insumos')"><span class="erpTabIcon">＋</span>Insumos para Comprar</button>
-    <button type="button" data-erp-module="comissoes" data-admin-commission onclick="showErpModule('comissoes')"><span class="erpTabIcon">%</span>Gestão de Comissões</button>
     <button type="button" data-erp-module="etiquetas" onclick="showErpModule('etiquetas')"><span class="erpTabIcon">QR</span>QR/Etiquetas</button>
       <button type="button" data-erp-module="mapa" data-erp-admin-map onclick="showErpModule('mapa')"><span class="erpTabIcon">⌘</span>Mapa técnico</button>
   </div>
@@ -13537,7 +13603,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
       <div class="panelHead">
         <div>
           <h3>Clientes</h3>
-          <span class="muted">Cadastro de clientes do WISENT ERP.</span>
+          <span class="muted">Cadastro de clientes do Private Label.</span>
         </div>
       </div>
       <form id="erpClientForm" class="form">
@@ -13563,7 +13629,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
       <div class="panelHead">
         <div>
           <h3>Clientes cadastrados</h3>
-          <span class="muted">Lista de clientes cadastrados no WISENT ERP.</span>
+          <span class="muted">Lista de clientes cadastrados no Private Label.</span>
         </div>
         <div class="filters">
           <input id="erpClientSearch" placeholder="Pesquisar cliente..." oninput="renderErpTest()">
@@ -13596,7 +13662,9 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
         <label>Data entrega<input id="erpOrderDue" type="date" onchange="syncErpProductionDueFromDelivery()"></label>
         <label>Prazo produção<input id="erpOrderProductionDue" type="date"></label>
         <label>Prioridade<select id="erpOrderPriority"><option>Normal</option><option>Urgente</option><option>Alta</option></select></label>
-        <label>Valor total<input id="erpOrderValue" type="number" step="0.01" min="0"></label>
+        <label>Valor total<input id="erpOrderValue" type="number" step="0.01" min="0" oninput="updateErpOrderFinancialPreview()"></label>
+        <label>Valor pago<input id="erpOrderPaidValue" type="number" step="0.01" min="0" value="0" oninput="updateErpOrderFinancialPreview()"><small>Em uma edição, informe o total já pago. A diferença positiva será lançada no histórico.</small></label>
+        <label>Valor a receber<input id="erpOrderPendingValue" type="text" value="R$ 0,00" readonly><small id="erpOrderFinancialPreviewStatus">Aguardando valores.</small></label>
         <label>Vencimento financeiro<input id="erpOrderFinancialDue" type="date"></label>
         <label>Etapa<select id="erpOrderStage"></select><small>Escolha a etapa inicial ou atual do pedido. O padrão é Pedido.</small></label>
         <label class="two">Observações<input id="erpOrderNotes" placeholder="Detalhes do pedido, estampa, prazo, acabamento..."></label>
@@ -13668,7 +13736,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
   <div class="erpModule" data-erp-panel="financeiro" hidden>
     <div class="panel">
       <div class="panelHead">
-        <div><h3>Financeiro</h3><span class="muted">Entradas, saídas, pendências e fluxo de caixa do WISENT ERP.</span></div>
+        <div><h3>Financeiro</h3><span class="muted">Entradas, saídas, pendências e fluxo de caixa do Private Label.</span></div>
       </div>
       <form id="erpFinanceForm" class="form">
         <input type="hidden" id="erpFinanceId">
@@ -13703,7 +13771,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
         <div>
           <span class="erpReportEyebrow">INTELIGÊNCIA OPERACIONAL</span>
           <h3>Relatório executivo</h3>
-          <p>Indicadores calculados automaticamente a partir dos pedidos, etapas, prazos, valores e movimentações do WISENT ERP.</p>
+          <p>Indicadores calculados automaticamente a partir dos pedidos, etapas, prazos, valores e movimentações do Private Label.</p>
         </div>
         <span class="erpReportLiveBadge"><i></i> Atualização automática</span>
       </div>
@@ -13828,10 +13896,10 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
         <div class="pdfCleanHeader">
           <div>
             <img id="erpReportPdfLogo" class="printLogo" alt="Logo" style="display:none">
-            <h1>Relatório de Produção - WISENT ERP</h1>
+            <h1>Relatório de Produção - Private Label</h1>
             <p id="erpReportPdfSubtitle">Período do relatório</p>
           </div>
-          <div class="erpPdfBadge">WISENT ERP</div>
+          <div class="erpPdfBadge">PRIVATE LABEL</div>
         </div>
 
         <div class="pdfThreeCards erpPdfMetrics">
@@ -13897,16 +13965,25 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
     <div class="panel">
       <div class="panelHead"><div><h3>Gestão de Comissões</h3><span class="muted">Cálculos vinculados a vendas reais de Atacado, Varejo e Private Label.</span></div></div>
       <div class="erpCommissionFilters">
-        <label>Competência<input id="erpCommissionMonth" type="month" onchange="renderErpCommissions()"></label>
-        <label>Ano<input id="erpCommissionYear" type="number" min="2000" max="2200" placeholder="Todos" oninput="renderErpCommissions()"></label>
+        <label>Ano<input id="erpCommissionYear" type="number" readonly aria-readonly="true"></label>
+        <label>Mês
+          <select id="erpCommissionMonth" onchange="renderErpCommissions()">
+            <option value="01">Janeiro</option><option value="02">Fevereiro</option><option value="03">Março</option>
+            <option value="04">Abril</option><option value="05">Maio</option><option value="06">Junho</option>
+            <option value="07">Julho</option><option value="08">Agosto</option><option value="09">Setembro</option>
+            <option value="10">Outubro</option><option value="11">Novembro</option><option value="12">Dezembro</option>
+          </select>
+        </label>
         <label>Data inicial<input id="erpCommissionStart" type="date" onchange="renderErpCommissions()"></label>
         <label>Data final<input id="erpCommissionEnd" type="date" onchange="renderErpCommissions()"></label>
         <label>Funcionário<select id="erpCommissionEmployeeFilter" onchange="renderErpCommissions()"><option value="">Todos</option></select></label>
         <label>Origem<select id="erpCommissionOriginFilter" onchange="renderErpCommissions()"><option value="">Todas</option><option>Atacado</option><option>Varejo</option><option>Private Label</option></select></label>
         <label>Status<select id="erpCommissionStatusFilter" onchange="renderErpCommissions()"><option value="">Todos</option><option>Pendente</option><option>Aprovada</option><option>Paga</option><option>Cancelada</option><option>Estornada</option></select></label>
         <label>Pedido ou venda<input id="erpCommissionSourceFilter" placeholder="ID" oninput="renderErpCommissions()"></label>
-        <button type="button" class="primary" onclick="recalculateErpCommissions()">Recalcular vendas</button>
+        <button type="button" class="primary" onclick="recalculateErpCommissions()">Calcular comissões</button>
+        <button type="button" class="secondary" onclick="clearErpCommissionCustomRange()">Usar mês completo</button>
       </div>
+      <p id="erpCommissionPeriodLabel" class="erpCommissionPeriodLabel">Calculando o mês completo.</p>
       <div class="grid erpStatsGrid">
         <div class="card"><small>Total vendido</small><strong id="erpCommissionSold">R$ 0,00</strong></div>
         <div class="card"><small>Atacado</small><strong id="erpCommissionWholesale">R$ 0,00</strong></div>
@@ -13916,18 +13993,6 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
         <div class="card"><small>Pendentes</small><strong id="erpCommissionPending">R$ 0,00</strong></div>
         <div class="card"><small>Pagas</small><strong id="erpCommissionPaid">R$ 0,00</strong></div>
       </div>
-    </div>
-    <div class="panel">
-      <div class="panelHead"><div><h3>Percentuais configuráveis</h3><span class="muted">Nunca são fixados no código; cada regra possui funcionário, origem e vigência.</span></div></div>
-      <form id="erpCommissionRuleForm" class="form">
-        <label>Funcionário<select id="erpCommissionRuleEmployee" required></select></label>
-        <label>Origem<select id="erpCommissionRuleOrigin"><option>Atacado</option><option>Varejo</option><option>Private Label</option></select></label>
-        <label>Percentual<input id="erpCommissionRulePercent" type="number" min="0" max="100" step="0.01" required></label>
-        <label>Vigência inicial<input id="erpCommissionRuleStart" type="date" required></label>
-        <label>Vigência final<input id="erpCommissionRuleEnd" type="date"></label>
-        <div class="actions"><button class="primary" type="submit">Salvar regra</button></div>
-      </form>
-      <div class="tableWrap"><table><thead><tr><th>Funcionário</th><th>Origem</th><th>Percentual</th><th>Vigência</th><th>Status</th></tr></thead><tbody id="erpCommissionRuleRows"></tbody></table></div>
     </div>
     <div class="panel"><div class="tableWrap"><table><thead><tr><th>Venda/Pedido</th><th>Funcionário</th><th>Origem</th><th>Elegível</th><th>%</th><th>Comissão</th><th>Status</th><th>Ações</th></tr></thead><tbody id="erpCommissionRows"></tbody></table></div></div>
   </div>
@@ -13952,7 +14017,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
   <div class="erpModule" data-erp-panel="etiquetas" hidden>
     <div class="panel">
       <div class="panelHead">
-        <div><h3>QR Code e etiquetas</h3><span class="muted">Prévia de etiqueta automática do pedido no WISENT ERP.</span></div>
+        <div><h3>QR Code e etiquetas</h3><span class="muted">Prévia de etiqueta automática do pedido no Private Label.</span></div>
       </div>
       <div class="form">
         <label>Pedido<select id="erpLabelOrderSelect" onchange="renderErpLabel()"></select></label>
@@ -13979,7 +14044,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .returnStageBtn{
       <div class="panelHead">
         <div>
           <h3>Prontidão 10/10</h3>
-          <span class="muted">Verificação operacional de segurança e integridade do WISENT ERP.</span>
+          <span class="muted">Verificação operacional de segurança e integridade do Private Label.</span>
         </div>
         <div class="filters">
           <button class="secondary" type="button" onclick="runErpProductionReadiness()">Executar verificação</button>
@@ -14382,7 +14447,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V174";
+const APP_BUILD_VERSION="V175";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -14422,7 +14487,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=174");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=175");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -15033,7 +15098,7 @@ function initAuthUi(){
     hideLoginScreen();
 
     if(isErpScopedRestrictedUser()){
-      setTimeout(()=>{showPage("erpTest");showErpModule(isErpSupplyOnlyUser()?"insumos":"pedidos");},80);
+      setTimeout(()=>{showPage(isErpSupplyOnlyUser()?"suppliesPage":"erpTest");},80);
     }else{
       setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
     }
@@ -15061,8 +15126,7 @@ function handleLoginSubmit(e){
   hideLoginScreen();
 
   if(isErpScopedRestrictedUser()){
-    showPage("erpTest");
-    showErpModule(isErpSupplyOnlyUser()?"insumos":"pedidos");
+    showPage(isErpSupplyOnlyUser()?"suppliesPage":"erpTest");
     showUndoToast(isErpSupplyOnlyUser()?"Login liberado somente para Demanda de Insumos.":`Login de ${erpRestrictedRoleLabel()} liberado somente para o Kanban de produção.`);
   }else{
     setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
@@ -16934,9 +16998,9 @@ function runLocalSystemAudit(){
     String(renderErpReports).includes("erpReportStageRows")&&
     String(renderErpLabel).includes("erpLabelPreview")
   ){
-    auditAdd(report,"pass","ERP_TEST_ISOLATED_MODULE","WISENT ERP possui clientes, pedidos, estoque, financeiro, relatórios e etiquetas funcionais.");
+    auditAdd(report,"pass","ERP_TEST_ISOLATED_MODULE","Private Label possui clientes, pedidos, estoque, financeiro, relatórios e etiquetas funcionais.");
   }else{
-    auditAdd(report,"warn","ERP_TEST_ISOLATED_MODULE","Não foi possível confirmar a integridade do módulo WISENT ERP.");
+    auditAdd(report,"warn","ERP_TEST_ISOLATED_MODULE","Não foi possível confirmar a integridade do módulo Private Label.");
   }
 
   if(
@@ -16971,9 +17035,9 @@ function runLocalSystemAudit(){
     $("erpOrderProductionDue")&&
     $("erpProductItems")
   ){
-    auditAdd(report,"pass","ERP_ORDER_PRODUCTS_REPORT_V145","WISENT ERP possui múltiplos modelos, grade PP-G4, prazo de produção no Kanban e relatório mensal por data.");
+    auditAdd(report,"pass","ERP_ORDER_PRODUCTS_REPORT_V145","Private Label possui múltiplos modelos, grade PP-G4, prazo de produção no Kanban e relatório mensal por data.");
   }else{
-    auditAdd(report,"warn","ERP_ORDER_PRODUCTS_REPORT_V145","Não foi possível confirmar modelos, grade e relatório mensal do WISENT ERP.");
+    auditAdd(report,"warn","ERP_ORDER_PRODUCTS_REPORT_V145","Não foi possível confirmar modelos, grade e relatório mensal do Private Label.");
   }
 
   if(
@@ -16984,9 +17048,9 @@ function runLocalSystemAudit(){
     document.querySelector(".erpModuleTabs .erpTabIcon")&&
     String(document.querySelector("style")?.textContent||"").includes("V146 ERP DESIGN PROFISSIONAL")
   ){
-    auditAdd(report,"pass","ERP_UI_MOBILE_V146","WISENT ERP possui ícones, cores por etapa e Kanban mobile responsivo.");
+    auditAdd(report,"pass","ERP_UI_MOBILE_V146","Private Label possui ícones, cores por etapa e Kanban mobile responsivo.");
   }else{
-    auditAdd(report,"warn","ERP_UI_MOBILE_V146","Não foi possível confirmar toda a interface mobile do WISENT ERP.");
+    auditAdd(report,"warn","ERP_UI_MOBILE_V146","Não foi possível confirmar toda a interface mobile do Private Label.");
   }
 
   if(
@@ -17010,7 +17074,7 @@ function runLocalSystemAudit(){
     String(exportErpReportPDF).includes("print-erp-report")&&
     String(document.querySelector("style")?.textContent||"").includes("V148 ERP RELATÓRIO PDF")
   ){
-    auditAdd(report,"pass","ERP_REPORT_PDF_V148","O relatório do WISENT ERP pode ser exportado em PDF com resumo por etapa, produção por data e pedidos/modelos.");
+    auditAdd(report,"pass","ERP_REPORT_PDF_V148","O relatório de Private Label pode ser exportado em PDF com resumo por etapa, produção por data e pedidos/modelos.");
   }else{
     auditAdd(report,"warn","ERP_REPORT_PDF_V148","Não foi possível confirmar a exportação PDF do relatório ERP.");
   }
@@ -17024,7 +17088,7 @@ function runLocalSystemAudit(){
     String(renderErpKanban).includes("isStandby")&&
     String(document.querySelector("style")?.textContent||"").includes("V149 ERP STANDBY")
   ){
-    auditAdd(report,"pass","ERP_STANDBY_SEWING_V149","WISENT ERP possui standby com motivo por pedido/etapa e responsável de costura por modelo.");
+    auditAdd(report,"pass","ERP_STANDBY_SEWING_V149","Private Label possui histórico legado de standby e responsável de costura por modelo.");
   }else{
     auditAdd(report,"warn","ERP_STANDBY_SEWING_V149","Não foi possível confirmar standby/costura por modelo.");
   }
@@ -17049,9 +17113,9 @@ function runLocalSystemAudit(){
     String(installErpTestSyncWatchers).includes("visibilitychange")&&
     String(readErpTestSnapshot).includes("ERP_TEST_SNAPSHOT_KEY")
   ){
-    auditAdd(report,"pass","ERP_CLOUD_PERSISTENCE_V151","WISENT ERP possui salvamento local, snapshot, fila offline, sincronização Supabase e mesclagem para vários colaboradores.");
+    auditAdd(report,"pass","ERP_CLOUD_PERSISTENCE_V151","Private Label possui salvamento local, snapshot, fila offline, sincronização Supabase e mesclagem para vários colaboradores.");
   }else{
-    auditAdd(report,"error","ERP_CLOUD_PERSISTENCE_V151","A proteção de salvamento do WISENT ERP não foi confirmada.");
+    auditAdd(report,"error","ERP_CLOUD_PERSISTENCE_V151","A proteção de salvamento do Private Label não foi confirmada.");
   }
 
   if(
@@ -17061,7 +17125,7 @@ function runLocalSystemAudit(){
     String(exportErpBackupBundle).includes("backup-wisent-erp")&&
     $("erpReadinessRows")
   ){
-    auditAdd(report,"pass","ERP_PRODUCTION_READINESS_V152","WISENT ERP possui auditoria local, backup automático/exportável e verificação de integridade.");
+    auditAdd(report,"pass","ERP_PRODUCTION_READINESS_V152","Private Label possui auditoria local, backup automático/exportável e verificação de integridade.");
   }else{
     auditAdd(report,"warn","ERP_PRODUCTION_READINESS_V152","Não foi possível confirmar hardening 10/10 do ERP.");
   }
@@ -17297,16 +17361,16 @@ async function runSystemAudit(){
 
   try{
     const erpCloud=await fetchErpTestCloudData();
-    auditAdd(report,"pass","ERP_CLOUD_READ_V152","Leitura compartilhada do WISENT ERP na nuvem funcionando.",erpCloud?`${(erpCloud.orders||[]).length} pedido(s) em nuvem.`:"Registro ERP ainda será criado no primeiro salvamento.");
+    auditAdd(report,"pass","ERP_CLOUD_READ_V152","Leitura compartilhada do Private Label na nuvem funcionando.",erpCloud?`${(erpCloud.orders||[]).length} pedido(s) em nuvem.`:"Registro Private Label ainda será criado no primeiro salvamento.");
   }catch(e){
-    auditAdd(report,"error","ERP_CLOUD_READ_V152","Falha ao ler dados compartilhados do WISENT ERP na nuvem.",String(e.message||e));
+    auditAdd(report,"error","ERP_CLOUD_READ_V152","Falha ao ler dados compartilhados do Private Label na nuvem.",String(e.message||e));
   }
 
   try{
     const flushed=await flushErpTestPendingQueue();
-    auditAdd(report,flushed?"pass":"warn","ERP_CLOUD_FLUSH_V152",flushed?"Fila pendente do WISENT ERP sincronizada ou vazia.":"Fila do WISENT ERP preservada para nova tentativa.");
+    auditAdd(report,flushed?"pass":"warn","ERP_CLOUD_FLUSH_V152",flushed?"Fila pendente do Private Label sincronizada ou vazia.":"Fila do Private Label preservada para nova tentativa.");
   }catch(e){
-    auditAdd(report,"error","ERP_CLOUD_FLUSH_V152","Falha ao validar fila de sincronização do WISENT ERP.",String(e.message||e));
+    auditAdd(report,"error","ERP_CLOUD_FLUSH_V152","Falha ao validar fila de sincronização do Private Label.",String(e.message||e));
   }
 
   const errors=report.items.filter(x=>x.level==="error").length;
@@ -18386,7 +18450,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V174 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V175 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -24070,10 +24134,11 @@ function applyErpSectorAccessControl(){
   const allowedModule=supplyOnly?"insumos":"pedidos";
 
   document.body.classList.toggle("erpSectorRestricted",restricted);
+  document.body.classList.toggle("erpSupplyOnly",supplyOnly);
 
   if(restricted){
     document.querySelectorAll(".menu button").forEach(btn=>{
-      btn.style.display=btn.dataset.page==="erpTest"?"":"none";
+      btn.style.display=btn.dataset.page===(supplyOnly?"suppliesPage":"erpTest")?"":"none";
     });
 
     document.querySelectorAll("[data-erp-module]").forEach(btn=>{
@@ -24085,7 +24150,7 @@ function applyErpSectorAccessControl(){
       panel.hidden=panel.dataset.erpPanel!==allowedModule;
     });
 
-    if($("pageTitle"))$("pageTitle").textContent=supplyOnly?"WISENT ERP — Demanda de Insumos":`WISENT ERP — ${erpRestrictedRoleLabel()}`;
+    if($("pageTitle"))$("pageTitle").textContent=supplyOnly?"Insumos para Comprar":`Private Label — ${erpRestrictedRoleLabel()}`;
   }else{
     document.querySelectorAll(".menu button").forEach(btn=>{
       btn.style.display="";
@@ -24114,19 +24179,30 @@ function applyErpSectorAccessControl(){
 
 function showPage(id){
   let nextPage=id||"dashboard";
+  const standaloneModules={suppliesPage:"insumos",commissionsPage:"comissoes"};
 
-  if(isErpScopedRestrictedUser()&&nextPage!=="erpTest"){
+  if(isErpSupplyOnlyUser()&&nextPage!=="suppliesPage"){
+    nextPage="suppliesPage";
+    id="suppliesPage";
+  }else if(isErpSectorRestrictedUser()&&nextPage!=="erpTest"){
     nextPage="erpTest";
     id="erpTest";
   }
 
+  if(nextPage==="commissionsPage"&&!isWisentAdmin()){
+    alert("A Gestão de Comissões é exclusiva para Admin.");
+    nextPage="dashboard";
+    id="dashboard";
+  }
+
   if(nextPage==="erpTest"&&erpTestDisabled()){
-    alert("O WISENT ERP está indisponível neste aparelho.");
+    alert("O Private Label está indisponível neste aparelho.");
     id = isErpScopedRestrictedUser()?"erpTest":"dashboard";
   }
 
   const resolvedPage=id||"dashboard";
-  const samePage=currentPage===resolvedPage&&$(resolvedPage)?.classList.contains("active");
+  const viewPage=standaloneModules[resolvedPage]?"erpTest":resolvedPage;
+  const samePage=currentPage===resolvedPage&&$(viewPage)?.classList.contains("active");
 
   currentPage=resolvedPage;
   window.currentPage=currentPage;
@@ -24137,7 +24213,7 @@ function showPage(id){
     document.querySelectorAll(".menu button").forEach(b=>b.classList.remove("active"));
   }
 
-  const view=$(currentPage);
+  const view=$(viewPage);
   if(view&&!view.classList.contains("active"))view.classList.add("active");
 
   const btn=document.querySelector(`.menu button[data-page="${currentPage}"]`);
@@ -24149,6 +24225,10 @@ function showPage(id){
   syncMobileBottomNav(currentPage);
   closeMobileMenu();
   render({force:true});
+  if(standaloneModules[currentPage]){
+    showErpModule(standaloneModules[currentPage]);
+    if(currentPage==="commissionsPage")ensureErpCommissionAutoCalculated();
+  }
 }
 
 let renderBusy=false;
@@ -24237,7 +24317,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V174",
+    version:"V175",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -24261,7 +24341,7 @@ function defaultErpTestState(){
     restorePoint:{
       baseVersion:ERP_TEST_RESTORE_POINT,
       createdAt:new Date().toISOString(),
-      note:"Estrutura de segurança do WISENT ERP."
+      note:"Estrutura de segurança do Private Label."
     }
   };
 }
@@ -24326,7 +24406,7 @@ function readErpAutoBackup(){
 function exportErpAuditLog(){
   const rows=readErpAuditLog();
   rowsCSV([
-    ["Auditoria WISENT ERP"],
+    ["Auditoria Private Label"],
     ["Gerado em",new Date().toLocaleString("pt-BR")],
     [],
     ["Data/hora","Usuário","Função","Ação","Nível","Detalhe"],
@@ -24405,7 +24485,7 @@ function renderErpProductionReadiness(checks=null){
 }
 
 async function runErpProductionReadiness(){
-  updateCloudStatus("Validando prontidão do WISENT ERP...");
+  updateCloudStatus("Validando prontidão do Private Label...");
   updateCloudDebug("testando salvamento local, fila, Supabase, auditoria e backups");
 
   await flushErpTestPendingQueue();
@@ -24666,7 +24746,7 @@ function erpSecurityGuidePromptOnce(){
     if(localStorage.getItem(ERP_TEST_SECURITY_GUIDE_KEY)==="ok")return;
     localStorage.setItem(ERP_TEST_SECURITY_GUIDE_KEY,"ok");
   }catch(e){}
-  console.info("WISENT ERP V152: para nota 10 real, aplicar SQL de Auth/RLS no Supabase e revisar policies.");
+  console.info("Private Label: para segurança final, aplicar Supabase Auth/RLS e revisar as políticas.");
 }
 
 
@@ -24674,7 +24754,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V174";
+  data.version="V175";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -24747,7 +24827,7 @@ function writeErpTestSnapshot(data){
   try{
     localStorage.setItem(ERP_TEST_SNAPSHOT_KEY,JSON.stringify(normalizeErpTestData(data)));
   }catch(e){
-    console.warn("Não foi possível gravar snapshot do WISENT ERP:",e);
+    console.warn("Não foi possível gravar snapshot do Private Label:",e);
   }
 }
 
@@ -24778,7 +24858,7 @@ function erpLocalWriteOnly(data){
     autoBackupErpTestData(normalized,"write");
     return true;
   }catch(e){
-    console.warn("Falha ao salvar WISENT ERP localmente:",e);
+    console.warn("Falha ao salvar Private Label localmente:",e);
     try{
       localStorage.removeItem(ERP_TEST_SNAPSHOT_KEY);
       localStorage.removeItem(ERP_TEST_BACKUP_KEY);
@@ -24792,7 +24872,7 @@ function erpLocalWriteOnly(data){
       window.name=ERP_TEST_KEY+"::"+serialized;
       return true;
     }catch(err){
-      console.error("Falha crítica ao salvar WISENT ERP:",err);
+      console.error("Falha crítica ao salvar Private Label:",err);
       return false;
     }
   }
@@ -24818,7 +24898,7 @@ function readErpTestData(){
     erpLocalWriteOnly(data);
     return normalizeErpTestData(data);
   }catch(e){
-    console.warn("Falha ao ler WISENT ERP:",e);
+    console.warn("Falha ao ler Private Label:",e);
     const emergency=readErpWindowFallback();
     if(emergency)return emergency;
     const snapshot=readErpTestSnapshot();
@@ -24916,7 +24996,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V151",
+    version:"V175",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -24945,7 +25025,7 @@ function writeErpTestPendingQueue(queue){
   try{
     localStorage.setItem(ERP_TEST_PENDING_KEY,JSON.stringify(Array.isArray(queue)?queue:[]));
   }catch(e){
-    console.warn("Não foi possível gravar fila do WISENT ERP:",e);
+    console.warn("Não foi possível gravar fila do Private Label:",e);
   }
 }
 
@@ -25532,7 +25612,7 @@ async function erpV2BuildMigrationPackage(data){
     value:{
       restorePoint:normalized.restorePoint||null,
       legacyVersion:normalized.version||"",
-      migratedFrom:"WISENT ERP LEGADO",
+      migratedFrom:"ERP LEGADO",
       migratedAt:now
     },
     created_at:now,
@@ -25577,7 +25657,7 @@ async function migrateErpTestToV2(){
     alert("Migração V2 bloqueada. Aplique primeiro o SQL V164 completo e execute a auditoria novamente.");
     return false;
   }
-  if(!confirm("Copiar o WISENT ERP atual para a estrutura V2?\n\nO ERP legado continuará intacto durante a migração."))return false;
+  if(!confirm("Copiar os dados atuais do Private Label para a estrutura V2?\n\nA estrutura legada continuará intacta durante a migração."))return false;
 
   erpV2MigrationBusy=true;
   if($("erpV2StructureStatus"))$("erpV2StructureStatus").textContent="Migrando...";
@@ -26574,7 +26654,7 @@ async function migrateErpCurrentDataToRelational(){
     return false;
   }
 
-  const ok=confirm(["Migrar os pedidos atuais do WISENT ERP para tabelas reais do Supabase?","","Isso não apaga o painel_state atual.","A partir da ativação, cada alteração do ERP também será enviada para tabelas próprias.","As imagens/base64 não serão gravadas no JSON da tabela; a próxima fase será Supabase Storage."].join("\\n"));
+  const ok=confirm(["Migrar os pedidos atuais do Private Label para tabelas reais do Supabase?","","Isso não apaga o painel_state atual.","A partir da ativação, cada alteração também será enviada para tabelas próprias.","As imagens/base64 não serão gravadas no JSON da tabela; a próxima fase será Supabase Storage."].join("\\n"));
   if(!ok)return false;
 
   setErpRelationalEnabled(true);
@@ -26690,13 +26770,13 @@ async function flushErpTestPendingQueue(){
 
     markSharedSaveConfirmed("erp",latestSharedSaveToken||"");
     setErpSyncStatus("ERP confirmado na nuvem • funcionários podem ver");
-    updateCloudDebug("WISENT ERP confirmado no Supabase; demandas disponíveis para colaboradores");
+    updateCloudDebug("Private Label confirmado no Supabase; demandas disponíveis para colaboradores");
     return true;
   }catch(e){
-    console.error("Falha ao sincronizar WISENT ERP:",e);
+    console.error("Falha ao sincronizar Private Label:",e);
     markSharedSavePending("erp","ERP pendente de nuvem");
     setErpSyncStatus("ERP salvo neste aparelho • ainda não confirmado para todos",true);
-    updateCloudStatus("WISENT ERP salvo localmente. Sincronização pendente.",true);
+    updateCloudStatus("Private Label salvo localmente. Sincronização pendente.",true);
     updateCloudDebug("fila ERP preservada: "+String(e.message||e).slice(0,180));
     return false;
   }finally{
@@ -26736,10 +26816,10 @@ async function syncErpTestCloud(options={}){
     await flushErpTestPendingQueue();
     return true;
   }catch(e){
-    console.warn("Sincronização do WISENT ERP adiada:",e);
+    console.warn("Sincronização do Private Label adiada:",e);
     setErpSyncStatus("ERP salvo localmente • sincronização pendente",true);
     if(options.showStatus){
-      updateCloudStatus("WISENT ERP em modo local. A sincronização será tentada novamente.",true);
+      updateCloudStatus("Private Label em modo local. A sincronização será tentada novamente.",true);
       updateCloudDebug("sync ERP adiado: "+String(e.message||e).slice(0,180));
     }
     return false;
@@ -26833,7 +26913,7 @@ function notifyErpSectorArrival(record,stage,eventData={}){
 
   try{
     if(typeof Notification!=="undefined"&&Notification.permission==="granted"){
-      new Notification(`WISENT ERP • ${stage}`,{
+      new Notification(`Private Label • ${stage}`,{
         body:`${orderNumber}${client?` • ${client}`:""} chegou no seu setor.`,
         tag:`wisent-${erpRealtimeArrivalOrderId}-${stage}`
       });
@@ -27117,14 +27197,14 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V151";
+  normalized.version="V175";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
   const localSaved=erpLocalWriteOnly(normalized);
 
   if(!localSaved){
-    updateCloudStatus("WISENT ERP não conseguiu salvar localmente. Não feche o app.",true);
+    updateCloudStatus("Private Label não conseguiu salvar localmente. Não feche o app.",true);
     setErpSyncStatus("Falha crítica no salvamento local do ERP",true);
     return false;
   }
@@ -27171,14 +27251,14 @@ function applyErpTestVisibility(){
   const disabled=erpTestDisabled();
   document.querySelectorAll("[data-erp-test-nav]").forEach(btn=>{btn.style.display=disabled?"none":"";});
   const status=$("erpRestoreStatus");
-  if(status)status.textContent=disabled?"WISENT ERP indisponível":"WISENT ERP ativo";
+  if(status)status.textContent=disabled?"Private Label indisponível":"Private Label ativo";
 }
 
 function toggleErpTestModuleFromMenu(){
   if(erpTestDisabled()){
     try{localStorage.removeItem(ERP_TEST_DISABLED_KEY);}catch(e){}
     applyErpTestVisibility();
-    showUndoToast("WISENT ERP reativado.");
+    showUndoToast("Private Label reativado.");
     showPage("erpTest");
     return;
   }
@@ -27187,7 +27267,7 @@ function toggleErpTestModuleFromMenu(){
 
 function restoreBeforeErpTest(){
   const ok=confirm([
-    "Desativar o WISENT ERP neste aparelho?",
+    "Desativar o Private Label neste aparelho?",
     "",
     "Isso apenas oculta o módulo.",
     "Os dados do painel principal, Supabase, Lançamentos, Pagos, Acumular e Atacado/Varejo não serão apagados.",
@@ -27196,12 +27276,12 @@ function restoreBeforeErpTest(){
   if(!ok)return;
   try{localStorage.setItem(ERP_TEST_DISABLED_KEY,"1");}catch(e){}
   applyErpTestVisibility();
-  showUndoToast("WISENT ERP ocultado sem afetar os dados salvos.");
+  showUndoToast("Private Label ocultado sem afetar os dados salvos.");
   if(currentPage==="erpTest")showPage("dashboard");
 }
 
 function resetErpTestData(){
-  const ok=confirm("Limpar os dados do WISENT ERP? O painel principal não será alterado.");
+  const ok=confirm("Limpar os dados do Private Label? O painel principal não será alterado.");
   if(!ok)return;
   const data=defaultErpTestState();
   data.resetAt=new Date().toISOString();
@@ -27211,7 +27291,7 @@ function resetErpTestData(){
   resetErpStockForm();
   resetErpFinanceForm();
   renderErpTest();
-  showUndoToast("Dados do WISENT ERP limpos. Dados principais preservados.");
+  showUndoToast("Dados do Private Label limpos. Dados principais preservados.");
 }
 
 function exportErpTestData(){
@@ -28190,11 +28270,14 @@ function resetErpOrderForm(){
   if($("erpOrderClientId"))$("erpOrderClientId").value="";
   if($("erpOrderType"))$("erpOrderType").value="PRIVATE LABEL";
   if($("erpOrderFinancialDue"))$("erpOrderFinancialDue").value="";
+  if($("erpOrderValue"))$("erpOrderValue").value="";
+  if($("erpOrderPaidValue"))$("erpOrderPaidValue").value="0";
   if($("erpOrderDue"))$("erpOrderDue").value=today();
   if($("erpOrderProductionDue"))$("erpOrderProductionDue").value=today();
   populateErpStageSelect();
   if($("erpOrderStage"))$("erpOrderStage").value="Pedido";
   setErpProductItemsInForm([erpBlankProductItem()]);
+  updateErpOrderFinancialPreview();
 }
 
 function populateErpStageSelect(){
@@ -28254,12 +28337,57 @@ function selectErpOrderClient(id){
   if($("erpOrderClientValidation"))$("erpOrderClientValidation").textContent="Cliente vinculado ao cadastro.";
 }
 
-function saveErpOrderFromForm(e){
+function updateErpOrderFinancialPreview(){
+  const total=Math.max(0,finiteNumber($("erpOrderValue")?.value,0));
+  const paid=Math.max(0,finiteNumber($("erpOrderPaidValue")?.value,0));
+  const pending=Math.max(0,total-paid);
+  if($("erpOrderPendingValue"))$("erpOrderPendingValue").value=money(pending);
+  if($("erpOrderFinancialPreviewStatus")){
+    $("erpOrderFinancialPreviewStatus").textContent=paid>total
+      ?"O valor pago não pode ultrapassar o total."
+      :paid<=0?"Pagamento pendente.":pending>0?`${total?Math.min(100,paid/total*100).toFixed(1).replace(".",","):0}% pago.`:"Pedido totalmente pago.";
+  }
+  return {total,paid,pending};
+}
+
+async function saveErpOrderPaidValue(order,desiredPaid,currentPaid){
+  const delta=Number((Math.max(0,desiredPaid)-Math.max(0,currentPaid)).toFixed(2));
+  if(delta<=0)return true;
+  const flushed=typeof flushErpV2Outbox==="function"?await flushErpV2Outbox():false;
+  if(!flushed)await new Promise(resolve=>setTimeout(resolve,450));
+  const audit=currentAuditInfo();
+  const orderUuid=order._v2Id||await erpV2Uuid("order",String(order.id));
+  const row=await erpV174Insert("wisent_erp_v2_payments",{
+    order_id:orderUuid,
+    amount:delta,
+    paid_at:new Date().toISOString(),
+    payment_method:"Informado no pedido",
+    note:currentPaid>0?"Complemento informado na edição do pedido":"Valor pago informado na criação do pedido",
+    created_by:audit.name||"",
+    updated_by:audit.name||""
+  });
+  const payment={id:String(row.id),amount:Number(row.amount),paidAt:row.paid_at,method:row.payment_method,note:row.note,user:row.created_by};
+  order.payments=[...(order.payments||[]),payment];
+  delete order._financialSummary;
+  const latest=readErpTestData();
+  const savedOrder=(latest.orders||[]).find(item=>String(item.id)===String(order.id));
+  if(savedOrder){
+    savedOrder.payments=[...(savedOrder.payments||[]),payment];
+    delete savedOrder._financialSummary;
+    erpLocalWriteOnly(latest);
+  }
+  appendErpAudit("private_label_payment_created",{orderId:order.id,amount:delta,source:"order_form"});
+  erpV174AuditCloud("payment",String(row.id),"created",null,row).catch(()=>{});
+  return true;
+}
+
+async function saveErpOrderFromForm(e){
   e.preventDefault();
 
   const data=readErpTestData();
   const id=$("erpOrderId")?.value||uid();
   const existing=data.orders.find(o=>String(o.id)===String(id));
+  const currentPaid=existing?erpOrderPaymentSummary(existing).paid:0;
   const audit=currentAuditInfo();
   const products=readErpProductItemsFromForm();
   const qty=products.reduce((sum,item)=>sum+erpProductQty(item),0);
@@ -28272,6 +28400,17 @@ function saveErpOrderFromForm(e){
   if(!client){
     alert("Selecione um cliente já cadastrado. Não é permitido criar pedido Private Label apenas digitando um nome.");
     $("erpOrderClient")?.focus();
+    return;
+  }
+  const financialPreview=updateErpOrderFinancialPreview();
+  if(financialPreview.paid>financialPreview.total+0.001){
+    alert("O Valor pago não pode ser maior que o Valor total do pedido.");
+    $("erpOrderPaidValue")?.focus();
+    return;
+  }
+  if(financialPreview.paid+0.001<currentPaid){
+    alert(`O pedido já possui ${money(currentPaid)} no histórico. Para reduzir esse valor, use um estorno; o formulário aceita apenas manter ou acrescentar pagamentos.`);
+    $("erpOrderPaidValue")?.focus();
     return;
   }
   const stageStartedAt=existing?.stage===stage
@@ -28299,6 +28438,7 @@ function saveErpOrderFromForm(e){
     standby:{active:false,reason:"",stage:"",at:"",user:""},
     standbyHistory:Array.isArray(existing?.standbyHistory)?existing.standbyHistory:[],
     sewingHistory:Array.isArray(existing?.sewingHistory)?existing.sewingHistory:[],
+    payments:Array.isArray(existing?.payments)?existing.payments:[],
     stageHistory:erpOrderStageHistory(existing),
     createdAt:existing?.createdAt||audit.at||new Date().toISOString(),
     createdBy:existing?.createdBy||audit.name||"Não registrado",
@@ -28323,7 +28463,15 @@ function saveErpOrderFromForm(e){
   const saved=writeErpTestData(data);
   const persisted=readErpTestData().orders.find(o=>String(o.id)===String(id));
   if(!saved||!persisted||persisted.stage!==stage){
-    alert("O pedido não pôde ser confirmado no WISENT ERP. Os dados do formulário foram mantidos; tente salvar novamente.");
+    alert("O pedido não pôde ser confirmado no Private Label. Os dados do formulário foram mantidos; tente salvar novamente.");
+    return;
+  }
+  if($("erpOrderId"))$("erpOrderId").value=id;
+  try{
+    await saveErpOrderPaidValue(order,financialPreview.paid,currentPaid);
+  }catch(error){
+    console.error(error);
+    alert("O pedido foi salvo, mas o Valor pago ainda não foi confirmado no Supabase. Os campos foram mantidos; confira a conexão e tente salvar novamente.");
     return;
   }
   resetErpOrderForm();
@@ -28355,10 +28503,13 @@ function editErpOrder(id){
   if($("erpOrderProductionDue"))$("erpOrderProductionDue").value=erpProductionDate(order);
   $("erpOrderPriority").value=order.priority||"Normal";
   $("erpOrderValue").value=order.value||0;
+  const payment=erpOrderPaymentSummary(order);
+  if($("erpOrderPaidValue"))$("erpOrderPaidValue").value=payment.paid||0;
   if($("erpOrderFinancialDue"))$("erpOrderFinancialDue").value=order.financialDueDate||"";
   $("erpOrderStage").value=ERP_STAGES.includes(order.stage)?order.stage:"Pedido";
   $("erpOrderNotes").value=order.notes||"";
   setErpProductItemsInForm(erpNormalizeOrderProducts(order));
+  updateErpOrderFinancialPreview();
 }
 
 function advanceErpOrder(id){
@@ -28462,7 +28613,7 @@ function returnErpOrderToPreviousStage(id){
 }
 
 function deleteErpOrder(id){
-  if(!confirm("Excluir este pedido do WISENT ERP?"))return;
+  if(!confirm("Excluir este pedido do Private Label?"))return;
   const data=readErpTestData();
   const existing=(data.orders||[]).find(o=>String(o.id)===String(id));
   if(existing)queueErpRelationalDeleteOrder(existing);
@@ -28525,7 +28676,7 @@ function editErpClient(id){
 }
 
 function deleteErpClient(id){
-  if(!confirm("Excluir este cliente do WISENT ERP?"))return;
+  if(!confirm("Excluir este cliente do Private Label?"))return;
   const data=readErpTestData();
   data.clients=(data.clients||[]).filter(c=>String(c.id)!==String(id));
   writeErpTestData(data);
@@ -28594,7 +28745,7 @@ function adjustErpStock(id,delta){
 }
 
 function deleteErpStock(id){
-  if(!confirm("Excluir este item do estoque do WISENT ERP?"))return;
+  if(!confirm("Excluir este item do estoque do Private Label?"))return;
   const data=readErpTestData();
   data.stock=(data.stock||[]).filter(s=>String(s.id)!==String(id));
   writeErpTestData(data);
@@ -28642,7 +28793,7 @@ function editErpFinance(id){
 }
 
 function deleteErpFinance(id){
-  if(!confirm("Excluir este lançamento financeiro do WISENT ERP?"))return;
+  if(!confirm("Excluir este lançamento financeiro do Private Label?"))return;
   const data=readErpTestData();
   data.finance=(data.finance||[]).filter(f=>String(f.id)!==String(id));
   writeErpTestData(data);
@@ -29382,7 +29533,7 @@ function renderErpReportPDF(){
   }
 
   if($("erpReportPdfFooter")){
-    $("erpReportPdfFooter").textContent=state.settings.pdfFooter||`Relatório gerado automaticamente pelo WISENT ERP em ${generated}.`;
+    $("erpReportPdfFooter").textContent=state.settings.pdfFooter||`Relatório gerado automaticamente pelo Private Label em ${generated}.`;
   }
 }
 
@@ -29392,7 +29543,7 @@ function printErpReportFallback(){
   const {range,productionRows,orders}=report;
   renderErpReportPDF();
   const oldTitle=document.title;
-  document.title=`Relatório WISENT ERP ${range.start} a ${range.end}`;
+  document.title=`Relatório Private Label ${range.start} a ${range.end}`;
   document.body.classList.remove(
     "print-report",
     "print-accumulation",
@@ -29448,7 +29599,7 @@ async function deliverErpPdf(bytes,fileName){
   const file=typeof File==="function"?new File([blob],fileName,{type:"application/pdf"}):null;
   if(file&&navigator.share&&navigator.canShare?.({files:[file]})){
     try{
-      await navigator.share({title:"Relatório WISENT ERP",text:"Relatório operacional do período selecionado.",files:[file]});
+      await navigator.share({title:"Relatório Private Label",text:"Relatório operacional do período selecionado.",files:[file]});
       return "shared";
     }catch(error){
       if(error?.name==="AbortError")return "cancelled";
@@ -29488,10 +29639,10 @@ async function exportErpReportPDF(){
   try{
     const {PDFDocument,StandardFonts,rgb}=window.PDFLib;
     const pdf=await PDFDocument.create();
-    pdf.setTitle(`Relatório WISENT ERP - ${erpReportRangeLabel(range)}`);
-    pdf.setAuthor("WISENT ERP");
+    pdf.setTitle(`Relatório Private Label - ${erpReportRangeLabel(range)}`);
+    pdf.setAuthor("Private Label");
     pdf.setSubject("Relatório operacional");
-    pdf.setCreator(`WISENT ERP ${APP_BUILD_VERSION}`);
+    pdf.setCreator(`Private Label ${APP_BUILD_VERSION}`);
     pdf.setCreationDate(new Date());
 
     const regular=await pdf.embedFont(StandardFonts.Helvetica);
@@ -29516,7 +29667,7 @@ async function exportErpReportPDF(){
       pageNumber+=1;
       y=pageSize[1]-margin;
       page.drawRectangle({x:0,y:pageSize[1]-8,width:pageSize[0],height:8,color:blue});
-      page.drawText("WISENT ERP",{x:margin,y:20,size:8,font:bold,color:muted});
+      page.drawText("PRIVATE LABEL",{x:margin,y:20,size:8,font:bold,color:muted});
       page.drawText(`Página ${pageNumber}`,{x:pageSize[0]-margin-42,y:20,size:8,font:regular,color:muted});
     }
 
@@ -29554,7 +29705,7 @@ async function exportErpReportPDF(){
     addPage();
     page.drawText("RELATÓRIO OPERACIONAL",{x:margin,y,size:9,font:bold,color:blue});
     y-=27;
-    page.drawText("WISENT ERP",{x:margin,y,size:25,font:bold,color:navy});
+    page.drawText("PRIVATE LABEL",{x:margin,y,size:25,font:bold,color:navy});
     y-=20;
     drawWrapped(`${erpReportRangeLabel(range)} | ${erpReportBasisName(basis)}`,margin,contentWidth,9,regular,muted,12);
     y-=8;
@@ -29624,7 +29775,7 @@ async function exportErpReportPDF(){
     drawSectionTitle("Informações de controle");
     drawWrapped(`Estoque abaixo do mínimo: ${lowStock} item(ns). Pedidos urgentes: ${stats.urgent}. Arquivo gerado em ${new Date().toLocaleString("pt-BR")}.`,margin,contentWidth,8.5,regular,muted,12);
     y-=5;
-    drawWrapped("Este relatório foi gerado automaticamente a partir dos dados sincronizados no WISENT ERP.",margin,contentWidth,8.5,regular,muted,12);
+    drawWrapped("Este relatório foi gerado automaticamente a partir dos dados sincronizados no Private Label.",margin,contentWidth,8.5,regular,muted,12);
 
     const bytes=await pdf.save();
     const fileName=`relatorio-wisent-erp-${range.start}-a-${range.end}.pdf`;
@@ -29632,7 +29783,7 @@ async function exportErpReportPDF(){
     if(delivery==="downloaded")setErpSyncStatus(`PDF gerado: ${fileName}`);
     if(delivery==="shared")setErpSyncStatus("PDF gerado e compartilhado com sucesso");
   }catch(error){
-    console.error("Falha ao gerar PDF do WISENT ERP:",error);
+    console.error("Falha ao gerar PDF do Private Label:",error);
     alert("Não foi possível gerar o arquivo PDF automaticamente. Abrirei a versão para impressão como alternativa.");
     printErpReportFallback();
   }finally{
@@ -29658,7 +29809,7 @@ async function exportErpOrderPDF(orderId){
     });
   };
   page.drawRectangle({x:0,y:830,width:595,height:12,color:rgb(.12,.38,.82)});
-  addLine("WISENT ERP • PEDIDO PRIVATE LABEL",11,bold,rgb(.12,.38,.82),20);
+  addLine("PRIVATE LABEL • PEDIDO",11,bold,rgb(.12,.38,.82),20);
   addLine(order.number||"Pedido",24,bold,rgb(.04,.08,.16),30);
   addLine(`Data: ${dateBR(String(order.createdAt||today()).slice(0,10))}  |  Etapa: ${order.stage||"Pedido"}  |  Entrega: ${dateBR(order.dueDate)}`,9,regular);
   y-=8;addLine("CLIENTE",10,bold,rgb(.12,.38,.82),17);
@@ -30010,7 +30161,7 @@ function populateErpCommissionEmployees(){
   }
 }
 
-async function recalculateErpCommissions(){
+async function recalculateErpCommissions(options={}){
   if(!isWisentAdmin())return;
   const data=readErpTestData();
   const rules=data.commissionRules||[];
@@ -30031,11 +30182,14 @@ async function recalculateErpCommissions(){
   });
   const existing=new Map((data.commissions||[]).map(row=>[`${row.source_origin}|${row.source_id}|${row.seller_id}`,row]));
   const rows=[];
+  const recalculatedKeys=new Set();
   for(const sale of sales){
     const rule=erpCommissionRuleFor(rules,sale.sellerId,sale.origin,sale.date);
     if(!rule)continue;
-    const old=existing.get(`${sale.origin}|${sale.sourceId}|${sale.sellerId}`);
+    const commissionKey=`${sale.origin}|${sale.sourceId}|${sale.sellerId}`;
+    const old=existing.get(commissionKey);
     const percentage=Number(rule.percentage||0);
+    recalculatedKeys.add(commissionKey);
     rows.push({
       id:old?.id||await erpV2Uuid("commission",`${sale.origin}-${sale.sourceId}-${sale.sellerId}`),
       source_id:sale.sourceId,source_origin:sale.origin,seller_id:sale.sellerId,seller_name:sale.sellerName,
@@ -30053,31 +30207,52 @@ async function recalculateErpCommissions(){
     alert("As comissões não foram confirmadas no Supabase. Confira a migration V174 e as regras cadastradas.");
     return;
   }
-  data.commissions=rows;
+  const preserved=(data.commissions||[]).filter(row=>!recalculatedKeys.has(`${row.source_origin}|${row.source_id}|${row.seller_id}`));
+  data.commissions=[...preserved,...rows];
   erpLocalWriteOnly(data);
   appendErpAudit("commissions_recalculated",{sales:sales.length,commissions:rows.length});
   erpV174AuditCloud("commission_batch",today().slice(0,7),"recalculated",{previousCount:existing.size},{sales:sales.length,commissions:rows.length}).catch(()=>{});
   renderErpCommissions();
-  showUndoToast(`${rows.length} comissão(ões) recalculada(s) a partir de vendas reais.`);
+  if(!options.silent)showUndoToast(`${rows.length} comissão(ões) recalculada(s) a partir de vendas reais.`);
 }
 
 function renderErpCommissions(){
   if(!isWisentAdmin())return;
   const data=readErpTestData();
   populateErpCommissionEmployees();
-  const month=$("erpCommissionMonth")?.value||"";
-  const year=String($("erpCommissionYear")?.value||"");
+  const now=new Date();
+  const currentYear=String(now.getFullYear());
+  const currentMonth=String(now.getMonth()+1).padStart(2,"0");
+  if($("erpCommissionYear")&&!$("erpCommissionYear").dataset.initialized){
+    $("erpCommissionYear").value=currentYear;
+    $("erpCommissionYear").dataset.initialized="1";
+  }
+  if($("erpCommissionMonth")&&!$("erpCommissionMonth").dataset.initialized){
+    $("erpCommissionMonth").value=currentMonth;
+    $("erpCommissionMonth").dataset.initialized="1";
+  }
+  const month=$("erpCommissionMonth")?.value||currentMonth;
+  const year=String($("erpCommissionYear")?.value||currentYear);
+  const competence=`${year}-${month}`;
+  ["erpCommissionStart","erpCommissionEnd"].forEach(id=>{
+    if($(id)){
+      $(id).min=`${year}-01-01`;
+      $(id).max=`${year}-12-31`;
+    }
+  });
   const start=$("erpCommissionStart")?.value||"";
   const end=$("erpCommissionEnd")?.value||"";
+  const rangeStart=start&&end&&start>end?end:start;
+  const rangeEnd=start&&end&&start>end?start:end;
   const employee=$("erpCommissionEmployeeFilter")?.value||"";
   const origin=$("erpCommissionOriginFilter")?.value||"";
   const status=$("erpCommissionStatusFilter")?.value||"";
   const source=erpReportFilterText($("erpCommissionSourceFilter")?.value);
   const rows=(data.commissions||[]).filter(row=>{
     const date=String(row.sale_date||"").slice(0,10);
-    const periodOk=(start||end)
-      ?(!start||date>=start)&&(!end||date<=end)
-      :month?row.competence===month:year?date.startsWith(`${year}-`):true;
+    const periodOk=(rangeStart||rangeEnd)
+      ?(!rangeStart||date>=rangeStart)&&(!rangeEnd||date<=rangeEnd)
+      :row.competence===competence;
     return periodOk&&(!employee||row.seller_id===employee)&&(!origin||row.source_origin===origin)&&(!status||row.status===status)&&(!source||erpReportFilterText(row.source_id).includes(source));
   });
   const sum=predicate=>rows.filter(predicate).reduce((total,row)=>total+Number(row.commission_value||0),0);
@@ -30088,8 +30263,25 @@ function renderErpCommissions(){
   $("erpCommissionTotal").textContent=money(sum(()=>true));
   $("erpCommissionPending").textContent=money(sum(row=>["Pendente","Aprovada"].includes(row.status)));
   $("erpCommissionPaid").textContent=money(sum(row=>row.status==="Paga"));
+  if($("erpCommissionPeriodLabel")){
+    $("erpCommissionPeriodLabel").textContent=(rangeStart||rangeEnd)
+      ?`Período personalizado: ${rangeStart?dateBR(rangeStart):"início"} até ${rangeEnd?dateBR(rangeEnd):"hoje"}.`
+      :`Mês completo: ${monthLabel(competence)}.`;
+  }
   $("erpCommissionRows").innerHTML=rows.length?rows.map(row=>`<tr><td>${esc(row.source_id)}</td><td>${esc(row.seller_name)}</td><td>${esc(row.source_origin)}</td><td>${money(row.eligible_value)}</td><td>${Number(row.percentage).toFixed(2)}%</td><td><strong>${money(row.commission_value)}</strong></td><td>${esc(row.status)}</td><td><select onchange="updateErpCommissionStatus('${row.id}',this.value)">${["Pendente","Aprovada","Paga","Cancelada","Estornada"].map(value=>`<option ${value===row.status?"selected":""}>${value}</option>`).join("")}</select></td></tr>`).join(""):`<tr><td colspan="8">Nenhuma comissão no período.</td></tr>`;
-  $("erpCommissionRuleRows").innerHTML=(data.commissionRules||[]).map(rule=>`<tr><td>${esc(rule.employee_name)}</td><td>${esc(rule.sale_origin)}</td><td>${Number(rule.percentage).toFixed(2)}%</td><td>${dateBR(rule.valid_from)} até ${dateBR(rule.valid_until)}</td><td>${rule.active?"Ativa":"Inativa"}</td></tr>`).join("");
+}
+
+function clearErpCommissionCustomRange(){
+  if($("erpCommissionStart"))$("erpCommissionStart").value="";
+  if($("erpCommissionEnd"))$("erpCommissionEnd").value="";
+  renderErpCommissions();
+}
+
+let erpCommissionAutoCalculatedAt=0;
+function ensureErpCommissionAutoCalculated(){
+  if(!isWisentAdmin()||Date.now()-erpCommissionAutoCalculatedAt<60000)return;
+  erpCommissionAutoCalculatedAt=Date.now();
+  recalculateErpCommissions({silent:true}).catch(error=>console.warn("Cálculo automático de comissões adiado:",error));
 }
 
 async function saveErpCommissionRule(event){
@@ -30139,7 +30331,7 @@ function renderErpTest(){
   applyErpTechnicalMapAccess();
   erpApplyCommissionAccess();
   if(erpTestDisabled()){
-    if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="WISENT ERP indisponível";
+    if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="Private Label indisponível";
     return;
   }
   populateErpStageSelect();
@@ -30167,8 +30359,9 @@ function renderErpTest(){
   }
 
   applyErpSectorAccessControl();
+  erpApplyCommissionAccess();
 
-  if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="WISENT ERP ativo";
+  if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="Private Label ativo";
 }
 
 
@@ -30223,6 +30416,16 @@ function renderCurrentPageOnly(){
 
     case "erpTest":
       renderErpTest();
+      break;
+
+    case "suppliesPage":
+      renderErpTest();
+      renderErpSupplies();
+      break;
+
+    case "commissionsPage":
+      renderErpTest();
+      renderErpCommissions();
       break;
 
     case "settings":
