@@ -4918,7 +4918,7 @@ body:not(.authLocked) .loginScreen{
 }
 
 
-/* ===== V86 BOTÃO DISCRETO RESETAR TESTES ===== */
+/* ===== V86 BOTÃO DISCRETO PARA LIMPEZA ===== */
 .resetTestBtn{
   opacity:.32!important;
   border-color:#fee2e2!important;
@@ -9196,7 +9196,7 @@ textarea{
 }
 
 
-/* ===== V140 WISENT ERP TESTE ISOLADO ===== */
+/* ===== V140 WISENT ERP ===== */
 .erpTestView{--erp-text:#f8fafc;--erp-gold:#d4af37;}
 body[data-page="erpTest"]{background:#050505!important;}
 body[data-page="erpTest"] .top,.erpTestView .panel,.erpTestView .card{background:linear-gradient(180deg,#111,#080808)!important;color:var(--erp-text)!important;border-color:rgba(212,175,55,.22)!important;}
@@ -9237,7 +9237,7 @@ body[data-page="erpTest"] .top h2,.erpTestView h2,.erpTestView h3,.erpTestView h
 @media(max-width:760px){.erpHero,.erpRestoreBox{display:grid;grid-template-columns:1fr;}.erpHero h2{font-size:28px;}.erpHeroActions,.erpHeroActions button{width:100%;}.erpStatsGrid,.erpSpecGrid{grid-template-columns:1fr;}.erpKanban{grid-template-columns:repeat(8,82vw);}}
 
 
-/* ===== V141 ERP TESTE FUNCIONAL E FUNDO PRETO ===== */
+/* ===== V141 ERP FUNCIONAL E FUNDO PRETO ===== */
 .erpTestView,
 .erpTestView *{
   scrollbar-color:#d4af37 #080808;
@@ -10561,6 +10561,18 @@ body[data-page="erpTest"] .main{
   min-height:32px!important;
 }
 
+.erpSewingAssignment select{
+  flex:1 1 180px!important;
+  min-width:0!important;
+  min-height:36px!important;
+  border:1px solid rgba(167,139,250,.38)!important;
+  border-radius:9px!important;
+  background:#17152b!important;
+  color:#fff!important;
+  padding:7px 9px!important;
+  font-weight:800!important;
+}
+
 .erpKanbanProductBox.missingSewing{
   border-color:rgba(167,139,250,.38)!important;
   background:linear-gradient(180deg,rgba(167,139,250,.10),rgba(255,255,255,.035))!important;
@@ -10580,7 +10592,8 @@ body[data-page="erpTest"] .main{
     grid-template-columns:1fr!important;
   }
 
-  .erpSewingAssignment button{
+  .erpSewingAssignment button,
+  .erpSewingAssignment select{
     width:100%!important;
     min-height:40px!important;
   }
@@ -11540,12 +11553,12 @@ body.erpStandbyModalOpen{
       <button data-page="pix">Chaves PIX</button>
       <button data-page="reports">Relatório PDF</button>
       <button data-page="collaborators">Colaboradores</button>
-      <button data-page="erpTest" data-erp-test-nav>WISENT ERP teste</button>
+      <button data-page="erpTest" data-erp-test-nav>WISENT ERP</button>
       <button data-page="settings">Personalizar</button>
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V166</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V167</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -11558,8 +11571,7 @@ body.erpStandbyModalOpen{
         <button type="button" class="secondary small wholesaleRecoverBtn" onclick="recoverWholesaleLaunchesDeepScan();closeProfileMenu();">Recuperação profunda</button>
         <button type="button" class="secondary small launchRecoverBtn" onclick="recoverInfluencerLaunchesDeepScan();closeProfileMenu();">Recuperar lançamentos influencers</button>
         <button type="button" class="secondary small systemAuditBtn" onclick="runSystemAuditAndShow();closeProfileMenu();">Auditoria do sistema</button>
-        <button type="button" class="secondary small erpRestoreMenuBtn" onclick="toggleErpTestModuleFromMenu();closeProfileMenu();">Ativar/Restaurar ERP teste</button>
-        <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Resetar testes</button>
+        <button type="button" class="secondary small resetTestBtn" onclick="resetTestData();closeProfileMenu();">Limpar dados do painel</button>
         <button type="button" class="secondary small" onclick="logoutUser();closeProfileMenu();">Sair</button>
       </div>
     </div><div class="monthbox topMonthBox" id="topMonthBox"><b>Mês</b><input id="globalMonth" type="month"></div></div>
@@ -12623,7 +12635,7 @@ body.erpStandbyModalOpen{
           <div class="authManagerHead">
             <div>
               <h4>Cadastro de colaborador</h4>
-              <p>Cada lançamento salva o colaborador logado. Perfis Corte/Costura entram somente no Kanban de produção do ERP teste.</p>
+              <p>Cada lançamento salva o colaborador logado. Perfis Corte/Costura entram somente no Kanban de produção do WISENT ERP.</p>
             </div>
             <span class="badge">Rastreamento</span>
           </div>
@@ -12680,26 +12692,24 @@ body.erpStandbyModalOpen{
 <section id="erpTest" class="view erpTestView">
   <div class="erpHero">
     <div>
-      <span class="erpLabBadge">Módulo teste isolado</span>
+      <span class="erpLabBadge">Gestão operacional</span>
       <h2>WISENT ERP</h2>
-      <p>Área experimental separada do painel de comissões. Os dados desta aba usam armazenamento próprio e não entram em Lançamentos, Atacado/Varejo, Pagos, Acumular ou Produto escolhido.</p>
+      <p>Área de gestão de clientes, pedidos, produção, estoque, financeiro, relatórios e etiquetas.</p>
       <div id="erpSyncStatus" class="erpSyncStatus">ERP: salvamento local ativo • sincronização iniciando</div>
     </div>
     <div class="erpHeroActions">
-      <button class="secondary" type="button" onclick="exportErpTestData()">Exportar dados ERP teste</button>
+      <button class="secondary" type="button" onclick="exportErpTestData()">Exportar dados ERP</button>
       <button class="secondary" type="button" onclick="exportErpBackupBundle()">Backup ERP</button>
-      <button class="secondary" type="button" onclick="runErpProductionReadiness()">Teste 10/10</button>
-      <button class="secondary" type="button" onclick="resetErpTestData()">Limpar dados do teste</button>
-      <button class="danger" type="button" onclick="restoreBeforeErpTest()">Restaurar ponto V139</button>
+      <button class="secondary" type="button" onclick="runErpProductionReadiness()">Verificar integridade</button>
     </div>
   </div>
 
-  <div class="panel erpRestoreBox">
+  <div class="panel erpRestoreBox" hidden>
     <div>
       <strong>Ponto de restauração criado</strong>
-      <p>Referência: <b>V139 — antes da aba WISENT ERP teste</b>. O botão “Restaurar ponto V139” desativa visualmente este módulo experimental e volta para o painel principal sem apagar os dados salvos do sistema atual.</p>
+      <p>Referência interna de segurança do WISENT ERP.</p>
     </div>
-    <span id="erpRestoreStatus">ERP teste ativo</span>
+    <span id="erpRestoreStatus">WISENT ERP ativo</span>
   </div>
 
   <div id="erpStandbyModal" class="erpStandbyModal noPrint" hidden>
@@ -12774,7 +12784,7 @@ body.erpStandbyModalOpen{
       <div class="panelHead">
         <div>
           <h3>Clientes</h3>
-          <span class="muted">Cadastro isolado para teste do ERP.</span>
+          <span class="muted">Cadastro de clientes do WISENT ERP.</span>
         </div>
       </div>
       <form id="erpClientForm" class="form">
@@ -12798,7 +12808,7 @@ body.erpStandbyModalOpen{
       <div class="panelHead">
         <div>
           <h3>Clientes cadastrados</h3>
-          <span class="muted">Lista de clientes do ERP teste.</span>
+          <span class="muted">Lista de clientes cadastrados no WISENT ERP.</span>
         </div>
         <div class="filters">
           <input id="erpClientSearch" placeholder="Pesquisar cliente..." oninput="renderErpTest()">
@@ -12817,8 +12827,8 @@ body.erpStandbyModalOpen{
     <div class="panel erpOrderCreatePanel">
       <div class="panelHead">
         <div>
-          <h3>Novo pedido ERP teste</h3>
-          <span class="muted">Formulário simplificado para testar fluxo de produção sem misturar com o painel principal.</span>
+          <h3>Novo pedido</h3>
+          <span class="muted">Cadastre o pedido para iniciar o fluxo de produção na etapa Pedido.</span>
         </div>
       </div>
       <form id="erpOrderForm" class="form erpOrderForm">
@@ -12831,7 +12841,7 @@ body.erpStandbyModalOpen{
         <label>Prazo produção<input id="erpOrderProductionDue" type="date"></label>
         <label>Prioridade<select id="erpOrderPriority"><option>Normal</option><option>Urgente</option><option>Alta</option></select></label>
         <label>Valor<input id="erpOrderValue" type="number" step="0.01" min="0"></label>
-        <label>Etapa<select id="erpOrderStage"></select></label>
+        <label>Etapa<select id="erpOrderStage" disabled></select><small>O pedido entra em Pedido e avança somente pelos controles do Kanban.</small></label>
         <label class="two">Observações<input id="erpOrderNotes" placeholder="Detalhes do pedido, estampa, prazo, acabamento..."></label>
 
         <div class="erpProductBuilder two">
@@ -12848,7 +12858,7 @@ body.erpStandbyModalOpen{
           <div id="erpProductItems"></div>
         </div>
 
-        <div class="actions two"><button class="primary" type="submit">Salvar pedido ERP teste</button><button class="secondary" type="button" onclick="resetErpOrderForm()">Cancelar</button></div>
+        <div class="actions two"><button class="primary" type="submit">Salvar pedido</button><button class="secondary" type="button" onclick="resetErpOrderForm()">Cancelar</button></div>
       </form>
     </div>
 
@@ -12872,7 +12882,7 @@ body.erpStandbyModalOpen{
       <div class="panelHead">
         <div>
           <h3>Estoque</h3>
-          <span class="muted">Controle mínimo com entrada/saída manual no teste.</span>
+          <span class="muted">Controle de entradas, saídas e níveis mínimos do estoque.</span>
         </div>
       </div>
       <form id="erpStockForm" class="form">
@@ -12901,7 +12911,7 @@ body.erpStandbyModalOpen{
   <div class="erpModule" data-erp-panel="financeiro" hidden>
     <div class="panel">
       <div class="panelHead">
-        <div><h3>Financeiro</h3><span class="muted">Entradas, saídas, pendências e fluxo de caixa do ERP teste.</span></div>
+        <div><h3>Financeiro</h3><span class="muted">Entradas, saídas, pendências e fluxo de caixa do WISENT ERP.</span></div>
       </div>
       <form id="erpFinanceForm" class="form">
         <input type="hidden" id="erpFinanceId">
@@ -12933,7 +12943,7 @@ body.erpStandbyModalOpen{
   <div class="erpModule" data-erp-panel="relatorios" hidden>
     <div class="panel">
       <div class="panelHead">
-        <div><h3>Relatórios ERP teste</h3><span class="muted">Resumo operacional calculado com os dados de teste.</span></div>
+        <div><h3>Relatórios ERP</h3><span class="muted">Resumo operacional calculado com os dados oficiais do sistema.</span></div>
         <div class="filters">
           <label class="erpMonthMini">Mês produção<input id="erpReportMonth" type="month" onchange="renderErpTest()"></label>
           <button class="secondary" onclick="exportErpReportCSV()">Exportar CSV</button>
@@ -12944,11 +12954,11 @@ body.erpStandbyModalOpen{
         <div class="card"><small>Produção diária</small><strong id="erpReportDaily">0</strong></div>
         <div class="card"><small>Produção semanal</small><strong id="erpReportWeekly">0</strong></div>
         <div class="card"><small>Peças no mês</small><strong id="erpReportMonthly">0</strong></div>
-        <div class="card"><small>Tempo médio produção</small><strong id="erpReportAvgTime">Teste</strong></div>
+        <div class="card"><small>Tempo médio produção</small><strong id="erpReportAvgTime">Em apuração</strong></div>
         <div class="card"><small>Faturamento</small><strong id="erpReportRevenue">R$ 0,00</strong></div>
         <div class="card"><small>Atrasados</small><strong id="erpReportLate">0</strong></div>
         <div class="card"><small>Estoque baixo</small><strong id="erpReportLowStock">0</strong></div>
-        <div class="card"><small>Funcionário mais produtivo</small><strong id="erpReportTopEmployee">Teste</strong></div>
+        <div class="card"><small>Funcionário mais produtivo</small><strong id="erpReportTopEmployee">Em apuração</strong></div>
       </div>
       <div class="tableWrap">
         <table>
@@ -12982,7 +12992,7 @@ body.erpStandbyModalOpen{
             <h1>Relatório de Produção - WISENT ERP</h1>
             <p id="erpReportPdfSubtitle">Mês de produção</p>
           </div>
-          <div class="erpPdfBadge">ERP TESTE</div>
+          <div class="erpPdfBadge">WISENT ERP</div>
         </div>
 
         <div class="pdfThreeCards erpPdfMetrics">
@@ -13023,7 +13033,7 @@ body.erpStandbyModalOpen{
   <div class="erpModule" data-erp-panel="etiquetas" hidden>
     <div class="panel">
       <div class="panelHead">
-        <div><h3>QR Code e etiquetas</h3><span class="muted">Prévia de etiqueta automática do pedido no ERP teste.</span></div>
+        <div><h3>QR Code e etiquetas</h3><span class="muted">Prévia de etiqueta automática do pedido no WISENT ERP.</span></div>
       </div>
       <div class="form">
         <label>Pedido<select id="erpLabelOrderSelect" onchange="renderErpLabel()"></select></label>
@@ -13050,10 +13060,10 @@ body.erpStandbyModalOpen{
       <div class="panelHead">
         <div>
           <h3>Prontidão 10/10</h3>
-          <span class="muted">Checklist operacional para transformar o ERP teste em uso profissional controlado.</span>
+          <span class="muted">Verificação operacional de segurança e integridade do WISENT ERP.</span>
         </div>
         <div class="filters">
-          <button class="secondary" type="button" onclick="runErpProductionReadiness()">Rodar teste</button>
+          <button class="secondary" type="button" onclick="runErpProductionReadiness()">Executar verificação</button>
           <button class="secondary" type="button" onclick="runErpSupabaseProductionAudit()">Auditar Supabase</button>
           <button class="secondary" type="button" onclick="runErpRelationalAudit()">Auditar ERP real</button>
           <button class="secondary" type="button" onclick="migrateErpCurrentDataToRelational()">Migrar ERP real</button>
@@ -13077,8 +13087,8 @@ body.erpStandbyModalOpen{
       <div class="erpSupabaseAuditBox erpRelationalBox">
         <div class="panelHead">
           <div>
-            <h3>ERP real em tabelas Supabase</h3>
-            <span class="muted">Fase 1 da migração segura: pedidos e produtos em tabelas próprias, sem imagens/base64 dentro do painel_state.</span>
+            <h3>Estrutura relacional Supabase</h3>
+            <span class="muted">Pedidos e produtos em tabelas próprias, com sincronização e proteção contra perda de dados.</span>
           </div>
           <div class="filters">
             <button class="secondary" type="button" onclick="runErpRelationalAudit()">Auditar tabelas</button>
@@ -13103,14 +13113,14 @@ body.erpStandbyModalOpen{
       <div class="erpSupabaseAuditBox erpRelationalBox">
         <div class="panelHead">
           <div>
-            <h3>ERP V2 isolado — Fase 1</h3>
-            <span class="muted">Estrutura paralela com UUID, versionamento, soft delete e auditoria. Nesta fase o ERP atual continua visível e nenhum dado legado é apagado.</span>
+            <h3>Banco operacional ERP V2</h3>
+            <span class="muted">Estrutura oficial com UUID, versionamento, exclusão protegida e auditoria.</span>
           </div>
           <div class="filters">
             <button class="secondary" type="button" onclick="runErpV2Audit()">Auditar V2</button>
             <button class="primary" type="button" onclick="migrateErpTestToV2()">Migrar cópia para V2</button>
-            <button class="secondary" type="button" onclick="runErpV2Phase2Audit()">Testar operações V2</button>
-            <button class="primary" type="button" onclick="toggleErpV2Phase2()">Ativar Fase 2</button>
+            <button class="secondary" type="button" onclick="runErpV2Phase2Audit()">Verificar operações V2</button>
+            <button class="primary" type="button" onclick="toggleErpV2Phase2()">Ativar operações V2</button>
           </div>
         </div>
         <div class="grid erpStatsGrid">
@@ -13120,7 +13130,7 @@ body.erpStandbyModalOpen{
           <div class="card erpMetricCard"><span class="erpMetricIcon">✓</span><small>Última migração</small><strong id="erpV2LastMigration">-</strong></div>
         </div>
         <div class="erpInlineStatus">
-          <strong id="erpV2Phase2Status">Fase 2 inativa</strong>
+          <strong id="erpV2Phase2Status">Operações V2 inativas</strong>
           <span class="muted">Quando ativada, novas alterações do ERP usam apenas operações individuais V2.</span>
         </div>
         <div class="tableWrap">
@@ -13149,7 +13159,7 @@ body.erpStandbyModalOpen{
         </div>
         <div class="tableWrap">
           <table>
-            <thead><tr><th>Teste</th><th>Status</th><th>Resposta</th></tr></thead>
+            <thead><tr><th>Verificação</th><th>Status</th><th>Resposta</th></tr></thead>
             <tbody id="erpSupabaseAuditRows"></tbody>
           </table>
         </div>
@@ -13383,7 +13393,6 @@ function legacyStorageKeys(){
     'painel_influencers_limpo_v45_filtered_corrigido',
     'painel_influencers_limpo_v44_supabase_corrigido',
     'painel_influencers_limpo_v43_supabase_diagnostico',
-    'painel_influencers_limpo_v42_teste_github',
     'painel_influencers_limpo_v41_supabase_direto',
     'painel_influencers_limpo_v40_supabase_ranking_sem_total',
     'painel_influencers_limpo_v39_supabase_lancamentos_sem_total',
@@ -13453,7 +13462,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V166";
+const APP_BUILD_VERSION="V167";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -13493,7 +13502,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=166");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=167");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -13801,7 +13810,7 @@ function handleBackupImport(event){
 
 function resetTestData(){
   const msg1=[
-    "Resetar todos os dados de teste?",
+    "Limpar todos os dados do painel?",
     "",
     "Será apagado:",
     "- lançamentos",
@@ -13838,7 +13847,7 @@ function resetTestData(){
     id:uid(),
     at:new Date().toISOString(),
     page:currentPage||"dashboard",
-    pageLabel:"Resetar testes",
+    pageLabel:"Limpar dados do painel",
     user:currentUser?.name||"Não registrado",
     state:previousData
   });
@@ -13867,7 +13876,7 @@ function resetTestData(){
   render();
   updateUndoButtons();
   showUndoToast("Sistema resetado para uso real. Influencers, colaboradores, login, logos e Pix foram mantidos.");
-  alert("Reset concluído. Os dados de teste foram apagados e o sistema ficou limpo para começar.");
+  alert("Limpeza concluída. Os dados do painel foram apagados e o sistema ficou pronto para começar.");
 }
 
 
@@ -15991,9 +16000,9 @@ function runLocalSystemAudit(){
     String(renderErpReports).includes("erpReportStageRows")&&
     String(renderErpLabel).includes("erpLabelPreview")
   ){
-    auditAdd(report,"pass","ERP_TEST_ISOLATED_MODULE","Aba WISENT ERP teste foi criada isolada do estado principal, com clientes, pedidos, estoque, financeiro, relatórios e etiquetas funcionais.");
+    auditAdd(report,"pass","ERP_TEST_ISOLATED_MODULE","WISENT ERP possui clientes, pedidos, estoque, financeiro, relatórios e etiquetas funcionais.");
   }else{
-    auditAdd(report,"warn","ERP_TEST_ISOLATED_MODULE","Não foi possível confirmar isolamento/restauração da aba WISENT ERP teste.");
+    auditAdd(report,"warn","ERP_TEST_ISOLATED_MODULE","Não foi possível confirmar a integridade do módulo WISENT ERP.");
   }
 
   if(
@@ -16028,9 +16037,9 @@ function runLocalSystemAudit(){
     $("erpOrderProductionDue")&&
     $("erpProductItems")
   ){
-    auditAdd(report,"pass","ERP_ORDER_PRODUCTS_REPORT_V145","ERP teste possui múltiplos modelos, grade PP-G4, prazo de produção no Kanban e relatório mensal por data.");
+    auditAdd(report,"pass","ERP_ORDER_PRODUCTS_REPORT_V145","WISENT ERP possui múltiplos modelos, grade PP-G4, prazo de produção no Kanban e relatório mensal por data.");
   }else{
-    auditAdd(report,"warn","ERP_ORDER_PRODUCTS_REPORT_V145","Não foi possível confirmar modelos/grade/relatório mensal do ERP teste.");
+    auditAdd(report,"warn","ERP_ORDER_PRODUCTS_REPORT_V145","Não foi possível confirmar modelos, grade e relatório mensal do WISENT ERP.");
   }
 
   if(
@@ -16041,9 +16050,9 @@ function runLocalSystemAudit(){
     document.querySelector(".erpModuleTabs .erpTabIcon")&&
     String(document.querySelector("style")?.textContent||"").includes("V146 ERP DESIGN PROFISSIONAL")
   ){
-    auditAdd(report,"pass","ERP_UI_MOBILE_V146","ERP teste recebeu estratégia visual com ícones, cores por etapa e Kanban mobile responsivo.");
+    auditAdd(report,"pass","ERP_UI_MOBILE_V146","WISENT ERP possui ícones, cores por etapa e Kanban mobile responsivo.");
   }else{
-    auditAdd(report,"warn","ERP_UI_MOBILE_V146","Não foi possível confirmar toda a melhoria visual/mobile do ERP teste.");
+    auditAdd(report,"warn","ERP_UI_MOBILE_V146","Não foi possível confirmar toda a interface mobile do WISENT ERP.");
   }
 
   if(
@@ -16067,7 +16076,7 @@ function runLocalSystemAudit(){
     String(exportErpReportPDF).includes("print-erp-report")&&
     String(document.querySelector("style")?.textContent||"").includes("V148 ERP RELATÓRIO PDF")
   ){
-    auditAdd(report,"pass","ERP_REPORT_PDF_V148","Relatório do WISENT ERP teste pode ser exportado em PDF com resumo por etapa, produção por data e pedidos/modelos.");
+    auditAdd(report,"pass","ERP_REPORT_PDF_V148","O relatório do WISENT ERP pode ser exportado em PDF com resumo por etapa, produção por data e pedidos/modelos.");
   }else{
     auditAdd(report,"warn","ERP_REPORT_PDF_V148","Não foi possível confirmar a exportação PDF do relatório ERP.");
   }
@@ -16075,12 +16084,13 @@ function runLocalSystemAudit(){
   if(
     String(setErpOrderStandby).includes("Motivo do standby")&&
     String(clearErpOrderStandby).includes("Retomar")&&
-    String(assignErpSewingWorker).includes("Quem está costurando")&&
+    String(assignErpSewingWorker).includes("Setor Costura")&&
+    String(erpCosturaCollaborators).includes("state.settings")&&
     String(erpProductBoxes).includes("erpSewingAssignment")&&
     String(renderErpKanban).includes("isStandby")&&
     String(document.querySelector("style")?.textContent||"").includes("V149 ERP STANDBY")
   ){
-    auditAdd(report,"pass","ERP_STANDBY_SEWING_V149","ERP teste possui standby com motivo por pedido/etapa e responsável de costura por modelo.");
+    auditAdd(report,"pass","ERP_STANDBY_SEWING_V149","WISENT ERP possui standby com motivo por pedido/etapa e responsável de costura por modelo.");
   }else{
     auditAdd(report,"warn","ERP_STANDBY_SEWING_V149","Não foi possível confirmar standby/costura por modelo.");
   }
@@ -16105,9 +16115,9 @@ function runLocalSystemAudit(){
     String(installErpTestSyncWatchers).includes("visibilitychange")&&
     String(readErpTestSnapshot).includes("ERP_TEST_SNAPSHOT_KEY")
   ){
-    auditAdd(report,"pass","ERP_CLOUD_PERSISTENCE_V151","ERP teste possui salvamento local, snapshot, fila offline, sync Supabase e mesclagem para vários colaboradores.");
+    auditAdd(report,"pass","ERP_CLOUD_PERSISTENCE_V151","WISENT ERP possui salvamento local, snapshot, fila offline, sincronização Supabase e mesclagem para vários colaboradores.");
   }else{
-    auditAdd(report,"error","ERP_CLOUD_PERSISTENCE_V151","Blindagem de salvamento do ERP teste não foi confirmada.");
+    auditAdd(report,"error","ERP_CLOUD_PERSISTENCE_V151","A proteção de salvamento do WISENT ERP não foi confirmada.");
   }
 
   if(
@@ -16117,7 +16127,7 @@ function runLocalSystemAudit(){
     String(exportErpBackupBundle).includes("backup-wisent-erp")&&
     $("erpReadinessRows")
   ){
-    auditAdd(report,"pass","ERP_PRODUCTION_READINESS_V152","ERP teste recebeu auditoria local, backup automático/exportável e checklist de prontidão 10/10.");
+    auditAdd(report,"pass","ERP_PRODUCTION_READINESS_V152","WISENT ERP possui auditoria local, backup automático/exportável e verificação de integridade.");
   }else{
     auditAdd(report,"warn","ERP_PRODUCTION_READINESS_V152","Não foi possível confirmar hardening 10/10 do ERP.");
   }
@@ -16341,16 +16351,16 @@ async function runSystemAudit(){
 
   try{
     const erpCloud=await fetchErpTestCloudData();
-    auditAdd(report,"pass","ERP_CLOUD_READ_V152","Leitura compartilhada do WISENT ERP teste na nuvem funcionando.",erpCloud?`${(erpCloud.orders||[]).length} pedido(s) em nuvem.`:"Registro ERP ainda será criado no primeiro salvamento.");
+    auditAdd(report,"pass","ERP_CLOUD_READ_V152","Leitura compartilhada do WISENT ERP na nuvem funcionando.",erpCloud?`${(erpCloud.orders||[]).length} pedido(s) em nuvem.`:"Registro ERP ainda será criado no primeiro salvamento.");
   }catch(e){
-    auditAdd(report,"error","ERP_CLOUD_READ_V152","Falha ao ler dados compartilhados do WISENT ERP teste na nuvem.",String(e.message||e));
+    auditAdd(report,"error","ERP_CLOUD_READ_V152","Falha ao ler dados compartilhados do WISENT ERP na nuvem.",String(e.message||e));
   }
 
   try{
     const flushed=await flushErpTestPendingQueue();
-    auditAdd(report,flushed?"pass":"warn","ERP_CLOUD_FLUSH_V152",flushed?"Fila pendente do ERP teste sincronizada ou vazia.":"Fila do ERP teste preservada para nova tentativa.");
+    auditAdd(report,flushed?"pass":"warn","ERP_CLOUD_FLUSH_V152",flushed?"Fila pendente do WISENT ERP sincronizada ou vazia.":"Fila do WISENT ERP preservada para nova tentativa.");
   }catch(e){
-    auditAdd(report,"error","ERP_CLOUD_FLUSH_V152","Falha ao validar fila de sincronização do ERP teste.",String(e.message||e));
+    auditAdd(report,"error","ERP_CLOUD_FLUSH_V152","Falha ao validar fila de sincronização do WISENT ERP.",String(e.message||e));
   }
 
   const errors=report.items.filter(x=>x.level==="error").length;
@@ -17428,8 +17438,8 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V166 carregada. Conectando ao Supabase...");
-  updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
+  updateCloudStatus("VERSÃO V167 carregada. Conectando ao Supabase...");
+  updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
     const url=SUPABASE_URL+"/rest/v1/personalizacao?chave=eq."+encodeURIComponent(CLOUD_STATE_KEY)+"&select=valor";
@@ -23082,7 +23092,7 @@ function showPage(id){
   }
 
   if(nextPage==="erpTest"&&erpTestDisabled()){
-    alert("A aba WISENT ERP teste está desativada pelo ponto de restauração V139. Use o menu do perfil para reativar, se necessário.");
+    alert("O WISENT ERP está indisponível neste aparelho.");
     id = isErpSectorRestrictedUser()?"erpTest":"dashboard";
   }
 
@@ -23193,7 +23203,7 @@ function defaultErpTestState(){
     restorePoint:{
       baseVersion:ERP_TEST_RESTORE_POINT,
       createdAt:new Date().toISOString(),
-      note:"Módulo ERP teste isolado. Desativar este módulo não altera dados do painel principal."
+      note:"Estrutura de segurança do WISENT ERP."
     }
   };
 }
@@ -23258,12 +23268,12 @@ function readErpAutoBackup(){
 function exportErpAuditLog(){
   const rows=readErpAuditLog();
   rowsCSV([
-    ["Auditoria ERP teste"],
+    ["Auditoria WISENT ERP"],
     ["Gerado em",new Date().toLocaleString("pt-BR")],
     [],
     ["Data/hora","Usuário","Função","Ação","Nível","Detalhe"],
     ...rows.map(row=>[row.at,row.user,row.role,row.action,row.level,JSON.stringify(row.detail||{})])
-  ],`auditoria-erp-teste-${today()}.csv`);
+  ],`auditoria-wisent-erp-${today()}.csv`);
 }
 
 function exportErpBackupBundle(){
@@ -23499,7 +23509,7 @@ async function erpPersonalizacaoAudit(){
 async function erpSupabaseAuthAudit(){
   /*
     HTML público não consegue provar Supabase Auth/RLS completo sem migrar
-    o login para auth.signInWithPassword. Este teste é propositalmente
+    o login para auth.signInWithPassword. Esta verificação é propositalmente
     classificado como alerta enquanto a aplicação ainda usa login local.
   */
   return {
@@ -23669,7 +23679,7 @@ function writeErpTestSnapshot(data){
   try{
     localStorage.setItem(ERP_TEST_SNAPSHOT_KEY,JSON.stringify(normalizeErpTestData(data)));
   }catch(e){
-    console.warn("Não foi possível gravar snapshot do ERP teste:",e);
+    console.warn("Não foi possível gravar snapshot do WISENT ERP:",e);
   }
 }
 
@@ -23681,13 +23691,13 @@ function erpLocalWriteOnly(data){
     autoBackupErpTestData(normalized,"write");
     return true;
   }catch(e){
-    console.warn("Falha ao salvar ERP teste localmente:",e);
+    console.warn("Falha ao salvar WISENT ERP localmente:",e);
     try{
       window.name=ERP_TEST_KEY+"::"+JSON.stringify(normalized);
       writeErpTestSnapshot(normalized);
       return true;
     }catch(err){
-      console.error("Falha crítica ao salvar ERP teste:",err);
+      console.error("Falha crítica ao salvar WISENT ERP:",err);
       return false;
     }
   }
@@ -23710,7 +23720,7 @@ function readErpTestData(){
     erpLocalWriteOnly(data);
     return normalizeErpTestData(data);
   }catch(e){
-    console.warn("Falha ao ler ERP teste:",e);
+    console.warn("Falha ao ler WISENT ERP:",e);
     const snapshot=readErpTestSnapshot();
     if(snapshot)return snapshot;
     return normalizeErpTestData(defaultErpTestState());
@@ -23835,7 +23845,7 @@ function writeErpTestPendingQueue(queue){
   try{
     localStorage.setItem(ERP_TEST_PENDING_KEY,JSON.stringify(Array.isArray(queue)?queue:[]));
   }catch(e){
-    console.warn("Não foi possível gravar fila do ERP teste:",e);
+    console.warn("Não foi possível gravar fila do WISENT ERP:",e);
   }
 }
 
@@ -24385,7 +24395,7 @@ async function erpV2BuildMigrationPackage(data){
     value:{
       restorePoint:normalized.restorePoint||null,
       legacyVersion:normalized.version||"",
-      migratedFrom:"WISENT ERP TESTE",
+      migratedFrom:"WISENT ERP LEGADO",
       migratedAt:now
     },
     created_at:now,
@@ -24430,7 +24440,7 @@ async function migrateErpTestToV2(){
     alert("Migração V2 bloqueada. Aplique primeiro o SQL V164 completo e execute a auditoria novamente.");
     return false;
   }
-  if(!confirm("Copiar o WISENT ERP TESTE atual para a estrutura V2?\n\nO ERP legado continuará intacto e continuará sendo a fonte visível nesta fase."))return false;
+  if(!confirm("Copiar o WISENT ERP atual para a estrutura V2?\n\nO ERP legado continuará intacto durante a migração."))return false;
 
   erpV2MigrationBusy=true;
   if($("erpV2StructureStatus"))$("erpV2StructureStatus").textContent="Migrando...";
@@ -25402,13 +25412,13 @@ async function flushErpTestPendingQueue(){
 
     markSharedSaveConfirmed("erp",latestSharedSaveToken||"");
     setErpSyncStatus("ERP confirmado na nuvem • funcionários podem ver");
-    updateCloudDebug("ERP teste confirmado no Supabase; demandas disponíveis para colaboradores");
+    updateCloudDebug("WISENT ERP confirmado no Supabase; demandas disponíveis para colaboradores");
     return true;
   }catch(e){
-    console.error("Falha ao sincronizar ERP teste:",e);
+    console.error("Falha ao sincronizar WISENT ERP:",e);
     markSharedSavePending("erp","ERP pendente de nuvem");
     setErpSyncStatus("ERP salvo neste aparelho • ainda não confirmado para todos",true);
-    updateCloudStatus("ERP teste salvo localmente. Sincronização pendente.",true);
+    updateCloudStatus("WISENT ERP salvo localmente. Sincronização pendente.",true);
     updateCloudDebug("fila ERP preservada: "+String(e.message||e).slice(0,180));
     return false;
   }finally{
@@ -25448,10 +25458,10 @@ async function syncErpTestCloud(options={}){
     await flushErpTestPendingQueue();
     return true;
   }catch(e){
-    console.warn("Sync ERP teste adiado:",e);
+    console.warn("Sincronização do WISENT ERP adiada:",e);
     setErpSyncStatus("ERP salvo localmente • sincronização pendente",true);
     if(options.showStatus){
-      updateCloudStatus("ERP teste em modo local. Sincronização será tentada novamente.",true);
+      updateCloudStatus("WISENT ERP em modo local. A sincronização será tentada novamente.",true);
       updateCloudDebug("sync ERP adiado: "+String(e.message||e).slice(0,180));
     }
     return false;
@@ -25503,7 +25513,7 @@ function writeErpTestData(data,options={}){
   const localSaved=erpLocalWriteOnly(normalized);
 
   if(!localSaved){
-    updateCloudStatus("ERP teste não conseguiu salvar localmente. Não feche o app.",true);
+    updateCloudStatus("WISENT ERP não conseguiu salvar localmente. Não feche o app.",true);
     setErpSyncStatus("Falha crítica no salvamento local do ERP",true);
     return false;
   }
@@ -25550,14 +25560,14 @@ function applyErpTestVisibility(){
   const disabled=erpTestDisabled();
   document.querySelectorAll("[data-erp-test-nav]").forEach(btn=>{btn.style.display=disabled?"none":"";});
   const status=$("erpRestoreStatus");
-  if(status)status.textContent=disabled?"ERP teste desativado — ponto V139 preservado":"ERP teste ativo";
+  if(status)status.textContent=disabled?"WISENT ERP indisponível":"WISENT ERP ativo";
 }
 
 function toggleErpTestModuleFromMenu(){
   if(erpTestDisabled()){
     try{localStorage.removeItem(ERP_TEST_DISABLED_KEY);}catch(e){}
     applyErpTestVisibility();
-    showUndoToast("ERP teste reativado. Os dados do painel principal não foram alterados.");
+    showUndoToast("WISENT ERP reativado.");
     showPage("erpTest");
     return;
   }
@@ -25566,21 +25576,21 @@ function toggleErpTestModuleFromMenu(){
 
 function restoreBeforeErpTest(){
   const ok=confirm([
-    "Restaurar ponto V139 e desativar a aba WISENT ERP teste?",
+    "Desativar o WISENT ERP neste aparelho?",
     "",
-    "Isso apenas oculta/desativa o módulo experimental.",
+    "Isso apenas oculta o módulo.",
     "Os dados do painel principal, Supabase, Lançamentos, Pagos, Acumular e Atacado/Varejo não serão apagados.",
-    "Os dados de teste do ERP ficam preservados em chave separada para eventual reativação."
+    "Os dados do ERP ficam preservados para eventual reativação."
   ].join("\n"));
   if(!ok)return;
   try{localStorage.setItem(ERP_TEST_DISABLED_KEY,"1");}catch(e){}
   applyErpTestVisibility();
-  showUndoToast("Ponto V139 restaurado visualmente. ERP teste desativado sem afetar dados salvos.");
+  showUndoToast("WISENT ERP ocultado sem afetar os dados salvos.");
   if(currentPage==="erpTest")showPage("dashboard");
 }
 
 function resetErpTestData(){
-  const ok=confirm("Limpar apenas os dados da aba WISENT ERP teste? O painel principal não será alterado.");
+  const ok=confirm("Limpar os dados do WISENT ERP? O painel principal não será alterado.");
   if(!ok)return;
   const data=defaultErpTestState();
   data.resetAt=new Date().toISOString();
@@ -25590,7 +25600,7 @@ function resetErpTestData(){
   resetErpStockForm();
   resetErpFinanceForm();
   renderErpTest();
-  showUndoToast("Dados do ERP teste limpos. Dados principais preservados.");
+  showUndoToast("Dados do WISENT ERP limpos. Dados principais preservados.");
 }
 
 function exportErpTestData(){
@@ -25599,7 +25609,7 @@ function exportErpTestData(){
   const url=URL.createObjectURL(blob);
   const a=document.createElement("a");
   a.href=url;
-  a.download=`wisent-erp-teste-${today()}.json`;
+  a.download=`wisent-erp-${today()}.json`;
   document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
 
@@ -25919,7 +25929,7 @@ function addErpProductItem(item=null){
   <div class="erpProductMain">
     <label>Modelo<input data-erp-product-model placeholder="Ex.: Camiseta Oversized" value="${esc(product.model==="Modelo não informado"?"":product.model)}"></label>
     <label>Cor<input data-erp-product-color placeholder="Ex.: Preto" value="${esc(product.color||"")}"></label>
-    <label>Responsável costura<input data-erp-product-sewing placeholder="Ex.: Marcelo" value="${esc(product.sewingWorker||"")}"></label>
+    <input type="hidden" data-erp-product-sewing value="${esc(product.sewingWorker||"")}">
   </div>
 
   <div class="erpArtworkUploadBox">
@@ -26276,25 +26286,44 @@ function erpCosturaCollaborators(){
   const names=new Set();
 
   (data.employees||[])
-    .filter(e=>String(e.role||"").toLowerCase().includes("costura")||String(e.name||"").toLowerCase().includes("costura"))
-    .forEach(e=>names.add(String(e.name||"").replace(/^Funcionário\\s+/i,"").trim()));
+    .filter(e=>{
+      const role=String(e.role||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+      return role==="costura"||role==="setor costura";
+    })
+    .forEach(e=>names.add(String(e.name||"").trim()));
 
-  (state.authUsers||[])
-    .filter(u=>String(u.role||"").toLowerCase().normalize("NFD").replace(/[\\u0300-\\u036f]/g,"")==="costura")
+  (state.settings?.authUsers||[])
+    .filter(u=>u.active!==false&&String(u.role||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")==="costura")
     .forEach(u=>names.add(String(u.name||u.username||"").trim()));
-
-  (data.orders||[]).forEach(order=>{
-    erpNormalizeOrderProducts(order).forEach(product=>{
-      if(product.sewingWorker)names.add(String(product.sewingWorker).trim());
-    });
-  });
-
-  ["Marcelo","Stefany"].forEach(name=>names.add(name));
 
   return [...names].filter(Boolean).sort((a,b)=>a.localeCompare(b,"pt-BR"));
 }
 
-function assignErpSewingWorker(orderId,productId){
+function canAssignErpSewingWorker(){
+  return erpUserRoleNormalized()==="costura";
+}
+
+function erpSewingWorkerOptions(current=""){
+  const workers=erpCosturaCollaborators();
+  const currentName=String(current||"").trim();
+  const options=[
+    '<option value="">Selecione o responsável</option>',
+    ...workers.map(name=>`<option value="${esc(name)}" ${name===currentName?"selected":""}>${esc(name)}</option>`)
+  ];
+  if(currentName&&!workers.includes(currentName)){
+    options.push(`<option value="${esc(currentName)}" selected disabled>${esc(currentName)} — cadastro antigo</option>`);
+  }
+  options.push('<option value="__remove__">Remover responsável</option>');
+  return options.join("");
+}
+
+function assignErpSewingWorker(orderId,productId,selectedWorker){
+  if(!canAssignErpSewingWorker()){
+    alert("Somente um funcionário conectado com o perfil Setor Costura pode alterar o responsável da costura.");
+    renderErpTest();
+    return;
+  }
+
   const data=readErpTestData();
   const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
 
@@ -26311,14 +26340,21 @@ function assignErpSewingWorker(orderId,productId){
     return;
   }
 
-  const list=erpCosturaCollaborators();
+  if((order.stage||"Pedido")!=="Costura"){
+    alert("O responsável só pode ser alterado enquanto o pedido estiver na etapa Costura.");
+    renderErpTest();
+    return;
+  }
+
   const current=product.sewingWorker||"";
-  const suggestion=list.length?`\\n\\nSugestões: ${list.join(", ")}`:"";
-  const name=prompt(`Quem está costurando este modelo?\\n\\nModelo: ${product.model}\\nCor: ${product.color||"Sem cor"}${suggestion}`,current);
-
-  if(name===null)return;
-
-  const clean=String(name||"").trim();
+  const clean=selectedWorker==="__remove__"?"":String(selectedWorker||"").trim();
+  const allowed=erpCosturaCollaborators();
+  if(clean&&!allowed.includes(clean)){
+    alert("Selecione um funcionário ativo cadastrado com o perfil Setor Costura.");
+    renderErpTest();
+    return;
+  }
+  if(clean===current)return;
   const audit=currentAuditInfo();
 
   product.sewingWorker=clean;
@@ -26436,6 +26472,7 @@ function resetErpOrderForm(){
   if($("erpOrderType"))$("erpOrderType").value="WISENT";
   if($("erpOrderDue"))$("erpOrderDue").value=today();
   if($("erpOrderProductionDue"))$("erpOrderProductionDue").value=today();
+  if($("erpOrderStage"))$("erpOrderStage").disabled=true;
   populateErpStageSelect();
   setErpProductItemsInForm([erpBlankProductItem()]);
 }
@@ -26468,7 +26505,7 @@ function saveErpOrderFromForm(e){
   const audit=currentAuditInfo();
   const products=readErpProductItemsFromForm();
   const qty=products.reduce((sum,item)=>sum+erpProductQty(item),0);
-  const stage=$("erpOrderStage")?.value||"Pedido";
+  const stage=existing&&ERP_STAGES.includes(existing.stage)?existing.stage:"Pedido";
   const dueDate=$("erpOrderDue")?.value||today();
   const productionDue=$("erpOrderProductionDue")?.value||dueDate;
 
@@ -26509,10 +26546,18 @@ function saveErpOrderFromForm(e){
   if(idx>=0)data.orders[idx]=order;
   else data.orders.push(order);
 
-  writeErpTestData(data);
+  const saved=writeErpTestData(data);
+  const persisted=readErpTestData().orders.find(o=>String(o.id)===String(id));
+  if(!saved||!persisted||persisted.stage!==stage){
+    alert("O pedido não pôde ser confirmado no WISENT ERP. Os dados do formulário foram mantidos; tente salvar novamente.");
+    return;
+  }
   resetErpOrderForm();
+  showErpModule("pedidos");
+  if($("erpSearch"))$("erpSearch").value="";
+  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value="Pedido";
   renderErpTest();
-  showUndoToast("Pedido ERP teste salvo com modelos, cores e grade.");
+  showUndoToast(existing?"Pedido atualizado.":"Pedido criado e encaminhado para a etapa Pedido.");
 }
 
 function editErpOrder(id){
@@ -26563,7 +26608,7 @@ function advanceErpOrder(id){
 }
 
 function deleteErpOrder(id){
-  if(!confirm("Excluir apenas este pedido do ERP teste?"))return;
+  if(!confirm("Excluir este pedido do WISENT ERP?"))return;
   const data=readErpTestData();
   const existing=(data.orders||[]).find(o=>String(o.id)===String(id));
   if(existing)queueErpRelationalDeleteOrder(existing);
@@ -26622,7 +26667,7 @@ function editErpClient(id){
 }
 
 function deleteErpClient(id){
-  if(!confirm("Excluir cliente apenas do ERP teste?"))return;
+  if(!confirm("Excluir este cliente do WISENT ERP?"))return;
   const data=readErpTestData();
   data.clients=(data.clients||[]).filter(c=>String(c.id)!==String(id));
   writeErpTestData(data);
@@ -26691,7 +26736,7 @@ function adjustErpStock(id,delta){
 }
 
 function deleteErpStock(id){
-  if(!confirm("Excluir item apenas do estoque ERP teste?"))return;
+  if(!confirm("Excluir este item do estoque do WISENT ERP?"))return;
   const data=readErpTestData();
   data.stock=(data.stock||[]).filter(s=>String(s.id)!==String(id));
   writeErpTestData(data);
@@ -26739,7 +26784,7 @@ function editErpFinance(id){
 }
 
 function deleteErpFinance(id){
-  if(!confirm("Excluir lançamento financeiro apenas do ERP teste?"))return;
+  if(!confirm("Excluir este lançamento financeiro do WISENT ERP?"))return;
   const data=readErpTestData();
   data.finance=(data.finance||[]).filter(f=>String(f.id)!==String(id));
   writeErpTestData(data);
@@ -26783,6 +26828,7 @@ function erpProductBoxes(order,limit=3){
   const visible=products.slice(0,limit);
   const extra=products.length-visible.length;
   const isCostura=(order.stage||"Pedido")==="Costura";
+  const canAssignSewing=isCostura&&canAssignErpSewingWorker();
 
   return `<div class="erpKanbanProductBoxes">
     ${visible.map((product,index)=>`<div class="erpKanbanProductBox ${isCostura&&!product.sewingWorker?"missingSewing":""}">
@@ -26795,7 +26841,9 @@ function erpProductBoxes(order,limit=3){
       <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
       ${isCostura?`<div class="erpSewingAssignment">
         <span><b>Costura</b>${esc(product.sewingWorker||"Sem responsável")}</span>
-        <button type="button" class="small secondary" onclick="assignErpSewingWorker('${order.id}','${product.id}')">Alterar</button>
+        ${canAssignSewing
+          ? `<select aria-label="Selecionar responsável da costura" onchange="assignErpSewingWorker('${order.id}','${product.id}',this.value)">${erpSewingWorkerOptions(product.sewingWorker)}</select>`
+          : `<small>Alteração exclusiva do Setor Costura</small>`}
       </div>`:""}
     </div>`).join("")}
     ${extra>0?`<div class="erpKanbanProductMore">+${extra} modelo(s) neste pedido</div>`:""}
@@ -27173,7 +27221,7 @@ function renderErpReportPDF(){
   }
 
   if($("erpReportPdfFooter")){
-    $("erpReportPdfFooter").textContent=state.settings.pdfFooter||`Relatório gerado automaticamente pelo painel WISENT ERP teste em ${generated}.`;
+    $("erpReportPdfFooter").textContent=state.settings.pdfFooter||`Relatório gerado automaticamente pelo WISENT ERP em ${generated}.`;
   }
 }
 
@@ -27218,7 +27266,7 @@ function exportErpReportCSV(){
   const productionRows=erpMonthlyProductionRows(data,erpSelectedReportMonth());
 
   rowsCSV([
-    ["Relatório ERP teste"],
+    ["Relatório WISENT ERP"],
     ["Data",dateBR(today())],
     ["Mês produção",erpSelectedReportMonth()],
     [],
@@ -27228,7 +27276,7 @@ function exportErpReportCSV(){
     ["Peças produzidas/movimentadas por data"],
     ["Data","Peças","Pedidos","Alterações do dia"],
     ...productionRows.map(r=>[r.date,r.qty,[...r.orders].join(", "),r.details.join(" | ")])
-  ],`relatorio-erp-teste-${today()}.csv`);
+  ],`relatorio-wisent-erp-${today()}.csv`);
 }
 
 function renderErpLabel(){
@@ -27252,14 +27300,14 @@ function renderErpLabel(){
         <p><b>Quantidade:</b> ${erpOrderQtyTotal(order)}</p>
         <p><b>Prazo produção:</b> ${dateBR(erpProductionDate(order))}</p>
         <p><b>Entrega:</b> ${dateBR(order.dueDate)}</p>
-        <small>QR teste: /pedidos/${esc(order.id)}</small>
+        <small>QR: /pedidos/${esc(order.id)}</small>
       </div>
     </div>`:`<div class="erpEmptyCol">Cadastre um pedido para gerar etiqueta.</div>`;
   }
 }
 
 function printErpLabelPreview(){
-  alert("Prévia de impressão da etiqueta pronta. No ERP definitivo, isso será uma impressão/PDF com QR Code real.");
+  alert("Prévia de impressão da etiqueta pronta.");
 }
 
 function renderErpTest(){
@@ -27267,7 +27315,7 @@ function renderErpTest(){
   applyErpTestVisibility();
   applyErpTechnicalMapAccess();
   if(erpTestDisabled()){
-    if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="ERP teste desativado — use o menu do perfil para reativar";
+    if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="WISENT ERP indisponível";
     return;
   }
   populateErpStageSelect();
@@ -27294,7 +27342,7 @@ function renderErpTest(){
 
   applyErpSectorAccessControl();
 
-  if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="ERP teste ativo • dados isolados";
+  if($("erpRestoreStatus"))$("erpRestoreStatus").textContent="WISENT ERP ativo";
 }
 
 
