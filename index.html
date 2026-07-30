@@ -11476,6 +11476,113 @@ body.erpStandbyModalOpen{
   padding:3px 7px!important;
 }
 
+/* ===== V170 TEMPO REAL ENTRE SETORES ===== */
+.erpRealtimeArrivalToast{
+  position:fixed!important;
+  z-index:10040!important;
+  right:18px!important;
+  bottom:86px!important;
+  width:min(390px,calc(100vw - 28px))!important;
+  display:none!important;
+  grid-template-columns:auto 1fr auto!important;
+  align-items:center!important;
+  gap:11px!important;
+  padding:13px!important;
+  border-radius:18px!important;
+  color:#f8fafc!important;
+  background:
+    radial-gradient(circle at top right,rgba(56,189,248,.18),transparent 36%),
+    #0b1628!important;
+  border:1px solid rgba(56,189,248,.34)!important;
+  box-shadow:0 24px 65px rgba(0,0,0,.46)!important;
+}
+
+.erpRealtimeArrivalToast.show{
+  display:grid!important;
+  animation:erpRealtimeToastIn .25s ease-out both!important;
+}
+
+.erpRealtimeArrivalIcon{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:44px!important;
+  height:44px!important;
+  border-radius:14px!important;
+  color:#7dd3fc!important;
+  background:rgba(56,189,248,.12)!important;
+  border:1px solid rgba(56,189,248,.22)!important;
+  font-size:20px!important;
+  font-weight:1000!important;
+}
+
+.erpRealtimeArrivalToast strong{
+  display:block!important;
+  margin-bottom:3px!important;
+  color:#fff!important;
+  font-size:13px!important;
+}
+
+.erpRealtimeArrivalToast span{
+  display:block!important;
+  color:#b8c9de!important;
+  font-size:11px!important;
+  line-height:1.4!important;
+}
+
+.erpRealtimeArrivalToast button{
+  min-height:36px!important;
+  padding:8px 11px!important;
+  white-space:nowrap!important;
+}
+
+.erpRealtimeSectorStatus{
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:7px!important;
+  width:max-content!important;
+  margin-top:7px!important;
+  padding:5px 8px!important;
+  border-radius:999px!important;
+  color:#fde68a!important;
+  background:rgba(212,175,55,.08)!important;
+  border:1px solid rgba(212,175,55,.20)!important;
+  font-size:10px!important;
+  font-weight:950!important;
+}
+
+.erpRealtimeSectorStatus.connected{
+  color:#a7f3d0!important;
+  background:rgba(52,211,153,.09)!important;
+  border-color:rgba(52,211,153,.22)!important;
+}
+
+.erpRealtimeSectorStatus::before{
+  content:""!important;
+  width:7px!important;
+  height:7px!important;
+  border-radius:50%!important;
+  background:currentColor!important;
+  box-shadow:0 0 0 4px rgba(255,255,255,.06)!important;
+}
+
+@keyframes erpRealtimeToastIn{
+  from{opacity:0;transform:translateY(12px) scale(.97)}
+  to{opacity:1;transform:none}
+}
+
+@media(max-width:560px){
+  .erpRealtimeArrivalToast{
+    right:14px!important;
+    bottom:78px!important;
+    grid-template-columns:auto 1fr!important;
+  }
+  .erpRealtimeArrivalToast button{
+    grid-column:1 / -1!important;
+    width:100%!important;
+  }
+}
+
 /* ===== V169 RELATÓRIO EXECUTIVO E CONTRASTE PROFISSIONAL ===== */
 .erpTestView{
   --erp-bg:#060b16;
@@ -11950,6 +12057,11 @@ body.erpStandbyModalOpen{
 <body class="page-dashboard authLocked">
 
 <div id="undoToast" class="undoToast noPrint"></div>
+<div id="erpRealtimeArrivalToast" class="erpRealtimeArrivalToast noPrint" role="status" aria-live="assertive">
+  <div class="erpRealtimeArrivalIcon">→</div>
+  <div><strong id="erpRealtimeArrivalTitle">Novo pedido no setor</strong><span id="erpRealtimeArrivalText">O Kanban foi atualizado em tempo real.</span></div>
+  <button type="button" class="primary" onclick="openErpRealtimeArrival()">Ver pedido</button>
+</div>
 <input id="backupImportInput" class="noPrint" type="file" accept="application/json,.json" style="display:none" onchange="handleBackupImport(event)">
 <div id="loginScreen" class="loginScreen noPrint">
   <div class="loginCard">
@@ -12013,7 +12125,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V169</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V170</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13990,7 +14102,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V169";
+const APP_BUILD_VERSION="V170";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -14030,7 +14142,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=169");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=170");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -16786,6 +16898,18 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","PERSONALIZACAO_CONFIRMATION_FIX_V163","Não foi possível confirmar correção da confirmação de painel_state.");
   }
 
+  if(
+    String(connectErpRealtime).includes("new WebSocket")&&
+    String(handleErpRealtimeMessage).includes("postgres_changes")&&
+    String(notifyErpSectorArrival).includes("navigator.vibrate")&&
+    String(installErpRealtime).includes("visibilitychange")&&
+    $("erpRealtimeArrivalToast")
+  ){
+    auditAdd(report,"pass","ERP_REALTIME_V170","Kanban possui atualização instantânea entre celulares, reconexão automática e alerta de chegada por setor.");
+  }else{
+    auditAdd(report,"warn","ERP_REALTIME_V170","Não foi possível confirmar todos os componentes do tempo real entre setores.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -17966,7 +18090,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V169 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V170 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -18665,6 +18789,7 @@ async function startApp(){
     await syncErpTestCloud({showStatus:false});
   }
       installErpTestSyncWatchers();
+      installErpRealtime();
       installStrictSharedSaveWatchers();
       erpSecurityGuidePromptOnce();
       updateStrictSharedStatus();
@@ -23605,7 +23730,7 @@ function applyErpSectorAccessControl(){
   if(notice){
     notice.hidden=!restricted;
     notice.innerHTML=restricted
-      ? `<strong>Acesso restrito — ${esc(erpRestrictedRoleLabel())}</strong><span>Este login visualiza apenas o Kanban da própria etapa. Não acessa clientes, estoque, financeiro, relatórios, configurações ou demais áreas do painel.</span>`
+      ? `<strong>Acesso restrito — ${esc(erpRestrictedRoleLabel())}</strong><span>Este login visualiza apenas o Kanban da própria etapa. Não acessa clientes, estoque, financeiro, relatórios, configurações ou demais áreas do painel.</span><small id="erpRealtimeSectorStatus" class="erpRealtimeSectorStatus ${erpRealtimeConnected?"connected":""}">${erpRealtimeConnected?"Tempo real conectado":"Tempo real reconectando"}</small>`
       : "";
   }
 }
@@ -23707,6 +23832,26 @@ let erpTestFlushBusy=false;
 let erpTestSyncBusy=false;
 let erpTestSyncTimer=null;
 let erpTestSyncWatchersInstalled=false;
+let erpRealtimeSocket=null;
+let erpRealtimeConnected=false;
+let erpRealtimeInstalled=false;
+let erpRealtimeJoinRef=0;
+let erpRealtimeHeartbeatRef=0;
+let erpRealtimeReconnectTimer=null;
+let erpRealtimeReconnectAttempt=0;
+let erpRealtimeHeartbeatTimer=null;
+let erpRealtimeSyncTimer=null;
+let erpRealtimeArrivalTimer=null;
+let erpRealtimeArrivalOrderId="";
+const erpRealtimeStageByOrder=new Map();
+const erpRealtimeSeenEvents=new Set();
+const ERP_REALTIME_TABLES=[
+  "wisent_erp_v2_orders",
+  "wisent_erp_v2_products",
+  "wisent_erp_v2_stage_events",
+  "wisent_erp_v2_standby_events",
+  "wisent_erp_v2_sewing_events"
+];
 
 function defaultErpTestState(){
   return {
@@ -26028,6 +26173,271 @@ async function syncErpTestCloud(options={}){
   }finally{
     erpTestSyncBusy=false;
   }
+}
+
+function erpRealtimeSocketUrl(){
+  const base=String(SUPABASE_URL||"").replace(/^http/i,"ws").replace(/\/+$/,"");
+  return `${base}/realtime/v1/websocket?apikey=${encodeURIComponent(SUPABASE_ANON_KEY)}&vsn=1.0.0`;
+}
+
+function erpRealtimePrimeStages(){
+  erpRealtimeStageByOrder.clear();
+  (readErpTestData().orders||[]).forEach(order=>{
+    const key=String(order._v2Id||order.id||"");
+    if(key)erpRealtimeStageByOrder.set(key,String(order.stage||"Pedido"));
+    if(order.id)erpRealtimeStageByOrder.set(String(order.id),String(order.stage||"Pedido"));
+  });
+}
+
+function updateErpRealtimeUi(){
+  const status=$("erpRealtimeSectorStatus");
+  if(status){
+    status.textContent=erpRealtimeConnected?"Tempo real conectado":"Tempo real reconectando";
+    status.classList.toggle("connected",erpRealtimeConnected);
+  }
+  if(erpRealtimeConnected&&$("erpSyncStatus")){
+    setErpSyncStatus("ERP em tempo real • atualizações instantâneas entre os setores");
+  }
+}
+
+function erpRealtimeSetConnected(value){
+  erpRealtimeConnected=!!value;
+  if(value)erpRealtimeReconnectAttempt=0;
+  updateErpRealtimeUi();
+}
+
+function erpRealtimeEventData(message){
+  const payload=message?.payload||{};
+  const data=payload.data||payload;
+  return {
+    table:String(data.table||""),
+    type:String(data.type||message?.event||""),
+    record:data.record||data.new||{},
+    oldRecord:data.old_record||data.old||{},
+    commitTimestamp:data.commit_timestamp||""
+  };
+}
+
+function erpRealtimeArrivalFingerprint(record,stage,eventData){
+  return [
+    record?.id||record?.legacy_id||record?.number||"",
+    stage||"",
+    record?.updated_at||eventData?.commitTimestamp||""
+  ].join("|");
+}
+
+function notifyErpSectorArrival(record,stage,eventData={}){
+  const targetStage=erpRestrictedStage();
+  if(!targetStage||stage!==targetStage)return;
+
+  const fingerprint=erpRealtimeArrivalFingerprint(record,stage,eventData);
+  if(erpRealtimeSeenEvents.has(fingerprint))return;
+  erpRealtimeSeenEvents.add(fingerprint);
+  if(erpRealtimeSeenEvents.size>120){
+    const first=erpRealtimeSeenEvents.values().next().value;
+    erpRealtimeSeenEvents.delete(first);
+  }
+
+  const orderNumber=String(record.number||record.order_number||"Pedido");
+  const client=String(record.client_name||record.client||"").trim();
+  erpRealtimeArrivalOrderId=String(record.legacy_id||record.id||"");
+
+  if($("erpRealtimeArrivalTitle"))$("erpRealtimeArrivalTitle").textContent=`${orderNumber} chegou em ${stage}`;
+  if($("erpRealtimeArrivalText"))$("erpRealtimeArrivalText").textContent=client
+    ? `${client} • demanda recebida agora no seu setor.`
+    : "Uma nova demanda acabou de chegar no seu setor.";
+
+  const toast=$("erpRealtimeArrivalToast");
+  if(toast){
+    toast.classList.add("show");
+    clearTimeout(erpRealtimeArrivalTimer);
+    erpRealtimeArrivalTimer=setTimeout(()=>toast.classList.remove("show"),9000);
+  }
+
+  try{
+    if(navigator.vibrate)navigator.vibrate([140,70,140]);
+  }catch(e){}
+
+  try{
+    if(typeof Notification!=="undefined"&&Notification.permission==="granted"){
+      new Notification(`WISENT ERP • ${stage}`,{
+        body:`${orderNumber}${client?` • ${client}`:""} chegou no seu setor.`,
+        tag:`wisent-${erpRealtimeArrivalOrderId}-${stage}`
+      });
+    }
+  }catch(e){}
+}
+
+function openErpRealtimeArrival(){
+  const toast=$("erpRealtimeArrivalToast");
+  if(toast)toast.classList.remove("show");
+  showPage("erpTest");
+  showErpModule("pedidos");
+  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value=erpRestrictedStage()||"";
+  if($("erpSearch")&&erpRealtimeArrivalOrderId)$("erpSearch").value="";
+  renderErpTest();
+}
+
+function erpRealtimeInspectArrival(eventData){
+  if(eventData.table!=="wisent_erp_v2_orders")return;
+  const record=eventData.record||{};
+  const key=String(record.id||record.legacy_id||"");
+  const legacyKey=String(record.legacy_id||"");
+  const stage=String(record.stage||"");
+  if(!key||!stage)return;
+
+  const previous=String(
+    eventData.oldRecord?.stage||
+    erpRealtimeStageByOrder.get(key)||
+    (legacyKey?erpRealtimeStageByOrder.get(legacyKey):"")||
+    ""
+  );
+
+  erpRealtimeStageByOrder.set(key,stage);
+  if(legacyKey)erpRealtimeStageByOrder.set(legacyKey,stage);
+
+  if(stage!==previous)notifyErpSectorArrival(record,stage,eventData);
+}
+
+function scheduleErpRealtimeCloudRefresh(delay=180){
+  clearTimeout(erpRealtimeSyncTimer);
+  erpRealtimeSyncTimer=setTimeout(async()=>{
+    try{
+      if(erpV2Phase2Enabled()){
+        await flushErpV2Outbox();
+        await syncErpV2FromCloud({showStatus:false});
+      }else{
+        await syncErpTestCloud({showStatus:false});
+      }
+      erpRealtimePrimeStages();
+      if(currentPage==="erpTest")renderErpTest();
+      updateErpRealtimeUi();
+    }catch(e){
+      console.warn("Atualização em tempo real adiada:",e);
+    }
+  },delay);
+}
+
+function handleErpRealtimeMessage(raw){
+  let message=null;
+  try{message=JSON.parse(raw?.data||raw||"");}catch(e){return;}
+
+  if(message.event==="phx_reply"&&String(message.ref)===String(erpRealtimeJoinRef)){
+    const joined=message.payload?.status==="ok";
+    erpRealtimeSetConnected(joined);
+    if(!joined){
+      try{erpRealtimeSocket?.close();}catch(e){}
+      scheduleErpRealtimeReconnect();
+    }
+    return;
+  }
+
+  if(message.event==="phx_error"||message.event==="phx_close"){
+    erpRealtimeSetConnected(false);
+    try{erpRealtimeSocket?.close();}catch(e){}
+    return;
+  }
+
+  if(message.event!=="postgres_changes")return;
+  const eventData=erpRealtimeEventData(message);
+  erpRealtimeInspectArrival(eventData);
+  scheduleErpRealtimeCloudRefresh();
+}
+
+function scheduleErpRealtimeReconnect(){
+  clearTimeout(erpRealtimeReconnectTimer);
+  if(navigator.onLine===false)return;
+  const delay=Math.min(20000,1200*Math.pow(1.7,Math.min(erpRealtimeReconnectAttempt++,6)));
+  erpRealtimeReconnectTimer=setTimeout(connectErpRealtime,delay);
+}
+
+function connectErpRealtime(){
+  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(erpRealtimeSocket&&[0,1].includes(erpRealtimeSocket.readyState))return true;
+
+  clearTimeout(erpRealtimeReconnectTimer);
+  erpRealtimeSetConnected(false);
+
+  try{
+    const socket=new WebSocket(erpRealtimeSocketUrl());
+    erpRealtimeSocket=socket;
+
+    socket.addEventListener("open",()=>{
+      erpRealtimeJoinRef+=1;
+      const postgresChanges=ERP_REALTIME_TABLES.map(table=>({
+        event:"*",
+        schema:"public",
+        table
+      }));
+      socket.send(JSON.stringify({
+        topic:"realtime:wisent-erp-v170",
+        event:"phx_join",
+        payload:{
+          config:{
+            broadcast:{ack:false,self:false},
+            presence:{enabled:false},
+            postgres_changes:postgresChanges,
+            private:false
+          },
+          access_token:SUPABASE_ANON_KEY
+        },
+        ref:String(erpRealtimeJoinRef),
+        join_ref:String(erpRealtimeJoinRef)
+      }));
+    });
+
+    socket.addEventListener("message",handleErpRealtimeMessage);
+    socket.addEventListener("error",()=>erpRealtimeSetConnected(false));
+    socket.addEventListener("close",()=>{
+      if(erpRealtimeSocket===socket)erpRealtimeSocket=null;
+      erpRealtimeSetConnected(false);
+      scheduleErpRealtimeReconnect();
+    });
+    return true;
+  }catch(e){
+    console.warn("Não foi possível abrir o tempo real do ERP:",e);
+    scheduleErpRealtimeReconnect();
+    return false;
+  }
+}
+
+function installErpRealtime(){
+  if(erpRealtimeInstalled)return;
+  erpRealtimeInstalled=true;
+  erpRealtimePrimeStages();
+  connectErpRealtime();
+
+  clearInterval(erpRealtimeHeartbeatTimer);
+  erpRealtimeHeartbeatTimer=setInterval(()=>{
+    try{
+      if(erpRealtimeSocket?.readyState===1){
+        erpRealtimeSocket.send(JSON.stringify({
+          topic:"phoenix",
+          event:"heartbeat",
+          payload:{},
+          ref:`heartbeat-${++erpRealtimeHeartbeatRef}`
+        }));
+      }
+    }catch(e){}
+  },25000);
+
+  window.addEventListener("online",()=>{
+    connectErpRealtime();
+    scheduleErpRealtimeCloudRefresh(80);
+  });
+  window.addEventListener("offline",()=>erpRealtimeSetConnected(false));
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible"){
+      connectErpRealtime();
+      scheduleErpRealtimeCloudRefresh(80);
+    }
+  });
+
+  setInterval(()=>{
+    if(document.hidden||erpRealtimeConnected)return;
+    scheduleErpRealtimeCloudRefresh(0);
+    connectErpRealtime();
+  },5000);
 }
 
 function installErpTestSyncWatchers(){
