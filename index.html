@@ -11545,7 +11545,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V164</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V165</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13109,6 +13109,8 @@ body.erpStandbyModalOpen{
           <div class="filters">
             <button class="secondary" type="button" onclick="runErpV2Audit()">Auditar V2</button>
             <button class="primary" type="button" onclick="migrateErpTestToV2()">Migrar cópia para V2</button>
+            <button class="secondary" type="button" onclick="runErpV2Phase2Audit()">Testar operações V2</button>
+            <button class="primary" type="button" onclick="toggleErpV2Phase2()">Ativar Fase 2</button>
           </div>
         </div>
         <div class="grid erpStatsGrid">
@@ -13116,6 +13118,10 @@ body.erpStandbyModalOpen{
           <div class="card erpMetricCard"><span class="erpMetricIcon">↥</span><small>Operações locais V2</small><strong id="erpV2OutboxCount">0</strong></div>
           <div class="card erpMetricCard"><span class="erpMetricIcon">DB</span><small>Registros migrados</small><strong id="erpV2MigratedCount">0</strong></div>
           <div class="card erpMetricCard"><span class="erpMetricIcon">✓</span><small>Última migração</small><strong id="erpV2LastMigration">-</strong></div>
+        </div>
+        <div class="erpInlineStatus">
+          <strong id="erpV2Phase2Status">Fase 2 inativa</strong>
+          <span class="muted">Quando ativada, novas alterações do ERP usam apenas operações individuais V2.</span>
         </div>
         <div class="tableWrap">
           <table>
@@ -13305,7 +13311,13 @@ let erpRelationalSyncBusy=false;
 const ERP_V2_OUTBOX_DB="wisent_erp_v2_outbox_v164";
 const ERP_V2_OUTBOX_STORE="operations";
 const ERP_V2_MIGRATION_STATUS_KEY=KEY+"_erp_v2_migration_status_v164";
+const ERP_V2_PHASE2_ENABLED_KEY=KEY+"_erp_v2_phase2_enabled_v165";
+const ERP_V2_VERSION_CACHE_KEY=KEY+"_erp_v2_version_cache_v165";
 let erpV2MigrationBusy=false;
+let erpV2FlushBusy=false;
+let erpV2FlushTimer=null;
+let erpV2DiffChain=Promise.resolve();
+let erpV2OutboxSequence=0;
 const PERSONALIZACAO_HEALTH_KEY=KEY+"_personalizacao_health_v162";
 const SHARED_SAVE_PENDING_KEY=KEY+"_shared_save_pending_v157";
 const SHARED_SAVE_ACK_KEY=KEY+"_shared_save_ack_v157";
@@ -13441,7 +13453,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V164";
+const APP_BUILD_VERSION="V165";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -13481,7 +13493,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=164");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=165");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -14597,7 +14609,9 @@ async function flushCriticalRecordQueues(){
     tasks.push(timeoutBool(flushProductChoicePendingQueue(),15000));
   }
 
-  if(typeof flushErpTestPendingQueue==="function"){
+  if(typeof flushErpV2Outbox==="function"&&erpV2Phase2Enabled()){
+    tasks.push(timeoutBool(flushErpV2Outbox(),18000));
+  }else if(typeof flushErpTestPendingQueue==="function"){
     tasks.push(timeoutBool(flushErpTestPendingQueue(),18000));
   }
 
@@ -17413,7 +17427,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V164 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V165 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -18104,7 +18118,13 @@ async function startApp(){
       await syncProductChoiceRecordsFromCloud({showStatus:false});
       installProductChoiceSyncWatchers();
 
-      await syncErpTestCloud({showStatus:false});
+  if(erpV2Phase2Enabled()){
+    erpV2DetachLegacyQueues();
+    await flushErpV2Outbox();
+    await syncErpV2FromCloud({showStatus:false});
+  }else{
+    await syncErpTestCloud({showStatus:false});
+  }
       installErpTestSyncWatchers();
       installStrictSharedSaveWatchers();
       erpSecurityGuidePromptOnce();
@@ -23920,15 +23940,18 @@ async function erpV2OutboxList(){
 
 async function erpV2EnqueueOperation(operation){
   const row={
-    operationId:String(operation?.operationId||crypto.randomUUID()),
+    operationId:String(operation?.operationId||(crypto.randomUUID?crypto.randomUUID():erpV2FallbackUuid(uid()))),
     entityType:String(operation?.entityType||""),
     entityId:operation?.entityId||null,
     action:String(operation?.action||"update"),
-    baseVersion:Number.isFinite(Number(operation?.baseVersion))?Number(operation.baseVersion):null,
+    baseVersion:operation?.baseVersion===null||operation?.baseVersion===undefined
+      ?null
+      :(Number.isFinite(Number(operation.baseVersion))?Number(operation.baseVersion):null),
     patch:ensurePlainObject(operation?.patch,{}),
     status:"pending",
     attempts:0,
     createdAt:new Date().toISOString(),
+    sequence:(Date.now()*1000)+(++erpV2OutboxSequence%1000),
     userName:currentAuditInfo().name||"Sistema",
     deviceId:getDeviceId()
   };
@@ -23942,6 +23965,68 @@ async function erpV2EnqueueOperation(operation){
   db.close();
   await renderErpV2Status();
   return row;
+}
+
+async function erpV2OutboxPut(row){
+  const db=await erpV2OutboxOpen();
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction(ERP_V2_OUTBOX_STORE,"readwrite");
+    tx.objectStore(ERP_V2_OUTBOX_STORE).put(row);
+    tx.oncomplete=()=>resolve(true);
+    tx.onerror=()=>reject(tx.error||new Error("Falha ao atualizar fila V2"));
+  });
+  db.close();
+  return true;
+}
+
+async function erpV2OutboxRemove(operationId){
+  const db=await erpV2OutboxOpen();
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction(ERP_V2_OUTBOX_STORE,"readwrite");
+    tx.objectStore(ERP_V2_OUTBOX_STORE).delete(String(operationId));
+    tx.oncomplete=()=>resolve(true);
+    tx.onerror=()=>reject(tx.error||new Error("Falha ao concluir operação V2"));
+  });
+  db.close();
+  return true;
+}
+
+function erpV2Phase2Enabled(){
+  try{return localStorage.getItem(ERP_V2_PHASE2_ENABLED_KEY)==="1";}catch(e){return false;}
+}
+
+function erpV2SetPhase2Enabled(value){
+  try{localStorage.setItem(ERP_V2_PHASE2_ENABLED_KEY,value?"1":"0");}catch(e){}
+}
+
+function erpV2ReadVersionCache(){
+  try{
+    const raw=localStorage.getItem(ERP_V2_VERSION_CACHE_KEY);
+    const parsed=raw?JSON.parse(raw):{};
+    return parsed&&typeof parsed==="object"?parsed:{};
+  }catch(e){
+    return {};
+  }
+}
+
+function erpV2RememberVersion(entityId,version){
+  if(!entityId||!Number.isFinite(Number(version)))return;
+  const cache=erpV2ReadVersionCache();
+  cache[String(entityId)]=Number(version);
+  try{localStorage.setItem(ERP_V2_VERSION_CACHE_KEY,JSON.stringify(cache));}catch(e){}
+}
+
+function erpV2DetachLegacyQueues(){
+  try{
+    const strict=readStrictMutationQueue();
+    const filtered=strict.filter(row=>String(row?.recordId||"")!==String(ERP_TEST_CLOUD_KEY));
+    if(filtered.length!==strict.length)writeStrictMutationQueue(filtered);
+  }catch(e){}
+  try{
+    const pending=readSharedSavePending();
+    if(pending?.scope==="erp")clearSharedSavePending("erp");
+  }catch(e){}
+  try{localStorage.removeItem(ERP_TEST_PENDING_KEY);}catch(e){}
 }
 
 function erpV2ReadMigrationStatus(){
@@ -23971,6 +24056,11 @@ async function renderErpV2Status(){
     $("erpV2LastMigration").textContent=status?.at
       ?new Date(status.at).toLocaleString("pt-BR")
       :"-";
+  }
+  if($("erpV2Phase2Status")){
+    $("erpV2Phase2Status").textContent=erpV2Phase2Enabled()
+      ?"Fase 2 ativa • operações individuais"
+      :"Fase 2 inativa";
   }
 }
 
@@ -24306,6 +24396,10 @@ async function erpV2UpsertChunks(table,rows,chunkSize=100){
 }
 
 async function migrateErpTestToV2(){
+  if(erpV2Phase2Enabled()){
+    alert("A migração inicial já foi concluída. Desative a Fase 2 somente se precisar repetir a cópia controlada.");
+    return false;
+  }
   if(erpV2MigrationBusy)return false;
   const audit=await runErpV2Audit({showAlert:false});
   if(audit.failures){
@@ -24344,6 +24438,533 @@ async function migrateErpTestToV2(){
     return false;
   }finally{
     erpV2MigrationBusy=false;
+  }
+}
+
+async function runErpV2Phase2Audit(options={}){
+  try{
+    const response=await fetchWithTimeout(
+      SUPABASE_URL+"/rest/v1/rpc/wisent_erp_v2_apply_operation",
+      {
+        method:"POST",
+        headers:cloudHeaders(),
+        body:JSON.stringify({
+          p_operation_id:crypto.randomUUID?crypto.randomUUID():erpV2FallbackUuid(uid()),
+          p_entity_type:"audit_probe",
+          p_entity_id:null,
+          p_action:"update",
+          p_base_version:null,
+          p_patch:{},
+          p_user_name:currentAuditInfo().name||"Sistema",
+          p_device_id:getDeviceId()
+        })
+      },
+      9000
+    );
+    const text=await response.text().catch(()=>"");
+    if(!response.ok){
+      if(options.showAlert!==false)alert(`Operações V2 indisponíveis: HTTP ${response.status}\n\n${text.slice(0,260)}`);
+      return false;
+    }
+    const result=text?JSON.parse(text):null;
+    const ready=result?.status==="invalid_entity";
+    if(options.showAlert!==false){
+      alert(ready
+        ?"Função de operações V2 aprovada. A Fase 2 pode ser ativada."
+        :"A função respondeu, mas não passou na validação esperada.");
+    }
+    return ready;
+  }catch(e){
+    if(options.showAlert!==false)alert("Falha ao testar operações V2:\n\n"+String(e.message||e).slice(0,300));
+    return false;
+  }
+}
+
+async function toggleErpV2Phase2(){
+  if(erpV2Phase2Enabled()){
+    if(!confirm("Desativar a Fase 2?\n\nNovas alterações voltarão temporariamente ao mecanismo legado do ERP."))return;
+    erpV2SetPhase2Enabled(false);
+    await renderErpV2Status();
+    setErpSyncStatus("Fase 2 V2 desativada",true);
+    return;
+  }
+
+  const structure=await runErpV2Audit({showAlert:false});
+  if(structure.failures){
+    alert("Fase 2 bloqueada: a estrutura V2 não está completa.");
+    return;
+  }
+  const rpcReady=await runErpV2Phase2Audit({showAlert:false});
+  if(!rpcReady){
+    alert("Fase 2 bloqueada: execute o SQL de operações V165 no Supabase.");
+    return;
+  }
+  if(!confirm("Ativar operações individuais V2?\n\nO ERP deixará de criar novos snapshots em personalizacao. O legado local será mantido como cache de segurança."))return;
+
+  erpV2DetachLegacyQueues();
+  erpV2SetPhase2Enabled(true);
+  await renderErpV2Status();
+  setErpSyncStatus("ERP V2 ativo • operações individuais e fila offline própria");
+  flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:true}));
+  showUndoToast("Fase 2 ativada. O ERP não cria mais salvamentos globais.");
+}
+
+function erpV2Comparable(value){
+  try{return JSON.stringify(value);}catch(e){return String(value);}
+}
+
+function erpV2ChangedPatch(previous,next){
+  const patch={};
+  const ignored=new Set(["id","legacy_id","created_at","updated_at","version"]);
+  Object.keys(next||{}).forEach(key=>{
+    if(ignored.has(key))return;
+    if(erpV2Comparable(previous?.[key])!==erpV2Comparable(next?.[key])){
+      patch[key]=next[key];
+    }
+  });
+  return patch;
+}
+
+async function erpV2QueueCollectionDiff(table,previousRows,nextRows){
+  const before=new Map((previousRows||[]).map(row=>[String(row.id),row]));
+  const after=new Map((nextRows||[]).map(row=>[String(row.id),row]));
+  const cache=erpV2ReadVersionCache();
+
+  for(const [id,row] of after){
+    const previous=before.get(id);
+    if(!previous){
+      await erpV2EnqueueOperation({
+        entityType:table,
+        entityId:id,
+        action:"insert",
+        baseVersion:null,
+        patch:row
+      });
+      continue;
+    }
+    const patch=erpV2ChangedPatch(previous,row);
+    if(Object.keys(patch).length){
+      await erpV2EnqueueOperation({
+        entityType:table,
+        entityId:id,
+        action:"update",
+        baseVersion:Number.isFinite(Number(cache[id]))?Number(cache[id]):null,
+        patch
+      });
+    }
+  }
+
+  for(const [id] of before){
+    if(after.has(id))continue;
+    await erpV2EnqueueOperation({
+      entityType:table,
+      entityId:id,
+      action:"soft_delete",
+      baseVersion:Number.isFinite(Number(cache[id]))?Number(cache[id]):null,
+      patch:{
+        deleted_at:new Date().toISOString(),
+        updated_by:currentAuditInfo().name||"Sistema",
+        device_id:getDeviceId()
+      }
+    });
+  }
+}
+
+async function erpV2QueueDiff(previousData,nextData){
+  const previousPkg=await erpV2BuildMigrationPackage(previousData);
+  const nextPkg=await erpV2BuildMigrationPackage(nextData);
+  const collections=[
+    ["wisent_erp_v2_orders","orders"],
+    ["wisent_erp_v2_products","products"],
+    ["wisent_erp_v2_clients","clients"],
+    ["wisent_erp_v2_inventory","inventory"],
+    ["wisent_erp_v2_finance","finance"],
+    ["wisent_erp_v2_employees","employees"],
+    ["wisent_erp_v2_stage_events","stageEvents"],
+    ["wisent_erp_v2_standby_events","standbyEvents"],
+    ["wisent_erp_v2_sewing_events","sewingEvents"]
+  ];
+  for(const [table,key] of collections){
+    await erpV2QueueCollectionDiff(table,previousPkg[key],nextPkg[key]);
+  }
+  scheduleErpV2Flush(120);
+  await renderErpV2Status();
+}
+
+function queueErpV2Diff(previousData,nextData){
+  erpV2DiffChain=erpV2DiffChain
+    .then(()=>erpV2QueueDiff(previousData,nextData))
+    .catch(e=>{
+      console.error("Falha ao montar operações individuais V2:",e);
+      setErpSyncStatus("ERP salvo localmente • falha ao preparar fila V2",true);
+    });
+  return erpV2DiffChain;
+}
+
+async function erpV2FetchRecord(table,id){
+  const response=await fetchWithTimeout(
+    SUPABASE_URL+"/rest/v1/"+encodeURIComponent(table)+"?id=eq."+encodeURIComponent(id)+"&select=*&limit=1",
+    {method:"GET",headers:cloudHeaders()},
+    9000
+  );
+  if(!response.ok){
+    const text=await response.text().catch(()=>"");
+    throw new Error(`${table} leitura HTTP ${response.status}: ${text.slice(0,180)}`);
+  }
+  const rows=await response.json();
+  return Array.isArray(rows)&&rows.length?rows[0]:null;
+}
+
+async function erpV2ApplyOutboxOperation(operation){
+  const row={...operation,attempts:Number(operation.attempts||0)+1,status:"sending",lastAttemptAt:new Date().toISOString()};
+  await erpV2OutboxPut(row);
+
+  let baseVersion=row.baseVersion;
+  if(row.action!=="insert"&&(baseVersion===null||baseVersion===undefined||!Number.isFinite(Number(baseVersion)))){
+    const remote=await erpV2FetchRecord(row.entityType,row.entityId);
+    if(!remote){
+      row.status="conflict";
+      row.error="Registro remoto não encontrado.";
+      await erpV2OutboxPut(row);
+      return false;
+    }
+    baseVersion=Number(remote.version||1);
+    row.baseVersion=baseVersion;
+    await erpV2OutboxPut(row);
+  }
+
+  const response=await fetchWithTimeout(
+    SUPABASE_URL+"/rest/v1/rpc/wisent_erp_v2_apply_operation",
+    {
+      method:"POST",
+      headers:cloudHeaders(),
+      body:JSON.stringify({
+        p_operation_id:row.operationId,
+        p_entity_type:row.entityType,
+        p_entity_id:row.entityId,
+        p_action:row.action,
+        p_base_version:baseVersion===null||baseVersion===undefined
+          ?null
+          :(Number.isFinite(Number(baseVersion))?Number(baseVersion):null),
+        p_patch:row.patch||{},
+        p_user_name:row.userName||currentAuditInfo().name||"Sistema",
+        p_device_id:row.deviceId||getDeviceId()
+      })
+    },
+    15000
+  );
+
+  const text=await response.text().catch(()=>"");
+  if(!response.ok){
+    row.status="retrying";
+    row.error=`HTTP ${response.status}: ${text.slice(0,220)}`;
+    await erpV2OutboxPut(row);
+    return false;
+  }
+
+  const result=text?JSON.parse(text):{};
+  if(result?.ok&&["applied","already_applied"].includes(result.status)){
+    const record=result.record||null;
+    if(record?.id&&Number.isFinite(Number(record.version))){
+      erpV2RememberVersion(record.id,record.version);
+    }
+    await erpV2OutboxRemove(row.operationId);
+    return true;
+  }
+
+  row.status=result?.status==="conflict"?"conflict":"retrying";
+  row.error=String(result?.message||"Operação V2 não confirmada").slice(0,300);
+  row.remote=result?.remote||null;
+  await erpV2OutboxPut(row);
+  return false;
+}
+
+async function flushErpV2Outbox(){
+  if(!erpV2Phase2Enabled())return true;
+  if(erpV2FlushBusy)return false;
+  if(navigator.onLine===false)return false;
+  erpV2FlushBusy=true;
+  try{
+    const rows=(await erpV2OutboxList())
+      .filter(row=>["pending","retrying","sending"].includes(row.status))
+      .sort((a,b)=>Number(a.sequence||0)-Number(b.sequence||0)||String(a.createdAt).localeCompare(String(b.createdAt)));
+    let allOk=true;
+    for(const row of rows){
+      try{
+        const ok=await erpV2ApplyOutboxOperation(row);
+        if(!ok)allOk=false;
+      }catch(e){
+        const failed={...row,status:"retrying",attempts:Number(row.attempts||0)+1,error:String(e.message||e).slice(0,300)};
+        await erpV2OutboxPut(failed);
+        allOk=false;
+        break;
+      }
+    }
+    const remaining=await erpV2OutboxList();
+    const conflicts=remaining.filter(row=>row.status==="conflict").length;
+    if(conflicts){
+      setErpSyncStatus(`ERP V2 com ${conflicts} conflito(s) protegido(s)`,true);
+    }else if(remaining.length){
+      setErpSyncStatus(`ERP V2 salvo localmente • ${remaining.length} operação(ões) pendente(s)`,true);
+    }else{
+      setErpSyncStatus("ERP V2 confirmado • operações individuais sincronizadas");
+    }
+    await renderErpV2Status();
+    return allOk&&!remaining.length;
+  }finally{
+    erpV2FlushBusy=false;
+  }
+}
+
+function scheduleErpV2Flush(delay=500){
+  clearTimeout(erpV2FlushTimer);
+  erpV2FlushTimer=setTimeout(()=>flushErpV2Outbox(),delay);
+}
+
+async function erpV2FetchAll(table,pageSize=500){
+  const rows=[];
+  for(let offset=0;;offset+=pageSize){
+    const response=await fetchWithTimeout(
+      SUPABASE_URL+"/rest/v1/"+encodeURIComponent(table)+
+        "?deleted_at=is.null&select=*&order=updated_at.asc&limit="+pageSize+"&offset="+offset,
+      {method:"GET",headers:cloudHeaders()},
+      12000
+    );
+    if(!response.ok){
+      const text=await response.text().catch(()=>"");
+      throw new Error(`${table} leitura HTTP ${response.status}: ${text.slice(0,180)}`);
+    }
+    const page=await response.json();
+    if(!Array.isArray(page))break;
+    rows.push(...page);
+    if(page.length<pageSize)break;
+  }
+  return rows;
+}
+
+function erpV2CacheRemoteVersions(collections){
+  const cache=erpV2ReadVersionCache();
+  Object.values(collections||{}).forEach(rows=>{
+    (Array.isArray(rows)?rows:[]).forEach(row=>{
+      if(row?.id&&Number.isFinite(Number(row.version)))cache[String(row.id)]=Number(row.version);
+    });
+  });
+  try{localStorage.setItem(ERP_V2_VERSION_CACHE_KEY,JSON.stringify(cache));}catch(e){}
+}
+
+function erpV2OfficialDataFromRows(rowsByType,localData){
+  const local=normalizeErpTestData(localData||readErpTestData());
+  const localArtwork=new Map();
+  (local.orders||[]).forEach(order=>{
+    erpNormalizeOrderProducts(order).forEach(product=>{
+      if(product?.id)localArtwork.set(String(product.id),String(product.artworkImage||""));
+    });
+  });
+
+  const orders=(rowsByType.orders||[]).map(row=>({
+    id:String(row.legacy_id||row.id),
+    number:row.number||"",
+    orderType:row.order_type||"WISENT",
+    client:row.client_name||"",
+    phone:row.phone||"",
+    dueDate:row.due_date||"",
+    productionDue:row.production_due||row.due_date||"",
+    priority:row.priority||"Normal",
+    value:Number(row.value||0),
+    stage:row.stage||"Pedido",
+    notes:row.notes||"",
+    qty:Number(row.qty||0),
+    products:[],
+    standby:{
+      active:!!row.standby_active,
+      reason:row.standby_reason||"",
+      stage:row.stage||"Pedido",
+      at:row.updated_at||"",
+      user:row.updated_by||""
+    },
+    standbyHistory:[],
+    sewingHistory:[],
+    stageHistory:[],
+    createdAt:row.created_at||"",
+    createdBy:row.created_by||"",
+    updatedAt:row.updated_at||"",
+    updatedBy:row.updated_by||"",
+    _v2Id:row.id,
+    _v2Version:Number(row.version||1)
+  }));
+  const orderByUuid=new Map((rowsByType.orders||[]).map((row,index)=>[String(row.id),orders[index]]));
+
+  (rowsByType.products||[]).forEach(row=>{
+    const order=orderByUuid.get(String(row.order_id));
+    if(!order)return;
+    const legacyId=String(row.legacy_id||row.id);
+    order.products.push({
+      id:legacyId,
+      model:row.model||"",
+      color:row.color||"",
+      sizes:ensurePlainObject(row.sizes,{}),
+      sewingWorker:row.sewing_worker||"",
+      sewingUpdatedAt:row.sewing_updated_at||"",
+      sewingUpdatedBy:row.sewing_updated_by||"",
+      artworkName:row.artwork_name||"",
+      artworkUrl:row.artwork_url||"",
+      artworkStoragePath:row.artwork_storage_path||"",
+      artworkImage:localArtwork.get(legacyId)||"",
+      _v2Id:row.id,
+      _v2Version:Number(row.version||1),
+      _position:Number(row.position||0)
+    });
+  });
+  orders.forEach(order=>{
+    order.products.sort((a,b)=>Number(a._position||0)-Number(b._position||0));
+    order.model=order.products[0]?.model||"";
+    order.color=order.products[0]?.color||"";
+    order.qty=erpOrderQtyTotal(order);
+  });
+
+  (rowsByType.stageEvents||[]).forEach(row=>{
+    const order=orderByUuid.get(String(row.order_id));
+    if(!order)return;
+    order.stageHistory.push({
+      id:String(row.legacy_id||row.id),
+      from:row.from_stage||"",
+      to:row.to_stage||"",
+      stage:row.stage||row.to_stage||"",
+      qty:Number(row.qty||0),
+      at:row.event_at||row.created_at||"",
+      user:row.created_by||"",
+      productionDue:row.production_due||""
+    });
+  });
+
+  (rowsByType.standbyEvents||[]).forEach(row=>{
+    const order=orderByUuid.get(String(row.order_id));
+    if(!order)return;
+    order.standbyHistory.push({
+      id:String(row.legacy_id||row.id),
+      type:row.event_type||"standby",
+      reason:row.reason||"",
+      stage:row.stage||"",
+      active:!!row.active,
+      at:row.event_at||row.created_at||"",
+      user:row.created_by||""
+    });
+  });
+
+  (rowsByType.sewingEvents||[]).forEach(row=>{
+    const order=orderByUuid.get(String(row.order_id));
+    if(!order)return;
+    const product=(rowsByType.products||[]).find(item=>String(item.id)===String(row.product_id));
+    order.sewingHistory.push({
+      id:String(row.legacy_id||row.id),
+      productId:product?String(product.legacy_id||product.id):"",
+      productModel:product?.model||"",
+      productColor:product?.color||"",
+      worker:row.worker||"",
+      at:row.event_at||row.created_at||"",
+      user:row.created_by||""
+    });
+  });
+
+  const clients=(rowsByType.clients||[]).map(row=>({
+    id:String(row.legacy_id||row.id),
+    name:row.name||"",
+    phone:row.phone||"",
+    email:row.email||"",
+    doc:row.document||"",
+    address:row.address||"",
+    city:row.city||"",
+    state:row.state||"",
+    notes:row.notes||"",
+    createdAt:row.created_at||"",
+    updatedAt:row.updated_at||"",
+    _v2Id:row.id,
+    _v2Version:Number(row.version||1)
+  }));
+
+  const stock=(rowsByType.inventory||[]).map(row=>({
+    id:String(row.legacy_id||row.id),
+    name:row.name||"",
+    category:row.category||"",
+    current:Number(row.current_qty||0),
+    min:Number(row.minimum_qty||0),
+    updatedAt:row.updated_at||"",
+    _v2Id:row.id,
+    _v2Version:Number(row.version||1)
+  }));
+
+  const finance=(rowsByType.finance||[]).map(row=>({
+    id:String(row.legacy_id||row.id),
+    date:row.entry_date||today(),
+    type:row.entry_type||"",
+    description:row.description||"",
+    value:Number(row.value||0),
+    status:row.status||"",
+    createdAt:row.created_at||"",
+    updatedAt:row.updated_at||"",
+    _v2Id:row.id,
+    _v2Version:Number(row.version||1)
+  }));
+
+  const employees=(rowsByType.employees||[]).map(row=>({
+    id:String(row.legacy_id||row.id),
+    name:row.name||"",
+    role:row.role||"",
+    online:!!row.online,
+    updatedAt:row.updated_at||"",
+    _v2Id:row.id,
+    _v2Version:Number(row.version||1)
+  }));
+
+  const moduleSetting=(rowsByType.settings||[]).find(row=>row.setting_key==="module");
+  return normalizeErpTestData({
+    version:"V165",
+    createdAt:local.createdAt||new Date().toISOString(),
+    updatedAt:new Date().toISOString(),
+    updatedBy:"Supabase V2",
+    orders,
+    clients,
+    finance,
+    stock,
+    employees,
+    restorePoint:moduleSetting?.value?.restorePoint||local.restorePoint
+  });
+}
+
+async function syncErpV2FromCloud(options={}){
+  if(!erpV2Phase2Enabled())return false;
+  const pending=await erpV2OutboxList();
+  if(pending.length){
+    if(options.showStatus)setErpSyncStatus(`ERP V2 aguardando ${pending.length} operação(ões) locais`,true);
+    return false;
+  }
+  try{
+    const [
+      orders,products,clients,inventory,finance,employees,settings,
+      stageEvents,standbyEvents,sewingEvents
+    ]=await Promise.all([
+      erpV2FetchAll("wisent_erp_v2_orders"),
+      erpV2FetchAll("wisent_erp_v2_products"),
+      erpV2FetchAll("wisent_erp_v2_clients"),
+      erpV2FetchAll("wisent_erp_v2_inventory"),
+      erpV2FetchAll("wisent_erp_v2_finance"),
+      erpV2FetchAll("wisent_erp_v2_employees"),
+      erpV2FetchAll("wisent_erp_v2_settings"),
+      erpV2FetchAll("wisent_erp_v2_stage_events"),
+      erpV2FetchAll("wisent_erp_v2_standby_events"),
+      erpV2FetchAll("wisent_erp_v2_sewing_events")
+    ]);
+    const rowsByType={orders,products,clients,inventory,finance,employees,settings,stageEvents,standbyEvents,sewingEvents};
+    erpV2CacheRemoteVersions(rowsByType);
+    const official=erpV2OfficialDataFromRows(rowsByType,readErpTestData());
+    erpLocalWriteOnly(official);
+    if(currentPage==="erpTest")renderErpTest();
+    setErpSyncStatus("ERP V2 sincronizado • tabelas oficiais atualizadas");
+    return true;
+  }catch(e){
+    console.error("Falha ao ler ERP V2:",e);
+    setErpSyncStatus("ERP V2 em cache local • leitura será repetida",true);
+    return false;
   }
 }
 
@@ -24631,6 +25252,10 @@ async function runErpRelationalAudit(){
 }
 
 async function migrateErpCurrentDataToRelational(){
+  if(erpV2Phase2Enabled()){
+    alert("A migração relacional antiga está desativada porque o ERP V2 está ativo.");
+    return false;
+  }
   const audit=await runErpRelationalAudit();
   if(audit.fail){
     alert("Migração bloqueada: aplique primeiro o SQL relacional seguro V163 no Supabase.");
@@ -24649,6 +25274,10 @@ async function migrateErpCurrentDataToRelational(){
 }
 
 async function toggleErpRelationalMode(){
+  if(erpV2Phase2Enabled()){
+    alert("O modo relacional antigo não pode ser ativado junto com a Fase 2 V2.");
+    return false;
+  }
   if(erpRelationalEnabled()){
     const ok=confirm("Desativar envio relacional do ERP? O painel_state continuará funcionando.");
     if(!ok)return;
@@ -24812,27 +25441,34 @@ function installErpTestSyncWatchers(){
   erpTestSyncWatchersInstalled=true;
 
   window.addEventListener("online",()=>{
-    flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:true}));
+    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:true}));
+    else flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:true}));
   });
 
   window.addEventListener("focus",()=>{
-    syncErpTestCloud({showStatus:false});
+    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:false}));
+    else syncErpTestCloud({showStatus:false});
   });
 
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState==="visible"){
-      syncErpTestCloud({showStatus:false});
+      if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:false}));
+      else syncErpTestCloud({showStatus:false});
     }
   });
 
   setInterval(()=>{
     if(document.hidden)return;
-    flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:false}));
-    if(erpRelationalEnabled())flushErpRelationalSyncQueue();
+    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:false}));
+    else{
+      flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:false}));
+      if(erpRelationalEnabled())flushErpRelationalSyncQueue();
+    }
   },10000);
 }
 
 function writeErpTestData(data,options={}){
+  const previous=readErpTestData();
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
@@ -24855,6 +25491,12 @@ function writeErpTestData(data,options={}){
   }
 
   if(options.queueCloud!==false){
+    if(erpV2Phase2Enabled()){
+      erpV2DetachLegacyQueues();
+      queueErpV2Diff(previous,normalized);
+      setErpSyncStatus("ERP V2 salvo localmente • preparando operações individuais");
+      return true;
+    }
     const erpToken=latestSharedSaveToken||newSharedSaveToken();
     enqueueStrictMutation({
       token:erpToken,
@@ -25566,7 +26208,8 @@ function submitErpOrderStandby(){
 
   closeErpStandbyModal();
   renderErpTest();
-  scheduleErpTestCloudSave(100);
+  if(erpV2Phase2Enabled())scheduleErpV2Flush(100);
+  else scheduleErpTestCloudSave(100);
   showUndoToast(`Pedido ${order.number||""} lançado para standby.`);
 }
 
