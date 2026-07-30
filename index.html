@@ -11455,6 +11455,14 @@ body.erpStandbyModalOpen{
   border-color:rgba(34,197,94,.22)!important;
 }
 
+
+/* ===== V162 CORREÇÃO CONFIRMAÇÃO PERSONALIZACAO ===== */
+#cloudStatus.cloudStatusError{
+  background:rgba(220,38,38,.08)!important;
+  border-radius:10px!important;
+  padding:3px 7px!important;
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -11537,7 +11545,7 @@ body.erpStandbyModalOpen{
     </nav>
   </aside>
   <main class="main">
-    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V161</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+    <div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V162</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13269,6 +13277,7 @@ const ERP_RELATIONAL_DELETE_KEY=KEY+"_erp_relational_delete_v161";
 const ERP_RELATIONAL_LAST_SYNC_KEY=KEY+"_erp_relational_last_sync_v161";
 let erpRelationalSyncTimer=null;
 let erpRelationalSyncBusy=false;
+const PERSONALIZACAO_HEALTH_KEY=KEY+"_personalizacao_health_v162";
 const SHARED_SAVE_PENDING_KEY=KEY+"_shared_save_pending_v157";
 const SHARED_SAVE_ACK_KEY=KEY+"_shared_save_ack_v157";
 const STRICT_MUTATION_QUEUE_KEY=KEY+"_strict_mutation_queue_v157";
@@ -13403,8 +13412,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V161";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v161";
+const APP_BUILD_VERSION="V162";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
   try{
@@ -13443,7 +13452,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=161");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=162");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -14609,11 +14618,11 @@ async function flushStrictSharedSave(){
 
     const reason=stateOk
       ?"painel_state confirmado, mas há filas críticas pendentes"
-      :"painel_state ainda não foi confirmado no Supabase";
+      :"painel_state não confirmou. Verifique/execute o SQL V162 da tabela personalizacao.";
 
     markSharedSavePending("painel",reason,tokenAtStart||latestSharedSaveToken);
-    setSaveUiState("retrying",reason,true);
-    scheduleCloudSaveRetry();
+    setSaveUiState(stateOk?"retrying":"failed",reason,true);
+    if(stateOk)scheduleCloudSaveRetry();
     return false;
   }finally{
     strictSharedFlushBusy=false;
@@ -14789,14 +14798,19 @@ async function copyCloudDiagnostics(){
   const debug=$("cloudDebug")?.textContent||"";
   const version=APP_BUILD_VERSION||"";
   const online=navigator.onLine?"online":"offline";
+  let personalizacaoHealth="";
+  try{personalizacaoHealth=localStorage.getItem(PERSONALIZACAO_HEALTH_KEY)||"";}catch(e){}
+  const queueSummary=(()=>{try{return JSON.stringify(currentStrictQueueSummary());}catch(e){return "";}})();
   const payload=[
     "DIAGNÓSTICO DA NUVEM",
     `Versão: ${version}`,
     `Status navegador: ${online}`,
     `Status: ${status}`,
     debug,
+    personalizacaoHealth?`Health personalizacao: ${personalizacaoHealth}`:"",
+    queueSummary?`Fila rígida: ${queueSummary}`:"",
     `Data/hora: ${new Date().toLocaleString("pt-BR")}`
-  ].join("\n");
+  ].filter(Boolean).join("\n");
 
   try{
     await navigator.clipboard.writeText(payload);
@@ -14805,6 +14819,7 @@ async function copyCloudDiagnostics(){
     prompt("Copie o diagnóstico abaixo:",payload);
   }
 }
+
 
 function cloudHeaders(extra={}){
   return {
@@ -16178,6 +16193,17 @@ function runLocalSystemAudit(){
     auditAdd(report,"warn","ERP_RELATIONAL_SUPABASE_V161","Não foi possível confirmar a camada relacional V161 do ERP.");
   }
 
+  if(
+    String(verifyCloudStateSaved).includes("tokensFromSupabaseRows")&&
+    String(forcePatchPersonalizacaoState).includes("PATCH")&&
+    String(cloudSaveNow).includes("SQL V162 de correção da personalizacao")&&
+    String(copyCloudDiagnostics).includes("Health personalizacao")
+  ){
+    auditAdd(report,"pass","PERSONALIZACAO_CONFIRMATION_FIX_V162","Correção do painel_state sem confirmação: verifica todas as linhas, tenta PATCH direto e gera diagnóstico específico da tabela personalizacao.");
+  }else{
+    auditAdd(report,"warn","PERSONALIZACAO_CONFIRMATION_FIX_V162","Não foi possível confirmar correção da confirmação de painel_state.");
+  }
+
   // Rascunho
   auditAdd(report,"pass","WHOLESALE_DRAFT","Proteção de rascunho automático instalada.");
 
@@ -16311,7 +16337,7 @@ function downloadSystemAuditReport(report){
   const a=document.createElement("a");
 
   a.href=url;
-  a.download=`auditoria-painel-v161-${today()}.json`;
+  a.download=`auditoria-painel-v162-${today()}.json`;
 
   document.body.appendChild(a);
   a.click();
@@ -16341,7 +16367,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V161",
+    "AUDITORIA DO SISTEMA — V162",
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -16369,7 +16395,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V161: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria V162: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -17358,7 +17384,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V161 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V162 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando teste de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -17743,15 +17769,36 @@ function tokenFromSupabaseResponseText(text){
 
   try{
     const parsed=JSON.parse(text);
-    const row=Array.isArray(parsed)?parsed[0]:parsed;
-    if(!row)return "";
+    const rows=Array.isArray(parsed)?parsed:[parsed];
 
-    if(row.valor!==undefined)return cloudTokenFromStoredValue(row.valor);
+    for(const row of rows){
+      if(!row)continue;
+      if(row.valor!==undefined){
+        const token=cloudTokenFromStoredValue(row.valor);
+        if(token)return token;
+      }
+      const direct=row?._syncMeta?.strictSaveToken||"";
+      if(direct)return direct;
+    }
 
-    return row?._syncMeta?.strictSaveToken||"";
+    return "";
   }catch(e){
     return "";
   }
+}
+
+function tokensFromSupabaseRows(rows){
+  const tokens=[];
+  (Array.isArray(rows)?rows:[]).forEach(row=>{
+    if(!row)return;
+    const token=row.valor!==undefined?cloudTokenFromStoredValue(row.valor):(row?._syncMeta?.strictSaveToken||"");
+    if(token)tokens.push(String(token));
+  });
+  return tokens;
+}
+
+function rememberPersonalizacaoHealth(data){
+  try{localStorage.setItem(PERSONALIZACAO_HEALTH_KEY,JSON.stringify({...(data||{}),at:new Date().toISOString()}));}catch(e){}
 }
 
 
@@ -17761,6 +17808,7 @@ async function verifyCloudStateSaved(expectedToken,responseText=""){
   const responseToken=tokenFromSupabaseResponseText(responseText);
   if(responseToken&&String(responseToken)===String(expectedToken)){
     cloudLastVerifiedToken=responseToken;
+    rememberPersonalizacaoHealth({ok:true,method:"return=representation",token:expectedToken});
     return true;
   }
 
@@ -17768,40 +17816,57 @@ async function verifyCloudStateSaved(expectedToken,responseText=""){
     const url=SUPABASE_URL+
       "/rest/v1/personalizacao?chave=eq."+
       encodeURIComponent(CLOUD_STATE_KEY)+
-      "&select=valor";
+      "&select=chave,valor";
 
-    const response=await fetchWithTimeout(url,{
-      method:"GET",
-      headers:cloudHeaders()
-    },7000);
+    const response=await fetchWithTimeout(url,{method:"GET",headers:cloudHeaders()},7000);
 
     if(!response.ok){
       const text=await response.text().catch(()=>"");
-      updateCloudDebug(`verificação pós-gravação: leitura HTTP ${response.status} ${text.slice(0,120)}`);
+      rememberPersonalizacaoHealth({ok:false,method:"select",status:response.status,error:text.slice(0,220)});
+      updateCloudDebug(`verificação pós-gravação: SELECT bloqueado/erro HTTP ${response.status} ${text.slice(0,120)}`);
       return false;
     }
 
     const rows=await response.json();
-    const row=Array.isArray(rows)?rows[0]:null;
-    if(!row||row.valor===undefined){
-      updateCloudDebug("verificação pós-gravação: painel_state não retornou valor");
-      return false;
-    }
+    const tokens=tokensFromSupabaseRows(rows);
 
-    const token=cloudTokenFromStoredValue(row.valor);
-
-    if(String(token)===String(expectedToken)){
-      cloudLastVerifiedToken=token;
+    if(tokens.some(token=>String(token)===String(expectedToken))){
+      cloudLastVerifiedToken=expectedToken;
+      rememberPersonalizacaoHealth({ok:true,method:"select-any-row",token:expectedToken,rows:Array.isArray(rows)?rows.length:0});
       return true;
     }
 
-    updateCloudDebug(`verificação pós-gravação falhou: token esperado ${expectedToken}, recebido ${token||"vazio"}`);
+    rememberPersonalizacaoHealth({ok:false,method:"select-any-row",expectedToken,returnedTokens:tokens.slice(-5),rows:Array.isArray(rows)?rows.length:0});
+    updateCloudDebug(`verificação pós-gravação falhou: token esperado ${expectedToken}, tokens retornados ${tokens.slice(-3).join(", ")||"vazio"}`);
     return false;
   }catch(e){
+    rememberPersonalizacaoHealth({ok:false,method:"exception",error:String(e.message||e).slice(0,220)});
     updateCloudDebug("erro na verificação pós-gravação Supabase: "+String(e.message||e).slice(0,160));
     return false;
   }
 }
+
+async function forcePatchPersonalizacaoState(statePayload,expectedToken){
+  try{
+    const response=await fetchWithTimeout(
+      SUPABASE_URL+"/rest/v1/personalizacao?chave=eq."+encodeURIComponent(CLOUD_STATE_KEY),
+      {method:"PATCH",headers:cloudHeaders({"Prefer":"return=representation"}),body:JSON.stringify({valor:statePayload})},
+      9000
+    );
+    const text=await response.text().catch(()=>"");
+    if(!response.ok){
+      rememberPersonalizacaoHealth({ok:false,method:"patch",status:response.status,error:text.slice(0,220)});
+      return false;
+    }
+    const ok=await verifyCloudStateSaved(expectedToken,text);
+    rememberPersonalizacaoHealth({ok,method:"patch+verify",status:response.status,token:expectedToken});
+    return ok;
+  }catch(e){
+    rememberPersonalizacaoHealth({ok:false,method:"patch-exception",error:String(e.message||e).slice(0,220)});
+    return false;
+  }
+}
+
 
 async function cloudSaveNow(){
   if(cloudSaveInFlight){
@@ -17862,7 +17927,12 @@ async function cloudSaveNow(){
         return false;
       }
 
-      const verified=await verifyCloudStateSaved(expectedToken,responseText);
+      let verified=await verifyCloudStateSaved(expectedToken,responseText);
+
+      if(!verified){
+        updateCloudDebug("POST aceito, mas token não encontrado. Aplicando PATCH direto em personalizacao/chave para corrigir possível duplicidade/RLS parcial.");
+        verified=await forcePatchPersonalizacaoState(statePayload,expectedToken);
+      }
 
       clearTimeout(cloudSaveRetryTimer);
       cloudSaveRetryAttempt=0;
@@ -17877,11 +17947,11 @@ async function cloudSaveNow(){
         return true;
       }
 
-      const reason="Supabase respondeu, mas a leitura de confirmação não retornou o token esperado";
-      updateStrictMutationStatus(expectedToken,"retrying",reason);
+      const reason="Supabase aceitou o envio, mas a tabela personalizacao não devolveu o token. Aplique o SQL V162 de correção da personalizacao.";
+      updateStrictMutationStatus(expectedToken,"failed",reason);
       markSharedSavePending("painel",reason,expectedToken);
-      setSaveUiState("retrying",reason,true);
-      scheduleCloudSaveRetry();
+      setSaveUiState("failed",reason,true);
+      updateCloudDebug(reason+" • Isso normalmente indica duplicidade em chave, ausência de UNIQUE(chave) ou policy SELECT/RLS incorreta.");
       return false;
     }catch(e){
       console.error("Falha ao salvar na nuvem:",e);
