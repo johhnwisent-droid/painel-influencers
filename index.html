@@ -13499,6 +13499,35 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
 @media(prefers-reduced-motion:reduce){.erpOrderCard,.erpOrderExpanded{animation:none!important}.erpDragOverlay{transition:none!important}}
 /* ===== FIM V180 ===== */
 
+/* ===== V181 CONTROLES CONECTADOS E MOVIMENTO OTIMISTA ===== */
+body.erpBoardDragging,body.erpBoardDragging *{cursor:grabbing!important}
+body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
+.erpOrderCard.isOptimistic{
+  opacity:.76!important;
+  border-color:#60a5fa!important;
+  box-shadow:0 0 0 2px rgba(96,165,250,.18),0 18px 42px rgba(0,0,0,.3)!important;
+  animation:erpBoardSaving 1s ease-in-out infinite alternate!important;
+}
+.erpOrderCard.isOptimistic::after{
+  content:"Salvando no Supabase…";
+  position:absolute;
+  right:10px;
+  bottom:8px;
+  z-index:5;
+  padding:4px 7px;
+  border-radius:999px;
+  background:#172554;
+  color:#bfdbfe;
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+}
+.erpOrderCollapseBtn{position:relative!important;z-index:2!important;touch-action:manipulation!important}
+@keyframes erpBoardSaving{from{filter:saturate(.88)}to{filter:saturate(1.18)}}
+@media(prefers-reduced-motion:reduce){.erpOrderCard.isOptimistic{animation:none!important}}
+/* ===== FIM V181 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -13588,7 +13617,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V180</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V181</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15703,7 +15732,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V180";
+const APP_BUILD_VERSION="V181";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -15743,7 +15772,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=180");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=181");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -19705,7 +19734,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V180 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V181 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25582,7 +25611,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V180",
+    version:"V181",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26019,7 +26048,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V180";
+  data.version="V181";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26272,7 +26301,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V180",
+    version:"V181",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28475,7 +28504,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V180";
+  normalized.version="V181";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -30195,6 +30224,19 @@ function toggleErpOrderCard(orderId){
   if(!erpBoardReplaceSingleCard(orderId))renderErpKanban(readErpTestData());
 }
 
+function erpBoardInstallDelegatedEvents(){
+  const board=$("erpKanban");
+  if(!board||board.dataset.erpEventsBound==="1")return;
+  board.dataset.erpEventsBound="1";
+  board.addEventListener("click",event=>{
+    const button=event.target?.closest?.(".erpOrderCollapseBtn[data-toggle-order]");
+    if(!button||!board.contains(button))return;
+    event.preventDefault();
+    event.stopPropagation();
+    toggleErpOrderCard(button.dataset.toggleOrder||"");
+  });
+}
+
 function erpBoardReplaceSingleCard(orderId){
   const selector=`.erpOrderCard[data-order-id="${CSS.escape(String(orderId))}"]`;
   const currentCard=document.querySelector(selector);
@@ -30404,9 +30446,9 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
 
   return `<article class="erpOrderCard ${collapsed?"isCollapsed":""} ${deadline.kind==="late"?"stageLate":""}" style="--card-stage:var(--stage-color)" data-order-id="${esc(order.id)}" data-stage="${esc(stage)}">
     <div class="erpDemandHeader">
-      <button type="button" class="erpDragHandle erpBoardFocus" draggable="true" data-drag-order="${esc(order.id)}" aria-label="Arrastar pedido ${esc(order.number||"")}. Use as setas para mover com o teclado." title="Arrastar demanda">⠿</button>
+      <button type="button" class="erpDragHandle erpBoardFocus" draggable="false" data-drag-order="${esc(order.id)}" aria-label="Arrastar pedido ${esc(order.number||"")}. Use as setas para mover com o teclado." title="Segure e arraste esta demanda">⠿</button>
       <div class="erpDemandTitle"><strong>${esc(title)}</strong><span>${esc(order.number||"Sem número")} • ${esc(order.client||"Cliente não informado")}</span></div>
-      <div class="erpDemandHeaderTools"><button type="button" class="erpOrderCollapseBtn" onclick="toggleErpOrderCard('${order.id}')" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Minimizar"} pedido">${collapsed?"＋":"−"}</button></div>
+      <div class="erpDemandHeaderTools"><button type="button" class="erpOrderCollapseBtn" data-toggle-order="${esc(order.id)}" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Minimizar"} pedido" title="${collapsed?"Expandir":"Minimizar"} esta demanda">${collapsed?"＋":"−"}</button></div>
     </div>
     <div class="erpDemandBadges">
       <span class="erpDemandBadge stage">${esc(stage)}</span>
@@ -30457,6 +30499,8 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
 function renderErpKanban(data){
   const target=$("erpKanban");
   if(!target)return;
+
+  erpBoardInstallDelegatedEvents();
 
   populateErpKanbanStageFilter();
   erpBoardPopulateResponsibleFilter(data);
@@ -30592,7 +30636,8 @@ function erpBoardStartVisualDrag(orderId,mode="mouse",clientX=0,clientY=0){
   if(!card)return false;
   erpBoardDragState={orderId:String(orderId),sourceStage:card.dataset.stage||"Pedido",targetStage:"",targetOrderId:"",placement:"end",mode,active:true,dropAccepted:false};
   card.classList.add("isDragging");
-  if(mode==="touch"){
+  document.body.classList.add("erpBoardDragging");
+  if(mode==="touch"||mode==="pointer"){
     erpBoardCreateDragOverlay(card);
     erpBoardMoveDragOverlay(clientX,clientY);
   }
@@ -30603,6 +30648,7 @@ function erpBoardStartVisualDrag(orderId,mode="mouse",clientX=0,clientY=0){
 function erpBoardFinishVisualDrag(cancelled=false){
   const state=erpBoardDragState?{...erpBoardDragState}:null;
   document.querySelectorAll(".erpOrderCard.isDragging").forEach(card=>card.classList.remove("isDragging"));
+  document.body.classList.remove("erpBoardDragging");
   erpBoardClearDropStyles();
   erpBoardRemoveDragOverlay();
   erpBoardDragState=null;
@@ -30617,39 +30663,8 @@ function erpBoardBindDragAndDrop(){
   document.querySelectorAll(".erpDragHandle[data-drag-order]").forEach(handle=>{
     if(handle.dataset.erpDragBound==="1")return;
     handle.dataset.erpDragBound="1";
-    handle.addEventListener("dragstart",event=>{
-      const orderId=handle.dataset.dragOrder||"";
-      if(!erpBoardStartVisualDrag(orderId,"mouse")){event.preventDefault();return;}
-      event.dataTransfer.effectAllowed="move";
-      event.dataTransfer.setData("text/plain",orderId);
-    });
-    handle.addEventListener("dragend",()=>{
-      if(erpBoardDragState?.mode==="mouse")erpBoardFinishVisualDrag(!erpBoardDragState?.targetStage);
-    });
     handle.addEventListener("keydown",erpBoardHandleKeyboardMove);
     handle.addEventListener("pointerdown",erpBoardPointerDown);
-  });
-  document.querySelectorAll(".erpKanbanCol[data-board-stage]").forEach(column=>{
-    if(column.dataset.erpDropBound==="1")return;
-    column.dataset.erpDropBound="1";
-    column.addEventListener("dragover",event=>{
-      if(!erpBoardDragState?.active)return;
-      event.preventDefault();
-      event.dataTransfer.dropEffect="move";
-      erpBoardAutoScroll(event.clientX,event.clientY);
-      erpBoardMarkDropTarget(event.target,event.clientY);
-    });
-    column.addEventListener("drop",event=>{
-      if(!erpBoardDragState?.active)return;
-      event.preventDefault();
-      erpBoardMarkDropTarget(event.target,event.clientY);
-      if(erpBoardDragState?.targetStage){
-        erpBoardDragState.dropAccepted=true;
-        erpBoardFinishVisualDrag(false);
-      }else{
-        erpBoardFinishVisualDrag(true);
-      }
-    });
   });
   if(!erpBoardPointerListenersInstalled){
     document.addEventListener("pointermove",erpBoardPointerMove,{passive:false});
@@ -30660,29 +30675,42 @@ function erpBoardBindDragAndDrop(){
 }
 
 function erpBoardPointerDown(event){
-  if(event.pointerType==="mouse")return;
+  if(typeof event.button==="number"&&event.button!==0)return;
   const handle=event.currentTarget;
   const orderId=handle.dataset.dragOrder||"";
-  const origin={x:event.clientX,y:event.clientY,pointerId:event.pointerId,orderId,handle,activated:false};
-  erpBoardDragState={...origin,sourceStage:handle.closest(".erpOrderCard")?.dataset.stage||"Pedido",targetStage:"",targetOrderId:"",placement:"end",mode:"touch",active:false};
+  const origin={x:event.clientX,y:event.clientY,pointerId:event.pointerId,pointerType:event.pointerType||"mouse",orderId,handle,activated:false};
+  erpBoardDragState={...origin,sourceStage:handle.closest(".erpOrderCard")?.dataset.stage||"Pedido",targetStage:"",targetOrderId:"",placement:"end",mode:"pointer",active:false};
   clearTimeout(erpBoardPointerTimer);
+  if(origin.pointerType==="mouse"){
+    try{handle.setPointerCapture(event.pointerId);}catch(e){}
+    return;
+  }
   erpBoardPointerTimer=setTimeout(()=>{
     if(!erpBoardDragState||erpBoardDragState.pointerId!==origin.pointerId)return;
-    if(erpBoardStartVisualDrag(orderId,"touch",origin.x,origin.y)){
-      erpBoardDragState={...erpBoardDragState,...origin,activated:true,active:true};
-      try{handle.setPointerCapture(event.pointerId);}catch(e){}
-      if(navigator.vibrate)navigator.vibrate(20);
-    }
-  },280);
+    erpBoardActivatePointerDrag(origin,origin.x,origin.y);
+  },220);
+}
+
+function erpBoardActivatePointerDrag(origin,clientX,clientY){
+  if(!origin||!erpBoardDragState||erpBoardDragState.pointerId!==origin.pointerId)return false;
+  if(!erpBoardStartVisualDrag(origin.orderId,"pointer",clientX,clientY))return false;
+  erpBoardDragState={...erpBoardDragState,...origin,activated:true,active:true,mode:"pointer"};
+  try{origin.handle.setPointerCapture(origin.pointerId);}catch(e){}
+  if(origin.pointerType!=="mouse"&&navigator.vibrate)navigator.vibrate(20);
+  return true;
 }
 
 function erpBoardPointerMove(event){
   const state=erpBoardDragState;
-  if(!state||state.mode!=="touch"||state.pointerId!==event.pointerId)return;
+  if(!state||state.mode!=="pointer"||state.pointerId!==event.pointerId)return;
   const distance=Math.hypot(event.clientX-state.x,event.clientY-state.y);
   if(!state.active){
-    if(distance>8){clearTimeout(erpBoardPointerTimer);erpBoardDragState=null;}
-    return;
+    if(state.pointerType==="mouse"&&distance>4){
+      if(!erpBoardActivatePointerDrag(state,event.clientX,event.clientY))return;
+    }else{
+      if(distance>8){clearTimeout(erpBoardPointerTimer);erpBoardDragState=null;}
+      return;
+    }
   }
   event.preventDefault();
   erpBoardMoveDragOverlay(event.clientX,event.clientY);
@@ -30693,7 +30721,7 @@ function erpBoardPointerMove(event){
 
 function erpBoardPointerUp(event){
   const state=erpBoardDragState;
-  if(!state||state.mode!=="touch"||state.pointerId!==event.pointerId)return;
+  if(!state||state.mode!=="pointer"||state.pointerId!==event.pointerId)return;
   clearTimeout(erpBoardPointerTimer);
   if(state.active)erpBoardFinishVisualDrag(!state.targetStage);
   else erpBoardDragState=null;
@@ -30739,6 +30767,25 @@ function erpBoardPositionForMove(orderId,targetStage,targetOrderId,placement){
   }
   const previous=rows[index-1];
   return previous?(Number(previous.boardPosition||0)+target)/2:Math.max(0,target/2);
+}
+
+function erpBoardApplyOptimisticVisualMove(orderId,targetStage,targetOrderId="",placement="end"){
+  const card=document.querySelector(`.erpOrderCard[data-order-id="${CSS.escape(String(orderId))}"]`);
+  const targetList=document.querySelector(`.erpKanbanList[data-board-list="${CSS.escape(String(targetStage))}"]`);
+  if(!card||!targetList)return false;
+  const targetCard=targetOrderId?targetList.querySelector(`.erpOrderCard[data-order-id="${CSS.escape(String(targetOrderId))}"]`):null;
+  if(targetCard&&targetCard!==card){
+    if(placement==="after")targetList.insertBefore(card,targetCard.nextSibling);
+    else targetList.insertBefore(card,targetCard);
+  }else if(!targetCard){
+    targetList.insertBefore(card,targetList.querySelector(".erpBoardLoadMore"));
+  }
+  card.dataset.stage=targetStage;
+  card.classList.add("isOptimistic");
+  const badge=card.querySelector(".erpDemandBadge.stage");
+  if(badge)badge.textContent=targetStage;
+  card.setAttribute("aria-busy","true");
+  return true;
 }
 
 async function erpBoardMoveBySelect(orderId,targetStage){
@@ -30787,9 +30834,10 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     baseVersion=Number(remote.version||1);
   }
   erpBoardSetState(`Salvando ${fromStage===toStage?"nova posição":`mudança para ${toStage}`}...`,"saving");
+  const optimisticApplied=erpBoardApplyOptimisticVisualMove(orderId,toStage,targetOrderId,placement);
 
   try{
-    const response=await fetchWithTimeout(`${SUPABASE_URL}/rest/v1/rpc/wisent_erp_v178_move_order`,{
+    const response=await fetchWithTimeout(`${SUPABASE_URL}/rest/v1/rpc/wisent_erp_v181_move_order`,{
       method:"POST",
       headers:cloudHeaders(),
       body:JSON.stringify({
@@ -30808,7 +30856,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
       const conflict=result?.status==="conflict";
       erpBoardSetState(conflict?"Conflito detectado: o pedido foi atualizado por outro usuário.":String(result?.message||`Falha HTTP ${response.status}`),"error");
       if(conflict)scheduleErpRealtimeCloudRefresh(0);
-      else if(response.status===404||String(raw).includes("PGRST202"))alert("Aplique o SQL SUPABASE_WISENT_ERP_BOARD_V178 antes de usar a movimentação do board.");
+      else if(response.status===404||String(raw).includes("PGRST202"))alert("Aplique o SQL SUPABASE_WISENT_ERP_BOARD_V181 antes de usar a movimentação do board.");
       renderErpKanban(readErpTestData());
       return false;
     }
@@ -30843,7 +30891,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V180:",error);
+    console.error("Falha ao mover demanda V181:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
