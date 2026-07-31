@@ -13528,6 +13528,91 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
 @media(prefers-reduced-motion:reduce){.erpOrderCard.isOptimistic{animation:none!important}}
 /* ===== FIM V181 ===== */
 
+/* ===== V182 DETALHES LIVRES E COLUNAS RECOLHÍVEIS ===== */
+.erpDemandHeaderTools .erpOrderCollapseBtn{
+  width:auto!important;
+  min-width:38px!important;
+  height:34px!important;
+  padding:0 9px!important;
+  gap:6px!important;
+  white-space:nowrap!important;
+}
+.erpOrderCollapseBtn .erpOrderCollapseIcon{
+  display:inline-grid!important;
+  place-items:center!important;
+  min-width:16px!important;
+  font-size:17px!important;
+  line-height:1!important;
+}
+.erpOrderCollapseBtn .erpOrderCollapseLabel{
+  display:inline!important;
+  color:#dbeafe!important;
+  font-size:9px!important;
+  font-weight:800!important;
+  letter-spacing:.02em!important;
+}
+.erpKanbanCol.isCollapsed{
+  flex:0 0 76px!important;
+  width:76px!important;
+  min-width:76px!important;
+  max-width:76px!important;
+  min-height:250px!important;
+  padding:8px!important;
+}
+.erpKanbanCol.isCollapsed .erpKanbanList,
+.erpKanbanCol.isCollapsed .erpColumnMetrics{
+  display:none!important;
+}
+.erpKanbanCol.isCollapsed .erpKanbanHead{
+  position:static!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  gap:10px!important;
+  padding:2px!important;
+  background:transparent!important;
+}
+.erpKanbanCol.isCollapsed .erpColumnTools{order:-1!important}
+.erpKanbanCol.isCollapsed .erpStageTitle{
+  display:flex!important;
+  min-height:180px!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  gap:8px!important;
+  writing-mode:horizontal-tb!important;
+}
+.erpKanbanCol.isCollapsed .erpStageTitle>span{
+  display:grid!important;
+  flex:0 0 auto!important;
+}
+.erpKanbanCol.isCollapsed .erpStageTitle>div{
+  display:flex!important;
+  min-width:0!important;
+  flex-direction:column!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+.erpKanbanCol.isCollapsed .erpStageTitle strong{
+  writing-mode:vertical-rl!important;
+  transform:rotate(180deg)!important;
+  color:#f8fafc!important;
+}
+.erpKanbanCol.isCollapsed .erpStageTitle small{
+  display:inline-flex!important;
+  padding:4px 6px!important;
+  border:1px solid rgba(148,163,184,.2)!important;
+  border-radius:999px!important;
+  background:rgba(148,163,184,.08)!important;
+  color:#cbd5e1!important;
+  white-space:nowrap!important;
+}
+@media(max-width:760px){
+  .erpDemandHeaderTools .erpOrderCollapseBtn{width:36px!important;min-width:36px!important;padding:0!important}
+  .erpOrderCollapseBtn .erpOrderCollapseLabel{display:none!important}
+  .erpKanbanCol.isCollapsed{flex-basis:66px!important;width:66px!important;min-width:66px!important;max-width:66px!important}
+}
+/* ===== FIM V182 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -13617,7 +13702,7 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V181</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V182</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15732,7 +15817,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V181";
+const APP_BUILD_VERSION="V182";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -15772,7 +15857,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=181");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=182");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -19734,7 +19819,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V181 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V182 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25564,9 +25649,9 @@ const ERP_STAGE_DEFAULT_DAYS=7;
 const ERP_PRODUCED_STAGE="Finalizado";
 const ERP_SIZES=["PP","P","M","G","GG","G3","G4"];
 const ERP_BOARD_BATCH_SIZE=40;
-const ERP_BOARD_COLUMN_STATE_KEY=KEY+"_erp_board_columns_v178";
-const ERP_BOARD_OPEN_PREFERENCE_KEY=KEY+"_erp_board_open_preference_v178";
-const ERP_BOARD_CARD_COLLAPSE_KEY=KEY+"_erp_board_cards_v179";
+const ERP_BOARD_COLUMN_STATE_KEY=KEY+"_erp_board_columns_v182";
+const ERP_BOARD_OPEN_PREFERENCE_KEY=KEY+"_erp_board_open_preference_v182";
+const ERP_BOARD_CARD_COLLAPSE_KEY=KEY+"_erp_board_cards_v182";
 const erpBoardColumnLimits=new Map();
 let erpBoardRenderTimer=null;
 let erpBoardDragState=null;
@@ -25611,7 +25696,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V181",
+    version:"V182",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26048,7 +26133,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V181";
+  data.version="V182";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26301,7 +26386,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V181",
+    version:"V182",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28504,7 +28589,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V181";
+  normalized.version="V182";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -30212,7 +30297,7 @@ function erpBoardIsCardCollapsed(orderId,total=0){
   const preference=erpBoardOpenPreference();
   if(preference==="compact")return true;
   if(preference==="expanded")return false;
-  return true;
+  return false;
 }
 
 function toggleErpOrderCard(orderId){
@@ -30332,9 +30417,20 @@ function erpBoardColumnState(){return erpBoardReadJson(ERP_BOARD_COLUMN_STATE_KE
 
 function toggleErpBoardColumn(stage){
   const state=erpBoardColumnState();
-  state[stage]=!state[stage];
+  const column=document.querySelector(`.erpKanbanCol[data-board-stage="${CSS.escape(String(stage))}"]`);
+  const collapsed=column?column.classList.contains("isCollapsed"):!!state[stage];
+  state[stage]=!collapsed;
   erpBoardWriteJson(ERP_BOARD_COLUMN_STATE_KEY,state);
-  renderErpKanban(readErpTestData());
+  if(!column){renderErpKanban(readErpTestData());return;}
+  column.classList.toggle("isCollapsed",state[stage]);
+  const button=column.querySelector(".erpColumnTools button");
+  if(button){
+    button.textContent=state[stage]?"＋":"−";
+    button.setAttribute("aria-expanded",String(!state[stage]));
+    button.setAttribute("aria-label",`${state[stage]?"Expandir":"Recolher"} coluna ${stage}`);
+    button.title=state[stage]?`Mostrar as demandas de ${stage}`:`Guardar as demandas de ${stage}`;
+  }
+  erpBoardSetState(state[stage]?`Setor ${stage} recolhido; as demandas continuam preservadas.`:`Setor ${stage} expandido.`);
 }
 
 function erpBoardLoadMore(stage){
@@ -30448,7 +30544,7 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
     <div class="erpDemandHeader">
       <button type="button" class="erpDragHandle erpBoardFocus" draggable="false" data-drag-order="${esc(order.id)}" aria-label="Arrastar pedido ${esc(order.number||"")}. Use as setas para mover com o teclado." title="Segure e arraste esta demanda">⠿</button>
       <div class="erpDemandTitle"><strong>${esc(title)}</strong><span>${esc(order.number||"Sem número")} • ${esc(order.client||"Cliente não informado")}</span></div>
-      <div class="erpDemandHeaderTools"><button type="button" class="erpOrderCollapseBtn" data-toggle-order="${esc(order.id)}" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Minimizar"} pedido" title="${collapsed?"Expandir":"Minimizar"} esta demanda">${collapsed?"＋":"−"}</button></div>
+      <div class="erpDemandHeaderTools"><button type="button" class="erpOrderCollapseBtn" data-toggle-order="${esc(order.id)}" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Abrir detalhes do pedido":"Minimizar pedido"}" title="${collapsed?"Abrir grade, modelos, anexos e histórico":"Minimizar esta demanda"}" onclick="event.preventDefault();event.stopPropagation();toggleErpOrderCard(this.dataset.toggleOrder);return false;"><span class="erpOrderCollapseIcon" aria-hidden="true">${collapsed?"＋":"−"}</span><span class="erpOrderCollapseLabel">${collapsed?"Detalhes":"Minimizar"}</span></button></div>
     </div>
     <div class="erpDemandBadges">
       <span class="erpDemandBadge stage">${esc(stage)}</span>
@@ -30529,7 +30625,7 @@ function renderErpKanban(data){
     return `<section class="erpKanbanCol ${restricted?"sectorOnly":""} ${collapsed?"isCollapsed":""} stage-${stageKey}" data-board-stage="${esc(stage)}" aria-label="Coluna ${esc(stage)}">
       <div class="erpKanbanHead">
         <div class="erpStageTitle"><span class="erpStageIcon">${esc(erpStageIcon(stage))}</span><div><strong>${esc(stage)}</strong><small>${stageOrders.length} pedido(s)</small></div></div>
-        <div class="erpColumnTools"><button type="button" onclick="toggleErpBoardColumn('${stage}')" aria-label="${collapsed?"Expandir":"Recolher"} coluna ${esc(stage)}">${collapsed?"＋":"−"}</button></div>
+        <div class="erpColumnTools"><button type="button" onclick="toggleErpBoardColumn('${stage}')" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Recolher"} coluna ${esc(stage)}" title="${collapsed?"Mostrar as demandas de "+esc(stage):"Guardar as demandas de "+esc(stage)}">${collapsed?"＋":"−"}</button></div>
         <div class="erpColumnMetrics"><span>${stagePieces} peça(s)</span>${lateCount?`<span class="late">• ${lateCount} atrasado(s)</span>`:"<span>• nenhum atraso</span>"}</div>
       </div>
       <div class="erpKanbanList" data-board-list="${esc(stage)}">
@@ -30653,7 +30749,7 @@ function erpBoardFinishVisualDrag(cancelled=false){
   erpBoardRemoveDragOverlay();
   erpBoardDragState=null;
   if(cancelled||!state){erpBoardSetState("Movimentação cancelada.");return;}
-  erpBoardMoveOrder(state.orderId,state.targetStage,state.targetOrderId,state.placement,{confirmStage:true}).catch(error=>{
+  erpBoardMoveOrder(state.orderId,state.targetStage,state.targetOrderId,state.placement,{confirmStage:false}).catch(error=>{
     console.error(error);
     erpBoardSetState("Não foi possível concluir a movimentação.","error");
   });
@@ -30891,7 +30987,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V181:",error);
+    console.error("Falha ao mover demanda V182:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
