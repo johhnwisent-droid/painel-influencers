@@ -9827,6 +9827,9 @@ body[data-page="erpTest"] .main{
   box-shadow:0 12px 35px rgba(0,0,0,.24)!important;
 }
 
+.erpOrderCard.isCollapsed .erpCompactOptional{display:none!important}
+.erpOrderCard.isCollapsed .erpOrderCompactSummary{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+
 .erpOrderCard::before{
   content:"";
   position:absolute;
@@ -13261,9 +13264,9 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
 .erpDemandFooter{display:grid!important;grid-template-columns:1fr auto!important;gap:7px!important;align-items:center!important}
 .erpDemandFooter>.primary,.erpDemandFooter>.orderDetailBtn{min-height:40px!important}
 .erpCardMenu{position:relative!important}
-.erpCardMenu summary{display:grid!important;place-items:center!important;width:40px!important;height:40px!important;border:1px solid #30415a!important;border-radius:10px!important;background:#142136!important;color:#cbd5e1!important;cursor:pointer!important;list-style:none!important;font-size:18px!important}
+.erpCardMenu summary,.erpCardMenuToggle{display:grid!important;place-items:center!important;width:40px!important;height:40px!important;min-height:40px!important;padding:0!important;border:1px solid #30415a!important;border-radius:10px!important;background:#142136!important;color:#cbd5e1!important;cursor:pointer!important;list-style:none!important;font-size:18px!important}
 .erpCardMenu summary::-webkit-details-marker{display:none!important}
-.erpCardMenu[open] summary{border-color:#60a5fa!important;color:#fff!important}
+.erpCardMenu[open] summary,.erpCardMenu.isOpen .erpCardMenuToggle{border-color:#60a5fa!important;color:#fff!important}
 .erpCardMenuList{position:absolute!important;right:0!important;bottom:46px!important;z-index:40!important;display:grid!important;gap:5px!important;width:180px!important;padding:8px!important;border:1px solid #34455e!important;border-radius:13px!important;background:#0e192b!important;box-shadow:0 18px 48px rgba(0,0,0,.42)!important}
 .erpCardMenuList button,.erpCardMenuList select{width:100%!important;min-height:38px!important;text-align:left!important;border:1px solid #283951!important;background:#142238!important;color:#dbe7f5!important;font-size:11px!important}
 .erpCardMenuList .danger{border-color:rgba(239,68,68,.28)!important;background:rgba(239,68,68,.09)!important;color:#fecaca!important}
@@ -13310,6 +13313,140 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
   .erpDemandTitle strong{font-size:13px!important}
 }
 /* ===== FIM V178 ===== */
+
+/* ===== V179 CORREÇÃO VISUAL E FUNCIONAL DO BOARD ===== */
+.erpBoardWorkspace{contain:none!important;overflow:visible!important}
+.erpKanbanHead .erpColumnMetrics span{
+  display:inline!important;
+  width:auto!important;
+  height:auto!important;
+  min-width:0!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  color:inherit!important;
+  font:inherit!important;
+  line-height:1.35!important;
+  box-shadow:none!important;
+}
+
+.erpKanbanHead .erpColumnMetrics .late{color:#fca5a5!important;font-weight:700!important}
+
+.erpKanbanList{
+  grid-auto-rows:max-content!important;
+  align-content:start!important;
+}
+
+.erpOrderCard{
+  align-self:start!important;
+  height:auto!important;
+  max-height:none!important;
+  overflow:visible!important;
+  contain:layout!important;
+}
+
+.erpOrderExpanded{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  overflow:visible!important;
+}
+
+.erpOrderExpanded>.erpDemandSection,
+.erpOrderExpanded>.erpDemandFooter{
+  width:100%!important;
+  min-width:0!important;
+  max-width:100%!important;
+}
+
+.erpDemandFooter{
+  grid-template-columns:minmax(0,1fr) 40px!important;
+  width:100%!important;
+  min-width:0!important;
+}
+
+.erpDemandFooter>.primary,
+.erpDemandFooter>.orderDetailBtn{width:100%!important;min-width:0!important}
+.erpCardMenu{width:40px!important;min-width:40px!important;max-width:40px!important}
+.erpCardMenuList{max-width:min(210px,calc(100vw - 32px))!important}
+.erpCardMenu:not([open])>.erpCardMenuList{display:none!important}
+.erpCardMenu[open]>.erpCardMenuList{display:grid!important}
+.erpCardMenu:not(.isOpen)>.erpCardMenuList{display:none!important}
+.erpCardMenu.isOpen>.erpCardMenuList{display:grid!important}
+
+.erpDemandSectionTitle,
+.erpDemandSummaryGrid,
+.erpKanbanProductBoxes,
+.erpKanbanProductBox,
+.erpProductColorSummary,
+.erpSewingAssignment,
+.erpDemandHistory{min-width:0!important;max-width:100%!important}
+
+.erpDemandSectionTitle>span,
+.erpDemandSummaryGrid span,
+.erpProductColorSummary span,
+.erpSewingAssignment span,
+.erpDemandHistory span,
+.erpDemandNotes{overflow-wrap:anywhere!important;word-break:break-word!important}
+
+.erpKanbanCol.isCollapsed .erpKanbanHead .erpColumnMetrics{display:none!important}
+
+@media(max-width:760px){
+  .erpBoardWorkspace{border-radius:14px!important;contain:none!important;overflow:visible!important}
+  .erpBoardHeaderActions{display:grid!important;grid-template-columns:1fr 1fr!important}
+  .erpBoardHeaderActions button{width:100%!important;min-width:0!important}
+  .erpBoardControls{width:100%!important;min-width:0!important}
+  .erpBoardSearchBox input{width:100%!important;min-width:0!important}
+  .erpKanban{max-width:100%!important;scroll-padding-inline:2px!important}
+  .erpKanbanCol,.erpKanban.singleStage .erpKanbanCol,.erpKanban.restricted .erpKanbanCol,body.erpSectorRestricted .erpKanbanCol{
+    flex-basis:min(88vw,340px)!important;
+    width:min(88vw,340px)!important;
+    min-width:min(88vw,340px)!important;
+    max-width:min(88vw,340px)!important;
+  }
+  body.erpSectorRestricted .erpKanbanCol{
+    flex-basis:100%!important;
+    width:100%!important;
+    min-width:100%!important;
+    max-width:100%!important;
+  }
+  .erpKanbanList{grid-auto-rows:max-content!important;align-content:start!important}
+  .erpOrderCard{width:100%!important;max-width:100%!important;overflow:visible!important}
+  .erpOrderExpanded{grid-template-columns:minmax(0,1fr)!important}
+  .erpDemandFooter{grid-template-columns:minmax(0,1fr) 44px!important}
+  .erpCardMenu{width:44px!important;min-width:44px!important;max-width:44px!important}
+  .erpCardMenuToggle{width:44px!important;height:44px!important;min-height:44px!important}
+  .erpCardMenuList{position:fixed!important;right:12px!important;bottom:74px!important;left:12px!important;width:auto!important;max-width:none!important}
+  .erpDemandFooter{grid-template-columns:minmax(0,1fr)!important}
+  .erpCardMenu{grid-column:1/-1!important;width:100%!important;min-width:0!important;max-width:100%!important}
+  .erpCardMenuToggle{display:none!important}
+  .erpCardMenu>.erpCardMenuList,
+  .erpCardMenu:not(.isOpen)>.erpCardMenuList{
+    position:static!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:7px!important;
+    width:100%!important;
+    max-width:100%!important;
+    padding:9px!important;
+    border-radius:12px!important;
+    box-shadow:none!important;
+  }
+  .erpCardMenuList::before{content:"Ações do pedido";grid-column:1/-1;color:#94a3b8;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .erpCardMenuList .erpBoardMoveSelect{grid-column:1/-1!important}
+  .erpCardMenuList .danger{grid-column:1/-1!important}
+}
+
+@media(max-width:430px){
+  .erpBoardHeaderActions{grid-template-columns:1fr!important}
+  .erpBoardControls{grid-template-columns:minmax(0,1fr) auto!important}
+  .erpBoardQuickActions>div{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpBoardQuickActions>div button:last-child{grid-column:1/-1!important}
+  .erpDemandSummaryGrid{grid-template-columns:minmax(0,1fr)!important}
+}
+/* ===== FIM V179 ===== */
 
 </style>
 
@@ -13400,7 +13537,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V178</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V179</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15515,7 +15652,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V178";
+const APP_BUILD_VERSION="V179";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -15555,7 +15692,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=178");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=179");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -19517,7 +19654,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V178 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V179 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25349,7 +25486,7 @@ const ERP_SIZES=["PP","P","M","G","GG","G3","G4"];
 const ERP_BOARD_BATCH_SIZE=40;
 const ERP_BOARD_COLUMN_STATE_KEY=KEY+"_erp_board_columns_v178";
 const ERP_BOARD_OPEN_PREFERENCE_KEY=KEY+"_erp_board_open_preference_v178";
-const ERP_BOARD_CARD_COLLAPSE_KEY=KEY+"_erp_board_cards_v178";
+const ERP_BOARD_CARD_COLLAPSE_KEY=KEY+"_erp_board_cards_v179";
 const erpBoardColumnLimits=new Map();
 let erpBoardRenderTimer=null;
 let erpBoardDragState=null;
@@ -25393,7 +25530,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V178",
+    version:"V179",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -25830,7 +25967,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V178";
+  data.version="V179";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26083,7 +26220,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V178",
+    version:"V179",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28286,7 +28423,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V178";
+  normalized.version="V179";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -29994,7 +30131,7 @@ function erpBoardIsCardCollapsed(orderId,total=0){
   const preference=erpBoardOpenPreference();
   if(preference==="compact")return true;
   if(preference==="expanded")return false;
-  return total>32;
+  return true;
 }
 
 function toggleErpOrderCard(orderId){
@@ -30056,6 +30193,26 @@ function erpBoardSetState(message,type="ready"){
   target.textContent=message;
   target.classList.toggle("isSaving",type==="saving");
   target.classList.toggle("isError",type==="error");
+}
+
+function toggleErpCardMenu(event,container){
+  event?.preventDefault?.();
+  event?.stopPropagation?.();
+  if(!container)return false;
+  const willOpen=!container.classList.contains("isOpen");
+  document.querySelectorAll(".erpCardMenu.isOpen").forEach(menu=>{
+    if(menu!==container){
+      menu.classList.remove("isOpen");
+      const previousList=menu.querySelector(".erpCardMenuList");
+      const previousButton=menu.querySelector(".erpCardMenuToggle");
+      previousButton?.setAttribute("aria-expanded","false");
+    }
+  });
+  container.classList.toggle("isOpen",willOpen);
+  const list=container.querySelector(".erpCardMenuList");
+  const button=container.querySelector(".erpCardMenuToggle");
+  button?.setAttribute("aria-expanded",String(willOpen));
+  return false;
 }
 
 function erpBoardColumnState(){return erpBoardReadJson(ERP_BOARD_COLUMN_STATE_KEY,{});}
@@ -30188,12 +30345,12 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
       ${payment?`<span class="erpDemandBadge financial ${payment.status==="Pago"?"paid":payment.status==="Parcialmente pago"?"partial":"dueSoon"}">${esc(payment.status)}</span>`:""}
     </div>
     <div class="erpOrderCompactSummary">
-      <span><b>Progresso</b>${currentIndex+1} de ${ERP_STAGES.length}</span>
+      <span class="erpCompactOptional"><b>Progresso</b>${currentIndex+1} de ${ERP_STAGES.length}</span>
       <span><b>Peças</b>${erpOrderQtyTotal(order)}</span>
       <span><b>Modelos</b>${products.length}</span>
       <span><b>Prazo do setor</b>${dateBR(String(order.stageDueAt||erpProductionDate(order)).slice(0,10))}</span>
-      <span><b>Entrega</b>${dateBR(order.dueDate)}</span>
-      <span><b>Responsável</b>${esc(responsible)}</span>
+      <span class="erpCompactOptional"><b>Entrega</b>${dateBR(order.dueDate)}</span>
+      <span class="erpCompactOptional"><b>Responsável</b>${esc(responsible)}</span>
       ${payment?`<span class="erpCompactFinance"><i>${esc(payment.status)}</i><b>${money(payment.pending)} pendente</b></span>`:""}
     </div>
     ${collapsed?"":`<div class="erpOrderExpanded">
@@ -30212,7 +30369,7 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
       <section class="erpDemandSection"><div class="erpDemandSectionTitle">Histórico recente <span>${esc(erpLastStageChange(order))}</span></div>${erpBoardRecentHistory(order)}</section>
       <div class="erpDemandFooter">
         ${canAdvance?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar etapa"}</button>`:`<button class="small orderDetailBtn" onclick="showErpOrderProductsDetail('${order.id}')">Ver detalhes</button>`}
-        <details class="erpCardMenu"><summary aria-label="Mais ações">⋯</summary><div class="erpCardMenuList">
+        <div class="erpCardMenu"><button type="button" class="erpCardMenuToggle" aria-label="Mais ações" aria-expanded="false" onclick="return toggleErpCardMenu(event,this.parentElement)">⋯</button><div class="erpCardMenuList">
           <button type="button" onclick="showErpOrderProductsDetail('${order.id}')">Ver detalhes</button>
           ${restricted?"":`<button type="button" onclick="editErpOrder('${order.id}')">Editar pedido</button>`}
           ${!restricted&&isWisentAdmin()?`<button type="button" onclick="openErpPaymentModal('${order.id}')">Pagamentos</button>`:""}
@@ -30220,7 +30377,7 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
           ${canReturn?`<button type="button" onclick="returnErpOrderToPreviousStage('${order.id}')">Voltar etapa</button>`:""}
           <select class="erpBoardMoveSelect" aria-label="Mover pedido para outra etapa" onchange="erpBoardMoveBySelect('${order.id}',this.value);this.value='${esc(stage)}'">${erpBoardMoveOptions(stage)}</select>
           ${restricted?"":`<button type="button" class="danger" onclick="deleteErpOrder('${order.id}')">Excluir pedido</button>`}
-        </div></details>
+        </div></div>
       </div>
     </div>`}
   </article>`;
