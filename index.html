@@ -13146,12 +13146,6 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
 .erpKanbanCol.stage-finalizado{--stage-color:#15803d}
 
 .erpKanbanCol.isDropTarget{border-color:var(--stage-color)!important;background:#142037!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--stage-color) 35%,transparent),0 18px 45px rgba(0,0,0,.28)!important}
-.erpKanbanCol.isCollapsed{flex-basis:58px!important;min-width:58px!important;max-width:58px!important;padding:8px 6px!important}
-.erpKanbanCol.isCollapsed .erpKanbanList,.erpKanbanCol.isCollapsed .erpColumnMetrics,.erpKanbanCol.isCollapsed .erpStageTitle small,.erpKanbanCol.isCollapsed .erpColumnMenu{display:none!important}
-.erpKanbanCol.isCollapsed .erpKanbanHead{display:grid!important;justify-items:center!important;gap:8px!important}
-.erpKanbanCol.isCollapsed .erpStageTitle{writing-mode:vertical-rl;min-height:140px!important}
-.erpKanbanCol.isCollapsed .erpStageTitle>span{display:none!important}
-
 .erpKanbanHead{
   position:sticky!important;
   top:0!important;
@@ -13299,7 +13293,6 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
   .erpKanbanCol,.erpKanban.singleStage .erpKanbanCol,.erpKanban.restricted .erpKanbanCol,body.erpSectorRestricted .erpKanbanCol{flex:0 0 88vw!important;width:88vw!important;min-width:88vw!important;max-width:88vw!important;max-height:calc(100vh - 215px)!important;scroll-snap-align:center!important}
   body.erpSectorRestricted .erpKanbanCol{flex-basis:100%!important;width:100%!important;min-width:100%!important;max-width:100%!important}
   .erpKanbanList{max-height:calc(100vh - 305px)!important}
-  .erpKanbanCol.isCollapsed{flex-basis:54px!important;width:54px!important;min-width:54px!important;max-width:54px!important}
   .erpOrderCard{padding:10px!important}
   .erpCardMenuList{position:fixed!important;right:12px!important;bottom:76px!important;left:12px!important;width:auto!important;padding:12px!important}
   .erpCardMenuList button,.erpCardMenuList select{min-height:44px!important}
@@ -13390,8 +13383,6 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
 .erpSewingAssignment span,
 .erpDemandHistory span,
 .erpDemandNotes{overflow-wrap:anywhere!important;word-break:break-word!important}
-
-.erpKanbanCol.isCollapsed .erpKanbanHead .erpColumnMetrics{display:none!important}
 
 @media(max-width:760px){
   .erpBoardWorkspace{border-radius:14px!important;contain:none!important;overflow:visible!important}
@@ -13528,7 +13519,7 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
 @media(prefers-reduced-motion:reduce){.erpOrderCard.isOptimistic{animation:none!important}}
 /* ===== FIM V181 ===== */
 
-/* ===== V183 DETALHES LIVRES E COLUNAS RECOLHÍVEIS ===== */
+/* ===== V184: ÚNICA REGRA DE COLUNAS E CARDS RECOLHÍVEIS ===== */
 .erpDemandHeaderTools .erpOrderCollapseBtn{
   width:auto!important;
   min-width:38px!important;
@@ -13551,7 +13542,10 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
   font-weight:800!important;
   letter-spacing:.02em!important;
 }
-.erpKanbanCol.isCollapsed{
+.erpKanban .erpKanbanCol.isCollapsed,
+.erpKanban.singleStage .erpKanbanCol.isCollapsed,
+.erpKanban.restricted .erpKanbanCol.isCollapsed,
+body.erpSectorRestricted .erpKanbanCol.isCollapsed{
   flex:0 0 176px!important;
   width:176px!important;
   min-width:176px!important;
@@ -13612,14 +13606,424 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
 @media(max-width:760px){
   .erpDemandHeaderTools .erpOrderCollapseBtn{width:auto!important;min-width:78px!important;padding:0 8px!important}
   .erpOrderCollapseBtn .erpOrderCollapseLabel{display:inline!important}
-  .erpKanbanCol.isCollapsed{flex-basis:132px!important;width:132px!important;min-width:132px!important;max-width:132px!important;min-height:70px!important;max-height:92px!important}
-  body.erpSectorRestricted .erpKanbanCol.isCollapsed,
-  .erpKanban.restricted .erpKanbanCol.isCollapsed{flex-basis:132px!important;width:132px!important;min-width:132px!important;max-width:132px!important}
+  .erpKanban .erpKanbanCol.isCollapsed,
+  .erpKanban.singleStage .erpKanbanCol.isCollapsed,
+  .erpKanban.restricted .erpKanbanCol.isCollapsed,
+  body.erpSectorRestricted .erpKanbanCol.isCollapsed{flex:0 0 132px!important;width:132px!important;min-width:132px!important;max-width:132px!important;min-height:70px!important;max-height:92px!important}
   .erpKanbanCol.isCollapsed .erpStageTitle>span{display:none!important}
   .erpKanbanCol.isCollapsed .erpStageTitle strong{font-size:12px!important}
   .erpKanbanCol.isCollapsed .erpStageTitle small{font-size:9px!important}
 }
-/* ===== FIM V183 ===== */
+/* ===== FIM V184 ===== */
+
+/* ===== V185 BOARD VISUAL PROFISSIONAL ===== */
+:root,
+.erpBoardWorkspace{
+  --erp-board-bg:#0b111b;
+  --erp-board-surface:#111a28;
+  --erp-board-card:#162131;
+  --erp-board-card-hover:#1a2739;
+  --erp-board-border:#2a3749;
+  --erp-board-text:#f3f6fb;
+  --erp-board-muted:#96a5b8;
+  --erp-board-accent:#6f8ff7;
+  --erp-board-success:#4aa67a;
+  --erp-board-warning:#d3a24f;
+  --erp-board-danger:#d75c65;
+  --erp-board-info:#5897c8;
+}
+
+.erpBoardWorkspace{
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  color:var(--erp-board-text)!important;
+  background:var(--erp-board-bg)!important;
+  border:1px solid var(--erp-board-border)!important;
+  border-radius:16px!important;
+  box-shadow:none!important;
+}
+
+.erpBoardWorkspace button,
+.erpBoardWorkspace input,
+.erpBoardWorkspace select{
+  font:inherit;
+}
+
+.erpBoardWorkspace button{
+  transition:background-color .16s ease,border-color .16s ease,color .16s ease,transform .16s ease,opacity .16s ease!important;
+}
+
+.erpBoardWorkspace button:hover:not(:disabled){transform:translateY(-1px)}
+.erpBoardWorkspace button:active:not(:disabled){transform:translateY(0)}
+.erpBoardWorkspace button:disabled,
+.erpBoardWorkspace input:disabled,
+.erpBoardWorkspace select:disabled{cursor:not-allowed!important;opacity:.46!important;filter:saturate(.55)}
+
+.erpBoardWorkspace button:focus-visible,
+.erpBoardWorkspace input:focus-visible,
+.erpBoardWorkspace select:focus-visible,
+.erpDragHandle:focus-visible{
+  outline:2px solid var(--erp-board-accent)!important;
+  outline-offset:2px!important;
+  box-shadow:0 0 0 4px rgba(111,143,247,.15)!important;
+}
+
+.erpBoardToolbar,
+.erpBoardControls,
+.erpBoardFilters{
+  background:var(--erp-board-surface)!important;
+  border-color:var(--erp-board-border)!important;
+  box-shadow:none!important;
+}
+
+.erpBoardSearchBox input,
+.erpBoardFilters input,
+.erpBoardFilters select{
+  color:var(--erp-board-text)!important;
+  background:#0e1724!important;
+  border:1px solid var(--erp-board-border)!important;
+  border-radius:10px!important;
+}
+
+.erpBoardSearchBox input::placeholder{color:#718096!important}
+.erpBoardFilters label{color:var(--erp-board-muted)!important;font-size:10px!important;font-weight:650!important}
+.erpBoardFilters .erpBoardCheck{background:#0e1724!important;border-color:var(--erp-board-border)!important}
+.erpBoardState{color:var(--erp-board-muted)!important}
+.erpBoardState::before{background:var(--erp-board-success)!important;box-shadow:none!important}
+.erpBoardState.isSaving::before{background:var(--erp-board-warning)!important}
+.erpBoardState.isError::before{background:var(--erp-board-danger)!important}
+
+.erpKanban{
+  gap:10px!important;
+  padding:2px 2px 12px!important;
+  scrollbar-color:#34445a transparent;
+}
+
+.erpKanbanCol{
+  --stage-color:var(--erp-board-info);
+  flex:0 0 310px!important;
+  width:310px!important;
+  min-width:310px!important;
+  max-width:310px!important;
+  padding:9px!important;
+  background:var(--erp-board-surface)!important;
+  border:1px solid var(--erp-board-border)!important;
+  border-top:2px solid var(--stage-color)!important;
+  border-radius:13px!important;
+  box-shadow:none!important;
+}
+
+.erpKanbanCol.stage-pedido{--stage-color:#5f8fd7}
+.erpKanbanCol.stage-corte{--stage-color:#4ca47b}
+.erpKanbanCol.stage-costura{--stage-color:#c69a4b}
+.erpKanbanCol.stage-conferencia{--stage-color:#8b79c9}
+.erpKanbanCol.stage-estampa{--stage-color:#b96f91}
+.erpKanbanCol.stage-embalagem{--stage-color:#4b9995}
+.erpKanbanCol.stage-entrega{--stage-color:#7181ca}
+.erpKanbanCol.stage-finalizado{--stage-color:var(--erp-board-success)}
+
+.erpKanban .erpKanbanCol.isCollapsed,
+.erpKanban.singleStage .erpKanbanCol.isCollapsed,
+.erpKanban.restricted .erpKanbanCol.isCollapsed,
+body.erpSectorRestricted .erpKanbanCol.isCollapsed{
+  flex:0 0 164px!important;
+  width:164px!important;
+  min-width:164px!important;
+  max-width:164px!important;
+}
+
+.erpKanbanHead{
+  padding:2px 1px 9px!important;
+  background:var(--erp-board-surface)!important;
+}
+
+.erpStageTitle>span{
+  width:27px!important;
+  height:27px!important;
+  color:var(--stage-color)!important;
+  background:color-mix(in srgb,var(--stage-color) 12%,transparent)!important;
+  border:1px solid color-mix(in srgb,var(--stage-color) 24%,transparent);
+  border-radius:8px!important;
+}
+
+.erpStageTitle strong{color:var(--erp-board-text)!important;font-size:13px!important;font-weight:720!important;letter-spacing:-.01em}
+.erpStageTitle small,.erpColumnMetrics{color:var(--erp-board-muted)!important}
+.erpColumnMetrics .late{color:#f09aa0!important}
+.erpColumnTools button{
+  color:#b6c2d1!important;
+  background:#172334!important;
+  border-color:var(--erp-board-border)!important;
+  border-radius:8px!important;
+}
+.erpColumnTools button:hover{color:var(--erp-board-text)!important;background:#1c2a3d!important;border-color:#3a4b62!important}
+
+.erpKanbanList{gap:7px!important;padding:1px 1px 7px!important;scrollbar-color:#34445a transparent}
+
+.erpOrderCard{
+  --card-stage:var(--erp-board-info);
+  padding:10px!important;
+  color:var(--erp-board-text)!important;
+  background:var(--erp-board-card)!important;
+  border:1px solid var(--erp-board-border)!important;
+  border-left:3px solid var(--card-stage)!important;
+  border-radius:11px!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.12)!important;
+}
+
+.erpOrderCard:hover{
+  background:var(--erp-board-card-hover)!important;
+  border-color:#3a4960!important;
+  border-left-color:var(--card-stage)!important;
+  box-shadow:0 5px 14px rgba(0,0,0,.16)!important;
+}
+
+.erpOrderCard.stageLate{border-left-color:var(--erp-board-danger)!important;background:#1b202d!important}
+.erpOrderCard[data-stage="Finalizado"]{border-left-color:var(--erp-board-success)!important}
+
+.erpDemandHeader{gap:8px!important;align-items:center!important}
+.erpDragHandle{
+  width:26px!important;
+  height:31px!important;
+  min-height:31px!important;
+  color:#8291a5!important;
+  background:#111b29!important;
+  border-color:var(--erp-board-border)!important;
+  border-radius:7px!important;
+}
+.erpDragHandle:hover{color:var(--erp-board-text)!important;background:#1c293a!important}
+
+.erpDemandTitle{display:grid!important;gap:1px!important}
+.erpDemandNumber{
+  color:var(--erp-board-muted)!important;
+  font-size:9px!important;
+  font-weight:700!important;
+  letter-spacing:.055em!important;
+  line-height:1.2!important;
+  text-transform:uppercase!important;
+}
+.erpDemandTitle strong{color:var(--erp-board-text)!important;font-size:14px!important;font-weight:730!important;line-height:1.22!important;letter-spacing:-.012em!important}
+.erpDemandClient{color:#b9c5d4!important;font-size:10px!important;font-weight:520!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+
+.erpDemandHeaderTools .erpOrderCollapseBtn{
+  min-width:72px!important;
+  width:auto!important;
+  height:31px!important;
+  padding:0 8px!important;
+  color:#c9d4e2!important;
+  background:#172334!important;
+  border:1px solid var(--erp-board-border)!important;
+  border-radius:8px!important;
+}
+.erpDemandHeaderTools .erpOrderCollapseBtn:hover{color:#fff!important;background:#1e2d41!important;border-color:#43536a!important}
+.erpOrderCollapseBtn .erpOrderCollapseLabel{color:inherit!important;font-size:9px!important;font-weight:720!important}
+
+.erpDemandBadges{gap:4px!important;margin:7px 0!important}
+.erpDemandBadge{
+  min-height:20px!important;
+  padding:2px 7px!important;
+  color:#c8d2df!important;
+  background:#111b29!important;
+  border-color:var(--erp-board-border)!important;
+  border-radius:999px!important;
+  font-size:8px!important;
+  font-weight:720!important;
+  letter-spacing:.045em!important;
+}
+.erpDemandBadge.stage{color:color-mix(in srgb,var(--card-stage) 70%,white)!important;background:color-mix(in srgb,var(--card-stage) 10%,transparent)!important;border-color:color-mix(in srgb,var(--card-stage) 30%,transparent)!important}
+.erpDemandBadge.priority-alta{color:#f0cb83!important;background:rgba(211,162,79,.1)!important;border-color:rgba(211,162,79,.34)!important}
+.erpDemandBadge.priority-urgente{color:#f5b1b5!important;background:rgba(215,92,101,.11)!important;border-color:rgba(215,92,101,.36)!important}
+.erpDemandBadge.late{color:#f5b1b5!important;background:rgba(215,92,101,.12)!important;border-color:rgba(215,92,101,.38)!important}
+.erpDemandBadge.dueSoon{color:#efd297!important;background:rgba(211,162,79,.1)!important;border-color:rgba(211,162,79,.32)!important}
+
+.erpOrderCompactSummary{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+  margin:6px 0 0!important;
+}
+.erpOrderCompactSummary span{
+  min-height:41px;
+  padding:6px!important;
+  color:#d9e1eb!important;
+  background:#111b29!important;
+  border:1px solid rgba(150,165,184,.12);
+  border-radius:7px!important;
+  font-size:10px!important;
+  font-weight:620!important;
+  line-height:1.25!important;
+}
+.erpOrderCompactSummary b{margin-bottom:2px;color:#8190a4!important;font-size:7px!important;font-weight:720!important;letter-spacing:.045em!important}
+
+.erpOrderExpanded{gap:7px!important;margin-top:7px!important}
+.erpDemandSection{
+  padding:9px!important;
+  background:#111b29!important;
+  border:1px solid rgba(150,165,184,.14)!important;
+  border-radius:9px!important;
+}
+.erpDemandSectionTitle{margin-bottom:7px!important;color:#dfe7f1!important;font-size:9px!important;font-weight:740!important;letter-spacing:.055em!important}
+.erpDemandSectionTitle span{color:var(--erp-board-muted)!important;font-size:8px!important}
+.erpDemandSummaryGrid{gap:5px!important}
+.erpDemandSummaryGrid span{padding:5px 6px;color:#d7e0eb!important;background:#0d1622;border-radius:6px;font-size:10px!important;line-height:1.3!important}
+.erpDemandSummaryGrid b{color:#7f8ea2!important;font-size:7px!important;letter-spacing:.04em}
+
+.erpStageProgress{gap:4px!important}
+.erpStageProgress span{min-width:54px!important;color:#738399!important}
+.erpStageProgress i{height:3px!important;border-radius:4px!important}
+.erpStageProgress small{font-size:7px!important}
+
+.erpKanbanProductBoxes{gap:6px!important}
+.erpKanbanProductBox{
+  padding:8px!important;
+  background:#0d1622!important;
+  border:1px solid rgba(150,165,184,.13)!important;
+  border-radius:8px!important;
+}
+.erpKanbanProductTop{gap:8px!important;margin-bottom:4px}
+.erpKanbanProductTop strong{color:#e8edf5!important;font-size:11px!important;font-weight:700!important}
+.erpKanbanProductTop span{color:#c5d0dd!important;background:#182536!important;border:1px solid #2d3a4d;border-radius:999px!important;font-size:8px!important}
+.erpKanbanProductBox>small{color:var(--erp-board-muted)!important;font-size:8px!important}
+.erpProductColorSummary{display:grid!important;gap:4px!important;margin-top:6px!important}
+.erpProductColorSummary span{padding:5px 6px;color:#b9c5d4!important;background:#121e2d;border-radius:6px;font-size:9px!important;line-height:1.35!important}
+.erpProductColorSummary b{color:#e1e8f0!important}
+.erpKanbanGrade{gap:4px!important;margin-top:6px!important}
+.erpKanbanGrade span{min-width:33px!important;padding:4px 5px!important;color:#c7d1de!important;background:#172334!important;border-color:#2b394b!important;border-radius:6px!important;font-size:8px!important}
+.erpKanbanGrade span b{color:#fff!important}
+
+.erpArtworkChip{margin-top:6px!important;background:#121e2d!important;border:1px solid #2b394b!important;border-radius:7px!important;color:#c5d0dd!important}
+.erpArtworkChip.hasImage{min-height:46px!important;padding:4px!important}
+.erpArtworkChip.hasImage img{width:38px!important;height:38px!important;border-radius:6px!important}
+.erpArtworkChip:hover{background:#182638!important;border-color:#405069!important}
+.erpArtworkChip.empty{min-height:34px!important;color:#718096!important}
+.erpSewingAssignment{margin-top:6px!important;padding:7px!important;background:#121e2d!important;border-color:#2b394b!important;border-radius:7px!important}
+.erpDemandNotes{margin:0!important;color:#b8c4d2!important;font-size:10px!important;line-height:1.45!important}
+
+.erpDemandFooter{gap:7px!important;padding-top:1px!important}
+.erpDemandFooter>.primary,
+.erpDemandFooter>.orderDetailBtn{
+  min-height:38px!important;
+  border-radius:8px!important;
+  font-size:10px!important;
+  font-weight:720!important;
+}
+.erpDemandFooter>.primary{background:var(--erp-board-accent)!important;border-color:var(--erp-board-accent)!important;color:#fff!important}
+.erpDemandFooter>.primary:hover{background:#7a98f8!important;border-color:#7a98f8!important}
+
+.erpCardMenuToggle{
+  width:38px!important;
+  height:38px!important;
+  min-height:38px!important;
+  color:#bdc8d6!important;
+  background:#172334!important;
+  border-color:var(--erp-board-border)!important;
+  border-radius:8px!important;
+}
+.erpCardMenu.isOpen .erpCardMenuToggle{color:#fff!important;border-color:var(--erp-board-accent)!important;background:#1d2c40!important}
+.erpCardMenuList{
+  gap:4px!important;
+  padding:7px!important;
+  background:#101a28!important;
+  border-color:#344257!important;
+  border-radius:10px!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.28)!important;
+}
+.erpCardMenuList button,.erpCardMenuList select{min-height:36px!important;color:#d7e0eb!important;background:#162334!important;border-color:#2b394c!important;border-radius:7px!important;font-size:10px!important}
+.erpCardMenuList button:hover,.erpCardMenuList select:hover{background:#1d2c40!important;border-color:#40516a!important}
+.erpCardMenuList .danger{color:#f1a7ad!important;background:rgba(215,92,101,.08)!important;border-color:rgba(215,92,101,.28)!important}
+
+.erpOrderCard.isCollapsed{padding:9px!important}
+.erpOrderCard.isCollapsed .erpDemandBadges{margin:5px 0!important}
+.erpOrderCard.isCollapsed .erpOrderCompactSummary{margin-top:5px!important}
+.erpOrderCard.isCollapsed .erpOrderCompactSummary .erpCompactOptional:last-child{display:grid!important}
+
+.erpBoardEmpty,.erpEmptyCol{color:#7f8da1!important;background:#0e1724!important;border-color:#293648!important;border-radius:9px!important}
+.erpBoardLoadMore{color:#c9d4e2!important;background:#172334!important;border-color:#334257!important;border-radius:8px!important}
+
+.erpKanbanCol.isDropTarget{background:#142033!important;border-color:var(--stage-color)!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--stage-color) 24%,transparent)!important}
+.erpKanbanCol.isDropBlocked{border-color:rgba(215,92,101,.46)!important;background:#191923!important}
+.erpOrderCard.isDragging{opacity:.68!important;transform:rotate(.4deg) scale(1.01)!important;box-shadow:0 14px 32px rgba(0,0,0,.3)!important}
+.erpOrderCard.isDropBefore{box-shadow:0 -3px 0 var(--erp-board-accent)!important}
+.erpOrderCard.isDropAfter{box-shadow:0 3px 0 var(--erp-board-accent)!important}
+
+@media(max-width:760px){
+  .erpBoardWorkspace{padding:9px!important;border-radius:13px!important}
+  .erpBoardControls{gap:7px!important;padding:7px!important;border-radius:11px!important}
+  .erpBoardFilters{padding:13px!important;background:var(--erp-board-surface)!important;border-radius:16px 16px 0 0!important}
+  .erpKanban{gap:9px!important;padding-bottom:12px!important;scroll-padding-inline:1px!important}
+  .erpKanbanCol,.erpKanban.singleStage .erpKanbanCol,.erpKanban.restricted .erpKanbanCol,body.erpSectorRestricted .erpKanbanCol{
+    flex:0 0 min(86vw,326px)!important;
+    width:min(86vw,326px)!important;
+    min-width:min(86vw,326px)!important;
+    max-width:min(86vw,326px)!important;
+    padding:8px!important;
+    border-radius:12px!important;
+  }
+  .erpKanban .erpKanbanCol.isCollapsed,
+  .erpKanban.singleStage .erpKanbanCol.isCollapsed,
+  .erpKanban.restricted .erpKanbanCol.isCollapsed,
+  body.erpSectorRestricted .erpKanbanCol.isCollapsed{
+    flex:0 0 128px!important;
+    width:128px!important;
+    min-width:128px!important;
+    max-width:128px!important;
+  }
+  .erpOrderCard{padding:9px!important;border-radius:10px!important}
+  .erpDemandTitle strong{font-size:13px!important}
+  .erpDemandHeaderTools .erpOrderCollapseBtn{min-width:76px!important;height:34px!important}
+  .erpOrderCompactSummary span{min-height:40px;padding:6px 5px!important}
+  .erpDemandSection{padding:8px!important}
+  .erpDemandSummaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpDemandFooter{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:center!important}
+  .erpCardMenu{grid-column:auto!important;width:40px!important;min-width:40px!important;max-width:40px!important}
+  .erpCardMenuToggle{display:grid!important;width:40px!important;height:40px!important;min-height:40px!important}
+  .erpCardMenu>.erpCardMenuList,.erpCardMenu:not(.isOpen)>.erpCardMenuList{display:none!important}
+  .erpCardMenu.isOpen>.erpCardMenuList{position:fixed!important;right:10px!important;bottom:72px!important;left:10px!important;display:grid!important;width:auto!important;max-width:none!important;padding:10px!important}
+  .erpCardMenuList button,.erpCardMenuList select{min-height:42px!important}
+}
+
+@media(max-width:430px){
+  .erpBoardWorkspace{padding:7px!important}
+  .erpOrderCompactSummary{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .erpDemandSummaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpDemandSummaryGrid span{padding:5px!important}
+}
+/* ===== FIM V185 ===== */
+
+/* ===== V186 SONS E NOTIFICACOES ===== */
+.erpSoundSettingsBox{
+  display:grid;
+  gap:14px;
+  padding:18px;
+  color:var(--erp-board-text);
+  background:var(--erp-board-surface);
+  border:1px solid var(--erp-board-border);
+  border-radius:16px;
+}
+.erpSoundSettingsHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.erpSoundSettingsHead h4{margin:0 0 4px;font-size:16px;color:var(--erp-board-text)}
+.erpSoundSettingsHead p{margin:0;max-width:680px;color:var(--erp-board-muted);font-size:12px;line-height:1.55}
+.erpSoundEnabledLabel{display:flex;align-items:center;gap:9px;min-height:40px;padding:8px 12px;color:var(--erp-board-text);background:var(--erp-board-card);border:1px solid var(--erp-board-border);border-radius:10px;white-space:nowrap}
+.erpSoundEnabledLabel input{width:19px;height:19px;margin:0;accent-color:var(--erp-board-accent)}
+.erpSoundControlGrid{display:grid;grid-template-columns:minmax(220px,1fr) auto;gap:12px;align-items:end}
+.erpSoundVolumeLabel{display:grid;gap:8px;color:var(--erp-board-muted);font-size:11px;font-weight:700}
+.erpSoundVolumeRow{display:grid;grid-template-columns:minmax(120px,1fr) 54px;gap:10px;align-items:center}
+.erpSoundVolumeRow input{width:100%;padding:0;accent-color:var(--erp-board-accent)}
+.erpSoundVolumeValue{display:grid;place-items:center;min-height:34px;color:var(--erp-board-text);background:var(--erp-board-card);border:1px solid var(--erp-board-border);border-radius:8px;font-size:12px;font-weight:800}
+.erpSoundTestActions{display:flex;gap:8px;flex-wrap:wrap}
+.erpSoundTestActions button{min-height:40px;color:var(--erp-board-text);background:var(--erp-board-card);border:1px solid var(--erp-board-border)}
+.erpSoundTestActions button:hover:not(:disabled){background:var(--erp-board-card-hover);border-color:var(--erp-board-accent)}
+.erpSoundTestActions button:focus-visible,.erpSoundEnabledLabel:focus-within{outline:2px solid var(--erp-board-accent);outline-offset:2px}
+.erpSoundTestActions button:disabled{cursor:not-allowed;opacity:.48}
+.erpSoundStatus{min-height:18px;margin:0;color:var(--erp-board-muted);font-size:11px}
+.erpSoundStatus.ok{color:var(--erp-board-success)}
+.erpSoundStatus.error{color:var(--erp-board-warning)}
+@media(max-width:650px){
+  .erpSoundSettingsBox{padding:14px;border-radius:14px}
+  .erpSoundSettingsHead{display:grid}
+  .erpSoundEnabledLabel{width:100%;justify-content:space-between}
+  .erpSoundControlGrid{grid-template-columns:1fr}
+  .erpSoundTestActions{display:grid;grid-template-columns:1fr}
+  .erpSoundTestActions button{width:100%;min-height:44px}
+}
+/* ===== FIM V186 ===== */
 
 </style>
 
@@ -13710,7 +14114,7 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V183</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V186</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14872,47 +15276,6 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
     <span id="erpRestoreStatus">Private Label ativo</span>
   </div>
 
-  <div id="erpStandbyModal" class="erpStandbyModal noPrint" hidden>
-    <div class="erpStandbyModalBackdrop" onclick="closeErpStandbyModal()"></div>
-    <div class="erpStandbyModalBox" role="dialog" aria-modal="true" aria-labelledby="erpStandbyModalTitle">
-      <div class="erpStandbyModalHead">
-        <div>
-          <span class="erpStandbyModalBadge">STANDBY</span>
-          <h3 id="erpStandbyModalTitle">Lançar pedido para standby</h3>
-          <p id="erpStandbyModalMeta">Selecione o motivo e confirme para mover o pedido para a seção de standby da etapa atual.</p>
-        </div>
-        <button type="button" class="secondary" onclick="closeErpStandbyModal()">Fechar</button>
-      </div>
-
-      <input type="hidden" id="erpStandbyOrderId">
-
-      <div class="erpStandbyQuickReasons">
-        <button type="button" onclick="fillErpStandbyReason('Aguardando material')">Aguardando material</button>
-        <button type="button" onclick="fillErpStandbyReason('Aguardando aprovação')">Aguardando aprovação</button>
-        <button type="button" onclick="fillErpStandbyReason('Aguardando ajuste de modelagem')">Ajuste de modelagem</button>
-        <button type="button" onclick="fillErpStandbyReason('Prioridade alterada')">Prioridade alterada</button>
-        <button type="button" onclick="fillErpStandbyReason('Problema técnico na etapa')">Problema técnico</button>
-      </div>
-
-      <label class="erpStandbyReasonLabel">
-        Motivo do standby <span>obrigatório</span>
-        <textarea id="erpStandbyReasonInput" rows="4" placeholder="Ex.: Falta malha preta tamanho GG. Pedido deve aguardar reposição para continuar na costura."></textarea>
-      </label>
-
-      <label class="erpStandbyResponsibleLabel">
-        Responsável pela pausa
-        <input id="erpStandbyResponsibleInput" placeholder="Nome de quem está colocando em standby">
-      </label>
-
-      <div id="erpStandbyValidation" class="erpStandbyValidation" hidden></div>
-
-      <div class="erpStandbyModalActions">
-        <button type="button" class="secondary" onclick="closeErpStandbyModal()">Cancelar</button>
-        <button type="button" class="primary" onclick="submitErpOrderStandby()">Confirmar standby</button>
-      </div>
-    </div>
-  </div>
-
   <div id="erpArtworkViewer" class="erpArtworkViewer noPrint" hidden>
     <div class="erpArtworkViewerBackdrop" onclick="closeErpArtworkViewer()"></div>
     <div id="erpArtworkViewerBox" class="erpArtworkViewerBox" role="dialog" aria-modal="true" aria-labelledby="erpArtworkViewerTitle">
@@ -15577,6 +15940,32 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
             </div>
           </div>
 
+          <section class="erpSoundSettingsBox full" aria-labelledby="erpSoundSettingsTitle">
+            <div class="erpSoundSettingsHead">
+              <div>
+                <h4 id="erpSoundSettingsTitle">Sons do Private Label</h4>
+                <p>Avisos discretos para confirma&ccedil;&atilde;o de pedido criado e chegada de demanda ao setor deste usu&aacute;rio. A prefer&ecirc;ncia fica salva neste aparelho.</p>
+              </div>
+              <label class="erpSoundEnabledLabel" for="erpSoundEnabled">
+                <span>Sons ativados</span>
+                <input id="erpSoundEnabled" type="checkbox" onchange="updateErpSoundSettingsFromUi()">
+              </label>
+            </div>
+            <div class="erpSoundControlGrid">
+              <label class="erpSoundVolumeLabel" for="erpSoundVolume">Volume
+                <span class="erpSoundVolumeRow">
+                  <input id="erpSoundVolume" type="range" min="0" max="1" step="0.05" oninput="updateErpSoundSettingsFromUi()">
+                  <output id="erpSoundVolumeValue" class="erpSoundVolumeValue" for="erpSoundVolume">45%</output>
+                </span>
+              </label>
+              <div class="erpSoundTestActions">
+                <button type="button" onclick="testErpSound('orderCreated')">Testar som de cria&ccedil;&atilde;o</button>
+                <button type="button" onclick="testErpSound('sectorArrival')">Testar som de chegada</button>
+              </div>
+            </div>
+            <p id="erpSoundStatus" class="erpSoundStatus" role="status" aria-live="polite">O &aacute;udio ser&aacute; liberado ap&oacute;s a primeira intera&ccedil;&atilde;o com o sistema.</p>
+          </section>
+
           <label>Logo do sistema<input type="file" id="setSystemLogo" accept="image/*" onchange="previewSystemLogo(event)"></label>
           <div class="card">
             <small>Logo atual do sistema</small>
@@ -15825,7 +16214,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V183";
+const APP_BUILD_VERSION="V186";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -15865,7 +16254,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=183");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=186");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -19827,7 +20216,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V183 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V186 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25266,6 +25655,7 @@ function renderSettings(){
   $("systemLogoPreview").innerHTML=sysLogo?`<img src="${sysLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
   $("pdfLogoPreview").innerHTML=pdfLogo?`<img src="${pdfLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
   renderAuthUsers();
+  renderErpSoundSettings();
 }
 
 function saveSettings(){
@@ -25674,6 +26064,8 @@ const ERP_TEST_LAST_SYNC_KEY=KEY+"_wisent_erp_test_last_sync_shared";
 const ERP_TEST_AUDIT_KEY=KEY+"_wisent_erp_test_audit_log_v152";
 const ERP_TEST_BACKUP_KEY=KEY+"_wisent_erp_test_auto_backup_v152";
 const ERP_TEST_SECURITY_GUIDE_KEY=KEY+"_wisent_erp_test_security_guide_seen_v152";
+const ERP_SOUND_SETTINGS_KEY=KEY+"_erp_sound_settings_v186";
+const ERP_SECTOR_NOTIFICATION_SEEN_KEY=KEY+"_erp_sector_notification_seen_v186";
 let erpTestFlushBusy=false;
 let erpTestSyncBusy=false;
 let erpTestSyncTimer=null;
@@ -25689,8 +26081,13 @@ let erpRealtimeHeartbeatTimer=null;
 let erpRealtimeSyncTimer=null;
 let erpRealtimeArrivalTimer=null;
 let erpRealtimeArrivalOrderId="";
+let erpAudioContext=null;
+let erpAudioUnlocked=false;
+let erpAudioUnlockInstalled=false;
 const erpRealtimeStageByOrder=new Map();
-const erpRealtimeSeenEvents=new Set();
+const erpRealtimeSeenEvents=new Set(readErpSectorSeenEvents());
+const erpOrderCreatedSoundPending=new Set();
+const erpOrderCreatedSoundPlayed=new Set();
 const ERP_REALTIME_TABLES=[
   "wisent_erp_v2_orders",
   "wisent_erp_v2_products",
@@ -25703,9 +26100,192 @@ const ERP_REALTIME_TABLES=[
   "wisent_erp_supply_requests"
 ];
 
+function readErpSoundSettings(){
+  const fallback={enabled:true,volume:0.45};
+  try{
+    const parsed=JSON.parse(localStorage.getItem(ERP_SOUND_SETTINGS_KEY)||"null");
+    if(!parsed||typeof parsed!=="object")return fallback;
+    const volume=Number(parsed.volume);
+    return {
+      enabled:parsed.enabled!==false,
+      volume:Number.isFinite(volume)?Math.max(0,Math.min(1,volume)):fallback.volume
+    };
+  }catch(e){return fallback;}
+}
+
+function writeErpSoundSettings(next={}){
+  const current=readErpSoundSettings();
+  const volume=Number(next.volume??current.volume);
+  const settings={
+    enabled:next.enabled===undefined?current.enabled:!!next.enabled,
+    volume:Number.isFinite(volume)?Math.max(0,Math.min(1,volume)):current.volume
+  };
+  try{localStorage.setItem(ERP_SOUND_SETTINGS_KEY,JSON.stringify(settings));}catch(e){}
+  renderErpSoundSettings();
+  return settings;
+}
+
+function setErpSoundStatus(message,type=""){
+  const status=$("erpSoundStatus");
+  if(!status)return;
+  status.textContent=message;
+  status.classList.toggle("ok",type==="ok");
+  status.classList.toggle("error",type==="error");
+}
+
+function renderErpSoundSettings(){
+  const settings=readErpSoundSettings();
+  if($("erpSoundEnabled"))$("erpSoundEnabled").checked=settings.enabled;
+  if($("erpSoundVolume"))$("erpSoundVolume").value=String(settings.volume);
+  if($("erpSoundVolumeValue"))$("erpSoundVolumeValue").textContent=`${Math.round(settings.volume*100)}%`;
+  document.querySelectorAll(".erpSoundTestActions button").forEach(button=>button.disabled=!settings.enabled||settings.volume<=0);
+}
+
+function updateErpSoundSettingsFromUi(){
+  const settings=writeErpSoundSettings({
+    enabled:$("erpSoundEnabled")?.checked!==false,
+    volume:Number($("erpSoundVolume")?.value??0.45)
+  });
+  setErpSoundStatus(settings.enabled&&settings.volume>0
+    ?`Sons ativados em ${Math.round(settings.volume*100)}%.`
+    :"Sons desativados neste aparelho.",settings.enabled&&settings.volume>0?"ok":"");
+}
+
+async function unlockErpAudio(){
+  try{
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextClass)return false;
+    if(!erpAudioContext)erpAudioContext=new AudioContextClass();
+    if(erpAudioContext.state==="suspended")await erpAudioContext.resume();
+    erpAudioUnlocked=erpAudioContext.state==="running";
+    return erpAudioUnlocked;
+  }catch(e){
+    erpAudioUnlocked=false;
+    return false;
+  }
+}
+
+function erpScheduleSoundTone(context,destination,frequency,start,duration,level,wave="sine"){
+  const oscillator=context.createOscillator();
+  const gain=context.createGain();
+  oscillator.type=wave;
+  oscillator.frequency.setValueAtTime(frequency,start);
+  oscillator.frequency.exponentialRampToValueAtTime(frequency*1.018,start+duration);
+  gain.gain.setValueAtTime(0.0001,start);
+  gain.gain.exponentialRampToValueAtTime(Math.max(0.0002,level),start+0.018);
+  gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);
+  oscillator.connect(gain);
+  gain.connect(destination);
+  oscillator.start(start);
+  oscillator.stop(start+duration+0.025);
+}
+
+function playErpSound(type){
+  const settings=readErpSoundSettings();
+  if(!settings.enabled||settings.volume<=0||!erpAudioUnlocked||!erpAudioContext||erpAudioContext.state!=="running")return false;
+  if(!["orderCreated","sectorArrival"].includes(type))return false;
+  try{
+    const context=erpAudioContext;
+    const master=context.createGain();
+    const now=context.currentTime+0.012;
+    master.gain.setValueAtTime(Math.max(0.0001,settings.volume),now);
+    master.gain.exponentialRampToValueAtTime(0.0001,now+0.42);
+    master.connect(context.destination);
+    if(type==="orderCreated"){
+      erpScheduleSoundTone(context,master,622,now,0.14,0.13,"triangle");
+      erpScheduleSoundTone(context,master,830,now+0.075,0.19,0.095,"sine");
+    }else{
+      erpScheduleSoundTone(context,master,466,now,0.13,0.105,"sine");
+      erpScheduleSoundTone(context,master,622,now+0.07,0.16,0.09,"triangle");
+      erpScheduleSoundTone(context,master,740,now+0.145,0.19,0.075,"sine");
+    }
+    return true;
+  }catch(e){return false;}
+}
+
+async function testErpSound(type){
+  const settings=readErpSoundSettings();
+  if(!settings.enabled||settings.volume<=0){
+    setErpSoundStatus("Ative os sons e escolha um volume acima de zero para testar.","error");
+    return false;
+  }
+  const unlocked=await unlockErpAudio();
+  const played=unlocked&&playErpSound(type);
+  setErpSoundStatus(played
+    ?(type==="sectorArrival"?"Som de chegada reproduzido.":"Som de criação reproduzido.")
+    :"O navegador bloqueou o áudio. Toque novamente no botão para liberar.",played?"ok":"error");
+  return played;
+}
+
+function installErpAudioUnlock(){
+  if(erpAudioUnlockInstalled)return;
+  erpAudioUnlockInstalled=true;
+  const handleFirstInteraction=()=>{
+    unlockErpAudio().then(unlocked=>{
+      if(!unlocked)return;
+      document.removeEventListener("pointerdown",handleFirstInteraction,true);
+      document.removeEventListener("keydown",handleFirstInteraction,true);
+      setErpSoundStatus("Áudio liberado para os avisos do Private Label.","ok");
+    });
+  };
+  document.addEventListener("pointerdown",handleFirstInteraction,{capture:true,passive:true});
+  document.addEventListener("keydown",handleFirstInteraction,true);
+}
+
+function readErpSectorSeenEvents(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(ERP_SECTOR_NOTIFICATION_SEEN_KEY)||"[]");
+    return Array.isArray(parsed)?parsed.filter(Boolean).slice(-180):[];
+  }catch(e){return [];}
+}
+
+function rememberErpSectorSeenEvent(fingerprint){
+  if(!fingerprint)return false;
+  erpRealtimeSeenEvents.add(fingerprint);
+  while(erpRealtimeSeenEvents.size>180){
+    erpRealtimeSeenEvents.delete(erpRealtimeSeenEvents.values().next().value);
+  }
+  try{localStorage.setItem(ERP_SECTOR_NOTIFICATION_SEEN_KEY,JSON.stringify(Array.from(erpRealtimeSeenEvents)));}catch(e){}
+  return true;
+}
+
+async function confirmErpOrderCreatedSound(order){
+  const orderId=String(order?.id||"");
+  if(!orderId||erpOrderCreatedSoundPending.has(orderId)||erpOrderCreatedSoundPlayed.has(orderId))return false;
+  erpOrderCreatedSoundPending.add(orderId);
+  try{
+    if(navigator.onLine===false)return false;
+    let confirmed=false;
+    if(erpV2Phase2Enabled()){
+      await erpV2DiffChain;
+      const orderUuid=order._v2Id||await erpV2Uuid("order",orderId);
+      for(const delay of [0,420,900]){
+        if(delay)await new Promise(resolve=>setTimeout(resolve,delay));
+        await flushErpV2Outbox();
+        const remote=await erpV2FetchRecord("wisent_erp_v2_orders",orderUuid);
+        if(remote&&!remote.deleted_at&&String(remote.legacy_id||"")===orderId){confirmed=true;break;}
+      }
+    }else{
+      const flushed=await flushErpTestPendingQueue();
+      if(flushed){
+        const remote=await fetchErpTestCloudData();
+        confirmed=!!remote?.orders?.some(item=>String(item.id)===orderId);
+      }
+    }
+    if(!confirmed)return false;
+    erpOrderCreatedSoundPlayed.add(orderId);
+    return playErpSound("orderCreated");
+  }catch(error){
+    console.warn("Som de pedido aguardando confirmacao real:",error);
+    return false;
+  }finally{
+    erpOrderCreatedSoundPending.delete(orderId);
+  }
+}
+
 function defaultErpTestState(){
   return {
-    version:"V183",
+    version:"V186",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26142,7 +26722,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V183";
+  data.version="V186";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26395,7 +26975,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V183",
+    version:"V186",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28273,7 +28853,11 @@ function erpRealtimeEventData(message){
 }
 
 function erpRealtimeArrivalFingerprint(record,stage,eventData){
+  const userKey=String(currentUser?.id||currentUser?.username||currentUser?.name||"sem-usuario");
+  const deviceKey=String(getDeviceId?.()||"sem-dispositivo");
   return [
+    userKey,
+    deviceKey,
     record?.id||record?.legacy_id||record?.number||"",
     stage||"",
     record?.updated_at||eventData?.commitTimestamp||""
@@ -28286,11 +28870,7 @@ function notifyErpSectorArrival(record,stage,eventData={}){
 
   const fingerprint=erpRealtimeArrivalFingerprint(record,stage,eventData);
   if(erpRealtimeSeenEvents.has(fingerprint))return;
-  erpRealtimeSeenEvents.add(fingerprint);
-  if(erpRealtimeSeenEvents.size>120){
-    const first=erpRealtimeSeenEvents.values().next().value;
-    erpRealtimeSeenEvents.delete(first);
-  }
+  rememberErpSectorSeenEvent(fingerprint);
 
   const orderNumber=String(record.number||record.order_number||"Pedido");
   const client=String(record.client_name||record.client||"").trim();
@@ -28311,6 +28891,8 @@ function notifyErpSectorArrival(record,stage,eventData={}){
   try{
     if(navigator.vibrate)navigator.vibrate([140,70,140]);
   }catch(e){}
+
+  playErpSound("sectorArrival");
 
   try{
     if(typeof Notification!=="undefined"&&Notification.permission==="granted"){
@@ -28410,7 +28992,7 @@ async function erpRealtimeInspectArrival(eventData){
   erpRealtimeStageByOrder.set(key,stage);
   if(legacyKey)erpRealtimeStageByOrder.set(legacyKey,stage);
 
-  if(stage!==previous){
+  if(previous&&stage!==previous){
     const targetStage=erpRestrictedStage();
     if(targetStage&&stage===targetStage){
       const hydrated=await hydrateErpRealtimeDemand(eventData,stage);
@@ -28598,7 +29180,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V183";
+  normalized.version="V186";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -29351,6 +29933,7 @@ function fillErpStandbyReason(text){
 }
 
 function openErpStandbyModal(orderId){
+  return false;
   const data=readErpTestData();
   const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
 
@@ -29399,10 +29982,11 @@ function closeErpStandbyModal(){
 }
 
 function setErpOrderStandby(orderId){
-  openErpStandbyModal(orderId);
+  return false;
 }
 
 function submitErpOrderStandby(){
+  return false;
   const orderId=$("erpStandbyOrderId")?.value||"";
   const reason=String($("erpStandbyReasonInput")?.value||"").trim();
   const responsible=String($("erpStandbyResponsibleInput")?.value||"").trim();
@@ -29479,6 +30063,7 @@ function submitErpOrderStandby(){
 }
 
 function clearErpOrderStandby(orderId){
+  return false;
   const data=readErpTestData();
   const order=(data.orders||[]).find(o=>String(o.id)===String(orderId));
   if(!order)return;
@@ -29918,6 +30503,7 @@ async function saveErpOrderFromForm(e){
     syncErpProductionStepsToCloud(order),
     erpV174AuditCloud("private_label_order",String(id),existing?"updated":"created",existing||null,order)
   ]).catch(error=>console.warn("Domínios V174 aguardando sincronização:",error));
+  if(!existing)confirmErpOrderCreatedSound(order).catch(()=>{});
   showUndoToast(existing?`Pedido atualizado na etapa ${stage}.`:`Pedido criado e encaminhado para a etapa ${stage}.`);
 }
 
@@ -29967,6 +30553,9 @@ function deleteErpOrder(id){
   const existing=(data.orders||[]).find(o=>String(o.id)===String(id));
   if(existing)queueErpRelationalDeleteOrder(existing);
   data.orders=data.orders.filter(o=>String(o.id)!==String(id));
+  const cardState=readErpOrderCardCollapse();
+  delete cardState[id];
+  erpBoardWriteJson(ERP_BOARD_CARD_COLLAPSE_KEY,cardState);
   writeErpTestData(data);
   renderErpTest();
 }
@@ -30317,23 +30906,21 @@ function erpBoardFindCard(orderId){
 
 function toggleErpOrderCard(orderId){
   const state=readErpOrderCardCollapse();
-  const card=erpBoardFindCard(orderId);
-  const current=card?card.classList.contains("isCollapsed"):erpBoardIsCardCollapsed(orderId);
+  const current=erpBoardIsCardCollapsed(orderId);
   state[orderId]=!current;
   erpBoardWriteJson(ERP_BOARD_CARD_COLLAPSE_KEY,state);
   if(!erpBoardReplaceSingleCard(orderId))renderErpKanban(readErpTestData());
 }
 
-function erpBoardInstallDelegatedEvents(){
-  const board=$("erpKanban");
-  if(!board||board.dataset.erpEventsBound==="1")return;
-  board.dataset.erpEventsBound="1";
-  board.addEventListener("click",event=>{
-    const button=event.target?.closest?.(".erpOrderCollapseBtn[data-toggle-order]");
-    if(!button||!board.contains(button))return;
-    event.preventDefault();
-    event.stopPropagation();
-    toggleErpOrderCard(button.dataset.toggleOrder||"");
+function erpBoardInstallCardEvents(root=document){
+  root.querySelectorAll(".erpOrderCollapseBtn[data-toggle-order]").forEach(button=>{
+    if(button.dataset.erpCollapseBound==="1")return;
+    button.dataset.erpCollapseBound="1";
+    button.addEventListener("click",event=>{
+      event.preventDefault();
+      event.stopPropagation();
+      toggleErpOrderCard(button.dataset.toggleOrder||"");
+    });
   });
 }
 
@@ -30349,6 +30936,7 @@ function erpBoardReplaceSingleCard(orderId){
   const replacement=template.content.firstElementChild;
   if(!replacement)return false;
   currentCard.replaceWith(replacement);
+  erpBoardInstallCardEvents(replacement);
   erpBoardBindDragAndDrop();
   replacement.querySelector(".erpOrderCollapseBtn")?.focus({preventScroll:true});
   erpBoardSetState(replacement.classList.contains("isCollapsed")?"Demanda minimizada.":"Demanda expandida.");
@@ -30432,8 +31020,7 @@ function erpBoardColumnState(){return erpBoardReadJson(ERP_BOARD_COLUMN_STATE_KE
 function toggleErpBoardColumn(stage){
   const state=erpBoardColumnState();
   const column=document.querySelector(`.erpKanbanCol[data-board-stage="${CSS.escape(String(stage))}"]`);
-  const collapsed=column?column.classList.contains("isCollapsed"):!!state[stage];
-  state[stage]=!collapsed;
+  state[stage]=!Boolean(state[stage]);
   erpBoardWriteJson(ERP_BOARD_COLUMN_STATE_KEY,state);
   if(!column){renderErpKanban(readErpTestData());return;}
   column.classList.toggle("isCollapsed",state[stage]);
@@ -30550,19 +31137,19 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
   const deadline=erpBoardDeadlineInfo(order);
   const title=order.title||products[0]?.model||`Pedido ${order.number||""}`;
   const priority=order.priority||"Normal";
+  const priorityKey=erpStageKey(priority);
   const responsible=erpBoardResponsible(order)||"Não definido";
   const currentIndex=Math.max(0,ERP_STAGES.indexOf(stage));
 
   return `<article class="erpOrderCard ${collapsed?"isCollapsed":""} ${deadline.kind==="late"?"stageLate":""}" style="--card-stage:var(--stage-color)" data-order-id="${esc(order.id)}" data-stage="${esc(stage)}">
     <div class="erpDemandHeader">
       <button type="button" class="erpDragHandle erpBoardFocus" draggable="false" data-drag-order="${esc(order.id)}" aria-label="Arrastar pedido ${esc(order.number||"")}. Use as setas para mover com o teclado." title="Segure e arraste esta demanda">⠿</button>
-      <div class="erpDemandTitle"><strong>${esc(title)}</strong><span>${esc(order.number||"Sem número")} • ${esc(order.client||"Cliente não informado")}</span></div>
-      <div class="erpDemandHeaderTools"><button type="button" class="erpOrderCollapseBtn" data-toggle-order="${esc(order.id)}" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Abrir detalhes do pedido":"Minimizar pedido"}" title="${collapsed?"Abrir grade, modelos e anexos":"Minimizar esta demanda"}" onclick="toggleErpOrderCard('${esc(order.id)}');return false;"><span class="erpOrderCollapseIcon" aria-hidden="true">${collapsed?"＋":"−"}</span><span class="erpOrderCollapseLabel">${collapsed?"Detalhes":"Minimizar"}</span></button></div>
+      <div class="erpDemandTitle"><span class="erpDemandNumber">${esc(order.number||"Sem número")}</span><strong>${esc(title)}</strong><span class="erpDemandClient">${esc(order.client||"Cliente não informado")}</span></div>
+      <div class="erpDemandHeaderTools"><button type="button" class="erpOrderCollapseBtn" data-toggle-order="${esc(order.id)}" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir pedido":"Minimizar pedido"}" title="${collapsed?"Expandir grade, modelos e anexos":"Minimizar esta demanda"}"><span class="erpOrderCollapseIcon" aria-hidden="true">${collapsed?"＋":"−"}</span><span class="erpOrderCollapseLabel">${collapsed?"Expandir":"Minimizar"}</span></button></div>
     </div>
     <div class="erpDemandBadges">
       <span class="erpDemandBadge stage">${esc(stage)}</span>
-      <span class="erpDemandBadge priority">${esc(priority)}</span>
-      ${erpIsStandby(order)?`<span class="erpDemandBadge dueSoon">Standby</span>`:""}
+      <span class="erpDemandBadge priority priority-${esc(priorityKey)}">${esc(priority)}</span>
       ${deadline.kind==="late"?`<span class="erpDemandBadge late">${esc(deadline.label)}</span>`:deadline.kind==="today"||deadline.kind==="soon"?`<span class="erpDemandBadge dueSoon">${esc(deadline.label)}</span>`:""}
     </div>
     <div class="erpOrderCompactSummary">
@@ -30645,6 +31232,7 @@ function renderErpKanban(data){
     </section>`;
   }).join("");
 
+  erpBoardInstallCardEvents(target);
   erpBoardBindDragAndDrop();
   erpBoardSetState(orders.length?`${orders.length} demanda(s) exibida(s) • atualização por pedido ativa.`:"Nenhuma demanda encontrada para os filtros selecionados.");
 }
@@ -30906,7 +31494,6 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
   if(!order)return false;
   const fromStage=String(order.stage||"Pedido");
   const toStage=String(targetStage||fromStage);
-  if(erpIsStandby(order)){alert("Retome este pedido do standby antes de movimentá-lo.");return false;}
   if(!ERP_STAGES.includes(toStage)){alert("A etapa selecionada não faz parte do fluxo Private Label.");return false;}
   if(isErpSectorRestrictedUser()&&fromStage!==erpRestrictedStage()){
     alert("Este pedido não pertence mais à etapa do seu setor.");
@@ -30997,7 +31584,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V183:",error);
+    console.error("Falha ao mover demanda V186:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
@@ -33009,6 +33596,8 @@ setTimeout(()=>{
 window.currentPage=window.currentPage||"dashboard";
 currentPage=window.currentPage;
 setPageClass(currentPage);
+renderErpSoundSettings();
+installErpAudioUnlock();
 startApp().catch(e=>{
   console.error("Erro no startApp recuperado:",e);
   updateCloudStatus("Painel recuperado em modo seguro.",true);
