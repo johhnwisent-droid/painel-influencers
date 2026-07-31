@@ -12996,6 +12996,321 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
 }
 /* ===== FIM V177 ===== */
 
+/* ===== V178 DEMAND BOARD ===== */
+.erpBoardWorkspace{
+  --board-bg:#0b1120;
+  --board-surface:#111827;
+  --board-surface-2:#172033;
+  --board-surface-3:#1e293b;
+  --board-line:rgba(148,163,184,.18);
+  --board-line-strong:rgba(148,163,184,.28);
+  --board-text:#f8fafc;
+  --board-muted:#94a3b8;
+  padding:18px!important;
+  background:
+    radial-gradient(circle at 6% 0,rgba(59,130,246,.08),transparent 30%),
+    var(--board-bg)!important;
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+
+.erpBoardHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:14px;
+}
+
+.erpBoardHeader h3{margin:0!important;font-size:clamp(20px,2.4vw,26px)!important;font-weight:700!important;letter-spacing:-.035em!important}
+.erpBoardHeader p{max-width:720px;margin:6px 0 0;color:#a9b7ca;font-size:12px;line-height:1.5}
+.erpBoardHeaderActions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.erpBoardHeaderActions button{min-height:40px!important}
+
+.erpBoardSearchBox{
+  position:relative;
+  flex:1 1 280px;
+  min-width:220px;
+}
+
+.erpBoardSearchBox::before{
+  content:"⌕";
+  position:absolute;
+  z-index:1;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#7f91a9;
+  font-size:18px;
+}
+
+.erpBoardSearchBox input{height:42px!important;padding-left:36px!important;background:#0d1728!important}
+
+.erpBoardControls{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:11px;
+  margin-bottom:10px;
+  border:1px solid var(--board-line);
+  border-radius:16px;
+  background:rgba(17,24,39,.8);
+}
+
+.erpBoardFilters{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(130px,1fr));
+  gap:10px;
+  padding:13px;
+  margin-bottom:10px;
+  border:1px solid var(--board-line);
+  border-radius:16px;
+  background:#0e1728;
+}
+
+.erpBoardFilters[hidden]{display:none!important}
+.erpBoardFilters label{display:grid;gap:5px;color:#9fb0c7!important;font-size:10px!important;font-weight:600!important;letter-spacing:.02em}
+.erpBoardFilters input,.erpBoardFilters select{min-height:40px!important;background:#111d31!important;color:#f1f5f9!important;border-color:#31415a!important}
+.erpBoardFilters .erpBoardCheck{display:flex;align-items:center;gap:8px;min-height:40px;padding:8px 10px;border:1px solid #31415a;border-radius:11px;background:#111d31}
+.erpBoardFilters .erpBoardCheck input{width:18px!important;min-height:18px!important;margin:0!important}
+.erpBoardFinanceFilter[hidden]{display:none!important}
+
+.erpBoardQuickActions{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+  color:#91a3bb;
+  font-size:11px;
+}
+
+.erpBoardQuickActions>div{display:flex;gap:7px;flex-wrap:wrap}
+.erpBoardQuickActions button{min-height:36px!important;padding:7px 10px!important;border:1px solid #2c3d56!important;background:#121e31!important;color:#c9d6e7!important;font-size:11px!important}
+.erpBoardQuickActions button:hover{border-color:#48617f!important;background:#182941!important;color:#fff!important}
+
+.erpBoardState{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:32px;
+  margin-bottom:10px;
+  color:#91a3bb;
+  font-size:11px;
+}
+
+.erpBoardState::before{content:"";width:7px;height:7px;border-radius:50%;background:#34d399;box-shadow:0 0 0 4px rgba(52,211,153,.1)}
+.erpBoardState.isSaving::before{background:#fbbf24;animation:erpBoardPulse 1s infinite}
+.erpBoardState.isError::before{background:#f87171}
+
+.erpKanban{
+  display:flex!important;
+  align-items:flex-start!important;
+  gap:12px!important;
+  width:100%!important;
+  padding:2px 2px 12px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  scroll-snap-type:x proximity!important;
+  scrollbar-width:thin!important;
+  scroll-behavior:smooth!important;
+}
+
+.erpKanbanCol{
+  --stage-color:#3b82f6;
+  display:flex!important;
+  flex:0 0 326px!important;
+  flex-direction:column!important;
+  min-width:326px!important;
+  max-width:326px!important;
+  max-height:calc(100vh - 245px)!important;
+  padding:10px!important;
+  border:1px solid var(--board-line)!important;
+  border-top:3px solid var(--stage-color)!important;
+  border-radius:15px!important;
+  background:#0f1728!important;
+  box-shadow:0 12px 30px rgba(0,0,0,.16)!important;
+  scroll-snap-align:start!important;
+  transition:flex-basis .18s ease,min-width .18s ease,border-color .18s ease,background .18s ease!important;
+}
+
+.erpKanbanCol.stage-pedido{--stage-color:#3b82f6}
+.erpKanbanCol.stage-corte{--stage-color:#22c55e}
+.erpKanbanCol.stage-costura{--stage-color:#f59e0b}
+.erpKanbanCol.stage-conferencia{--stage-color:#a78bfa}
+.erpKanbanCol.stage-estampa{--stage-color:#ec4899}
+.erpKanbanCol.stage-embalagem{--stage-color:#14b8a6}
+.erpKanbanCol.stage-entrega{--stage-color:#6366f1}
+.erpKanbanCol.stage-finalizado{--stage-color:#15803d}
+
+.erpKanbanCol.isDropTarget{border-color:var(--stage-color)!important;background:#142037!important;box-shadow:0 0 0 2px color-mix(in srgb,var(--stage-color) 35%,transparent),0 18px 45px rgba(0,0,0,.28)!important}
+.erpKanbanCol.isCollapsed{flex-basis:58px!important;min-width:58px!important;max-width:58px!important;padding:8px 6px!important}
+.erpKanbanCol.isCollapsed .erpKanbanList,.erpKanbanCol.isCollapsed .erpColumnMetrics,.erpKanbanCol.isCollapsed .erpStageTitle small,.erpKanbanCol.isCollapsed .erpColumnMenu{display:none!important}
+.erpKanbanCol.isCollapsed .erpKanbanHead{display:grid!important;justify-items:center!important;gap:8px!important}
+.erpKanbanCol.isCollapsed .erpStageTitle{writing-mode:vertical-rl;min-height:140px!important}
+.erpKanbanCol.isCollapsed .erpStageTitle>span{display:none!important}
+
+.erpKanbanHead{
+  position:sticky!important;
+  top:0!important;
+  z-index:3!important;
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:8px!important;
+  padding:3px 2px 10px!important;
+  margin:0!important;
+  background:#0f1728!important;
+}
+
+.erpStageTitle{display:flex!important;align-items:center!important;gap:8px!important;min-width:0!important}
+.erpStageTitle>span{display:grid!important;place-items:center!important;width:28px!important;height:28px!important;border-radius:9px!important;background:color-mix(in srgb,var(--stage-color) 14%,transparent)!important;color:var(--stage-color)!important}
+.erpStageTitle strong{font-size:14px!important;font-weight:700!important;color:#f8fafc!important}
+.erpStageTitle small{display:block!important;margin-top:2px!important;color:#8fa2ba!important;font-size:10px!important;font-weight:500!important}
+.erpColumnMetrics{display:flex;align-items:center;gap:5px;grid-column:1/-1;color:#8497b0;font-size:10px}
+.erpColumnMetrics .late{color:#fca5a5;font-weight:700}
+.erpColumnTools{display:flex;align-items:center;gap:4px}
+.erpColumnTools button{display:grid!important;place-items:center!important;width:30px!important;height:30px!important;min-height:30px!important;padding:0!important;border:1px solid #293a52!important;background:#142035!important;color:#b9c8da!important}
+
+.erpKanbanList{
+  display:grid!important;
+  gap:8px!important;
+  min-height:72px!important;
+  max-height:calc(100vh - 338px)!important;
+  padding:1px 2px 8px!important;
+  overflow-y:auto!important;
+  overflow-x:hidden!important;
+  scrollbar-width:thin!important;
+  overscroll-behavior:contain!important;
+}
+
+.erpOrderCard{
+  --card-stage:#3b82f6;
+  position:relative!important;
+  width:100%!important;
+  padding:11px!important;
+  border:1px solid var(--board-line)!important;
+  border-left:3px solid var(--card-stage)!important;
+  border-radius:13px!important;
+  background:linear-gradient(155deg,#172033,#121b2c)!important;
+  color:#e8eef8!important;
+  box-shadow:0 5px 15px rgba(0,0,0,.15)!important;
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,opacity .18s ease!important;
+  contain:layout paint!important;
+}
+
+.erpOrderCard:hover{border-color:rgba(148,163,184,.34)!important;box-shadow:0 10px 25px rgba(0,0,0,.22)!important}
+.erpOrderCard.stageLate{border-left-color:#ef4444!important}
+.erpOrderCard.isDragging{z-index:20!important;opacity:.58!important;transform:rotate(1deg) scale(1.015)!important;box-shadow:0 24px 55px rgba(0,0,0,.42)!important;cursor:grabbing!important}
+.erpOrderCard.isDropBefore{box-shadow:0 -3px 0 #60a5fa,0 10px 25px rgba(0,0,0,.22)!important}
+.erpOrderCard.isDropAfter{box-shadow:0 3px 0 #60a5fa,0 10px 25px rgba(0,0,0,.22)!important}
+
+.erpDemandHeader{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;gap:8px!important;align-items:start!important}
+.erpDragHandle{display:grid!important;place-items:center!important;width:28px!important;height:34px!important;min-height:34px!important;padding:0!important;border:1px solid #2b3c55!important;border-radius:8px!important;background:#111c2e!important;color:#8295ad!important;cursor:grab!important;touch-action:pan-y!important;user-select:none!important;font-size:15px!important;letter-spacing:-2px!important}
+.erpDragHandle:active{cursor:grabbing!important}
+.erpDemandTitle{min-width:0!important}
+.erpDemandTitle strong{display:block!important;color:#f8fafc!important;font-size:14px!important;font-weight:700!important;line-height:1.25!important;overflow-wrap:anywhere!important}
+.erpDemandTitle span{display:block!important;margin-top:3px!important;color:#aab9cb!important;font-size:11px!important;font-weight:500!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.erpDemandHeaderTools{display:flex!important;align-items:center!important;gap:4px!important}
+.erpDemandHeaderTools .erpOrderCollapseBtn{min-width:32px!important;width:32px!important;height:32px!important;padding:0!important}
+
+.erpDemandBadges{display:flex!important;align-items:center!important;gap:5px!important;flex-wrap:wrap!important;margin:8px 0!important}
+.erpDemandBadge{display:inline-flex!important;align-items:center!important;min-height:21px!important;padding:3px 7px!important;border:1px solid rgba(148,163,184,.18)!important;border-radius:999px!important;background:rgba(148,163,184,.07)!important;color:#cbd5e1!important;font-size:9px!important;font-weight:700!important;letter-spacing:.035em!important;text-transform:uppercase!important}
+.erpDemandBadge.stage{border-color:color-mix(in srgb,var(--card-stage) 35%,transparent)!important;background:color-mix(in srgb,var(--card-stage) 11%,transparent)!important;color:color-mix(in srgb,var(--card-stage) 68%,white)!important}
+.erpDemandBadge.late{border-color:rgba(239,68,68,.35)!important;background:rgba(239,68,68,.1)!important;color:#fecaca!important}
+.erpDemandBadge.dueSoon{border-color:rgba(245,158,11,.35)!important;background:rgba(245,158,11,.1)!important;color:#fde68a!important}
+.erpDemandBadge.paid{border-color:rgba(34,197,94,.3)!important;background:rgba(34,197,94,.1)!important;color:#bbf7d0!important}
+.erpDemandBadge.partial{border-color:rgba(59,130,246,.3)!important;background:rgba(59,130,246,.1)!important;color:#bfdbfe!important}
+.erpDemandBadge.priority{color:#f8fafc!important}
+
+.erpOrderCompactSummary{grid-template-columns:repeat(3,minmax(0,1fr))!important;margin:7px 0 0!important;gap:5px!important}
+.erpOrderCompactSummary span{padding:6px 7px!important;border-radius:8px!important;background:rgba(8,15,27,.46)!important;font-size:10px!important;font-weight:600!important}
+.erpOrderCompactSummary b{font-size:8px!important;font-weight:600!important}
+.erpCompactFinance{grid-column:1/-1!important;display:flex!important;justify-content:space-between!important;align-items:center!important;color:#cbd5e1!important}
+.erpCompactFinance b{color:#fbbf24!important}
+
+.erpOrderCard.isCollapsed{padding:9px!important;min-height:0!important}
+.erpOrderCard.isCollapsed .erpDemandBadges{margin:6px 0!important}
+.erpOrderCard.isCollapsed .erpDemandBadge:not(.stage):not(.late):not(.dueSoon):not(.priority):not(.financial){display:none!important}
+.erpOrderCard.isCollapsed .erpOrderExpanded{display:none!important}
+
+.erpOrderExpanded{display:grid!important;gap:9px!important;margin-top:9px!important}
+.erpDemandSection{padding:10px!important;border:1px solid rgba(148,163,184,.13)!important;border-radius:11px!important;background:rgba(8,15,27,.36)!important}
+.erpDemandSectionTitle{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;margin-bottom:8px!important;color:#eef4fb!important;font-size:10px!important;font-weight:700!important;letter-spacing:.045em!important;text-transform:uppercase!important}
+.erpDemandSectionTitle span{color:#7f94ad!important;font-size:9px!important;font-weight:500!important;text-transform:none!important}
+.erpDemandSummaryGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+.erpDemandSummaryGrid span{display:grid!important;gap:2px!important;color:#dce5f0!important;font-size:10px!important;overflow-wrap:anywhere!important}
+.erpDemandSummaryGrid b{color:#7f93ac!important;font-size:8px!important;font-weight:600!important;text-transform:uppercase!important}
+
+.erpStageProgress{display:flex!important;gap:5px!important;width:100%!important;padding-bottom:4px!important;overflow-x:auto!important;scrollbar-width:thin!important}
+.erpStageProgress span{flex:0 0 auto!important;min-width:58px!important;color:#657890!important}
+.erpStageProgress i{height:4px!important}
+.erpStageProgress small{display:block!important;max-width:none!important;font-size:8px!important;white-space:nowrap!important;text-overflow:clip!important}
+
+.erpKanbanProductBoxes{display:grid!important;gap:7px!important}
+.erpKanbanProductBox{padding:9px!important;border-radius:10px!important;background:#111d30!important}
+.erpArtworkChip.hasImage{min-height:50px!important}
+.erpArtworkChip.hasImage img{width:43px!important;height:43px!important}
+
+.erpDemandHistory{display:grid!important;gap:6px!important}
+.erpDemandHistory div{display:grid!important;grid-template-columns:70px minmax(0,1fr)!important;gap:7px!important;color:#c4d0df!important;font-size:9px!important;line-height:1.35!important}
+.erpDemandHistory time{color:#7489a2!important}
+.erpDemandNotes{margin:0!important;color:#cbd5e1!important;font-size:10px!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+
+.erpFinancialProgress{height:6px!important;margin:8px 0 5px!important;border-radius:999px!important;background:#26344a!important;overflow:hidden!important}
+.erpFinancialProgress i{display:block!important;height:100%!important;border-radius:inherit!important;background:linear-gradient(90deg,#3b82f6,#22c55e)!important}
+
+.erpDemandFooter{display:grid!important;grid-template-columns:1fr auto!important;gap:7px!important;align-items:center!important}
+.erpDemandFooter>.primary,.erpDemandFooter>.orderDetailBtn{min-height:40px!important}
+.erpCardMenu{position:relative!important}
+.erpCardMenu summary{display:grid!important;place-items:center!important;width:40px!important;height:40px!important;border:1px solid #30415a!important;border-radius:10px!important;background:#142136!important;color:#cbd5e1!important;cursor:pointer!important;list-style:none!important;font-size:18px!important}
+.erpCardMenu summary::-webkit-details-marker{display:none!important}
+.erpCardMenu[open] summary{border-color:#60a5fa!important;color:#fff!important}
+.erpCardMenuList{position:absolute!important;right:0!important;bottom:46px!important;z-index:40!important;display:grid!important;gap:5px!important;width:180px!important;padding:8px!important;border:1px solid #34455e!important;border-radius:13px!important;background:#0e192b!important;box-shadow:0 18px 48px rgba(0,0,0,.42)!important}
+.erpCardMenuList button,.erpCardMenuList select{width:100%!important;min-height:38px!important;text-align:left!important;border:1px solid #283951!important;background:#142238!important;color:#dbe7f5!important;font-size:11px!important}
+.erpCardMenuList .danger{border-color:rgba(239,68,68,.28)!important;background:rgba(239,68,68,.09)!important;color:#fecaca!important}
+
+.erpBoardLoadMore{width:100%!important;min-height:38px!important;border:1px dashed #3a4c65!important;background:transparent!important;color:#9fb0c6!important;font-size:11px!important}
+.erpBoardEmpty{display:grid!important;place-items:center!important;min-height:86px!important;padding:14px!important;border:1px dashed #2f4058!important;border-radius:11px!important;color:#73869f!important;text-align:center!important;font-size:11px!important}
+
+.erpBoardMoveSelect{font-size:11px!important}
+.erpBoardFocus:focus-visible,.erpBoardWorkspace button:focus-visible,.erpBoardWorkspace input:focus-visible,.erpBoardWorkspace select:focus-visible,.erpDragHandle:focus-visible{outline:2px solid #60a5fa!important;outline-offset:2px!important}
+
+@keyframes erpBoardPulse{50%{opacity:.35}}
+
+@media(max-width:1180px){
+  .erpBoardFilters{grid-template-columns:repeat(3,minmax(130px,1fr))}
+  .erpKanbanCol{flex-basis:310px!important;min-width:310px!important;max-width:310px!important}
+}
+
+@media(max-width:760px){
+  .erpBoardWorkspace{padding:12px!important}
+  .erpBoardHeader{display:grid!important;grid-template-columns:1fr!important}
+  .erpBoardHeaderActions{justify-content:stretch!important}
+  .erpBoardHeaderActions>*{flex:1!important}
+  .erpBoardControls{display:grid!important;grid-template-columns:1fr auto!important;padding:8px!important}
+  .erpBoardSearchBox{min-width:0!important}
+  .erpBoardFilters{position:fixed!important;inset:auto 0 0!important;z-index:10020!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;max-height:82vh!important;margin:0!important;padding:16px!important;border-radius:20px 20px 0 0!important;overflow:auto!important;box-shadow:0 -24px 70px rgba(0,0,0,.55)!important}
+  .erpBoardQuickActions{display:grid!important;grid-template-columns:1fr!important}
+  .erpBoardQuickActions>div{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpBoardQuickActions button{width:100%!important}
+  .erpKanban{display:flex!important;grid-template-columns:none!important;gap:10px!important;overflow-x:auto!important;scroll-snap-type:x mandatory!important;padding-bottom:16px!important}
+  .erpKanbanCol,.erpKanban.singleStage .erpKanbanCol,.erpKanban.restricted .erpKanbanCol,body.erpSectorRestricted .erpKanbanCol{flex:0 0 88vw!important;width:88vw!important;min-width:88vw!important;max-width:88vw!important;max-height:calc(100vh - 215px)!important;scroll-snap-align:center!important}
+  body.erpSectorRestricted .erpKanbanCol{flex-basis:100%!important;width:100%!important;min-width:100%!important;max-width:100%!important}
+  .erpKanbanList{max-height:calc(100vh - 305px)!important}
+  .erpKanbanCol.isCollapsed{flex-basis:54px!important;width:54px!important;min-width:54px!important;max-width:54px!important}
+  .erpOrderCard{padding:10px!important}
+  .erpCardMenuList{position:fixed!important;right:12px!important;bottom:76px!important;left:12px!important;width:auto!important;padding:12px!important}
+  .erpCardMenuList button,.erpCardMenuList select{min-height:44px!important}
+  .erpDemandFooter>.primary,.erpDemandFooter>.orderDetailBtn,.erpCardMenu summary{min-height:44px!important}
+}
+
+@media(max-width:430px){
+  .erpBoardFilters{grid-template-columns:1fr!important}
+  .erpOrderCompactSummary{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .erpDemandSummaryGrid{grid-template-columns:1fr 1fr!important}
+  .erpDemandTitle strong{font-size:13px!important}
+}
+/* ===== FIM V178 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -13085,7 +13400,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V177</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V178</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14418,17 +14733,36 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
       </form>
     </div>
 
-    <div class="panel">
-      <div class="panelHead">
-        <div><h3>Kanban de produção</h3><span class="muted">Fluxo Private Label: Pedido → Corte → Costura → Estampa → Conferência → Embalagem → Entrega → Finalizado.</span></div>
-        <div class="filters"><input id="erpSearch" placeholder="Pesquisar cliente, pedido, modelo, status..." oninput="renderErpTest()"></div>
+    <div class="panel erpBoardWorkspace">
+      <div class="erpBoardHeader">
+        <div><h3>Demandas de produção</h3><p>Board operacional Private Label: Pedido → Corte → Costura → Conferência → Estampa → Embalagem → Entrega → Finalizado.</p></div>
+        <div class="erpBoardHeaderActions"><button type="button" class="secondary" onclick="erpBoardSetAllCollapsed(true)">Minimizar todos</button><button type="button" class="secondary" onclick="erpBoardSetAllCollapsed(false)">Expandir todos</button></div>
       </div>
       <div id="erpSectorAccessNotice" class="erpSectorAccessNotice" hidden></div>
-      <div class="erpKanbanToolbar">
-        <label>Etapa no celular<select id="erpKanbanStageFilter" onchange="renderErpTest()"><option value="">Todas as etapas</option></select></label>
-        <span id="erpKanbanMobileSummary">0 pedidos • 0 peças</span>
+      <div class="erpBoardControls">
+        <label class="erpBoardSearchBox"><input id="erpSearch" placeholder="Pesquisar cliente, pedido, modelo ou responsável" oninput="scheduleErpBoardRender()" aria-label="Pesquisar demandas"></label>
+        <button type="button" class="secondary" onclick="toggleErpBoardFilters()" aria-controls="erpBoardFilters">Filtros</button>
       </div>
-      <div class="erpKanbanMobileHint">No celular, filtre por etapa e toque no pedido para expandir ou recolher. O prazo padrão de cada setor é de 7 dias.</div>
+      <div id="erpBoardFilters" class="erpBoardFilters" hidden>
+        <label>Etapa<select id="erpKanbanStageFilter" onchange="renderErpKanban(readErpTestData())"><option value="">Todas as etapas</option></select></label>
+        <label>Prioridade<select id="erpBoardPriorityFilter" onchange="renderErpKanban(readErpTestData())"><option value="">Todas</option><option>Normal</option><option>Alta</option><option>Urgente</option></select></label>
+        <label>Prazo<select id="erpBoardDeadlineFilter" onchange="renderErpKanban(readErpTestData())"><option value="">Todos</option><option value="late">Atrasados</option><option value="today">Vencem hoje</option><option value="soon">Próximos 7 dias</option></select></label>
+        <label>Responsável<select id="erpBoardResponsibleFilter" onchange="renderErpKanban(readErpTestData())"><option value="">Todos</option></select></label>
+        <label class="erpBoardFinanceFilter">Financeiro<select id="erpBoardFinanceFilter" onchange="renderErpKanban(readErpTestData())"><option value="">Todos</option><option>Pendente</option><option>Parcialmente pago</option><option>Pago</option><option>Vencido</option></select></label>
+        <label>De<input id="erpBoardDateFrom" type="date" onchange="renderErpKanban(readErpTestData())"></label>
+        <label>Até<input id="erpBoardDateTo" type="date" onchange="renderErpKanban(readErpTestData())"></label>
+        <label>Mínimo de peças<input id="erpBoardMinQty" type="number" min="0" step="1" placeholder="0" oninput="scheduleErpBoardRender()"></label>
+        <label>Ordenar<select id="erpBoardSort" onchange="renderErpKanban(readErpTestData())"><option value="position">Ordem do board</option><option value="deadline">Prazo mais próximo</option><option value="late">Mais atrasado</option><option value="recent">Mais recente</option><option value="oldest">Mais antigo</option><option value="qty">Maior quantidade</option><option value="value">Maior valor</option><option value="client">Cliente</option><option value="priority">Prioridade</option></select></label>
+        <label>Abrir cards<select id="erpBoardOpenPreference" onchange="setErpBoardOpenPreference(this.value)"><option value="remember">Manter preferência</option><option value="compact">Compactos</option><option value="expanded">Expandidos</option></select></label>
+        <label class="erpBoardCheck"><input id="erpBoardLateOnly" type="checkbox" onchange="renderErpKanban(readErpTestData())"> Somente atrasados</label>
+        <button type="button" class="secondary" onclick="resetErpBoardFilters()">Limpar filtros</button>
+        <button type="button" class="primary" onclick="toggleErpBoardFilters(false)">Aplicar</button>
+      </div>
+      <div class="erpBoardQuickActions">
+        <span id="erpKanbanMobileSummary">0 pedidos • 0 peças</span>
+        <div><button type="button" onclick="erpBoardSetAllCollapsed(true)">Compactar</button><button type="button" onclick="erpBoardSetAllCollapsed(false)">Expandir</button><button type="button" onclick="resetErpBoardFilters()">Limpar filtros</button></div>
+      </div>
+      <div id="erpBoardState" class="erpBoardState" role="status" aria-live="polite">Board sincronizado e pronto.</div>
       <div id="erpKanban" class="erpKanban"></div>
     </div>
   </div>
@@ -15181,7 +15515,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V177";
+const APP_BUILD_VERSION="V178";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -15221,7 +15555,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=177");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=178");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -17742,7 +18076,7 @@ function runLocalSystemAudit(){
     String(isErpSectorRestrictedUser).includes("costura")&&
     String(showPage).includes("nextPage=\"erpTest\"")&&
     String(showErpModule).includes("isErpSectorRestrictedUser()?\"pedidos\"")&&
-    String(renderErpKanban).includes("restrictedStage")
+    String(erpVisibleKanbanStages).includes("erpRestrictedStage")
   ){
     auditAdd(report,"pass","ERP_SECTOR_KANBAN_LOGIN","Perfis Corte e Costura ficam restritos ao Kanban ERP da própria etapa.");
   }else{
@@ -17776,9 +18110,9 @@ function runLocalSystemAudit(){
 
   if(
     String(erpStageIcon).includes("Corte")&&
-    String(erpProductionUrgencyLabel).includes("Produção hoje")&&
-    String(renderErpKanban).includes("erpOrderMetaGrid")&&
-    String(renderErpKanban).includes("erpDeadlineBadge")&&
+    String(erpBoardDeadlineInfo).includes("Vence amanhã")&&
+    String(erpRenderOrderCard).includes("erpDemandSummaryGrid")&&
+    String(erpRenderOrderCard).includes("erpDemandBadge")&&
     document.querySelector(".erpModuleTabs .erpTabIcon")&&
     String(document.querySelector("style")?.textContent||"").includes("V146 ERP DESIGN PROFISSIONAL")
   ){
@@ -17819,7 +18153,7 @@ function runLocalSystemAudit(){
     String(assignErpSewingWorker).includes("Setor Costura")&&
     String(erpCosturaCollaborators).includes("state.settings")&&
     String(erpProductBoxes).includes("erpSewingAssignment")&&
-    String(renderErpKanban).includes("isStandby")&&
+    String(erpBoardMoveOrder).includes("erpIsStandby")&&
     String(document.querySelector("style")?.textContent||"").includes("V149 ERP STANDBY")
   ){
     auditAdd(report,"pass","ERP_STANDBY_SEWING_V149","Private Label possui histórico legado de standby e responsável de costura por modelo.");
@@ -17828,16 +18162,15 @@ function runLocalSystemAudit(){
   }
 
   if(
-    String(erpRenderKanbanSection).includes("standbySection")&&
-    String(toggleErpKanbanSection).includes("ERP_KANBAN_COLLAPSE_KEY")&&
-    String(renderErpKanban).includes("activeOrders")&&
-    String(renderErpKanban).includes("standbyOrders")&&
-    String(erpRenderOrderCard).includes("setErpOrderStandby")&&
+    String(normalizeErpTestData).includes("standbyHistory")&&
+    String(erpV2BuildMigrationPackage).includes("standbyEvents")&&
+    String(erpBoardMoveOrder).includes("Retome este pedido")&&
+    String(erpRenderOrderCard).includes("Standby")&&
     String(document.querySelector("style")?.textContent||"").includes("V150 ERP STANDBY POR ETAPA")
   ){
-    auditAdd(report,"pass","ERP_STANDBY_ACCORDION_V150","Standby fica separado abaixo das demandas da etapa, com seções minimizáveis e estratégia visual vermelha.");
+    auditAdd(report,"pass","ERP_STANDBY_ACCORDION_V150","Histórico legado de standby foi preservado, sem reintroduzir Standby como etapa operacional.");
   }else{
-    auditAdd(report,"warn","ERP_STANDBY_ACCORDION_V150","Não foi possível confirmar standby separado/minimizável por etapa.");
+    auditAdd(report,"warn","ERP_STANDBY_ACCORDION_V150","Não foi possível confirmar a preservação do histórico legado de standby.");
   }
 
   if(
@@ -17882,7 +18215,7 @@ function runLocalSystemAudit(){
     String(submitErpOrderStandby).includes("confirmed")&&
     String(submitErpOrderStandby).includes("scheduleErpTestCloudSave")&&
     String(validateErpStandbyReason).includes("motivo mais claro")&&
-    String(erpRenderOrderCard).includes("erpStandbyReasonText")
+    String(normalizeErpTestData).includes("standbyHistory")
   ){
     auditAdd(report,"pass","ERP_STANDBY_FLOW_V154","Fluxo de standby usa modal com motivo obrigatório, validação, confirmação pós-salvamento e motivo visível no card.");
   }else{
@@ -17949,7 +18282,7 @@ function runLocalSystemAudit(){
     String(addErpProductItem).includes("data-erp-artwork-preview")&&
     String(erpProductBoxes).includes("erpArtworkChip")
   ){
-    auditAdd(report,"pass","ERP_ORDER_TYPE_ARTWORK_V159","ERP permite pedido WISENT/PRIVATE LABEL e foto de estampa vinculada individualmente a cada modelo do pedido.");
+    auditAdd(report,"pass","ERP_ORDER_TYPE_ARTWORK_V159","Private Label preserva pedidos antigos e mantém a foto de estampa vinculada individualmente a cada modelo.");
   }else{
     auditAdd(report,"warn","ERP_ORDER_TYPE_ARTWORK_V159","Não foi possível confirmar tipo do pedido e estampa por modelo.");
   }
@@ -19184,7 +19517,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V177 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V178 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25009,10 +25342,19 @@ function renderSharedShell(){
 const ERP_TEST_KEY=KEY+"_wisent_erp_test_v145";
 const ERP_TEST_DISABLED_KEY=KEY+"_wisent_erp_test_disabled_v145";
 const ERP_TEST_RESTORE_POINT="V139";
-const ERP_STAGES=["Pedido","Corte","Costura","Estampa","Conferência","Embalagem","Entrega","Finalizado"];
+const ERP_STAGES=["Pedido","Corte","Costura","Conferência","Estampa","Embalagem","Entrega","Finalizado"];
 const ERP_STAGE_DEFAULT_DAYS=7;
 const ERP_PRODUCED_STAGE="Finalizado";
 const ERP_SIZES=["PP","P","M","G","GG","G3","G4"];
+const ERP_BOARD_BATCH_SIZE=40;
+const ERP_BOARD_COLUMN_STATE_KEY=KEY+"_erp_board_columns_v178";
+const ERP_BOARD_OPEN_PREFERENCE_KEY=KEY+"_erp_board_open_preference_v178";
+const ERP_BOARD_CARD_COLLAPSE_KEY=KEY+"_erp_board_cards_v178";
+const erpBoardColumnLimits=new Map();
+let erpBoardRenderTimer=null;
+let erpBoardDragState=null;
+let erpBoardPointerTimer=null;
+let erpBoardPointerListenersInstalled=false;
 const ERP_TEST_CLOUD_KEY=KEY+"_wisent_erp_test_shared";
 const ERP_TEST_PENDING_KEY=KEY+"_wisent_erp_test_pending_shared";
 const ERP_TEST_SNAPSHOT_KEY=KEY+"_wisent_erp_test_snapshot_shared";
@@ -25051,7 +25393,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V177",
+    version:"V178",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -25187,7 +25529,7 @@ function erpProductionReadinessChecks(){
     {key:"offline_queue",label:"Fila offline",ok:true,warn:queue.length>0,detail:queue.length?`${queue.length} item(ns) pendente(s) de envio.`:"Fila vazia ou pronta para preservar alterações offline."},
     {key:"cloud_sync",label:"Sincronização compartilhada",ok:!!lastSync||queue.length===0,warn:!lastSync,detail:lastSync?`Última sincronização: ${new Date(lastSync).toLocaleString("pt-BR")}`:"Ainda aguardando primeira confirmação de nuvem neste aparelho."},
     {key:"sector_users",label:"Usuários por setor",ok:hasSectorUsers,warn:!hasSectorUsers,detail:hasSectorUsers?"Perfis Corte e Costura detectados.":"Cadastre ao menos um login Corte e um login Costura."},
-    {key:"kanban_restricted",label:"Kanban setorial",ok:String(isErpSectorRestrictedUser).includes("corte")&&String(renderErpKanban).includes("standbyOrders"),warn:false,detail:"Corte/Costura ficam restritos ao Kanban e veem demandas/standby por etapa."},
+    {key:"kanban_restricted",label:"Kanban setorial",ok:String(isErpSectorRestrictedUser).includes("corte")&&String(renderErpKanban).includes("erpVisibleKanbanStages"),warn:false,detail:"Corte/Costura ficam restritos ao board da própria etapa e recebem as demandas completas em tempo real."},
     {key:"audit_log",label:"Trilha de auditoria",ok:true,warn:auditRows.length<1,detail:auditRows.length?`${auditRows.length} evento(s) locais registrados.`:"Será alimentada conforme o ERP for usado."},
     {key:"auto_backup",label:"Backup automático",ok:!!backup,warn:!backup,detail:backup?`Último backup local: ${new Date(backup.at).toLocaleString("pt-BR")}`:"Será criado na próxima alteração do ERP."},
     {key:"pdf_report",label:"Relatório PDF",ok:typeof exportErpReportPDF==="function",warn:false,detail:"Relatório PDF disponível para produção mensal."},
@@ -25488,7 +25830,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V177";
+  data.version="V178";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -25521,8 +25863,19 @@ function normalizeErpTestData(raw){
     fixed.stageStartedAt=fixed.stageStartedAt||fixed.updatedAt||fixed.createdAt||new Date().toISOString();
     fixed.stageDueAt=fixed.stageDueAt||erpStageDueFrom(fixed.stageStartedAt);
     fixed.stageResponsible=fixed.stageResponsible||"";
+    fixed.boardPosition=Number.isFinite(Number(fixed.boardPosition))?Number(fixed.boardPosition):0;
     return fixed;
   });
+
+  const boardCounters={};
+  data.orders
+    .slice()
+    .sort((a,b)=>String(a.createdAt||a.id||"").localeCompare(String(b.createdAt||b.id||"")))
+    .forEach(order=>{
+      const stage=ERP_STAGES.includes(order.stage)?order.stage:"Pedido";
+      boardCounters[stage]=Number(boardCounters[stage]||0)+1;
+      if(!(Number(order.boardPosition)>0))order.boardPosition=boardCounters[stage]*1000;
+    });
 
   data.clients=data.clients.map(client=>({
     ...client,
@@ -25730,7 +26083,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V177",
+    version:"V178",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -26161,6 +26514,7 @@ async function erpV2BuildMigrationPackage(data){
       value:Number(order.value||0),
       financial_due_date:order.financialDueDate||null,
       stage:String(order.stage||"Pedido"),
+      board_position:Number(order.boardPosition||0),
       stage_started_at:order.stageStartedAt||createdAt,
       stage_due_at:order.stageDueAt||erpStageDueFrom(order.stageStartedAt||createdAt),
       stage_responsible:String(order.stageResponsible||""),
@@ -26211,7 +26565,7 @@ async function erpV2BuildMigrationPackage(data){
       const row=stageRows[index];
       const legacyId=String(row.id||`${legacyOrderId}-stage-${index}`);
       pkg.stageEvents.push({
-        id:await erpV2Uuid("stage",legacyId),
+        id:/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(legacyId)?legacyId:await erpV2Uuid("stage",legacyId),
         legacy_id:legacyId,
         order_id:orderId,
         from_stage:String(row.from||""),
@@ -26773,6 +27127,7 @@ function erpV2OfficialDataFromRows(rowsByType,localData){
     value:Number(row.value||0),
     financialDueDate:row.financial_due_date||"",
     stage:row.stage||"Pedido",
+    boardPosition:Number(row.board_position||0),
     stageStartedAt:row.stage_started_at||row.updated_at||row.created_at,
     stageDueAt:row.stage_due_at||"",
     stageResponsible:row.stage_responsible||"",
@@ -27931,7 +28286,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V177";
+  normalized.version="V178";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -29207,7 +29562,12 @@ async function saveErpOrderFromForm(e){
     updatedBy:existing?(audit.name||""):"",
     stageStartedAt,
     stageDueAt:existing?.stage===stage&&existing?.stageDueAt?existing.stageDueAt:erpStageDueFrom(stageStartedAt),
-    stageResponsible:existing?.stageResponsible||""
+    stageResponsible:existing?.stageResponsible||"",
+    boardPosition:existing?.stage===stage&&Number.isFinite(Number(existing?.boardPosition))
+      ?Number(existing.boardPosition)
+      :Math.max(0,...data.orders.filter(item=>String(item.stage||"Pedido")===stage&&String(item.id)!==String(id)).map(item=>Number(item.boardPosition||0)))+1000,
+    _v2Id:existing?._v2Id||"",
+    _v2Version:Number(existing?._v2Version||0)||undefined
   };
 
   if(!existing||existing.stage!==stage){
@@ -29273,104 +29633,20 @@ function editErpOrder(id){
   updateErpOrderFinancialPreview();
 }
 
-function advanceErpOrder(id){
-  const data=readErpTestData();
-  const order=data.orders.find(o=>String(o.id)===String(id));
-  if(!order)return;
-
-  if(erpIsStandby(order)){
-    alert("Este pedido está em standby. Retome o pedido antes de avançar a etapa.");
-    return;
-  }
-
+async function advanceErpOrder(id){
+  const order=(readErpTestData().orders||[]).find(item=>String(item.id)===String(id));
+  if(!order)return false;
   const next=erpNextStage(order.stage);
-  if(next===order.stage)return;
-  const audit=currentAuditInfo();
-  const previous=order.stage;
-  order.products=erpNormalizeOrderProducts(order);
-  order.qty=erpOrderQtyTotal(order);
-  order.productionDue=order.productionDue||order.dueDate||today();
-  order.stage=next;
-  order.stageHistory=[
-    ...erpOrderStageHistory(order),
-    erpStageHistoryEntry(previous,next,order)
-  ];
-  order.updatedAt=audit.at||new Date().toISOString();
-  order.updatedBy=audit.name||"Não registrado";
-  order.stageStartedAt=order.updatedAt;
-  order.stageDueAt=erpStageDueFrom(order.stageStartedAt);
-  order.stageResponsible="";
-  writeErpTestData(data);
-  renderErpTest();
-  appendErpAudit("production_stage_advanced",{orderId:id,from:previous,to:next});
-  Promise.all([
-    syncErpProductionStepsToCloud(order),
-    erpV174AuditCloud("private_label_order",String(id),"stage_advanced",{stage:previous},{stage:next})
-  ]).catch(error=>console.warn("Etapa aguardando sincronização V174:",error));
+  if(next===order.stage)return false;
+  return erpBoardMoveOrder(id,next,"","end",{confirmStage:false});
 }
 
-function returnErpOrderToPreviousStage(id){
-  const data=readErpTestData();
-  const order=(data.orders||[]).find(item=>String(item.id)===String(id));
-  if(!order)return;
-
-  if(erpIsStandby(order)){
-    alert("Retome este pedido do standby antes de devolvê-lo para a etapa anterior.");
-    return;
-  }
-
-  const restrictedStage=erpRestrictedStage();
-  if(isErpSectorRestrictedUser()&&String(order.stage||"")!==restrictedStage){
-    alert("Este pedido não pertence mais à etapa do seu setor.");
-    scheduleErpRealtimeCloudRefresh(0);
-    return;
-  }
-
-  const current=String(order.stage||"Pedido");
-  const previous=erpPreviousStage(current);
-  if(previous===current)return;
-
-  const confirmed=confirm([
-    `Devolver o pedido ${order.number||""}?`,
-    "",
-    `Etapa atual: ${current}`,
-    `Nova etapa: ${previous}`,
-    "",
-    "A devolução será sincronizada em tempo real e ficará registrada no histórico."
-  ].join("\n"));
-  if(!confirmed)return;
-
-  const audit=currentAuditInfo();
-  order.products=erpNormalizeOrderProducts(order);
-  order.qty=erpOrderQtyTotal(order);
-  order.stage=previous;
-  order.stageHistory=[
-    ...erpOrderStageHistory(order),
-    {
-      ...erpStageHistoryEntry(current,previous,order),
-      direction:"backward",
-      reason:"Devolvido para a etapa anterior"
-    }
-  ];
-  order.updatedAt=audit.at||new Date().toISOString();
-  order.updatedBy=audit.name||"Não registrado";
-  order.stageStartedAt=order.updatedAt;
-  order.stageDueAt=erpStageDueFrom(order.stageStartedAt);
-  order.stageResponsible="";
-
-  const saved=writeErpTestData(data);
-  if(!saved){
-    alert("Não foi possível registrar a devolução. O pedido permaneceu na etapa atual.");
-    return;
-  }
-
-  renderErpTest();
-  appendErpAudit("production_stage_returned",{orderId:id,from:current,to:previous});
-  Promise.all([
-    syncErpProductionStepsToCloud(order),
-    erpV174AuditCloud("private_label_order",String(id),"stage_returned",{stage:current},{stage:previous})
-  ]).catch(error=>console.warn("Devolução aguardando sincronização V174:",error));
-  showUndoToast(`Pedido ${order.number||""} devolvido de ${current} para ${previous}.`);
+async function returnErpOrderToPreviousStage(id){
+  const order=(readErpTestData().orders||[]).find(item=>String(item.id)===String(id));
+  if(!order)return false;
+  const previous=erpPreviousStage(order.stage);
+  if(previous===order.stage)return false;
+  return erpBoardMoveOrder(id,previous,"","end",{confirmStage:true});
 }
 
 function deleteErpOrder(id){
@@ -29698,27 +29974,172 @@ function renderErpKanbanMobileSummary(orders,stages){
   }
 }
 
-const ERP_ORDER_CARD_COLLAPSE_KEY=KEY+"_erp_order_cards_collapsed_v174";
-function readErpOrderCardCollapse(){
-  try{return JSON.parse(localStorage.getItem(ERP_ORDER_CARD_COLLAPSE_KEY)||"{}")||{};}catch(e){return {};}
+function erpBoardReadJson(key,fallback={}){
+  try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback))||fallback;}catch(e){return fallback;}
 }
+
+function erpBoardWriteJson(key,value){
+  try{localStorage.setItem(key,JSON.stringify(value));}catch(e){}
+}
+
+function readErpOrderCardCollapse(){return erpBoardReadJson(ERP_BOARD_CARD_COLLAPSE_KEY,{});}
+
+function erpBoardOpenPreference(){
+  try{return localStorage.getItem(ERP_BOARD_OPEN_PREFERENCE_KEY)||"remember";}catch(e){return "remember";}
+}
+
+function erpBoardIsCardCollapsed(orderId,total=0){
+  const state=readErpOrderCardCollapse();
+  if(typeof state[orderId]==="boolean")return state[orderId];
+  const preference=erpBoardOpenPreference();
+  if(preference==="compact")return true;
+  if(preference==="expanded")return false;
+  return total>32;
+}
+
 function toggleErpOrderCard(orderId){
   const state=readErpOrderCardCollapse();
-  state[orderId]=!state[orderId];
-  try{localStorage.setItem(ERP_ORDER_CARD_COLLAPSE_KEY,JSON.stringify(state));}catch(e){}
-  const card=[...document.querySelectorAll(".erpOrderCard[data-order-id]")].find(item=>String(item.dataset.orderId)===String(orderId));
-  if(!card){renderErpKanban(readErpTestData());return;}
-  const collapsed=!!state[orderId];
-  card.classList.toggle("isCollapsed",collapsed);
-  const button=card.querySelector(".erpOrderCollapseBtn");
-  if(button){
-    button.setAttribute("aria-expanded",String(!collapsed));
-    button.setAttribute("aria-label",`${collapsed?"Expandir":"Minimizar"} pedido`);
-    const icon=button.querySelector(".erpOrderCollapseIcon");
-    const label=button.querySelector(".erpOrderCollapseLabel");
-    if(icon)icon.textContent=collapsed?"+":"−";
-    if(label)label.textContent=collapsed?"Expandir":"Minimizar";
+  const card=document.querySelector(`.erpOrderCard[data-order-id="${CSS.escape(String(orderId))}"]`);
+  const current=card?card.classList.contains("isCollapsed"):erpBoardIsCardCollapsed(orderId);
+  state[orderId]=!current;
+  erpBoardWriteJson(ERP_BOARD_CARD_COLLAPSE_KEY,state);
+  renderErpKanban(readErpTestData());
+}
+
+function erpBoardSetAllCollapsed(collapsed){
+  const data=readErpTestData();
+  const state=readErpOrderCardCollapse();
+  (data.orders||[]).forEach(order=>state[order.id]=!!collapsed);
+  erpBoardWriteJson(ERP_BOARD_CARD_COLLAPSE_KEY,state);
+  renderErpKanban(data);
+  erpBoardSetState(collapsed?"Todas as demandas estão compactas.":"Todas as demandas estão expandidas.");
+}
+
+function setErpBoardOpenPreference(value){
+  const allowed=["remember","compact","expanded"];
+  const preference=allowed.includes(value)?value:"remember";
+  try{localStorage.setItem(ERP_BOARD_OPEN_PREFERENCE_KEY,preference);}catch(e){}
+  if(preference!=="remember"){
+    const data=readErpTestData();
+    const state=readErpOrderCardCollapse();
+    (data.orders||[]).forEach(order=>state[order.id]=preference==="compact");
+    erpBoardWriteJson(ERP_BOARD_CARD_COLLAPSE_KEY,state);
   }
+  renderErpKanban(readErpTestData());
+}
+
+function scheduleErpBoardRender(){
+  clearTimeout(erpBoardRenderTimer);
+  erpBoardRenderTimer=setTimeout(()=>renderErpKanban(readErpTestData()),180);
+}
+
+function toggleErpBoardFilters(force){
+  const panel=$("erpBoardFilters");
+  if(!panel)return;
+  const show=typeof force==="boolean"?force:panel.hidden;
+  panel.hidden=!show;
+  if(show)panel.querySelector("input,select")?.focus();
+}
+
+function resetErpBoardFilters(){
+  ["erpSearch","erpBoardDateFrom","erpBoardDateTo","erpBoardMinQty"].forEach(id=>{if($(id))$(id).value="";});
+  ["erpKanbanStageFilter","erpBoardPriorityFilter","erpBoardDeadlineFilter","erpBoardResponsibleFilter","erpBoardFinanceFilter"].forEach(id=>{if($(id))$(id).value="";});
+  if($("erpBoardSort"))$("erpBoardSort").value="position";
+  if($("erpBoardLateOnly"))$("erpBoardLateOnly").checked=false;
+  erpBoardColumnLimits.clear();
+  renderErpKanban(readErpTestData());
+}
+
+function erpBoardSetState(message,type="ready"){
+  const target=$("erpBoardState");
+  if(!target)return;
+  target.textContent=message;
+  target.classList.toggle("isSaving",type==="saving");
+  target.classList.toggle("isError",type==="error");
+}
+
+function erpBoardColumnState(){return erpBoardReadJson(ERP_BOARD_COLUMN_STATE_KEY,{});}
+
+function toggleErpBoardColumn(stage){
+  const state=erpBoardColumnState();
+  state[stage]=!state[stage];
+  erpBoardWriteJson(ERP_BOARD_COLUMN_STATE_KEY,state);
+  renderErpKanban(readErpTestData());
+}
+
+function erpBoardLoadMore(stage){
+  erpBoardColumnLimits.set(stage,Number(erpBoardColumnLimits.get(stage)||ERP_BOARD_BATCH_SIZE)+ERP_BOARD_BATCH_SIZE);
+  renderErpKanban(readErpTestData());
+}
+
+function erpBoardDeadlineInfo(order){
+  if((order.stage||"Pedido")==="Finalizado")return {kind:"done",days:0,label:"Finalizado"};
+  const raw=order.stageDueAt||erpProductionDate(order);
+  const due=Date.parse(raw||"");
+  if(!Number.isFinite(due))return {kind:"normal",days:0,label:"Prazo não informado"};
+  const end=new Date(due);end.setHours(23,59,59,999);
+  const days=Math.ceil((end.getTime()-Date.now())/86400000);
+  if(days<0)return {kind:"late",days:Math.abs(days),label:`Atrasado há ${Math.abs(days)} dia(s)`};
+  if(days===0)return {kind:"today",days:0,label:"Vence hoje"};
+  if(days===1)return {kind:"soon",days:1,label:"Vence amanhã"};
+  if(days<=7)return {kind:"soon",days,label:`Vence em ${days} dias`};
+  return {kind:"normal",days,label:"No prazo"};
+}
+
+function erpBoardResponsible(order){
+  if(order.stageResponsible)return String(order.stageResponsible);
+  const workers=[...new Set(erpNormalizeOrderProducts(order).map(product=>String(product.sewingWorker||"").trim()).filter(Boolean))];
+  return workers.join(", ");
+}
+
+function erpBoardPopulateResponsibleFilter(data){
+  const select=$("erpBoardResponsibleFilter");
+  if(!select)return;
+  const current=select.value||"";
+  const values=[...new Set((data.orders||[]).map(erpBoardResponsible).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  select.innerHTML=`<option value="">Todos</option>${values.map(value=>`<option value="${esc(value)}">${esc(value)}</option>`).join("")}`;
+  if(values.includes(current))select.value=current;
+}
+
+function erpBoardFilteredOrders(data){
+  const query=String($("erpSearch")?.value||"").trim().toLocaleLowerCase("pt-BR");
+  const priority=$("erpBoardPriorityFilter")?.value||"";
+  const deadline=$("erpBoardDeadlineFilter")?.value||"";
+  const responsible=$("erpBoardResponsibleFilter")?.value||"";
+  const finance=isWisentAdmin()?($("erpBoardFinanceFilter")?.value||""):"";
+  const from=$("erpBoardDateFrom")?.value||"";
+  const to=$("erpBoardDateTo")?.value||"";
+  const minQty=Math.max(0,Number($("erpBoardMinQty")?.value||0));
+  const lateOnly=!!$("erpBoardLateOnly")?.checked;
+  const result=(data.orders||[]).filter(order=>{
+    const search=[order.number,order.title,order.client,order.model,order.notes,erpBoardResponsible(order),...erpNormalizeOrderProducts(order).flatMap(product=>[product.model,product.reference,product.color,...product.colors.map(color=>color.color)])].join(" ").toLocaleLowerCase("pt-BR");
+    const deadlineInfo=erpBoardDeadlineInfo(order);
+    const orderDate=String(order.createdAt||order.updatedAt||"").slice(0,10);
+    if(query&&!search.includes(query))return false;
+    if(priority&&String(order.priority||"Normal")!==priority)return false;
+    if(responsible&&erpBoardResponsible(order)!==responsible)return false;
+    if(finance&&erpOrderPaymentSummary(order).status!==finance)return false;
+    if(from&&orderDate<from)return false;
+    if(to&&orderDate>to)return false;
+    if(erpOrderQtyTotal(order)<minQty)return false;
+    if((lateOnly||deadline==="late")&&deadlineInfo.kind!=="late")return false;
+    if(deadline==="today"&&deadlineInfo.kind!=="today")return false;
+    if(deadline==="soon"&&!(["today","soon"].includes(deadlineInfo.kind)))return false;
+    return true;
+  });
+  const sort=$("erpBoardSort")?.value||"position";
+  const priorityRank={Urgente:0,Alta:1,Normal:2};
+  return result.sort((a,b)=>{
+    if(sort==="deadline")return Date.parse(a.stageDueAt||a.dueDate||"9999-12-31")-Date.parse(b.stageDueAt||b.dueDate||"9999-12-31");
+    if(sort==="late")return erpBoardDeadlineInfo(b).days-erpBoardDeadlineInfo(a).days;
+    if(sort==="recent")return String(b.updatedAt||b.createdAt||"").localeCompare(String(a.updatedAt||a.createdAt||""));
+    if(sort==="oldest")return String(a.createdAt||"").localeCompare(String(b.createdAt||""));
+    if(sort==="qty")return erpOrderQtyTotal(b)-erpOrderQtyTotal(a);
+    if(sort==="value")return Number(b.value||0)-Number(a.value||0);
+    if(sort==="client")return String(a.client||"").localeCompare(String(b.client||""),"pt-BR");
+    if(sort==="priority")return (priorityRank[a.priority]??2)-(priorityRank[b.priority]??2);
+    return Number(a.boardPosition||0)-Number(b.boardPosition||0)||String(a.createdAt||a.id).localeCompare(String(b.createdAt||b.id));
+  });
 }
 
 function erpOrderStageProgress(order){
@@ -29730,57 +30151,78 @@ function erpOrderStageProgress(order){
   }).join("")}</div>`;
 }
 
+function erpBoardRecentHistory(order,limit=3){
+  const history=erpOrderStageHistory(order).slice().sort((a,b)=>String(b.at||b.date||"").localeCompare(String(a.at||a.date||""))).slice(0,limit);
+  if(!history.length)return `<div class="erpBoardEmpty">Nenhuma mudança de etapa registrada.</div>`;
+  return `<div class="erpDemandHistory">${history.map(item=>`<div><time>${esc(item.at?new Date(item.at).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):dateBR(item.date))}</time><span>${esc(item.from||"Início")} → ${esc(item.to||item.stage||"-")}<br>${esc(item.user||"Sistema")}</span></div>`).join("")}</div>`;
+}
 
-function erpRenderOrderCard(order,stage,restricted){
+function erpBoardMoveOptions(current){
+  return ERP_STAGES.map(stage=>`<option value="${esc(stage)}" ${stage===current?"selected":""}>${esc(stage)}</option>`).join("");
+}
+
+function erpRenderOrderCard(order,stage,restricted,total=0){
   const restrictedStage=erpRestrictedStage();
   const canAdvance=stage!=="Finalizado"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
   const canReturn=stage!=="Pedido"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
-  const urgency=erpProductionUrgencyClass(order);
   const products=erpNormalizeOrderProducts(order);
   const payment=isWisentAdmin()?erpOrderPaymentSummary(order):null;
-  const collapsed=!!readErpOrderCardCollapse()[order.id];
-  const stageLate=!!(order.stageDueAt&&Date.parse(order.stageDueAt)<Date.now()&&stage!=="Finalizado");
+  const collapsed=erpBoardIsCardCollapsed(order.id,total);
+  const deadline=erpBoardDeadlineInfo(order);
+  const title=order.title||products[0]?.model||`Pedido ${order.number||""}`;
+  const priority=order.priority||"Normal";
+  const responsible=erpBoardResponsible(order)||"Não definido";
+  const currentIndex=Math.max(0,ERP_STAGES.indexOf(stage));
 
-  return `<article class="erpOrderCard ${collapsed?"isCollapsed":""} ${stageLate?"stageLate":""} ${erpOrderLate(order)?"late":""} urgency-${urgency}" data-order-id="${esc(order.id)}">
-    <div class="erpOrderTop">
-      <strong>${esc(order.number||"-")}</strong>
-      <div class="erpOrderBadges">
-        <span class="erpOrderTypeBadge ${erpOrderTypeClass(order)}">${esc(erpOrderType(order))}</span>
-        <span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span>
-        <button type="button" class="erpOrderCollapseBtn" onclick="toggleErpOrderCard('${order.id}')" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Minimizar"} pedido"><span class="erpOrderCollapseIcon">${collapsed?"+":"−"}</span><span class="erpOrderCollapseLabel">${collapsed?"Expandir":"Minimizar"}</span></button>
-      </div>
+  return `<article class="erpOrderCard ${collapsed?"isCollapsed":""} ${deadline.kind==="late"?"stageLate":""}" style="--card-stage:var(--stage-color)" data-order-id="${esc(order.id)}" data-stage="${esc(stage)}">
+    <div class="erpDemandHeader">
+      <button type="button" class="erpDragHandle erpBoardFocus" draggable="true" data-drag-order="${esc(order.id)}" aria-label="Arrastar pedido ${esc(order.number||"")}. Use as setas para mover com o teclado." title="Arrastar demanda">⠿</button>
+      <div class="erpDemandTitle"><strong>${esc(title)}</strong><span>${esc(order.number||"Sem número")} • ${esc(order.client||"Cliente não informado")}</span></div>
+      <div class="erpDemandHeaderTools"><button type="button" class="erpOrderCollapseBtn" onclick="toggleErpOrderCard('${order.id}')" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Minimizar"} pedido">${collapsed?"＋":"−"}</button></div>
     </div>
-    <p>${esc(order.client||"-")}</p>
+    <div class="erpDemandBadges">
+      <span class="erpDemandBadge stage">${esc(stage)}</span>
+      <span class="erpDemandBadge priority">${esc(priority)}</span>
+      ${erpIsStandby(order)?`<span class="erpDemandBadge dueSoon">Standby</span>`:""}
+      ${deadline.kind==="late"?`<span class="erpDemandBadge late">${esc(deadline.label)}</span>`:deadline.kind==="today"||deadline.kind==="soon"?`<span class="erpDemandBadge dueSoon">${esc(deadline.label)}</span>`:""}
+      ${payment?`<span class="erpDemandBadge financial ${payment.status==="Pago"?"paid":payment.status==="Parcialmente pago"?"partial":"dueSoon"}">${esc(payment.status)}</span>`:""}
+    </div>
     <div class="erpOrderCompactSummary">
-      <span><b>Etapa</b>${esc(stage)}</span>
-      <span><b>Peças</b>${erpOrderQtyTotal(order)}</span>
-      <span><b>Prazo</b>${dateBR(String(order.stageDueAt||erpProductionDate(order)).slice(0,10))}</span>
-    </div>
-    <div class="erpOrderExpanded">
-    ${erpOrderStageProgress(order)}
-    <div class="erpOrderMetaGrid">
+      <span><b>Progresso</b>${currentIndex+1} de ${ERP_STAGES.length}</span>
       <span><b>Peças</b>${erpOrderQtyTotal(order)}</span>
       <span><b>Modelos</b>${products.length}</span>
       <span><b>Prazo do setor</b>${dateBR(String(order.stageDueAt||erpProductionDate(order)).slice(0,10))}</span>
-      <span><b>Etapa</b>${esc(stage)}</span>
-      ${payment?`<span class="erpOrderFinanceMeta"><b>Financeiro</b>${esc(payment.status)} • ${money(payment.pending)}</span>`:""}
+      <span><b>Entrega</b>${dateBR(order.dueDate)}</span>
+      <span><b>Responsável</b>${esc(responsible)}</span>
+      ${payment?`<span class="erpCompactFinance"><i>${esc(payment.status)}</i><b>${money(payment.pending)} pendente</b></span>`:""}
     </div>
-    ${erpProductBoxes(order,3)}
-    <div class="erpDeadlineRow">
-      <span class="erpDeadlineBadge ${urgency}">${esc(erpProductionUrgencyLabel(order))}</span>
-      <small>Entrega: ${dateBR(order.dueDate)}</small>
-    </div>
-    <small class="erpLastChange">Última alteração: ${esc(erpLastStageChange(order))}</small>
-    <div class="erpOrderActions">
-      <button class="small orderDetailBtn" onclick="showErpOrderProductsDetail('${order.id}')">Ver detalhes</button>
-      <button class="small secondary orderPdfBtn" onclick="exportErpOrderPDF('${order.id}',this)">Exportar PDF</button>
-      ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
-      ${!restricted&&isWisentAdmin()?`<button class="small secondary" onclick="openErpPaymentModal('${order.id}')">Pagamentos</button>`:""}
-      ${canReturn?`<button class="small returnStageBtn" onclick="returnErpOrderToPreviousStage('${order.id}')">${restricted?"Devolver etapa":"Voltar etapa"}</button>`:""}
-      ${canAdvance?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
-      ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
-    </div>
-    </div>
+    ${collapsed?"":`<div class="erpOrderExpanded">
+      <section class="erpDemandSection"><div class="erpDemandSectionTitle">Produção <span>Etapa ${currentIndex+1} de ${ERP_STAGES.length}</span></div>${erpOrderStageProgress(order)}</section>
+      <section class="erpDemandSection"><div class="erpDemandSectionTitle">Resumo</div><div class="erpDemandSummaryGrid">
+        <span><b>Cliente</b>${esc(order.client||"-")}</span><span><b>Tipo</b>Private Label</span>
+        <span><b>Prioridade</b>${esc(priority)}</span><span><b>Responsável</b>${esc(responsible)}</span>
+        <span><b>Prazo do setor</b>${dateBR(String(order.stageDueAt||"").slice(0,10))}</span><span><b>Entrega prevista</b>${dateBR(order.dueDate)}</span>
+        <span><b>Quantidade</b>${erpOrderQtyTotal(order)} peça(s)</span><span><b>Modelos</b>${products.length}</span>
+      </div></section>
+      <section class="erpDemandSection"><div class="erpDemandSectionTitle">Modelos, tamanhos e anexos <span>${products.length} modelo(s)</span></div>${erpProductBoxes(order,Math.max(3,products.length))}</section>
+      ${payment?`<section class="erpDemandSection"><div class="erpDemandSectionTitle">Financeiro <span>${esc(payment.status)}</span></div><div class="erpDemandSummaryGrid">
+        <span><b>Valor total</b>${money(payment.total)}</span><span><b>Valor pago</b>${money(payment.paid)}</span><span><b>Valor pendente</b>${money(payment.pending)}</span><span><b>Percentual pago</b>${payment.percent.toFixed(1)}%</span>
+      </div><div class="erpFinancialProgress" aria-label="${payment.percent.toFixed(0)}% pago"><i style="width:${Math.max(0,Math.min(100,payment.percent))}%"></i></div></section>`:""}
+      ${order.notes?`<section class="erpDemandSection"><div class="erpDemandSectionTitle">Observações</div><p class="erpDemandNotes">${esc(order.notes)}</p></section>`:""}
+      <section class="erpDemandSection"><div class="erpDemandSectionTitle">Histórico recente <span>${esc(erpLastStageChange(order))}</span></div>${erpBoardRecentHistory(order)}</section>
+      <div class="erpDemandFooter">
+        ${canAdvance?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar etapa"}</button>`:`<button class="small orderDetailBtn" onclick="showErpOrderProductsDetail('${order.id}')">Ver detalhes</button>`}
+        <details class="erpCardMenu"><summary aria-label="Mais ações">⋯</summary><div class="erpCardMenuList">
+          <button type="button" onclick="showErpOrderProductsDetail('${order.id}')">Ver detalhes</button>
+          ${restricted?"":`<button type="button" onclick="editErpOrder('${order.id}')">Editar pedido</button>`}
+          ${!restricted&&isWisentAdmin()?`<button type="button" onclick="openErpPaymentModal('${order.id}')">Pagamentos</button>`:""}
+          <button type="button" onclick="exportErpOrderPDF('${order.id}',this)">Exportar PDF</button>
+          ${canReturn?`<button type="button" onclick="returnErpOrderToPreviousStage('${order.id}')">Voltar etapa</button>`:""}
+          <select class="erpBoardMoveSelect" aria-label="Mover pedido para outra etapa" onchange="erpBoardMoveBySelect('${order.id}',this.value);this.value='${esc(stage)}'">${erpBoardMoveOptions(stage)}</select>
+          ${restricted?"":`<button type="button" class="danger" onclick="deleteErpOrder('${order.id}')">Excluir pedido</button>`}
+        </div></details>
+      </div>
+    </div>`}
   </article>`;
 }
 
@@ -29789,11 +30231,14 @@ function renderErpKanban(data){
   if(!target)return;
 
   populateErpKanbanStageFilter();
+  erpBoardPopulateResponsibleFilter(data);
+  if($("erpBoardOpenPreference"))$("erpBoardOpenPreference").value=erpBoardOpenPreference();
+  if(document.querySelector(".erpBoardFinanceFilter"))document.querySelector(".erpBoardFinanceFilter").hidden=!isWisentAdmin();
 
   const restricted=isErpSectorRestrictedUser();
   const stages=erpVisibleKanbanStages();
-  const query=$("erpSearch")?.value||"";
-  const orders=(data.orders||[]).filter(order=>erpOrderMatchesSearch(order,query));
+  const orders=erpBoardFilteredOrders(data);
+  const columnState=erpBoardColumnState();
 
   renderErpKanbanMobileSummary(orders,stages);
 
@@ -29802,20 +30247,296 @@ function renderErpKanban(data){
 
   target.innerHTML=stages.map(stage=>{
     const stageOrders=orders.filter(o=>(o.stage||"Pedido")===stage);
-    const activeOrders=stageOrders;
     const stageKey=erpStageKey(stage);
     const stagePieces=stageOrders.reduce((sum,order)=>sum+erpOrderQtyTotal(order),0);
+    const lateCount=stageOrders.filter(order=>erpBoardDeadlineInfo(order).kind==="late").length;
+    const limit=Number(erpBoardColumnLimits.get(stage)||ERP_BOARD_BATCH_SIZE);
+    const visible=stageOrders.slice(0,limit);
+    const collapsed=!!columnState[stage];
 
-    return `<div class="erpKanbanCol ${restricted?"sectorOnly":""} stage-${stageKey}">
+    return `<section class="erpKanbanCol ${restricted?"sectorOnly":""} ${collapsed?"isCollapsed":""} stage-${stageKey}" data-board-stage="${esc(stage)}" aria-label="Coluna ${esc(stage)}">
       <div class="erpKanbanHead">
-        <div class="erpStageTitle"><span class="erpStageIcon">${esc(erpStageIcon(stage))}</span><div><strong>${esc(stage)}</strong><small>${stagePieces} peça(s)</small></div></div>
-        <span class="erpStageCount">${stageOrders.length}</span>
+        <div class="erpStageTitle"><span class="erpStageIcon">${esc(erpStageIcon(stage))}</span><div><strong>${esc(stage)}</strong><small>${stageOrders.length} pedido(s)</small></div></div>
+        <div class="erpColumnTools"><button type="button" onclick="toggleErpBoardColumn('${stage}')" aria-label="${collapsed?"Expandir":"Recolher"} coluna ${esc(stage)}">${collapsed?"＋":"−"}</button></div>
+        <div class="erpColumnMetrics"><span>${stagePieces} peça(s)</span>${lateCount?`<span class="late">• ${lateCount} atrasado(s)</span>`:"<span>• nenhum atraso</span>"}</div>
       </div>
-      <div class="erpKanbanList">
-        ${erpRenderKanbanSection(stage,"active",`Demandas de ${stage}`,activeOrders,restricted)}
+      <div class="erpKanbanList" data-board-list="${esc(stage)}">
+        ${visible.length?visible.map(order=>erpRenderOrderCard(order,stage,restricted,orders.length)).join(""):`<div class="erpBoardEmpty">Nenhuma demanda nesta etapa.</div>`}
+        ${stageOrders.length>visible.length?`<button type="button" class="erpBoardLoadMore" onclick="erpBoardLoadMore('${stage}')">Carregar mais ${Math.min(ERP_BOARD_BATCH_SIZE,stageOrders.length-visible.length)} demanda(s)</button>`:""}
       </div>
-    </div>`;
+    </section>`;
   }).join("");
+
+  erpBoardBindDragAndDrop();
+  erpBoardSetState(orders.length?`${orders.length} demanda(s) exibida(s) • atualização por pedido ativa.`:"Nenhuma demanda encontrada para os filtros selecionados.");
+}
+
+function erpBoardClearDropStyles(){
+  document.querySelectorAll(".erpKanbanCol.isDropTarget,.erpOrderCard.isDropBefore,.erpOrderCard.isDropAfter").forEach(element=>element.classList.remove("isDropTarget","isDropBefore","isDropAfter"));
+}
+
+function erpBoardMarkDropTarget(element,clientY=0){
+  erpBoardClearDropStyles();
+  const column=element?.closest?.(".erpKanbanCol[data-board-stage]");
+  if(!column||!erpBoardDragState)return;
+  column.classList.add("isDropTarget");
+  const card=element.closest?.(".erpOrderCard[data-order-id]");
+  let placement="end";
+  let targetOrderId="";
+  if(card&&String(card.dataset.orderId)!==String(erpBoardDragState.orderId)){
+    const rect=card.getBoundingClientRect();
+    placement=clientY&&clientY>rect.top+(rect.height/2)?"after":"before";
+    targetOrderId=card.dataset.orderId||"";
+    card.classList.add(placement==="after"?"isDropAfter":"isDropBefore");
+  }
+  erpBoardDragState.targetStage=column.dataset.boardStage||"";
+  erpBoardDragState.targetOrderId=targetOrderId;
+  erpBoardDragState.placement=placement;
+}
+
+function erpBoardStartVisualDrag(orderId,mode="mouse"){
+  const card=document.querySelector(`.erpOrderCard[data-order-id="${CSS.escape(String(orderId))}"]`);
+  if(!card)return false;
+  erpBoardDragState={orderId:String(orderId),sourceStage:card.dataset.stage||"Pedido",targetStage:card.dataset.stage||"Pedido",targetOrderId:"",placement:"end",mode,active:true};
+  card.classList.add("isDragging");
+  erpBoardSetState(`Movendo ${card.querySelector(".erpDemandTitle strong")?.textContent||"demanda"}...`,"saving");
+  return true;
+}
+
+function erpBoardFinishVisualDrag(cancelled=false){
+  const state=erpBoardDragState?{...erpBoardDragState}:null;
+  document.querySelectorAll(".erpOrderCard.isDragging").forEach(card=>card.classList.remove("isDragging"));
+  erpBoardClearDropStyles();
+  erpBoardDragState=null;
+  if(cancelled||!state){erpBoardSetState("Movimentação cancelada.");return;}
+  erpBoardMoveOrder(state.orderId,state.targetStage,state.targetOrderId,state.placement,{confirmStage:true}).catch(error=>{
+    console.error(error);
+    erpBoardSetState("Não foi possível concluir a movimentação.","error");
+  });
+}
+
+function erpBoardBindDragAndDrop(){
+  document.querySelectorAll(".erpDragHandle[data-drag-order]").forEach(handle=>{
+    handle.addEventListener("dragstart",event=>{
+      const orderId=handle.dataset.dragOrder||"";
+      if(!erpBoardStartVisualDrag(orderId,"mouse")){event.preventDefault();return;}
+      event.dataTransfer.effectAllowed="move";
+      event.dataTransfer.setData("text/plain",orderId);
+    });
+    handle.addEventListener("dragend",()=>{
+      if(erpBoardDragState?.mode==="mouse")erpBoardFinishVisualDrag(!erpBoardDragState?.targetStage);
+    });
+    handle.addEventListener("keydown",erpBoardHandleKeyboardMove);
+    handle.addEventListener("pointerdown",erpBoardPointerDown);
+  });
+  document.querySelectorAll(".erpKanbanCol[data-board-stage]").forEach(column=>{
+    column.addEventListener("dragover",event=>{
+      if(!erpBoardDragState?.active)return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect="move";
+      erpBoardMarkDropTarget(event.target,event.clientY);
+    });
+    column.addEventListener("drop",event=>{
+      if(!erpBoardDragState?.active)return;
+      event.preventDefault();
+      erpBoardMarkDropTarget(event.target,event.clientY);
+    });
+  });
+  if(!erpBoardPointerListenersInstalled){
+    document.addEventListener("pointermove",erpBoardPointerMove,{passive:false});
+    document.addEventListener("pointerup",erpBoardPointerUp);
+    document.addEventListener("pointercancel",erpBoardPointerCancel);
+    erpBoardPointerListenersInstalled=true;
+  }
+}
+
+function erpBoardPointerDown(event){
+  if(event.pointerType==="mouse")return;
+  const handle=event.currentTarget;
+  const orderId=handle.dataset.dragOrder||"";
+  const origin={x:event.clientX,y:event.clientY,pointerId:event.pointerId,orderId,handle,activated:false};
+  erpBoardDragState={...origin,sourceStage:handle.closest(".erpOrderCard")?.dataset.stage||"Pedido",targetStage:"",targetOrderId:"",placement:"end",mode:"touch",active:false};
+  clearTimeout(erpBoardPointerTimer);
+  erpBoardPointerTimer=setTimeout(()=>{
+    if(!erpBoardDragState||erpBoardDragState.pointerId!==origin.pointerId)return;
+    if(erpBoardStartVisualDrag(orderId,"touch")){
+      erpBoardDragState={...erpBoardDragState,...origin,activated:true,active:true};
+      try{handle.setPointerCapture(event.pointerId);}catch(e){}
+      if(navigator.vibrate)navigator.vibrate(20);
+    }
+  },280);
+}
+
+function erpBoardPointerMove(event){
+  const state=erpBoardDragState;
+  if(!state||state.mode!=="touch"||state.pointerId!==event.pointerId)return;
+  const distance=Math.hypot(event.clientX-state.x,event.clientY-state.y);
+  if(!state.active){
+    if(distance>8){clearTimeout(erpBoardPointerTimer);erpBoardDragState=null;}
+    return;
+  }
+  event.preventDefault();
+  const element=document.elementFromPoint(event.clientX,event.clientY);
+  erpBoardMarkDropTarget(element,event.clientY);
+}
+
+function erpBoardPointerUp(event){
+  const state=erpBoardDragState;
+  if(!state||state.mode!=="touch"||state.pointerId!==event.pointerId)return;
+  clearTimeout(erpBoardPointerTimer);
+  if(state.active)erpBoardFinishVisualDrag(!state.targetStage);
+  else erpBoardDragState=null;
+}
+
+function erpBoardPointerCancel(event){
+  if(!erpBoardDragState||erpBoardDragState.pointerId!==event.pointerId)return;
+  clearTimeout(erpBoardPointerTimer);
+  erpBoardFinishVisualDrag(true);
+}
+
+function erpBoardHandleKeyboardMove(event){
+  const orderId=event.currentTarget.dataset.dragOrder||"";
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(item=>String(item.id)===String(orderId));
+  if(!order)return;
+  if(["ArrowLeft","ArrowRight"].includes(event.key)){
+    event.preventDefault();
+    const target=event.key==="ArrowRight"?erpNextStage(order.stage):erpPreviousStage(order.stage);
+    if(target!==order.stage)erpBoardMoveOrder(order.id,target,"","end",{confirmStage:true});
+  }
+  if(["ArrowUp","ArrowDown"].includes(event.key)){
+    event.preventDefault();
+    const rows=(data.orders||[]).filter(item=>item.stage===order.stage).sort((a,b)=>Number(a.boardPosition||0)-Number(b.boardPosition||0));
+    const index=rows.findIndex(item=>String(item.id)===String(order.id));
+    const target=rows[index+(event.key==="ArrowUp"?-1:1)];
+    if(target)erpBoardMoveOrder(order.id,order.stage,target.id,event.key==="ArrowUp"?"before":"after",{confirmStage:false});
+  }
+}
+
+function erpBoardPositionForMove(orderId,targetStage,targetOrderId,placement){
+  const rows=(readErpTestData().orders||[])
+    .filter(order=>String(order.id)!==String(orderId)&&String(order.stage||"Pedido")===String(targetStage))
+    .sort((a,b)=>Number(a.boardPosition||0)-Number(b.boardPosition||0));
+  if(!rows.length)return 1000;
+  if(!targetOrderId)return Math.max(...rows.map(order=>Number(order.boardPosition||0)))+1000;
+  const index=rows.findIndex(order=>String(order.id)===String(targetOrderId));
+  if(index<0)return Math.max(...rows.map(order=>Number(order.boardPosition||0)))+1000;
+  const target=Number(rows[index].boardPosition||((index+1)*1000));
+  if(placement==="after"){
+    const next=rows[index+1];
+    return next?(target+Number(next.boardPosition||target+1000))/2:target+1000;
+  }
+  const previous=rows[index-1];
+  return previous?(Number(previous.boardPosition||0)+target)/2:Math.max(0,target/2);
+}
+
+async function erpBoardMoveBySelect(orderId,targetStage){
+  const order=(readErpTestData().orders||[]).find(item=>String(item.id)===String(orderId));
+  if(!order||targetStage===order.stage)return;
+  await erpBoardMoveOrder(orderId,targetStage,"","end",{confirmStage:true});
+}
+
+async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement="end",options={}){
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(item=>String(item.id)===String(orderId));
+  if(!order)return false;
+  const fromStage=String(order.stage||"Pedido");
+  const toStage=String(targetStage||fromStage);
+  if(erpIsStandby(order)){alert("Retome este pedido do standby antes de movimentá-lo.");return false;}
+  if(!ERP_STAGES.includes(toStage)){alert("A etapa selecionada não faz parte do fluxo Private Label.");return false;}
+  if(isErpSectorRestrictedUser()&&fromStage!==erpRestrictedStage()){
+    alert("Este pedido não pertence mais à etapa do seu setor.");
+    scheduleErpRealtimeCloudRefresh(0);
+    return false;
+  }
+  if(fromStage!==toStage&&Math.abs(ERP_STAGES.indexOf(fromStage)-ERP_STAGES.indexOf(toStage))!==1){
+    alert("Para proteger o histórico, mova o pedido somente para a etapa anterior ou seguinte.");
+    return false;
+  }
+  if(fromStage===toStage&&String(targetOrderId)===String(orderId))return true;
+  if(fromStage===toStage&&($("erpBoardSort")?.value||"position")!=="position"){
+    erpBoardSetState("Para reordenar uma coluna, selecione ‘Ordem do board’.","error");
+    return false;
+  }
+  if(fromStage!==toStage&&options.confirmStage!==false&&!confirm(`Mover o pedido ${order.number||""} de ${fromStage} para ${toStage}?`)){
+    erpBoardSetState("Movimentação cancelada.");
+    return false;
+  }
+  if(navigator.onLine===false){
+    erpBoardSetState("Sem internet: o pedido permaneceu na etapa atual para evitar divergência.","error");
+    return false;
+  }
+
+  const position=erpBoardPositionForMove(orderId,toStage,targetOrderId,placement);
+  const orderUuid=order._v2Id||await erpV2Uuid("order",String(order.id));
+  let baseVersion=Number(order._v2Version||0);
+  if(!(baseVersion>0)){
+    const remote=await erpV2FetchRecord("wisent_erp_v2_orders",orderUuid);
+    if(!remote){erpBoardSetState("Pedido ainda não foi confirmado na estrutura V2 do Supabase.","error");return false;}
+    baseVersion=Number(remote.version||1);
+  }
+  erpBoardSetState(`Salvando ${fromStage===toStage?"nova posição":`mudança para ${toStage}`}...`,"saving");
+
+  try{
+    const response=await fetchWithTimeout(`${SUPABASE_URL}/rest/v1/rpc/wisent_erp_v178_move_order`,{
+      method:"POST",
+      headers:cloudHeaders(),
+      body:JSON.stringify({
+        p_order_id:orderUuid,
+        p_base_version:baseVersion,
+        p_from_stage:fromStage,
+        p_to_stage:toStage,
+        p_board_position:position,
+        p_user_name:currentAuditInfo().name||"Sistema",
+        p_device_id:getDeviceId()
+      })
+    },15000);
+    const raw=await response.text();
+    const result=raw?JSON.parse(raw):{};
+    if(!response.ok||!result?.ok){
+      const conflict=result?.status==="conflict";
+      erpBoardSetState(conflict?"Conflito detectado: o pedido foi atualizado por outro usuário.":String(result?.message||`Falha HTTP ${response.status}`),"error");
+      if(conflict)scheduleErpRealtimeCloudRefresh(0);
+      else if(response.status===404||String(raw).includes("PGRST202"))alert("Aplique o SQL SUPABASE_WISENT_ERP_BOARD_V178 antes de usar a movimentação do board.");
+      renderErpKanban(readErpTestData());
+      return false;
+    }
+
+    const record=result.record||{};
+    const latest=readErpTestData();
+    const index=(latest.orders||[]).findIndex(item=>String(item.id)===String(orderId));
+    if(index<0)return false;
+    const current=latest.orders[index];
+    const movedAt=record.updated_at||new Date().toISOString();
+    latest.orders[index]={
+      ...current,
+      stage:record.stage||toStage,
+      boardPosition:Number(record.board_position??position),
+      stageStartedAt:record.stage_started_at||current.stageStartedAt,
+      stageDueAt:record.stage_due_at||current.stageDueAt,
+      stageResponsible:record.stage_responsible||"",
+      updatedAt:movedAt,
+      updatedBy:record.updated_by||currentAuditInfo().name||"Sistema",
+      _v2Id:record.id||orderUuid,
+      _v2Version:Number(record.version||baseVersion+1),
+      stageHistory:fromStage===toStage?erpOrderStageHistory(current):[
+        ...erpOrderStageHistory(current),
+        {...erpStageHistoryEntry(fromStage,toStage,current),id:String(result.event_id||uid()),at:movedAt,user:record.updated_by||currentAuditInfo().name||"Sistema",direction:ERP_STAGES.indexOf(toStage)<ERP_STAGES.indexOf(fromStage)?"backward":"forward"}
+      ]
+    };
+    erpLocalWriteOnly(latest);
+    erpV2RememberVersion(record.id||orderUuid,record.version||baseVersion+1);
+    appendErpAudit(fromStage===toStage?"board_order_reordered":"production_stage_moved",{orderId,from:fromStage,to:toStage,boardPosition:position,version:record.version});
+    renderErpTest();
+    erpBoardSetState(fromStage===toStage?"Posição atualizada e confirmada no Supabase.":`Pedido movido para ${toStage} e histórico registrado.`);
+    showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
+    return true;
+  }catch(error){
+    console.error("Falha ao mover demanda V178:",error);
+    erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
+    renderErpKanban(readErpTestData());
+    return false;
+  }
 }
 
 function renderErpStock(data){
