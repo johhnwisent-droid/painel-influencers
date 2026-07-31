@@ -13715,6 +13715,73 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
 }
 /* ===== FIM V184 ===== */
 
+/* ===== V187 AJUSTES OPERACIONAIS PRESERVANDO A BASE V184 ===== */
+.erpCompactNotes{
+  min-height:54px!important;
+  height:54px;
+  max-height:180px!important;
+  resize:vertical!important;
+  overflow-y:auto!important;
+  line-height:1.45!important;
+}
+.erpCurrencyInput{font-variant-numeric:tabular-nums;font-weight:650;letter-spacing:.01em}
+.erpKanbanCol.isDropTarget{
+  outline:2px solid color-mix(in srgb,var(--stage-color) 72%,white 8%)!important;
+  outline-offset:-2px!important;
+  background:color-mix(in srgb,var(--stage-color) 11%,#0f1728)!important;
+}
+.erpKanbanCol.isDropTarget::after{
+  content:"Solte aqui";
+  position:sticky;
+  bottom:8px;
+  z-index:9;
+  display:block;
+  margin-top:8px;
+  padding:9px 10px;
+  border:1px solid color-mix(in srgb,var(--stage-color) 54%,transparent);
+  border-radius:10px;
+  background:color-mix(in srgb,var(--stage-color) 18%,#111827);
+  color:#f8fafc;
+  font-size:11px;
+  font-weight:750;
+  text-align:center;
+  pointer-events:none;
+}
+body.erpBoardDragging{cursor:grabbing!important;user-select:none!important}
+body.erpBoardDragging .erpKanban{scroll-snap-type:none!important;scroll-behavior:auto!important}
+body.erpSectorRestricted:not(.erpSupplyOnly) .menu button[data-page="erpTest"],
+body.erpSectorRestricted:not(.erpSupplyOnly) .menu button[data-page="suppliesPage"]{display:flex!important}
+body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module="pedidos"]{display:none!important}
+body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module="insumos"]{display:flex!important;justify-content:center!important;width:100%!important}
+.erpSupplyRelatedOrder{display:block;margin:8px 0;padding:8px 10px;border:1px solid rgba(96,165,250,.18);border-radius:9px;background:rgba(37,99,235,.08);color:#bfd7ff;font-weight:650}
+.erpSupplyActions{flex-wrap:wrap}
+
+@media(max-width:760px){
+  .erpDragHandle{
+    width:44px!important;
+    min-width:44px!important;
+    height:44px!important;
+    min-height:44px!important;
+    touch-action:none!important;
+    cursor:grab!important;
+    border-color:rgba(96,165,250,.38)!important;
+    background:#14243c!important;
+  }
+  .erpDragHandle::after{content:"Arrastar";position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .erpSupplyComposer,.erpSupplyBoard{padding:14px!important;border-radius:14px!important}
+  .erpSupplyComposer .form{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+  .erpSupplyComposer .form label,.erpSupplyComposer .form .two,.erpSupplyComposer .form .actions{grid-column:1/-1!important;width:100%!important}
+  .erpSupplyComposer input,.erpSupplyComposer select,.erpSupplyComposer button,.erpSupplyBoard select{min-height:44px!important;font-size:16px!important}
+  .erpSupplyComposer .actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+  .erpSupplyList{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+  .erpSupplyCard{width:100%!important;min-width:0!important;padding:14px!important;overflow:hidden!important}
+  .erpSupplyCardHead{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:10px!important}
+  .erpSupplyMeta{display:grid!important;grid-template-columns:1fr!important;gap:4px!important}
+  .erpSupplyActions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+  .erpSupplyActions label,.erpSupplyActions button,.erpSupplyActions select{width:100%!important;min-height:44px!important}
+}
+/* ===== FIM V187 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -13804,7 +13871,7 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V184</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V187</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15071,12 +15138,12 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
         <label>Data entrega<input id="erpOrderDue" type="date" onchange="syncErpProductionDueFromDelivery()"></label>
         <label>Prazo produção<input id="erpOrderProductionDue" type="date"></label>
         <label>Prioridade<select id="erpOrderPriority"><option>Normal</option><option>Urgente</option><option>Alta</option></select></label>
-        <label>Valor total<input id="erpOrderValue" type="number" step="0.01" min="0" oninput="updateErpOrderFinancialPreview()"></label>
-        <label>Valor pago<input id="erpOrderPaidValue" type="number" step="0.01" min="0" value="0" oninput="updateErpOrderFinancialPreview()"><small>Em uma edição, informe o total já pago. A diferença positiva será lançada no histórico.</small></label>
+        <label>Valor total<input id="erpOrderValue" class="erpCurrencyInput" type="text" inputmode="numeric" autocomplete="off" value="R$ 0,00" oninput="erpHandleCurrencyInput(this);updateErpOrderFinancialPreview()" onfocus="this.select()"></label>
+        <label>Valor pago<input id="erpOrderPaidValue" class="erpCurrencyInput" type="text" inputmode="numeric" autocomplete="off" value="R$ 0,00" oninput="erpHandleCurrencyInput(this);updateErpOrderFinancialPreview()" onfocus="this.select()"><small>Em uma edição, informe o total já pago. A diferença positiva será lançada no histórico.</small></label>
         <label>Valor a receber<input id="erpOrderPendingValue" type="text" value="R$ 0,00" readonly><small id="erpOrderFinancialPreviewStatus">Aguardando valores.</small></label>
         <label>Vencimento financeiro<input id="erpOrderFinancialDue" type="date"></label>
         <label>Etapa<select id="erpOrderStage"></select><small>Escolha a etapa inicial ou atual do pedido. O padrão é Pedido.</small></label>
-        <label class="two">Observações<input id="erpOrderNotes" placeholder="Detalhes do pedido, estampa, prazo, acabamento..."></label>
+        <label class="two">Observações<textarea id="erpOrderNotes" class="erpCompactNotes" rows="2" placeholder="Detalhes do pedido, estampa, prazo, acabamento..." oninput="erpAutoResizeTextarea(this)"></textarea></label>
 
         <div class="erpProductBuilder two">
           <div class="erpProductBuilderHead">
@@ -15878,8 +15945,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V184";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v184";
+const APP_BUILD_VERSION="V187";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v187";
 
 async function clearOldPwaCacheOnce(){
   const url=new URL(window.location.href);
@@ -15891,7 +15958,7 @@ async function clearOldPwaCacheOnce(){
     if(!alreadyRecovered){
       if("caches" in window){
         const keys=await caches.keys();
-        const obsolete=keys.filter(key=>/wisent|painel/i.test(key)&&!key.includes("v184"));
+  const obsolete=keys.filter(key=>/wisent|painel/i.test(key)&&!key.includes("v187"));
         await Promise.all(obsolete.map(key=>caches.delete(key)));
       }
 
@@ -15903,7 +15970,7 @@ async function clearOldPwaCacheOnce(){
       localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
     }
   }catch(e){
-    console.warn("Recuperação segura de cache V184 não concluída:",e);
+  console.warn("Recuperação segura de cache V187 não concluída:",e);
     status="error";
   }
   if(needsVersionUrl){
@@ -15922,7 +15989,7 @@ function registerPwa(){
     if(cacheStatus==="redirected")return;
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=184");
+    const reg=await navigator.serviceWorker.register("./service-worker.js?v=187");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -19884,7 +19951,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V184 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V187 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25549,6 +25616,14 @@ function isErpScopedRestrictedUser(){
   return isErpSectorRestrictedUser()||isErpSupplyOnlyUser();
 }
 
+function erpSectorCanAccessSupplies(){
+  return isErpSectorRestrictedUser()||isErpSupplyOnlyUser()||isWisentAdmin();
+}
+
+function erpSectorIsViewingSupplies(){
+  return isErpSectorRestrictedUser()&&currentPage==="suppliesPage";
+}
+
 function erpRestrictedStage(){
   const role=erpUserRoleNormalized();
   if(role==="corte")return "Corte";
@@ -25564,15 +25639,18 @@ function erpRestrictedRoleLabel(){
 function applyErpSectorAccessControl(){
   const restricted=isErpScopedRestrictedUser();
   const supplyOnly=isErpSupplyOnlyUser();
+  const sectorSupplies=erpSectorIsViewingSupplies();
   const stage=erpRestrictedStage();
-  const allowedModule=supplyOnly?"insumos":"pedidos";
+  const allowedModule=(supplyOnly||sectorSupplies)?"insumos":"pedidos";
 
   document.body.classList.toggle("erpSectorRestricted",restricted);
   document.body.classList.toggle("erpSupplyOnly",supplyOnly);
+  document.body.classList.toggle("erpSectorSupplies",sectorSupplies);
 
   if(restricted){
     document.querySelectorAll(".menu button").forEach(btn=>{
-      btn.style.display=btn.dataset.page===(supplyOnly?"suppliesPage":"erpTest")?"":"none";
+      const allowedPages=supplyOnly?["suppliesPage"]:["erpTest","suppliesPage"];
+      btn.style.display=allowedPages.includes(btn.dataset.page)?"":"none";
     });
 
     document.querySelectorAll("[data-erp-module]").forEach(btn=>{
@@ -25584,7 +25662,7 @@ function applyErpSectorAccessControl(){
       panel.hidden=panel.dataset.erpPanel!==allowedModule;
     });
 
-    if($("pageTitle"))$("pageTitle").textContent=supplyOnly?"Insumos para Comprar":`Private Label — ${erpRestrictedRoleLabel()}`;
+    if($("pageTitle"))$("pageTitle").textContent=(supplyOnly||sectorSupplies)?"Insumos para Comprar":`Private Label — ${erpRestrictedRoleLabel()}`;
   }else{
     document.querySelectorAll(".menu button").forEach(btn=>{
       btn.style.display="";
@@ -25603,8 +25681,8 @@ function applyErpSectorAccessControl(){
   if(notice){
     notice.hidden=!restricted;
     notice.innerHTML=restricted
-      ? supplyOnly
-        ? `<strong>Acesso restrito — Demanda de Insumos</strong><span>Este perfil pode criar, consultar e acompanhar solicitações de insumos. Funções administrativas e demais módulos ficam indisponíveis.</span>`
+      ? (supplyOnly||sectorSupplies)
+        ? `<strong>Acesso operacional — Insumos para Comprar</strong><span>${sectorSupplies?`Você pode alternar pelo menu entre o Kanban do setor ${esc(stage)} e esta página de solicitações.`:`Este perfil pode criar, consultar e acompanhar solicitações de insumos.`} Funções administrativas e demais módulos ficam indisponíveis.</span>`
         : `<strong>Acesso operacional — ${esc(erpRestrictedRoleLabel())}</strong><span>No celular, este login visualiza todas as etapas e pode filtrar um setor. As ações de produção continuam limitadas às permissões do seu cargo.</span><small id="erpRealtimeSectorStatus" class="erpRealtimeSectorStatus ${erpRealtimeConnected?"connected":""}">${erpRealtimeConnected?"Tempo real conectado":"Tempo real reconectando"}</small>`
       : "";
   }
@@ -25618,7 +25696,7 @@ function showPage(id){
   if(isErpSupplyOnlyUser()&&nextPage!=="suppliesPage"){
     nextPage="suppliesPage";
     id="suppliesPage";
-  }else if(isErpSectorRestrictedUser()&&nextPage!=="erpTest"){
+  }else if(isErpSectorRestrictedUser()&&!(["erpTest","suppliesPage"].includes(nextPage))){
     nextPage="erpTest";
     id="erpTest";
   }
@@ -25724,6 +25802,8 @@ let erpBoardPointerTimer=null;
 let erpBoardPointerListenersInstalled=false;
 let erpBoardViewportListenerInstalled=false;
 let erpBoardDragOverlay=null;
+let erpBoardAutoScrollFrame=null;
+let erpBoardLastPointer=null;
 const ERP_UI_PREFERENCE_DB_NAME="wisent_erp_ui_preferences_v184";
 const ERP_UI_PREFERENCE_STORE="preferences";
 const erpUiPreferenceMemory=new Map();
@@ -25770,7 +25850,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V184",
+    version:"V187",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26207,7 +26287,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V184";
+  data.version="V187";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26460,7 +26540,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V184",
+    version:"V187",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28663,7 +28743,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V184";
+  normalized.version="V187";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -28775,7 +28855,8 @@ function showErpModule(module){
   const requested=module||"dashboard";
   const mapBlocked=requested==="mapa"&&!isErpTechnicalMapAdmin();
   const commissionBlocked=requested==="comissoes"&&!isWisentAdmin();
-  const target=isErpSupplyOnlyUser()?"insumos":(isErpSectorRestrictedUser()?"pedidos":((mapBlocked||commissionBlocked)?"dashboard":requested));
+  const sectorTarget=erpSectorIsViewingSupplies()&&requested==="insumos"?"insumos":"pedidos";
+  const target=isErpSupplyOnlyUser()?"insumos":(isErpSectorRestrictedUser()?sectorTarget:((mapBlocked||commissionBlocked)?"dashboard":requested));
 
   if(mapBlocked)showUndoToast("Área disponível somente para a conta principal de administrador.");
   if(commissionBlocked)showUndoToast("Gestão de Comissões disponível somente para Admin.");
@@ -29757,6 +29838,45 @@ function erpOrderStageHistory(order){
   return Array.isArray(order?.stageHistory)?order.stageHistory:[];
 }
 
+function erpParseCurrencyValue(value){
+  const raw=String(value??"").trim();
+  if(!raw)return 0;
+  if(raw.includes("R$")||raw.includes(",")){
+    const normalized=raw.replace(/[^\d,-]/g,"").replace(/\./g,"").replace(",",".");
+    return Math.max(0,finiteNumber(normalized,0));
+  }
+  return Math.max(0,finiteNumber(raw,0));
+}
+
+function erpCurrencyFieldNumber(fieldOrId){
+  const field=typeof fieldOrId==="string"?$(fieldOrId):fieldOrId;
+  if(!field)return 0;
+  const stored=Number(field.dataset.currencyValue);
+  return Number.isFinite(stored)?Math.max(0,stored):erpParseCurrencyValue(field.value);
+}
+
+function erpSetCurrencyField(fieldOrId,value){
+  const field=typeof fieldOrId==="string"?$(fieldOrId):fieldOrId;
+  if(!field)return 0;
+  const numeric=Math.max(0,finiteNumber(value,0));
+  field.dataset.currencyValue=numeric.toFixed(2);
+  field.value=money(numeric);
+  return numeric;
+}
+
+function erpHandleCurrencyInput(field){
+  if(!field)return 0;
+  const digits=String(field.value||"").replace(/\D/g,"");
+  const numeric=digits?Number(digits)/100:0;
+  return erpSetCurrencyField(field,numeric);
+}
+
+function erpAutoResizeTextarea(field){
+  if(!field)return;
+  field.style.height="auto";
+  field.style.height=`${Math.min(180,Math.max(54,field.scrollHeight))}px`;
+}
+
 
 function resetErpOrderForm(){
   const form=$("erpOrderForm");
@@ -29766,12 +29886,13 @@ function resetErpOrderForm(){
   if($("erpOrderClientId"))$("erpOrderClientId").value="";
   if($("erpOrderType"))$("erpOrderType").value="PRIVATE LABEL";
   if($("erpOrderFinancialDue"))$("erpOrderFinancialDue").value="";
-  if($("erpOrderValue"))$("erpOrderValue").value="";
-  if($("erpOrderPaidValue"))$("erpOrderPaidValue").value="0";
+  erpSetCurrencyField("erpOrderValue",0);
+  erpSetCurrencyField("erpOrderPaidValue",0);
   if($("erpOrderDue"))$("erpOrderDue").value=today();
   if($("erpOrderProductionDue"))$("erpOrderProductionDue").value=today();
   populateErpStageSelect();
   if($("erpOrderStage"))$("erpOrderStage").value="Pedido";
+  if($("erpOrderNotes")){ $("erpOrderNotes").value=""; $("erpOrderNotes").style.height="54px"; }
   setErpProductItemsInForm([erpBlankProductItem()]);
   updateErpOrderFinancialPreview();
 }
@@ -29834,8 +29955,8 @@ function selectErpOrderClient(id){
 }
 
 function updateErpOrderFinancialPreview(){
-  const total=Math.max(0,finiteNumber($("erpOrderValue")?.value,0));
-  const paid=Math.max(0,finiteNumber($("erpOrderPaidValue")?.value,0));
+  const total=erpCurrencyFieldNumber("erpOrderValue");
+  const paid=erpCurrencyFieldNumber("erpOrderPaidValue");
   const pending=Math.max(0,total-paid);
   if($("erpOrderPendingValue"))$("erpOrderPendingValue").value=money(pending);
   if($("erpOrderFinancialPreviewStatus")){
@@ -29877,8 +29998,41 @@ async function saveErpOrderPaidValue(order,desiredPaid,currentPaid){
   return true;
 }
 
+function captureErpInterfaceState(){
+  const controls={};
+  document.querySelectorAll("#erpSearch,#erpBoardFilters input,#erpBoardFilters select").forEach(field=>{
+    if(!field.id)return;
+    controls[field.id]=field.type==="checkbox"?Boolean(field.checked):field.value;
+  });
+  return {
+    page:currentPage,
+    module:document.querySelector("[data-erp-module].active")?.dataset.erpModule||"pedidos",
+    controls,
+    boardScrollLeft:$("erpKanban")?.scrollLeft||0,
+    windowScrollY:window.scrollY||0
+  };
+}
+
+function restoreErpInterfaceState(snapshot){
+  if(!snapshot)return;
+  Object.entries(snapshot.controls||{}).forEach(([id,value])=>{
+    const field=$(id);
+    if(!field)return;
+    if(field.type==="checkbox")field.checked=Boolean(value);
+    else field.value=value??"";
+  });
+  const requestedModule=snapshot.module||"pedidos";
+  showErpModule(requestedModule);
+  if(requestedModule==="pedidos")renderErpKanban(readErpTestData());
+  requestAnimationFrame(()=>{
+    if($("erpKanban"))$("erpKanban").scrollLeft=Number(snapshot.boardScrollLeft||0);
+    window.scrollTo({top:Number(snapshot.windowScrollY||0),behavior:"auto"});
+  });
+}
+
 async function saveErpOrderFromForm(e){
   e.preventDefault();
+  const interfaceState=captureErpInterfaceState();
 
   const data=readErpTestData();
   const id=$("erpOrderId")?.value||uid();
@@ -29923,7 +30077,7 @@ async function saveErpOrderFromForm(e){
     dueDate,
     productionDue,
     priority:$("erpOrderPriority")?.value||"Normal",
-    value:Math.max(0,finiteNumber($("erpOrderValue")?.value,0)),
+    value:erpCurrencyFieldNumber("erpOrderValue"),
     financialDueDate:$("erpOrderFinancialDue")?.value||"",
     products,
     model:products[0]?.model||"Modelo não informado",
@@ -29976,10 +30130,8 @@ async function saveErpOrderFromForm(e){
     return;
   }
   resetErpOrderForm();
-  showErpModule("pedidos");
-  if($("erpSearch"))$("erpSearch").value="";
-  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value=stage;
   renderErpTest();
+  restoreErpInterfaceState(interfaceState);
   appendErpAudit(existing?"private_label_order_updated":"private_label_order_created",{orderId:id,number:order.number,stage});
   Promise.all([
     syncErpProductVariationsToCloud(order),
@@ -30003,12 +30155,13 @@ function editErpOrder(id){
   $("erpOrderDue").value=order.dueDate||today();
   if($("erpOrderProductionDue"))$("erpOrderProductionDue").value=erpProductionDate(order);
   $("erpOrderPriority").value=order.priority||"Normal";
-  $("erpOrderValue").value=order.value||0;
+  erpSetCurrencyField("erpOrderValue",order.value||0);
   const payment=erpOrderPaymentSummary(order);
-  if($("erpOrderPaidValue"))$("erpOrderPaidValue").value=payment.paid||0;
+  erpSetCurrencyField("erpOrderPaidValue",payment.paid||0);
   if($("erpOrderFinancialDue"))$("erpOrderFinancialDue").value=order.financialDueDate||"";
   $("erpOrderStage").value=ERP_STAGES.includes(order.stage)?order.stage:"Pedido";
   $("erpOrderNotes").value=order.notes||"";
+  erpAutoResizeTextarea($("erpOrderNotes"));
   setErpProductItemsInForm(erpNormalizeOrderProducts(order));
   updateErpOrderFinancialPreview();
 }
@@ -30951,9 +31104,14 @@ function erpBoardAutoScroll(clientX,clientY){
   const board=$("erpKanban");
   if(board){
     const rect=board.getBoundingClientRect();
-    const edge=Math.min(72,Math.max(42,rect.width*.08));
-    if(clientX<rect.left+edge)board.scrollLeft-=18;
-    else if(clientX>rect.right-edge)board.scrollLeft+=18;
+    const edge=Math.min(96,Math.max(56,rect.width*.12));
+    if(clientX<rect.left+edge){
+      const strength=Math.min(1,(rect.left+edge-clientX)/edge);
+      board.scrollLeft-=Math.round(8+28*strength);
+    }else if(clientX>rect.right-edge){
+      const strength=Math.min(1,(clientX-(rect.right-edge))/edge);
+      board.scrollLeft+=Math.round(8+28*strength);
+    }
   }
   const pointed=document.elementFromPoint(clientX,clientY);
   const list=pointed?.closest?.(".erpKanbanList");
@@ -30962,6 +31120,25 @@ function erpBoardAutoScroll(clientX,clientY){
     if(clientY<rect.top+44)list.scrollTop-=14;
     else if(clientY>rect.bottom-44)list.scrollTop+=14;
   }
+}
+
+function erpBoardStopAutoScrollLoop(){
+  if(erpBoardAutoScrollFrame)cancelAnimationFrame(erpBoardAutoScrollFrame);
+  erpBoardAutoScrollFrame=null;
+  erpBoardLastPointer=null;
+}
+
+function erpBoardStartAutoScrollLoop(){
+  erpBoardStopAutoScrollLoop();
+  const tick=()=>{
+    if(!erpBoardDragState?.active||!erpBoardLastPointer){erpBoardStopAutoScrollLoop();return;}
+    const {x,y}=erpBoardLastPointer;
+    erpBoardAutoScroll(x,y);
+    const element=document.elementFromPoint(x,y);
+    erpBoardMarkDropTarget(element,y);
+    erpBoardAutoScrollFrame=requestAnimationFrame(tick);
+  };
+  erpBoardAutoScrollFrame=requestAnimationFrame(tick);
 }
 
 function erpBoardMarkDropTarget(element,clientY=0){
@@ -31007,6 +31184,8 @@ function erpBoardStartVisualDrag(orderId,mode="mouse",clientX=0,clientY=0){
     erpBoardCreateDragOverlay(card);
     erpBoardMoveDragOverlay(clientX,clientY);
   }
+  erpBoardLastPointer={x:clientX,y:clientY};
+  erpBoardStartAutoScrollLoop();
   erpBoardSetState(`Movendo ${card.querySelector(".erpDemandTitle strong")?.textContent||"demanda"}...`,"saving");
   return true;
 }
@@ -31017,6 +31196,7 @@ function erpBoardFinishVisualDrag(cancelled=false){
   document.body.classList.remove("erpBoardDragging");
   erpBoardClearDropStyles();
   erpBoardRemoveDragOverlay();
+  erpBoardStopAutoScrollLoop();
   erpBoardDragState=null;
   if(cancelled||!state){erpBoardSetState("Movimentação cancelada.");return;}
   erpBoardMoveOrder(state.orderId,state.targetStage,state.targetOrderId,state.placement,{confirmStage:false}).catch(error=>{
@@ -31047,14 +31227,15 @@ function erpBoardPointerDown(event){
   const origin={x:event.clientX,y:event.clientY,pointerId:event.pointerId,pointerType:event.pointerType||"mouse",orderId,handle,activated:false};
   erpBoardDragState={...origin,sourceStage:handle.closest(".erpOrderCard")?.dataset.stage||"Pedido",targetStage:"",targetOrderId:"",placement:"end",mode:"pointer",active:false};
   clearTimeout(erpBoardPointerTimer);
+  try{handle.setPointerCapture(event.pointerId);}catch(e){}
   if(origin.pointerType==="mouse"){
-    try{handle.setPointerCapture(event.pointerId);}catch(e){}
     return;
   }
+  if(event.cancelable)event.preventDefault();
   erpBoardPointerTimer=setTimeout(()=>{
     if(!erpBoardDragState||erpBoardDragState.pointerId!==origin.pointerId)return;
     erpBoardActivatePointerDrag(origin,origin.x,origin.y);
-  },220);
+  },140);
 }
 
 function erpBoardActivatePointerDrag(origin,clientX,clientY){
@@ -31073,12 +31254,15 @@ function erpBoardPointerMove(event){
   if(!state.active){
     if(state.pointerType==="mouse"&&distance>4){
       if(!erpBoardActivatePointerDrag(state,event.clientX,event.clientY))return;
+    }else if(state.pointerType!=="mouse"&&distance>6){
+      clearTimeout(erpBoardPointerTimer);
+      if(!erpBoardActivatePointerDrag(state,event.clientX,event.clientY))return;
     }else{
-      if(distance>8){clearTimeout(erpBoardPointerTimer);erpBoardDragState=null;}
       return;
     }
   }
   event.preventDefault();
+  erpBoardLastPointer={x:event.clientX,y:event.clientY};
   erpBoardMoveDragOverlay(event.clientX,event.clientY);
   erpBoardAutoScroll(event.clientX,event.clientY);
   const element=document.elementFromPoint(event.clientX,event.clientY);
@@ -31256,7 +31440,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V184:",error);
+    console.error("Falha ao mover demanda V187:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
@@ -32283,6 +32467,23 @@ async function saveErpPayment(event){
 function resetErpSupplyForm(){
   $("erpSupplyForm")?.reset();
   if($("erpSupplyId"))$("erpSupplyId").value="";
+  if($("erpSupplySector")){
+    $("erpSupplySector").value=erpRestrictedStage()||"";
+    $("erpSupplySector").readOnly=isErpSectorRestrictedUser();
+    $("erpSupplySector").setAttribute("aria-readonly",isErpSectorRestrictedUser()?"true":"false");
+  }
+}
+
+function erpSupplyActorName(){
+  return String(currentAuditInfo().name||currentUser?.name||"").trim().toLocaleLowerCase("pt-BR");
+}
+
+function erpSupplyIsOwnedByCurrentUser(item){
+  return Boolean(erpSupplyActorName())&&String(item?.createdBy||"").trim().toLocaleLowerCase("pt-BR")===erpSupplyActorName();
+}
+
+function erpSupplyCanEdit(item){
+  return item?.status==="Solicitado"&&(isWisentAdmin()||erpSupplyIsOwnedByCurrentUser(item));
 }
 
 async function saveErpSupply(event){
@@ -32300,10 +32501,15 @@ async function saveErpSupply(event){
     alert("Esta demanda já foi processada e não pode mais ser editada.");
     return;
   }
+  if(existing&&!isWisentAdmin()&&!erpSupplyIsOwnedByCurrentUser(existing)){
+    alert("Você só pode editar uma solicitação criada pelo seu próprio login.");
+    return;
+  }
+  const requestingSector=isErpSectorRestrictedUser()?erpRestrictedStage():($("erpSupplySector").value||erpUserRole());
   const payload={
     item:$("erpSupplyItem").value.trim(),quantity:qty,unit:$("erpSupplyUnit").value,
     priority:$("erpSupplyPriority").value,note:$("erpSupplyNote").value||"",
-    requesting_sector:$("erpSupplySector").value||erpRestrictedStage()||erpUserRole(),
+    requesting_sector:requestingSector,
     order_id:orderId||null,status:"Solicitado",updated_by:audit.name||""
   };
   let row;
@@ -32323,12 +32529,13 @@ async function saveErpSupply(event){
   erpV174AuditCloud("supply_request",String(row.id),existing?"updated":"created",existing||null,normalized).catch(()=>{});
   resetErpSupplyForm();
   renderErpSupplies();
+  showUndoToast(existing?"Solicitação atualizada e confirmada no Supabase.":"Solicitação publicada e confirmada no Supabase.");
 }
 
 function editErpSupply(id){
   const item=(readErpTestData().supplies||[]).find(row=>String(row.id)===String(id));
   if(!item||item.status!=="Solicitado")return;
-  if(!isWisentAdmin()&&String(item.createdBy||"")!==String(currentUser?.name||"")){
+  if(!erpSupplyCanEdit(item)){
     alert("Você só pode editar uma solicitação publicada por você.");
     return;
   }
@@ -32344,20 +32551,56 @@ function editErpSupply(id){
   $("erpSupplyItem").focus();
 }
 
+async function cancelErpSupply(id){
+  const data=readErpTestData();
+  const item=(data.supplies||[]).find(row=>String(row.id)===String(id));
+  if(!item||!erpSupplyCanEdit(item)){
+    alert("Apenas o autor pode cancelar uma solicitação ainda não processada.");
+    return false;
+  }
+  if(!confirm(`Cancelar a solicitação de ${item.item||"insumo"}?`))return false;
+  const previous={...item};
+  const now=new Date().toISOString();
+  try{
+    await erpV174Patch("wisent_erp_supply_requests",id,{status:"Cancelado",updated_at:now,updated_by:currentAuditInfo().name||""});
+  }catch(error){
+    console.error(error);
+    alert("O cancelamento não foi confirmado no Supabase. A solicitação permaneceu ativa.");
+    return false;
+  }
+  item.status="Cancelado";
+  item.updatedAt=now;
+  erpLocalWriteOnly(data);
+  appendErpAudit("supply_request_cancelled",{id,item:item.item,previousStatus:previous.status});
+  erpV174AuditCloud("supply_request",String(id),"cancelled",previous,item).catch(()=>{});
+  if(String($("erpSupplyId")?.value||"")===String(id))resetErpSupplyForm();
+  renderErpSupplies();
+  showUndoToast("Solicitação cancelada e confirmada no Supabase.");
+  return true;
+}
+
 function renderErpSupplies(){
   const data=readErpTestData();
+  const restrictedStage=erpRestrictedStage();
+  if($("erpSupplySector")){
+    if(restrictedStage)$("erpSupplySector").value=restrictedStage;
+    $("erpSupplySector").readOnly=Boolean(restrictedStage);
+    $("erpSupplySector").setAttribute("aria-readonly",restrictedStage?"true":"false");
+  }
   const filter=$("erpSupplyStatusFilter")?.value||"";
   const rows=(data.supplies||[]).filter(item=>!filter||item.status===filter).sort((a,b)=>String(b.createdAt).localeCompare(String(a.createdAt)));
   if($("erpSupplyOrder")){
     const current=$("erpSupplyOrder").value;
-    $("erpSupplyOrder").innerHTML='<option value="">Nenhum</option>'+data.orders.map(order=>`<option value="${esc(order.id)}">${esc(order.number)} • ${esc(order.client)}</option>`).join("");
+    const availableOrders=restrictedStage?data.orders.filter(order=>String(order.stage||"Pedido")===restrictedStage):data.orders;
+    $("erpSupplyOrder").innerHTML='<option value="">Nenhum</option>'+availableOrders.map(order=>`<option value="${esc(order.id)}">${esc(order.number)} • ${esc(order.client)}</option>`).join("");
     $("erpSupplyOrder").value=current;
   }
   if($("erpSupplySummary"))$("erpSupplySummary").textContent=`${rows.length} demanda(s) • ${rows.filter(row=>row.status!=="Entregue"&&row.status!=="Cancelado").length} em aberto`;
   if($("erpSupplyList"))$("erpSupplyList").innerHTML=rows.length?rows.map(item=>{
-    const canEdit=item.status==="Solicitado"&&(isWisentAdmin()||String(item.createdBy||"")===String(currentUser?.name||""));
+    const canEdit=erpSupplyCanEdit(item);
     const statusClass=erpStandaloneClassToken(item.status);
-    return `<article class="erpSupplyCard priority-${erpStandaloneClassToken(item.priority)} status-${statusClass}"><div class="erpSupplyCardHead"><div><span class="erpSupplyCardEyebrow">${esc(item.priority||"Normal")} • ${esc(item.sector||"Sem setor")}</span><strong>${esc(item.item)}</strong></div><span class="erpSupplyQuantity">${Number(item.qty)} ${esc(item.unit)}</span></div><span class="erpSupplyStatusPill">${esc(item.status||"Solicitado")}</span><p>${esc(item.note||"Sem observação")}</p><small class="erpSupplyMeta"><span>Publicado por ${esc(item.createdBy||"Colaborador")}</span><span>${dateTimeBR(item.createdAt)}${item.buyer?` • Compra: ${esc(item.buyer)}`:""}</span></small><div class="erpSupplyActions"><label>Status ${isWisentAdmin()?`<select onchange="updateErpSupplyStatus('${item.id}',this.value)">${["Solicitado","Em análise","Aprovado","Comprado","Entregue","Cancelado"].map(status=>`<option ${status===item.status?"selected":""}>${status}</option>`).join("")}</select>`:`<b>${esc(item.status)}</b>`}</label>${canEdit?`<button class="small secondary" type="button" onclick="editErpSupply('${item.id}')">Editar</button>`:""}</div></article>`;
+    const related=(data.orders||[]).find(order=>String(order._v2Id||"")===String(item.orderV2Id||""));
+    return `<article class="erpSupplyCard priority-${erpStandaloneClassToken(item.priority)} status-${statusClass}"><div class="erpSupplyCardHead"><div><span class="erpSupplyCardEyebrow">${esc(item.priority||"Normal")} • ${esc(item.sector||"Sem setor")}</span><strong>${esc(item.item)}</strong></div><span class="erpSupplyQuantity">${Number(item.qty)} ${esc(item.unit)}</span></div><span class="erpSupplyStatusPill">${esc(item.status||"Solicitado")}</span><p>${esc(item.note||"Sem observação")}</p>${related?`<small class="erpSupplyRelatedOrder">Pedido ${esc(related.number||related.id)} • ${esc(related.client||"")}</small>`:""}<small class="erpSupplyMeta"><span>Publicado por ${esc(item.createdBy||"Colaborador")}</span><span>${dateTimeBR(item.createdAt)}${item.buyer?` • Compra: ${esc(item.buyer)}`:""}</span></small><div class="erpSupplyActions"><label>Status ${isWisentAdmin()?`<select onchange="updateErpSupplyStatus('${item.id}',this.value)">${["Solicitado","Em análise","Aprovado","Comprado","Entregue","Cancelado"].map(status=>`<option ${status===item.status?"selected":""}>${status}</option>`).join("")}</select>`:`<b>${esc(item.status)}</b>`}</label>${canEdit?`<button class="small secondary" type="button" onclick="editErpSupply('${item.id}')">Editar</button><button class="small danger" type="button" onclick="cancelErpSupply('${item.id}')">Cancelar solicitação</button>`:""}</div></article>`;
   }).join(""):`<div class="erpEmptyCol">Nenhuma demanda neste filtro.</div>`;
 }
 
@@ -32606,7 +32849,7 @@ function renderErpTest(){
   renderErpV2Status();
 
   if(isErpSectorRestrictedUser()){
-    showErpModule("pedidos");
+    showErpModule(currentPage==="suppliesPage"?"insumos":"pedidos");
   }else if(!document.querySelector("[data-erp-module].active")){
     showErpModule("dashboard");
   }
