@@ -12850,6 +12850,152 @@ body[data-page="commissionsPage"] .profileMenuDropdown button:hover{
 }
 /* ===== FIM V176 ===== */
 
+/* ===== V177 PERMISSÕES, DEMANDAS E ESTAMPA ===== */
+.erpOrderCompactSummary{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:7px!important;
+  margin:10px 0 0!important;
+}
+
+.erpOrderCompactSummary span{
+  display:grid!important;
+  min-width:0!important;
+  gap:3px!important;
+  padding:8px!important;
+  border:1px solid rgba(148,163,184,.12)!important;
+  border-radius:10px!important;
+  background:rgba(15,23,42,.55)!important;
+  color:#e2e8f0!important;
+  font-size:11px!important;
+  font-weight:850!important;
+  overflow-wrap:anywhere!important;
+}
+
+.erpOrderCompactSummary b{
+  color:#8fa3bd!important;
+  font-size:9px!important;
+  letter-spacing:.04em!important;
+  text-transform:uppercase!important;
+}
+
+.erpOrderCollapseBtn{
+  display:inline-flex!important;
+  width:auto!important;
+  min-width:38px!important;
+  padding:0 9px!important;
+  gap:5px!important;
+  touch-action:manipulation!important;
+}
+
+.erpOrderCollapseBtn .erpOrderCollapseIcon{
+  font-size:17px!important;
+  line-height:1!important;
+}
+
+.erpOrderCollapseBtn .erpOrderCollapseLabel{
+  display:none!important;
+  font-size:10px!important;
+  font-weight:950!important;
+}
+
+.erpOrderCard.isCollapsed{
+  padding-bottom:12px!important;
+}
+
+.erpOrderCard.isCollapsed .erpOrderExpanded{
+  display:none!important;
+}
+
+.erpOrderCard.isCollapsed .erpOrderCompactSummary{
+  margin-bottom:0!important;
+}
+
+.erpOrderActions .orderPdfBtn{
+  border:1px solid rgba(56,189,248,.32)!important;
+  background:rgba(14,165,233,.11)!important;
+  color:#bae6fd!important;
+  font-weight:950!important;
+}
+
+.erpOrderActions .orderPdfBtn:hover{
+  border-color:rgba(125,211,252,.65)!important;
+  background:rgba(14,165,233,.2)!important;
+}
+
+body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
+  display:inline-flex!important;
+}
+
+.erpArtworkChip.hasImage{
+  position:relative!important;
+  min-height:60px!important;
+  cursor:zoom-in!important;
+  touch-action:manipulation!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+
+.erpArtworkChip.hasImage img{
+  width:52px!important;
+  height:52px!important;
+  pointer-events:none!important;
+}
+
+.erpArtworkChip.hasImage span{
+  pointer-events:none!important;
+}
+
+.erpArtworkChip.hasImage::after{
+  content:"Ver foto"!important;
+}
+
+.erpArtworkViewer{
+  overscroll-behavior:contain!important;
+}
+
+.erpArtworkViewerBox{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+}
+
+.erpArtworkViewerBox>img{
+  width:100%!important;
+  height:auto!important;
+  max-height:72vh!important;
+  object-fit:contain!important;
+  touch-action:pinch-zoom!important;
+  user-select:none!important;
+  -webkit-user-drag:none!important;
+}
+
+.erpArtworkViewerBox.isLoading>img{
+  opacity:.42!important;
+}
+
+.erpArtworkViewerBox.hasError>img{
+  display:none!important;
+}
+
+.erpArtworkViewerBox.hasError #erpArtworkViewerMeta{
+  padding:14px!important;
+  border:1px solid rgba(248,113,113,.28)!important;
+  border-radius:12px!important;
+  background:rgba(239,68,68,.1)!important;
+  color:#fecaca!important;
+}
+
+@media(min-width:761px){
+  .erpOrderCollapseBtn .erpOrderCollapseLabel{display:inline!important}
+}
+
+@media(max-width:520px){
+  .erpOrderCompactSummary{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .erpOrderCompactSummary span{padding:7px 6px!important;font-size:10px!important}
+  .erpArtworkViewerBox{height:94vh!important;max-height:94vh!important}
+  .erpArtworkViewerBox>img{max-height:74vh!important;min-height:260px!important}
+}
+/* ===== FIM V177 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -12939,7 +13085,7 @@ body[data-page="commissionsPage"] .profileMenuDropdown button:hover{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V176</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V177</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14144,7 +14290,7 @@ body[data-page="commissionsPage"] .profileMenuDropdown button:hover{
 
   <div id="erpArtworkViewer" class="erpArtworkViewer noPrint" hidden>
     <div class="erpArtworkViewerBackdrop" onclick="closeErpArtworkViewer()"></div>
-    <div class="erpArtworkViewerBox" role="dialog" aria-modal="true" aria-labelledby="erpArtworkViewerTitle">
+    <div id="erpArtworkViewerBox" class="erpArtworkViewerBox" role="dialog" aria-modal="true" aria-labelledby="erpArtworkViewerTitle">
       <div class="erpArtworkViewerHead">
         <div><small>ESTAMPA DO MODELO</small><h3 id="erpArtworkViewerTitle">Visualização da estampa</h3></div>
         <button type="button" class="secondary" onclick="closeErpArtworkViewer()">Fechar</button>
@@ -15035,7 +15181,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V176";
+const APP_BUILD_VERSION="V177";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -15075,7 +15221,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=176");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=177");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -19038,7 +19184,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V176 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V177 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -24905,7 +25051,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V176",
+    version:"V177",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -25342,7 +25488,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V176";
+  data.version="V177";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -25584,7 +25730,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V176",
+    version:"V177",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -27785,7 +27931,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V176";
+  normalized.version="V177";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -28041,12 +28187,37 @@ function openErpArtworkViewer(trigger){
     return;
   }
   const label=trigger?.dataset?.artworkLabel||row?.dataset?.artworkName||"Estampa vinculada ao modelo";
+  showErpArtworkViewer(src,label);
+}
+
+function openErpOrderArtworkViewer(orderId,productId){
+  const order=(readErpTestData().orders||[]).find(item=>String(item.id)===String(orderId));
+  const product=erpNormalizeOrderProducts(order||{}).find(item=>String(item.id)===String(productId));
+  const src=erpProductArtworkSrc(product);
+  if(!order||!product||!src){
+    alert("A foto desta estampa não está disponível neste aparelho. Edite o pedido e envie a imagem novamente para sincronizá-la.");
+    return;
+  }
+  showErpArtworkViewer(src,erpArtworkLabel(product),`${order.number||"Pedido"} • ${product.model||"Modelo"}`);
+}
+
+function showErpArtworkViewer(src,label,context=""){
   const modal=$("erpArtworkViewer");
   const image=$("erpArtworkViewerImage");
+  const box=$("erpArtworkViewerBox");
   if(!modal||!image)return;
+  if(box){box.classList.add("isLoading");box.classList.remove("hasError");}
+  image.onload=()=>{
+    if(box)box.classList.remove("isLoading","hasError");
+    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent=`${context?`${context} • `:""}Toque ou use o gesto de zoom para conferir os detalhes da arte.`;
+  };
+  image.onerror=()=>{
+    if(box){box.classList.remove("isLoading");box.classList.add("hasError");}
+    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Não foi possível carregar esta foto. Edite o pedido e envie a estampa novamente para renovar a imagem sincronizada.";
+  };
   image.src=src;
   if($("erpArtworkViewerTitle"))$("erpArtworkViewerTitle").textContent=label;
-  if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Use o gesto de zoom do celular para conferir os detalhes da arte.";
+  if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Carregando foto da estampa...";
   modal.hidden=false;
   document.body.style.overflow="hidden";
 }
@@ -28055,7 +28226,9 @@ function closeErpArtworkViewer(){
   const modal=$("erpArtworkViewer");
   if(modal)modal.hidden=true;
   const image=$("erpArtworkViewerImage");
-  if(image)image.removeAttribute("src");
+  if(image){image.onload=null;image.onerror=null;image.removeAttribute("src");}
+  const box=$("erpArtworkViewerBox");
+  if(box)box.classList.remove("isLoading","hasError");
   document.body.style.overflow="";
 }
 
@@ -29443,7 +29616,7 @@ function erpProductBoxes(order,limit=3){
       </div>
       ${product.reference?`<small>${esc(product.reference)}</small>`:""}
       <div class="erpProductColorSummary">${product.colors.map(color=>`<span><b>${esc(color.color||"Sem cor")}</b> ${ERP_SIZES.filter(size=>Number(color.sizes?.[size]||0)>0).map(size=>`${size}:${Number(color.sizes[size])}`).join(" • ")||"0 peças"}</span>`).join("")}</div>
-      ${erpProductHasArtwork(product)?`<button type="button" class="erpArtworkChip hasImage" data-artwork-src="${esc(erpProductArtworkSrc(product))}" data-artwork-label="${esc(erpArtworkLabel(product))}" onclick="openErpArtworkViewer(this)"><img src="${esc(erpProductArtworkSrc(product))}" alt="Estampa do modelo ${esc(product.model||"")}"><span>${esc(erpArtworkLabel(product))}</span></button>`:erpProductHasArtworkReference(product)?`<div class="erpArtworkChip pending"><span>${esc(erpArtworkLabel(product))}</span></div>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
+      ${erpProductHasArtwork(product)?`<button type="button" class="erpArtworkChip hasImage" onclick="openErpOrderArtworkViewer('${order.id}','${product.id}')" aria-label="Visualizar foto da estampa ${esc(erpArtworkLabel(product))}" title="Clique ou toque para ampliar"><img src="${esc(erpProductArtworkSrc(product))}" alt="Estampa do modelo ${esc(product.model||"")}" loading="lazy"><span>${esc(erpArtworkLabel(product))}</span></button>`:erpProductHasArtworkReference(product)?`<button type="button" class="erpArtworkChip pending" onclick="openErpOrderArtworkViewer('${order.id}','${product.id}')"><span>${esc(erpArtworkLabel(product))}</span></button>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
       <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
       ${isCostura?`<div class="erpSewingAssignment">
         <span><b>Costura</b>${esc(product.sewingWorker||"Sem responsável")}</span>
@@ -29533,7 +29706,19 @@ function toggleErpOrderCard(orderId){
   const state=readErpOrderCardCollapse();
   state[orderId]=!state[orderId];
   try{localStorage.setItem(ERP_ORDER_CARD_COLLAPSE_KEY,JSON.stringify(state));}catch(e){}
-  renderErpTest();
+  const card=[...document.querySelectorAll(".erpOrderCard[data-order-id]")].find(item=>String(item.dataset.orderId)===String(orderId));
+  if(!card){renderErpKanban(readErpTestData());return;}
+  const collapsed=!!state[orderId];
+  card.classList.toggle("isCollapsed",collapsed);
+  const button=card.querySelector(".erpOrderCollapseBtn");
+  if(button){
+    button.setAttribute("aria-expanded",String(!collapsed));
+    button.setAttribute("aria-label",`${collapsed?"Expandir":"Minimizar"} pedido`);
+    const icon=button.querySelector(".erpOrderCollapseIcon");
+    const label=button.querySelector(".erpOrderCollapseLabel");
+    if(icon)icon.textContent=collapsed?"+":"−";
+    if(label)label.textContent=collapsed?"Expandir":"Minimizar";
+  }
 }
 
 function erpOrderStageProgress(order){
@@ -29552,29 +29737,34 @@ function erpRenderOrderCard(order,stage,restricted){
   const canReturn=stage!=="Pedido"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
   const urgency=erpProductionUrgencyClass(order);
   const products=erpNormalizeOrderProducts(order);
-  const payment=erpOrderPaymentSummary(order);
+  const payment=isWisentAdmin()?erpOrderPaymentSummary(order):null;
   const collapsed=!!readErpOrderCardCollapse()[order.id];
   const stageLate=!!(order.stageDueAt&&Date.parse(order.stageDueAt)<Date.now()&&stage!=="Finalizado");
 
-  return `<article class="erpOrderCard ${collapsed?"isCollapsed":""} ${stageLate?"stageLate":""} ${erpOrderLate(order)?"late":""} urgency-${urgency}">
+  return `<article class="erpOrderCard ${collapsed?"isCollapsed":""} ${stageLate?"stageLate":""} ${erpOrderLate(order)?"late":""} urgency-${urgency}" data-order-id="${esc(order.id)}">
     <div class="erpOrderTop">
       <strong>${esc(order.number||"-")}</strong>
       <div class="erpOrderBadges">
         <span class="erpOrderTypeBadge ${erpOrderTypeClass(order)}">${esc(erpOrderType(order))}</span>
         <span class="erpPriority ${erpOrderUrgent(order)?"urgent":""}">${esc(order.priority||"Normal")}</span>
-        <button type="button" class="erpOrderCollapseBtn" onclick="toggleErpOrderCard('${order.id}')" aria-label="${collapsed?"Expandir":"Recolher"} pedido">${collapsed?"＋":"−"}</button>
+        <button type="button" class="erpOrderCollapseBtn" onclick="toggleErpOrderCard('${order.id}')" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Minimizar"} pedido"><span class="erpOrderCollapseIcon">${collapsed?"+":"−"}</span><span class="erpOrderCollapseLabel">${collapsed?"Expandir":"Minimizar"}</span></button>
       </div>
     </div>
     <p>${esc(order.client||"-")}</p>
+    <div class="erpOrderCompactSummary">
+      <span><b>Etapa</b>${esc(stage)}</span>
+      <span><b>Peças</b>${erpOrderQtyTotal(order)}</span>
+      <span><b>Prazo</b>${dateBR(String(order.stageDueAt||erpProductionDate(order)).slice(0,10))}</span>
+    </div>
+    <div class="erpOrderExpanded">
     ${erpOrderStageProgress(order)}
     <div class="erpOrderMetaGrid">
       <span><b>Peças</b>${erpOrderQtyTotal(order)}</span>
       <span><b>Modelos</b>${products.length}</span>
       <span><b>Prazo do setor</b>${dateBR(String(order.stageDueAt||erpProductionDate(order)).slice(0,10))}</span>
       <span><b>Etapa</b>${esc(stage)}</span>
-      <span><b>Financeiro</b>${esc(payment.status)} • ${money(payment.pending)}</span>
+      ${payment?`<span class="erpOrderFinanceMeta"><b>Financeiro</b>${esc(payment.status)} • ${money(payment.pending)}</span>`:""}
     </div>
-    <div class="erpOrderExpanded">
     ${erpProductBoxes(order,3)}
     <div class="erpDeadlineRow">
       <span class="erpDeadlineBadge ${urgency}">${esc(erpProductionUrgencyLabel(order))}</span>
@@ -29583,8 +29773,9 @@ function erpRenderOrderCard(order,stage,restricted){
     <small class="erpLastChange">Última alteração: ${esc(erpLastStageChange(order))}</small>
     <div class="erpOrderActions">
       <button class="small orderDetailBtn" onclick="showErpOrderProductsDetail('${order.id}')">Ver detalhes</button>
+      <button class="small secondary orderPdfBtn" onclick="exportErpOrderPDF('${order.id}',this)">Exportar PDF</button>
       ${restricted?"":`<button class="small secondary" onclick="editErpOrder('${order.id}')">Editar</button>`}
-      ${!restricted&&isWisentAdmin()?`<button class="small secondary" onclick="openErpPaymentModal('${order.id}')">Pagamentos</button><button class="small secondary" onclick="exportErpOrderPDF('${order.id}')">Exportar PDF</button>`:""}
+      ${!restricted&&isWisentAdmin()?`<button class="small secondary" onclick="openErpPaymentModal('${order.id}')">Pagamentos</button>`:""}
       ${canReturn?`<button class="small returnStageBtn" onclick="returnErpOrderToPreviousStage('${order.id}')">${restricted?"Devolver etapa":"Voltar etapa"}</button>`:""}
       ${canAdvance?`<button class="small primary" onclick="advanceErpOrder('${order.id}')">${restricted?"Concluir etapa":"Avançar"}</button>`:""}
       ${restricted?"":`<button class="small danger" onclick="deleteErpOrder('${order.id}')">Excluir</button>`}
@@ -30379,11 +30570,19 @@ async function exportErpReportPDF(){
   }
 }
 
-async function exportErpOrderPDF(orderId){
+async function exportErpOrderPDF(orderId,trigger=null){
   const order=(readErpTestData().orders||[]).find(item=>String(item.id)===String(orderId));
-  if(!order||!window.PDFLib)return;
+  if(!order){alert("A demanda não foi encontrada. Atualize a esteira e tente novamente.");return;}
+  if(!window.PDFLib){
+    alert("O gerador de PDF não foi carregado. Envie o arquivo pdf-lib.min.js junto com o index.html e tente novamente.");
+    return;
+  }
+  const button=trigger?.closest?.("button")||trigger;
+  const originalLabel=button?.textContent||"Exportar PDF";
+  if(button){button.disabled=true;button.textContent="Gerando PDF...";}
+  try{
   const client=(readErpTestData().clients||[]).find(item=>String(item.id)===String(order.clientId))||{};
-  const payment=erpOrderPaymentSummary(order);
+  const payment=isWisentAdmin()?erpOrderPaymentSummary(order):null;
   const {PDFDocument,StandardFonts,rgb}=window.PDFLib;
   const pdf=await PDFDocument.create();
   const regular=await pdf.embedFont(StandardFonts.Helvetica);
@@ -30412,14 +30611,25 @@ async function exportErpOrderPDF(orderId){
     });
     y-=5;
   });
-  y-=5;addLine("FINANCEIRO",10,bold,rgb(.12,.38,.82),18);
-  addLine(`Valor total: ${money(payment.total)}  |  Pago: ${money(payment.paid)}  |  Pendente: ${money(payment.pending)}  |  ${payment.status}`,10,bold);
-  addLine(`Percentual pago: ${payment.percent.toFixed(1).replace(".",",")}%${order.financialDueDate?`  |  Vencimento: ${dateBR(order.financialDueDate)}`:""}`);
+  if(payment){
+    y-=5;addLine("FINANCEIRO",10,bold,rgb(.12,.38,.82),18);
+    addLine(`Valor total: ${money(payment.total)}  |  Pago: ${money(payment.paid)}  |  Pendente: ${money(payment.pending)}  |  ${payment.status}`,10,bold);
+    addLine(`Percentual pago: ${payment.percent.toFixed(1).replace(".",",")}%${order.financialDueDate?`  |  Vencimento: ${dateBR(order.financialDueDate)}`:""}`);
+  }
   y-=8;addLine("PRODUÇÃO E OBSERVAÇÕES",10,bold,rgb(.12,.38,.82),18);
   addLine(`Prazo do setor: ${dateBR(String(order.stageDueAt||"").slice(0,10))}  |  Entrega prevista: ${dateBR(order.dueDate)}`);
   addLine(order.notes||"Sem observações.");
   const bytes=await pdf.save();
-  await deliverErpPdf(bytes,`pedido-private-label-${String(order.number||order.id).replace(/[^a-z0-9_-]+/gi,"-")}.pdf`);
+  const fileName=`demanda-private-label-${String(order.number||order.id).replace(/[^a-z0-9_-]+/gi,"-")}.pdf`;
+  const delivery=await deliverErpPdf(bytes,fileName);
+  if(delivery==="downloaded")setErpSyncStatus(`PDF da demanda gerado: ${fileName}`);
+  if(delivery==="shared")setErpSyncStatus("PDF da demanda compartilhado com sucesso");
+  }catch(error){
+    console.error("Falha ao exportar demanda em PDF:",error);
+    alert("Não foi possível gerar o PDF desta demanda. Os dados continuam preservados; tente novamente após atualizar a página.");
+  }finally{
+    if(button){button.disabled=false;button.textContent=originalLabel;}
+  }
 }
 
 function renderErpLabel(){
