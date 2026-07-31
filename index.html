@@ -13448,6 +13448,57 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
 }
 /* ===== FIM V179 ===== */
 
+/* ===== V180 INTERAÇÃO PROFISSIONAL DO BOARD ===== */
+.erpDragHandle{touch-action:none!important}
+.erpKanbanCol.isDropBlocked{
+  border-color:#ef4444!important;
+  background:rgba(127,29,29,.22)!important;
+  box-shadow:0 0 0 2px rgba(239,68,68,.2)!important;
+}
+.erpKanbanCol.isDropBlocked::after{
+  content:"Movimento não permitido";
+  position:sticky;
+  bottom:8px;
+  z-index:8;
+  display:block;
+  margin-top:8px;
+  padding:8px 10px;
+  border:1px solid rgba(248,113,113,.34);
+  border-radius:10px;
+  background:#3b1118;
+  color:#fecaca;
+  font-size:10px;
+  font-weight:700;
+  text-align:center;
+}
+.erpDragOverlay{
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:2147483000;
+  display:grid;
+  width:min(272px,calc(100vw - 24px));
+  gap:3px;
+  padding:12px 14px;
+  border:1px solid rgba(96,165,250,.58);
+  border-left:4px solid #60a5fa;
+  border-radius:14px;
+  background:linear-gradient(155deg,#1e2b43,#121b2c);
+  color:#f8fafc;
+  box-shadow:0 24px 64px rgba(0,0,0,.55);
+  opacity:.96;
+  pointer-events:none;
+  will-change:transform;
+}
+.erpDragOverlay>span{color:#93c5fd;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.erpDragOverlay>strong{font-size:14px;line-height:1.25;overflow-wrap:anywhere}
+.erpDragOverlay>small{color:#a9b8cb;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.erpDragOverlay>i{justify-self:start;margin-top:4px;padding:3px 7px;border-radius:999px;background:rgba(96,165,250,.12);color:#bfdbfe;font-size:9px;font-style:normal;font-weight:700;text-transform:uppercase}
+.erpOrderCard,.erpOrderExpanded{animation:erpBoardCardIn .16s ease-out}
+@keyframes erpBoardCardIn{from{opacity:.72;transform:translateY(-3px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.erpOrderCard,.erpOrderExpanded{animation:none!important}.erpDragOverlay{transition:none!important}}
+/* ===== FIM V180 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -13537,7 +13588,7 @@ body.erpSectorRestricted .erpOrderCard .erpOrderActions .orderPdfBtn{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V179</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V180</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15652,7 +15703,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V179";
+const APP_BUILD_VERSION="V180";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -15692,7 +15743,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=179");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=180");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -19654,7 +19705,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V179 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V180 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25492,6 +25543,7 @@ let erpBoardRenderTimer=null;
 let erpBoardDragState=null;
 let erpBoardPointerTimer=null;
 let erpBoardPointerListenersInstalled=false;
+let erpBoardDragOverlay=null;
 const ERP_TEST_CLOUD_KEY=KEY+"_wisent_erp_test_shared";
 const ERP_TEST_PENDING_KEY=KEY+"_wisent_erp_test_pending_shared";
 const ERP_TEST_SNAPSHOT_KEY=KEY+"_wisent_erp_test_snapshot_shared";
@@ -25530,7 +25582,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V179",
+    version:"V180",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -25967,7 +26019,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V179";
+  data.version="V180";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26220,7 +26272,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V179",
+    version:"V180",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28423,7 +28475,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V179";
+  normalized.version="V180";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -30140,7 +30192,26 @@ function toggleErpOrderCard(orderId){
   const current=card?card.classList.contains("isCollapsed"):erpBoardIsCardCollapsed(orderId);
   state[orderId]=!current;
   erpBoardWriteJson(ERP_BOARD_CARD_COLLAPSE_KEY,state);
-  renderErpKanban(readErpTestData());
+  if(!erpBoardReplaceSingleCard(orderId))renderErpKanban(readErpTestData());
+}
+
+function erpBoardReplaceSingleCard(orderId){
+  const selector=`.erpOrderCard[data-order-id="${CSS.escape(String(orderId))}"]`;
+  const currentCard=document.querySelector(selector);
+  if(!currentCard)return false;
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(item=>String(item.id)===String(orderId));
+  if(!order)return false;
+  const visibleOrders=erpBoardFilteredOrders(data);
+  const template=document.createElement("template");
+  template.innerHTML=erpRenderOrderCard(order,order.stage||"Pedido",isErpSectorRestrictedUser(),visibleOrders.length).trim();
+  const replacement=template.content.firstElementChild;
+  if(!replacement)return false;
+  currentCard.replaceWith(replacement);
+  erpBoardBindDragAndDrop();
+  replacement.querySelector(".erpOrderCollapseBtn")?.focus({preventScroll:true});
+  erpBoardSetState(replacement.classList.contains("isCollapsed")?"Demanda minimizada.":"Demanda expandida.");
+  return true;
 }
 
 function erpBoardSetAllCollapsed(collapsed){
@@ -30429,33 +30500,102 @@ function renderErpKanban(data){
 }
 
 function erpBoardClearDropStyles(){
-  document.querySelectorAll(".erpKanbanCol.isDropTarget,.erpOrderCard.isDropBefore,.erpOrderCard.isDropAfter").forEach(element=>element.classList.remove("isDropTarget","isDropBefore","isDropAfter"));
+  document.querySelectorAll(".erpKanbanCol.isDropTarget,.erpKanbanCol.isDropBlocked,.erpOrderCard.isDropBefore,.erpOrderCard.isDropAfter").forEach(element=>element.classList.remove("isDropTarget","isDropBlocked","isDropBefore","isDropAfter"));
+}
+
+function erpBoardCanDropStage(sourceStage,targetStage){
+  const sourceIndex=ERP_STAGES.indexOf(sourceStage);
+  const targetIndex=ERP_STAGES.indexOf(targetStage);
+  return sourceIndex>=0&&targetIndex>=0&&Math.abs(targetIndex-sourceIndex)<=1;
+}
+
+function erpBoardCreateDragOverlay(card){
+  erpBoardRemoveDragOverlay();
+  const overlay=document.createElement("div");
+  overlay.className="erpDragOverlay";
+  overlay.setAttribute("aria-hidden","true");
+  const title=card.querySelector(".erpDemandTitle strong")?.textContent||"Demanda";
+  const subtitle=card.querySelector(".erpDemandTitle span")?.textContent||"Private Label";
+  const stage=card.dataset.stage||"Pedido";
+  overlay.innerHTML=`<span>Movendo</span><strong>${esc(title)}</strong><small>${esc(subtitle)}</small><i>${esc(stage)}</i>`;
+  document.body.appendChild(overlay);
+  erpBoardDragOverlay=overlay;
+  return overlay;
+}
+
+function erpBoardMoveDragOverlay(clientX,clientY){
+  if(!erpBoardDragOverlay)return;
+  const width=erpBoardDragOverlay.offsetWidth||260;
+  const height=erpBoardDragOverlay.offsetHeight||92;
+  const x=Math.max(8,Math.min(window.innerWidth-width-8,clientX+16));
+  const y=Math.max(8,Math.min(window.innerHeight-height-8,clientY+16));
+  erpBoardDragOverlay.style.transform=`translate3d(${x}px,${y}px,0)`;
+}
+
+function erpBoardRemoveDragOverlay(){
+  erpBoardDragOverlay?.remove();
+  erpBoardDragOverlay=null;
+}
+
+function erpBoardAutoScroll(clientX,clientY){
+  const board=$("erpKanban");
+  if(board){
+    const rect=board.getBoundingClientRect();
+    const edge=Math.min(72,Math.max(42,rect.width*.08));
+    if(clientX<rect.left+edge)board.scrollLeft-=18;
+    else if(clientX>rect.right-edge)board.scrollLeft+=18;
+  }
+  const pointed=document.elementFromPoint(clientX,clientY);
+  const list=pointed?.closest?.(".erpKanbanList");
+  if(list){
+    const rect=list.getBoundingClientRect();
+    if(clientY<rect.top+44)list.scrollTop-=14;
+    else if(clientY>rect.bottom-44)list.scrollTop+=14;
+  }
 }
 
 function erpBoardMarkDropTarget(element,clientY=0){
   erpBoardClearDropStyles();
   const column=element?.closest?.(".erpKanbanCol[data-board-stage]");
   if(!column||!erpBoardDragState)return;
+  const targetStage=column.dataset.boardStage||"";
+  if(!erpBoardCanDropStage(erpBoardDragState.sourceStage,targetStage)){
+    column.classList.add("isDropBlocked");
+    erpBoardDragState.targetStage="";
+    erpBoardDragState.targetOrderId="";
+    erpBoardDragState.placement="end";
+    return;
+  }
   column.classList.add("isDropTarget");
   const card=element.closest?.(".erpOrderCard[data-order-id]");
   let placement="end";
   let targetOrderId="";
+  if(card&&String(card.dataset.orderId)===String(erpBoardDragState.orderId)){
+    erpBoardDragState.targetStage=targetStage;
+    erpBoardDragState.targetOrderId=String(card.dataset.orderId||"");
+    erpBoardDragState.placement="self";
+    return;
+  }
   if(card&&String(card.dataset.orderId)!==String(erpBoardDragState.orderId)){
     const rect=card.getBoundingClientRect();
     placement=clientY&&clientY>rect.top+(rect.height/2)?"after":"before";
     targetOrderId=card.dataset.orderId||"";
     card.classList.add(placement==="after"?"isDropAfter":"isDropBefore");
   }
-  erpBoardDragState.targetStage=column.dataset.boardStage||"";
+  erpBoardDragState.targetStage=targetStage;
   erpBoardDragState.targetOrderId=targetOrderId;
   erpBoardDragState.placement=placement;
 }
 
-function erpBoardStartVisualDrag(orderId,mode="mouse"){
+function erpBoardStartVisualDrag(orderId,mode="mouse",clientX=0,clientY=0){
   const card=document.querySelector(`.erpOrderCard[data-order-id="${CSS.escape(String(orderId))}"]`);
   if(!card)return false;
-  erpBoardDragState={orderId:String(orderId),sourceStage:card.dataset.stage||"Pedido",targetStage:card.dataset.stage||"Pedido",targetOrderId:"",placement:"end",mode,active:true};
+  erpBoardDragState={orderId:String(orderId),sourceStage:card.dataset.stage||"Pedido",targetStage:"",targetOrderId:"",placement:"end",mode,active:true,dropAccepted:false};
   card.classList.add("isDragging");
+  if(mode==="touch"){
+    erpBoardCreateDragOverlay(card);
+    erpBoardMoveDragOverlay(clientX,clientY);
+  }
   erpBoardSetState(`Movendo ${card.querySelector(".erpDemandTitle strong")?.textContent||"demanda"}...`,"saving");
   return true;
 }
@@ -30464,6 +30604,7 @@ function erpBoardFinishVisualDrag(cancelled=false){
   const state=erpBoardDragState?{...erpBoardDragState}:null;
   document.querySelectorAll(".erpOrderCard.isDragging").forEach(card=>card.classList.remove("isDragging"));
   erpBoardClearDropStyles();
+  erpBoardRemoveDragOverlay();
   erpBoardDragState=null;
   if(cancelled||!state){erpBoardSetState("Movimentação cancelada.");return;}
   erpBoardMoveOrder(state.orderId,state.targetStage,state.targetOrderId,state.placement,{confirmStage:true}).catch(error=>{
@@ -30474,6 +30615,8 @@ function erpBoardFinishVisualDrag(cancelled=false){
 
 function erpBoardBindDragAndDrop(){
   document.querySelectorAll(".erpDragHandle[data-drag-order]").forEach(handle=>{
+    if(handle.dataset.erpDragBound==="1")return;
+    handle.dataset.erpDragBound="1";
     handle.addEventListener("dragstart",event=>{
       const orderId=handle.dataset.dragOrder||"";
       if(!erpBoardStartVisualDrag(orderId,"mouse")){event.preventDefault();return;}
@@ -30487,16 +30630,25 @@ function erpBoardBindDragAndDrop(){
     handle.addEventListener("pointerdown",erpBoardPointerDown);
   });
   document.querySelectorAll(".erpKanbanCol[data-board-stage]").forEach(column=>{
+    if(column.dataset.erpDropBound==="1")return;
+    column.dataset.erpDropBound="1";
     column.addEventListener("dragover",event=>{
       if(!erpBoardDragState?.active)return;
       event.preventDefault();
       event.dataTransfer.dropEffect="move";
+      erpBoardAutoScroll(event.clientX,event.clientY);
       erpBoardMarkDropTarget(event.target,event.clientY);
     });
     column.addEventListener("drop",event=>{
       if(!erpBoardDragState?.active)return;
       event.preventDefault();
       erpBoardMarkDropTarget(event.target,event.clientY);
+      if(erpBoardDragState?.targetStage){
+        erpBoardDragState.dropAccepted=true;
+        erpBoardFinishVisualDrag(false);
+      }else{
+        erpBoardFinishVisualDrag(true);
+      }
     });
   });
   if(!erpBoardPointerListenersInstalled){
@@ -30516,7 +30668,7 @@ function erpBoardPointerDown(event){
   clearTimeout(erpBoardPointerTimer);
   erpBoardPointerTimer=setTimeout(()=>{
     if(!erpBoardDragState||erpBoardDragState.pointerId!==origin.pointerId)return;
-    if(erpBoardStartVisualDrag(orderId,"touch")){
+    if(erpBoardStartVisualDrag(orderId,"touch",origin.x,origin.y)){
       erpBoardDragState={...erpBoardDragState,...origin,activated:true,active:true};
       try{handle.setPointerCapture(event.pointerId);}catch(e){}
       if(navigator.vibrate)navigator.vibrate(20);
@@ -30533,6 +30685,8 @@ function erpBoardPointerMove(event){
     return;
   }
   event.preventDefault();
+  erpBoardMoveDragOverlay(event.clientX,event.clientY);
+  erpBoardAutoScroll(event.clientX,event.clientY);
   const element=document.elementFromPoint(event.clientX,event.clientY);
   erpBoardMarkDropTarget(element,event.clientY);
 }
@@ -30689,7 +30843,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V178:",error);
+    console.error("Falha ao mover demanda V180:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
