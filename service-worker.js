@@ -1,4 +1,4 @@
-const WISENT_CACHE="wisent-erp-static-v187";
+const WISENT_CACHE="wisent-erp-static-v188";
 const WISENT_STATIC=["./index.html","./pdf-lib.min.js","./manifest.json"];
 
 self.addEventListener("install",event=>{

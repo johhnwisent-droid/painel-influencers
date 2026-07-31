@@ -13871,7 +13871,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V187</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V188</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15945,12 +15945,10 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V187";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v187";
+const APP_BUILD_VERSION="V188";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v188";
 
 async function clearOldPwaCacheOnce(){
-  const url=new URL(window.location.href);
-  const needsVersionUrl=url.searchParams.get("v")!==APP_BUILD_VERSION;
   let status="ready";
   try{
     const alreadyRecovered=localStorage.getItem(APP_CACHE_RECOVERY_KEY)==="ok";
@@ -15958,25 +15956,14 @@ async function clearOldPwaCacheOnce(){
     if(!alreadyRecovered){
       if("caches" in window){
         const keys=await caches.keys();
-  const obsolete=keys.filter(key=>/wisent|painel/i.test(key)&&!key.includes("v187"));
+        const obsolete=keys.filter(key=>/wisent|painel/i.test(key)&&!key.includes("v188"));
         await Promise.all(obsolete.map(key=>caches.delete(key)));
       }
-
-      if("serviceWorker" in navigator){
-        const regs=await navigator.serviceWorker.getRegistrations();
-        await Promise.all(regs.map(reg=>reg.unregister().catch(error=>console.warn("Service worker antigo não removido:",error))));
-      }
-
       localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
     }
   }catch(e){
-  console.warn("Recuperação segura de cache V187 não concluída:",e);
+    console.warn("Recuperação segura de cache V188 não concluída:",e);
     status="error";
-  }
-  if(needsVersionUrl){
-    url.searchParams.set("v",APP_BUILD_VERSION);
-    window.location.replace(url.toString());
-    return "redirected";
   }
   return status;
 }
@@ -15989,7 +15976,8 @@ function registerPwa(){
     if(cacheStatus==="redirected")return;
 
     try{
-    const reg=await navigator.serviceWorker.register("./service-worker.js?v=187");
+      const hadController=Boolean(navigator.serviceWorker.controller);
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=188");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -16002,9 +15990,9 @@ function registerPwa(){
       });
 
       navigator.serviceWorker.addEventListener("controllerchange",()=>{
-        if(!window.__pwaReloading){
-          window.__pwaReloading=true;
-          window.location.reload();
+        if(hadController&&!window.__pwaControllerNotified){
+          window.__pwaControllerNotified=true;
+          showPwaUpdateToast();
         }
       });
 
@@ -16024,7 +16012,8 @@ function forceVisibleRecovery(reason=""){
     document.body.classList.add("appRecovered");
 
     const login=document.getElementById("loginScreen");
-    const hasSession=!!getSessionUser?.();
+    const recoveredUser=getSessionUser?.()||null;
+    const hasSession=!!recoveredUser;
 
     if(!hasSession){
       if(login){
@@ -16034,7 +16023,8 @@ function forceVisibleRecovery(reason=""){
       const msg=document.getElementById("loginMsg");
       if(msg)msg.textContent="Login carregado. Entre novamente se o app ficou preso no cache.";
     }else{
-      document.body.classList.remove("authLocked");
+      if(!currentUser)setSessionUser(recoveredUser);
+      hideLoginScreen();
       setPageClass(currentPage||"dashboard");
     }
 
@@ -16577,7 +16567,12 @@ function updateAuthVisuals(){
 }
 
 function showLoginScreen(msg="",isError=false){
+  const login=$("loginScreen");
   document.body.classList.add("authLocked");
+  if(login){
+    login.style.removeProperty("display");
+    login.removeAttribute("aria-hidden");
+  }
   const el=$("loginMsg");
   if(el){
     el.textContent=msg||"Entre com seu usuário interno.";
@@ -16589,6 +16584,11 @@ function showLoginScreen(msg="",isError=false){
 
 function hideLoginScreen(){
   document.body.classList.remove("authLocked");
+  const login=$("loginScreen");
+  if(login){
+    login.style.setProperty("display","none","important");
+    login.setAttribute("aria-hidden","true");
+  }
   updateAuthVisuals();
 }
 
@@ -19951,7 +19951,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V187 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V188 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25850,7 +25850,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V187",
+    version:"V188",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26287,7 +26287,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V187";
+  data.version="V188";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26540,7 +26540,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V187",
+    version:"V188",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28743,7 +28743,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V187";
+  normalized.version="V188";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -31440,7 +31440,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V187:",error);
+    console.error("Falha ao mover demanda V188:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
