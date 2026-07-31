@@ -12265,6 +12265,591 @@ body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="erpTest"]{display
 }
 /* ===== FIM V175 ===== */
 
+/* ===== V176 INSUMOS E COMISSÕES — QUADRO PROFISSIONAL ===== */
+body[data-page="suppliesPage"],
+body[data-page="suppliesPage"] .app,
+body[data-page="suppliesPage"] .main,
+body[data-page="suppliesPage"] #erpTest,
+body[data-page="commissionsPage"],
+body[data-page="commissionsPage"] .app,
+body[data-page="commissionsPage"] .main,
+body[data-page="commissionsPage"] #erpTest{
+  background:
+    radial-gradient(circle at 18% -8%,rgba(56,189,248,.12),transparent 34%),
+    radial-gradient(circle at 92% 4%,rgba(139,92,246,.10),transparent 27%),
+    #07101f!important;
+  color:#f8fafc!important;
+}
+
+body[data-page="suppliesPage"] .main,
+body[data-page="commissionsPage"] .main{
+  min-height:100vh!important;
+}
+
+body[data-page="suppliesPage"] .top,
+body[data-page="commissionsPage"] .top{
+  margin:-4px 0 18px!important;
+  padding:18px 20px!important;
+  border:1px solid rgba(148,163,184,.16)!important;
+  border-radius:20px!important;
+  background:rgba(10,19,34,.88)!important;
+  box-shadow:0 18px 50px rgba(0,0,0,.22)!important;
+  backdrop-filter:blur(16px)!important;
+}
+
+body[data-page="suppliesPage"] .top h2,
+body[data-page="commissionsPage"] .top h2{
+  font-size:clamp(22px,3vw,30px)!important;
+  letter-spacing:-.035em!important;
+}
+
+body[data-page="suppliesPage"] #cloudStatus,
+body[data-page="suppliesPage"] .cloudDebug,
+body[data-page="commissionsPage"] #cloudStatus,
+body[data-page="commissionsPage"] .cloudDebug{
+  color:#94a3b8!important;
+}
+
+body[data-page="suppliesPage"] .copyCloudDiagBtn,
+body[data-page="commissionsPage"] .copyCloudDiagBtn{
+  border-color:#31435f!important;
+  background:#111e32!important;
+  color:#b9c8dc!important;
+}
+
+body[data-page="suppliesPage"] .copyCloudDiagBtn:hover,
+body[data-page="commissionsPage"] .copyCloudDiagBtn:hover{
+  border-color:#38bdf8!important;
+  background:#152844!important;
+  color:#e0f2fe!important;
+}
+
+body[data-page="suppliesPage"] .profileMenuTrigger,
+body[data-page="commissionsPage"] .profileMenuTrigger{
+  border-color:#31435f!important;
+  background:#101d31!important;
+  color:#f8fafc!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.2)!important;
+}
+
+body[data-page="suppliesPage"] .profileMenuTrigger:hover,
+body[data-page="commissionsPage"] .profileMenuTrigger:hover{
+  border-color:#466181!important;
+  background:#15253d!important;
+}
+
+body[data-page="suppliesPage"] .profileMenuTrigger #loggedUserName,
+body[data-page="commissionsPage"] .profileMenuTrigger #loggedUserName{
+  color:#f8fafc!important;
+}
+
+body[data-page="suppliesPage"] .profileMenuArrow,
+body[data-page="commissionsPage"] .profileMenuArrow{
+  color:#94a3b8!important;
+}
+
+body[data-page="suppliesPage"] .profileMenuDropdown,
+body[data-page="commissionsPage"] .profileMenuDropdown{
+  border-color:#31435f!important;
+  background:#0c1728!important;
+  box-shadow:0 22px 65px rgba(0,0,0,.38)!important;
+}
+
+body[data-page="suppliesPage"] .profileMenuDropdown button,
+body[data-page="commissionsPage"] .profileMenuDropdown button{
+  border:1px solid #293b57!important;
+  background:#14233a!important;
+  color:#dbe7f5!important;
+}
+
+body[data-page="suppliesPage"] .profileMenuDropdown button:hover,
+body[data-page="commissionsPage"] .profileMenuDropdown button:hover{
+  border-color:#3d587c!important;
+  background:#1a2d49!important;
+  color:#fff!important;
+}
+
+.erpModule[data-erp-panel="insumos"],
+.erpModule[data-erp-panel="comissoes"]{
+  --workspace-bg:#0a1425;
+  --workspace-panel:#101c30;
+  --workspace-card:#16243a;
+  --workspace-card-hover:#1a2b45;
+  --workspace-line:#293b57;
+  --workspace-text:#f8fafc;
+  --workspace-muted:#9fb0c8;
+  display:grid;
+  gap:16px;
+  color:var(--workspace-text)!important;
+}
+
+.erpModule[data-erp-panel="insumos"]>.panel,
+.erpModule[data-erp-panel="comissoes"]>.panel{
+  margin:0!important;
+  padding:20px!important;
+  border:1px solid var(--workspace-line)!important;
+  border-radius:22px!important;
+  background:
+    linear-gradient(145deg,rgba(255,255,255,.025),transparent 55%),
+    var(--workspace-bg)!important;
+  color:var(--workspace-text)!important;
+  box-shadow:0 22px 60px rgba(0,0,0,.22)!important;
+  contain:layout paint!important;
+}
+
+.erpModule[data-erp-panel="insumos"] .panelHead,
+.erpModule[data-erp-panel="comissoes"] .panelHead{
+  align-items:flex-start!important;
+  margin-bottom:18px!important;
+}
+
+.erpModule[data-erp-panel="insumos"] .panelHead h3,
+.erpModule[data-erp-panel="comissoes"] .panelHead h3{
+  color:#fff!important;
+  font-size:20px!important;
+  letter-spacing:-.025em!important;
+}
+
+.erpModule[data-erp-panel="insumos"] .panelHead h3::before,
+.erpModule[data-erp-panel="comissoes"] .panelHead h3::before{
+  content:"";
+  display:inline-block;
+  width:9px;
+  height:9px;
+  margin:0 9px 2px 0;
+  border-radius:50%;
+  background:#38bdf8;
+  box-shadow:0 0 0 5px rgba(56,189,248,.11);
+}
+
+.erpModule[data-erp-panel="comissoes"] .panelHead h3::before{
+  background:#a78bfa;
+  box-shadow:0 0 0 5px rgba(167,139,250,.12);
+}
+
+.erpModule[data-erp-panel="insumos"] .muted,
+.erpModule[data-erp-panel="comissoes"] .muted{
+  color:var(--workspace-muted)!important;
+  line-height:1.5!important;
+}
+
+.erpModule[data-erp-panel="insumos"] input,
+.erpModule[data-erp-panel="insumos"] select,
+.erpModule[data-erp-panel="insumos"] textarea,
+.erpModule[data-erp-panel="comissoes"] input,
+.erpModule[data-erp-panel="comissoes"] select,
+.erpModule[data-erp-panel="comissoes"] textarea{
+  min-height:44px!important;
+  border:1px solid #354966!important;
+  border-radius:12px!important;
+  background:#0b1628!important;
+  color:#f8fafc!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)!important;
+}
+
+.erpModule[data-erp-panel="insumos"] input::placeholder,
+.erpModule[data-erp-panel="comissoes"] input::placeholder{
+  color:#64748b!important;
+}
+
+.erpModule[data-erp-panel="insumos"] input:focus,
+.erpModule[data-erp-panel="insumos"] select:focus,
+.erpModule[data-erp-panel="comissoes"] input:focus,
+.erpModule[data-erp-panel="comissoes"] select:focus{
+  outline:none!important;
+  border-color:#38bdf8!important;
+  box-shadow:0 0 0 3px rgba(56,189,248,.13)!important;
+}
+
+.erpModule[data-erp-panel="insumos"] label,
+.erpModule[data-erp-panel="comissoes"] label{
+  color:#cbd5e1!important;
+}
+
+.erpModule[data-erp-panel="insumos"] button.primary,
+.erpModule[data-erp-panel="comissoes"] button.primary{
+  min-height:44px!important;
+  background:linear-gradient(135deg,#2563eb,#0284c7)!important;
+  color:#fff!important;
+  box-shadow:0 10px 24px rgba(37,99,235,.2)!important;
+}
+
+.erpModule[data-erp-panel="insumos"] button.secondary,
+.erpModule[data-erp-panel="comissoes"] button.secondary{
+  min-height:44px!important;
+  border:1px solid #354966!important;
+  background:#17253a!important;
+  color:#dbeafe!important;
+}
+
+.erpModule[data-erp-panel="insumos"] button:hover,
+.erpModule[data-erp-panel="comissoes"] button:hover{
+  filter:brightness(1.08);
+  transform:translateY(-1px);
+}
+
+.erpSupplyComposer{
+  position:relative;
+  overflow:hidden;
+}
+
+.erpSupplyComposer::after{
+  content:"";
+  position:absolute;
+  top:-90px;
+  right:-70px;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(56,189,248,.13),transparent 68%);
+  pointer-events:none;
+}
+
+.erpSupplyComposer .form{
+  position:relative;
+  z-index:1;
+  padding:16px!important;
+  border:1px solid rgba(56,189,248,.13)!important;
+  border-radius:18px!important;
+  background:rgba(15,30,51,.64)!important;
+}
+
+.erpSupplyBoard{
+  background:
+    linear-gradient(145deg,rgba(56,189,248,.035),transparent 50%),
+    #091426!important;
+}
+
+.erpSupplyBoard .filters select{
+  min-width:190px!important;
+}
+
+.erpSupplyList{
+  grid-template-columns:repeat(auto-fit,minmax(275px,1fr))!important;
+  align-items:start!important;
+  gap:14px!important;
+}
+
+.erpSupplyCard{
+  position:relative!important;
+  overflow:hidden!important;
+  min-height:230px!important;
+  padding:16px!important;
+  gap:13px!important;
+  border:1px solid #2b3d59!important;
+  border-left:0!important;
+  border-radius:16px!important;
+  background:var(--workspace-card)!important;
+  color:#e8eef8!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.18)!important;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease!important;
+}
+
+.erpSupplyCard::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:4px;
+  background:#38bdf8;
+}
+
+.erpSupplyCard:hover{
+  transform:translateY(-2px)!important;
+  border-color:#3f587c!important;
+  background:var(--workspace-card-hover)!important;
+}
+
+.erpSupplyCard.priority-alta::before{background:#f59e0b}
+.erpSupplyCard.priority-urgente::before{background:#ef4444}
+.erpSupplyCard.priority-baixa::before{background:#64748b}
+
+.erpSupplyCardHead{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:start!important;
+  gap:12px!important;
+}
+
+.erpSupplyCardHead>div{
+  display:grid;
+  min-width:0;
+  gap:4px;
+}
+
+.erpSupplyCardHead strong{
+  color:#fff!important;
+  font-size:16px!important;
+  line-height:1.3!important;
+  overflow-wrap:anywhere!important;
+}
+
+.erpSupplyCardEyebrow{
+  color:#7dd3fc!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  letter-spacing:.09em!important;
+  text-transform:uppercase!important;
+}
+
+.erpSupplyQuantity{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  min-width:62px!important;
+  padding:7px 9px!important;
+  border:1px solid rgba(56,189,248,.24)!important;
+  border-radius:10px!important;
+  background:rgba(56,189,248,.1)!important;
+  color:#bae6fd!important;
+  font-size:12px!important;
+  font-weight:950!important;
+  white-space:nowrap!important;
+}
+
+.erpSupplyCard p{
+  min-height:42px!important;
+  padding:11px!important;
+  border:1px solid rgba(148,163,184,.1)!important;
+  border-radius:11px!important;
+  background:rgba(7,16,31,.4)!important;
+  color:#d5dfed!important;
+  line-height:1.5!important;
+}
+
+.erpSupplyMeta{
+  display:grid!important;
+  gap:4px!important;
+  color:#92a6bf!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+}
+
+.erpSupplyStatusPill,
+.erpCommissionStatus{
+  display:inline-flex!important;
+  align-items:center!important;
+  width:max-content!important;
+  padding:5px 9px!important;
+  border:1px solid rgba(56,189,248,.25)!important;
+  border-radius:999px!important;
+  background:rgba(56,189,248,.1)!important;
+  color:#bae6fd!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  text-transform:uppercase!important;
+  letter-spacing:.04em!important;
+}
+
+.status-em-analise .erpSupplyStatusPill,
+.erpCommissionStatus.status-aprovada{border-color:rgba(245,158,11,.32)!important;background:rgba(245,158,11,.11)!important;color:#fde68a!important}
+.status-aprovado .erpSupplyStatusPill,
+.status-aprovada .erpSupplyStatusPill{border-color:rgba(167,139,250,.32)!important;background:rgba(167,139,250,.11)!important;color:#ddd6fe!important}
+.status-comprado .erpSupplyStatusPill,
+.erpCommissionStatus.status-paga{border-color:rgba(52,211,153,.3)!important;background:rgba(52,211,153,.1)!important;color:#a7f3d0!important}
+.status-entregue .erpSupplyStatusPill{border-color:rgba(45,212,191,.3)!important;background:rgba(45,212,191,.1)!important;color:#99f6e4!important}
+.status-cancelado .erpSupplyStatusPill,
+.erpCommissionStatus.status-cancelada,
+.erpCommissionStatus.status-estornada{border-color:rgba(248,113,113,.3)!important;background:rgba(248,113,113,.1)!important;color:#fecaca!important}
+
+.erpSupplyActions{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  align-items:end!important;
+  gap:10px!important;
+  margin-top:auto!important;
+}
+
+.erpSupplyActions label{
+  display:grid!important;
+  gap:5px!important;
+}
+
+.erpSupplyActions select{
+  min-width:0!important;
+}
+
+.erpCommissionWorkspace{
+  background:
+    radial-gradient(circle at 92% 0,rgba(167,139,250,.09),transparent 28%),
+    #0a1425!important;
+}
+
+.erpCommissionFilters{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(150px,1fr))!important;
+  gap:11px!important;
+  padding:16px!important;
+  border:1px solid rgba(167,139,250,.15)!important;
+  border-radius:18px!important;
+  background:rgba(17,29,49,.74)!important;
+}
+
+.erpCommissionFilters label{
+  min-width:0!important;
+}
+
+.erpCommissionFilters button{
+  width:100%!important;
+  align-self:end!important;
+}
+
+.erpCommissionPeriodLabel{
+  display:flex!important;
+  align-items:center!important;
+  min-height:42px!important;
+  margin:12px 0 14px!important;
+  padding:10px 13px!important;
+  border:1px solid rgba(167,139,250,.22)!important;
+  border-radius:12px!important;
+  background:rgba(139,92,246,.09)!important;
+  color:#ddd6fe!important;
+}
+
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:11px!important;
+  margin:0!important;
+}
+
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .card{
+  position:relative!important;
+  min-height:105px!important;
+  padding:15px!important;
+  overflow:hidden!important;
+  border:1px solid #2d405e!important;
+  border-radius:15px!important;
+  background:linear-gradient(145deg,#182842,#111d31)!important;
+  box-shadow:0 10px 26px rgba(0,0,0,.16)!important;
+}
+
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .card::after{
+  content:"";
+  position:absolute;
+  inset:auto -24px -34px auto;
+  width:88px;
+  height:88px;
+  border-radius:50%;
+  background:rgba(56,189,248,.07);
+}
+
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .card:nth-child(4n+2)::after{background:rgba(245,158,11,.08)}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .card:nth-child(4n+3)::after{background:rgba(167,139,250,.08)}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .card:nth-child(4n)::after{background:rgba(52,211,153,.08)}
+
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid small{
+  color:#9fb0c8!important;
+  font-size:11px!important;
+  font-weight:850!important;
+  text-transform:uppercase!important;
+  letter-spacing:.04em!important;
+}
+
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid strong{
+  display:block!important;
+  margin-top:12px!important;
+  color:#fff!important;
+  font-size:clamp(18px,2.4vw,25px)!important;
+  line-height:1.15!important;
+}
+
+.erpCommissionLedger .tableWrap{
+  border:1px solid #2b3e5b!important;
+  border-radius:16px!important;
+  background:#0b1628!important;
+}
+
+.erpCommissionLedger table{
+  background:transparent!important;
+}
+
+.erpCommissionLedger th{
+  background:#111f35!important;
+  color:#aebed2!important;
+  border-color:#293b57!important;
+}
+
+.erpCommissionLedger td{
+  background:#0d192b!important;
+  color:#e5edf8!important;
+  border-color:#22334d!important;
+}
+
+.erpCommissionLedger tbody tr:nth-child(even) td{background:#101d31!important}
+.erpCommissionLedger tbody tr:hover td{background:#172842!important}
+.erpCommissionLedger td select{min-width:125px!important}
+
+@media(max-width:1100px){
+  .erpCommissionFilters{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .erpModule[data-erp-panel="comissoes"] .erpStatsGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+@media(max-width:760px){
+  body[data-page="suppliesPage"] .main,
+  body[data-page="commissionsPage"] .main{padding:14px!important}
+  body[data-page="suppliesPage"] .top,
+  body[data-page="commissionsPage"] .top{padding:14px!important;border-radius:16px!important}
+  .erpModule[data-erp-panel="insumos"]>.panel,
+  .erpModule[data-erp-panel="comissoes"]>.panel{padding:15px!important;border-radius:18px!important}
+  .erpSupplyComposer .form{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:13px!important}
+  .erpSupplyComposer .form .two,
+  .erpSupplyComposer .form .actions{grid-column:1/-1!important}
+  .erpSupplyList{grid-template-columns:1fr!important}
+  .erpSupplyCard{min-height:0!important}
+  .erpCommissionFilters{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding:13px!important}
+  .erpCommissionLedger .tableWrap{border:0!important;background:transparent!important;overflow:visible!important}
+  .erpCommissionLedger table,
+  .erpCommissionLedger tbody,
+  .erpCommissionLedger tr{display:block!important;width:100%!important}
+  .erpCommissionLedger thead{display:none!important}
+  .erpCommissionLedger tr{
+    overflow:hidden!important;
+    margin-bottom:12px!important;
+    border:1px solid #2b3e5b!important;
+    border-radius:15px!important;
+    background:#101d31!important;
+  }
+  .erpCommissionLedger td{
+    display:grid!important;
+    grid-template-columns:minmax(98px,.7fr) minmax(0,1fr)!important;
+    gap:12px!important;
+    align-items:center!important;
+    min-height:48px!important;
+    padding:10px 12px!important;
+    white-space:normal!important;
+    text-align:right!important;
+  }
+  .erpCommissionLedger td::before{
+    color:#8fa4bd!important;
+    font-size:10px!important;
+    font-weight:950!important;
+    letter-spacing:.04em!important;
+    text-align:left!important;
+    text-transform:uppercase!important;
+  }
+  .erpCommissionLedger td:nth-child(1)::before{content:"Venda/Pedido"}
+  .erpCommissionLedger td:nth-child(2)::before{content:"Funcionário"}
+  .erpCommissionLedger td:nth-child(3)::before{content:"Origem"}
+  .erpCommissionLedger td:nth-child(4)::before{content:"Elegível"}
+  .erpCommissionLedger td:nth-child(5)::before{content:"Percentual"}
+  .erpCommissionLedger td:nth-child(6)::before{content:"Comissão"}
+  .erpCommissionLedger td:nth-child(7)::before{content:"Status"}
+  .erpCommissionLedger td:nth-child(8)::before{content:"Ação"}
+  .erpCommissionLedger td[colspan]{display:block!important;text-align:center!important}
+  .erpCommissionLedger td[colspan]::before{display:none!important}
+  .erpCommissionLedger td select{width:100%!important;min-width:0!important}
+}
+
+@media(max-width:460px){
+  .erpSupplyComposer .form,
+  .erpCommissionFilters,
+  .erpModule[data-erp-panel="comissoes"] .erpStatsGrid{grid-template-columns:1fr!important}
+  .erpSupplyCardHead,
+  .erpSupplyActions{grid-template-columns:1fr!important}
+  .erpSupplyQuantity{justify-self:start!important}
+  .erpSupplyActions button{width:100%!important}
+}
+/* ===== FIM V176 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -12354,7 +12939,7 @@ body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="erpTest"]{display
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V175</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V176</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -13941,8 +14526,8 @@ body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="erpTest"]{display
   </div>
 
   <div class="erpModule" data-erp-panel="insumos" hidden>
-    <div class="panel">
-      <div class="panelHead"><div><h3>Insumos para Comprar</h3><span class="muted">Solicitações publicadas pelos colaboradores, com responsável, data, prioridade e andamento.</span></div></div>
+    <div class="panel erpSupplyComposer">
+      <div class="panelHead"><div><h3>Nova solicitação</h3><span class="muted">Informe o insumo necessário. A demanda ficará disponível para acompanhamento imediatamente.</span></div></div>
       <form id="erpSupplyForm" class="form">
         <input type="hidden" id="erpSupplyId">
         <label>Item ou insumo<input id="erpSupplyItem" required placeholder="Ex.: Malha preta"></label>
@@ -13955,14 +14540,14 @@ body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="erpTest"]{display
         <div class="actions two"><button class="primary" type="submit">Publicar demanda</button><button class="secondary" type="button" onclick="resetErpSupplyForm()">Cancelar</button></div>
       </form>
     </div>
-    <div class="panel">
-      <div class="panelHead"><div><h3>Demandas publicadas</h3><span id="erpSupplySummary" class="muted">Carregando solicitações...</span></div><div class="filters"><select id="erpSupplyStatusFilter" onchange="renderErpSupplies()"><option value="">Todos os status</option><option>Solicitado</option><option>Em análise</option><option>Aprovado</option><option>Comprado</option><option>Entregue</option><option>Cancelado</option></select></div></div>
+    <div class="panel erpSupplyBoard">
+      <div class="panelHead"><div><h3>Quadro de demandas</h3><span id="erpSupplySummary" class="muted">Carregando solicitações...</span></div><div class="filters"><select id="erpSupplyStatusFilter" onchange="renderErpSupplies()" aria-label="Filtrar demandas por status"><option value="">Todos os status</option><option>Solicitado</option><option>Em análise</option><option>Aprovado</option><option>Comprado</option><option>Entregue</option><option>Cancelado</option></select></div></div>
       <div id="erpSupplyList" class="erpSupplyList"></div>
     </div>
   </div>
 
   <div class="erpModule" data-erp-panel="comissoes" data-admin-commission-panel hidden>
-    <div class="panel">
+    <div class="panel erpCommissionWorkspace">
       <div class="panelHead"><div><h3>Gestão de Comissões</h3><span class="muted">Cálculos vinculados a vendas reais de Atacado, Varejo e Private Label.</span></div></div>
       <div class="erpCommissionFilters">
         <label>Ano<input id="erpCommissionYear" type="number" readonly aria-readonly="true"></label>
@@ -13994,7 +14579,10 @@ body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="erpTest"]{display
         <div class="card"><small>Pagas</small><strong id="erpCommissionPaid">R$ 0,00</strong></div>
       </div>
     </div>
-    <div class="panel"><div class="tableWrap"><table><thead><tr><th>Venda/Pedido</th><th>Funcionário</th><th>Origem</th><th>Elegível</th><th>%</th><th>Comissão</th><th>Status</th><th>Ações</th></tr></thead><tbody id="erpCommissionRows"></tbody></table></div></div>
+    <div class="panel erpCommissionLedger">
+      <div class="panelHead"><div><h3>Detalhamento das comissões</h3><span class="muted">Confira cada venda considerada, o percentual aplicado e a situação do pagamento.</span></div></div>
+      <div class="tableWrap"><table><thead><tr><th>Venda/Pedido</th><th>Funcionário</th><th>Origem</th><th>Elegível</th><th>%</th><th>Comissão</th><th>Status</th><th>Ações</th></tr></thead><tbody id="erpCommissionRows"></tbody></table></div>
+    </div>
   </div>
 
   <div id="erpPaymentModal" class="erpPaymentModal noPrint" hidden>
@@ -14447,7 +15035,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V175";
+const APP_BUILD_VERSION="V176";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v162";
 
 async function clearOldPwaCacheOnce(){
@@ -14487,7 +15075,7 @@ function registerPwa(){
     await clearOldPwaCacheOnce();
 
     try{
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=175");
+      const reg=await navigator.serviceWorker.register("./service-worker.js?v=176");
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -18450,7 +19038,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-  updateCloudStatus("VERSÃO V175 carregada. Conectando ao Supabase...");
+  updateCloudStatus("VERSÃO V176 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -24317,7 +24905,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V175",
+    version:"V176",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -24754,7 +25342,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V175";
+  data.version="V176";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -24996,7 +25584,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V175",
+    version:"V176",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -27197,7 +27785,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V175";
+  normalized.version="V176";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -30113,7 +30701,8 @@ function renderErpSupplies(){
   if($("erpSupplySummary"))$("erpSupplySummary").textContent=`${rows.length} demanda(s) • ${rows.filter(row=>row.status!=="Entregue"&&row.status!=="Cancelado").length} em aberto`;
   if($("erpSupplyList"))$("erpSupplyList").innerHTML=rows.length?rows.map(item=>{
     const canEdit=item.status==="Solicitado"&&(isWisentAdmin()||String(item.createdBy||"")===String(currentUser?.name||""));
-    return `<article class="erpSupplyCard priority-${String(item.priority).toLowerCase()}"><div><strong>${esc(item.item)}</strong><span>${Number(item.qty)} ${esc(item.unit)} • ${esc(item.priority)}</span></div><p>${esc(item.note||"Sem observação")}</p><small>${esc(item.createdBy||"Colaborador")} • ${dateTimeBR(item.createdAt)} • ${esc(item.sector||"Setor não informado")}${item.buyer?` • Compra: ${esc(item.buyer)}`:""}</small><div class="erpSupplyActions"><label>Status ${isWisentAdmin()?`<select onchange="updateErpSupplyStatus('${item.id}',this.value)">${["Solicitado","Em análise","Aprovado","Comprado","Entregue","Cancelado"].map(status=>`<option ${status===item.status?"selected":""}>${status}</option>`).join("")}</select>`:`<b>${esc(item.status)}</b>`}</label>${canEdit?`<button class="small secondary" type="button" onclick="editErpSupply('${item.id}')">Editar</button>`:""}</div></article>`;
+    const statusClass=erpStandaloneClassToken(item.status);
+    return `<article class="erpSupplyCard priority-${erpStandaloneClassToken(item.priority)} status-${statusClass}"><div class="erpSupplyCardHead"><div><span class="erpSupplyCardEyebrow">${esc(item.priority||"Normal")} • ${esc(item.sector||"Sem setor")}</span><strong>${esc(item.item)}</strong></div><span class="erpSupplyQuantity">${Number(item.qty)} ${esc(item.unit)}</span></div><span class="erpSupplyStatusPill">${esc(item.status||"Solicitado")}</span><p>${esc(item.note||"Sem observação")}</p><small class="erpSupplyMeta"><span>Publicado por ${esc(item.createdBy||"Colaborador")}</span><span>${dateTimeBR(item.createdAt)}${item.buyer?` • Compra: ${esc(item.buyer)}`:""}</span></small><div class="erpSupplyActions"><label>Status ${isWisentAdmin()?`<select onchange="updateErpSupplyStatus('${item.id}',this.value)">${["Solicitado","Em análise","Aprovado","Comprado","Entregue","Cancelado"].map(status=>`<option ${status===item.status?"selected":""}>${status}</option>`).join("")}</select>`:`<b>${esc(item.status)}</b>`}</label>${canEdit?`<button class="small secondary" type="button" onclick="editErpSupply('${item.id}')">Editar</button>`:""}</div></article>`;
   }).join(""):`<div class="erpEmptyCol">Nenhuma demanda neste filtro.</div>`;
 }
 
@@ -30159,6 +30748,15 @@ function populateErpCommissionEmployees(){
     $("erpCommissionEmployeeFilter").innerHTML='<option value="">Todos</option>'+options;
     $("erpCommissionEmployeeFilter").value=current;
   }
+}
+
+function erpStandaloneClassToken(value){
+  return String(value||"")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-+|-+$/g,"");
 }
 
 async function recalculateErpCommissions(options={}){
@@ -30268,7 +30866,7 @@ function renderErpCommissions(){
       ?`Período personalizado: ${rangeStart?dateBR(rangeStart):"início"} até ${rangeEnd?dateBR(rangeEnd):"hoje"}.`
       :`Mês completo: ${monthLabel(competence)}.`;
   }
-  $("erpCommissionRows").innerHTML=rows.length?rows.map(row=>`<tr><td>${esc(row.source_id)}</td><td>${esc(row.seller_name)}</td><td>${esc(row.source_origin)}</td><td>${money(row.eligible_value)}</td><td>${Number(row.percentage).toFixed(2)}%</td><td><strong>${money(row.commission_value)}</strong></td><td>${esc(row.status)}</td><td><select onchange="updateErpCommissionStatus('${row.id}',this.value)">${["Pendente","Aprovada","Paga","Cancelada","Estornada"].map(value=>`<option ${value===row.status?"selected":""}>${value}</option>`).join("")}</select></td></tr>`).join(""):`<tr><td colspan="8">Nenhuma comissão no período.</td></tr>`;
+  $("erpCommissionRows").innerHTML=rows.length?rows.map(row=>`<tr class="status-${erpStandaloneClassToken(row.status)}"><td>${esc(row.source_id)}</td><td>${esc(row.seller_name)}</td><td>${esc(row.source_origin)}</td><td>${money(row.eligible_value)}</td><td>${Number(row.percentage).toFixed(2)}%</td><td><strong>${money(row.commission_value)}</strong></td><td><span class="erpCommissionStatus status-${erpStandaloneClassToken(row.status)}">${esc(row.status)}</span></td><td><select aria-label="Alterar status da comissão" onchange="updateErpCommissionStatus('${row.id}',this.value)">${["Pendente","Aprovada","Paga","Cancelada","Estornada"].map(value=>`<option ${value===row.status?"selected":""}>${value}</option>`).join("")}</select></td></tr>`).join(""):`<tr><td colspan="8">Nenhuma comissão no período.</td></tr>`;
 }
 
 function clearErpCommissionCustomRange(){
