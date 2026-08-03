@@ -16342,8 +16342,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V197";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v197";
+const APP_BUILD_VERSION="V198";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v198";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
@@ -16372,9 +16372,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=197",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=198",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=197");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=198");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -17954,7 +17954,7 @@ function wholesaleRecordFromTableRow(row){
   return {
     ...payload,
     id:legacyId,
-    date:payload.date||row.sale_date||today(),
+    date:normalizeDateOnly(row.sale_date||payload.date)||today(),
     saleType:payload.saleType||row.sale_type||"Varejo",
     orderStatus:payload.orderStatus||row.order_status||"Efetuado",
     createdAt:row.created_at||payload.createdAt||"",
@@ -18139,7 +18139,19 @@ function applyWholesaleCloudRecords(records,{syncStartedAt=0}={}){
   const newerDuringSync=current.filter(item=>{
     const id=String(item?.id||"");
     if(!id||cloudIds.has(id)||pendingIds.has(id)||pendingDeletes.has(id))return false;
-    return syncStartedAt>0&&wholesaleRecordTime(item)>syncStartedAt;
+
+    /*
+      Proteção V198:
+      uma leitura da nuvem pode ter começado antes da confirmação do lançamento
+      recém-salvo. Nesse intervalo, a fila pode ser esvaziada e a resposta antiga
+      ainda não conter a nova linha. Preserve o registro local confirmado até que
+      uma leitura posterior traga a mesma linha oficialmente.
+    */
+    const unsyncedVersion=Number(item?._wholesaleVersion||0)===0;
+    const isLastSaved=String(lastSavedWholesaleId||"")===id&&(Date.now()-wholesaleRecordTime(item))<120000;
+    const savedNearSync=syncStartedAt>0&&wholesaleRecordTime(item)>=(syncStartedAt-10000);
+
+    return unsyncedVersion||isLastSaved||savedNearSync;
   });
 
   const merged=mergeWholesaleCollections(cloudItems,pendingItems,newerDuringSync)
@@ -34959,7 +34971,7 @@ if($("wholesaleForm")){
     const id=$("wholesaleId").value||uid();
     const existingWholesale=(state.wholesaleRetail||[]).find(w=>w.id===id);
     const audit=currentAuditInfo();
-    const date=$("wholesaleDate").value||today();
+    const date=normalizeDateOnly($("wholesaleDate").value)||today();
 
     const item={
       id,
@@ -35083,16 +35095,25 @@ if($("wholesaleForm")){
     clearWholesaleFormDraft();
     updateCloudStatus("Pendente • confirmando lançamento de Atacado e Varejo no Supabase",true);
     showUndoToast("Lançamento preservado na fila. Confirmando no Supabase...");
-    flushWholesalePendingQueue()
+    /*
+      V198: usa um único fluxo serializado (enviar -> confirmar -> reler).
+      Evita a corrida em que uma leitura antiga da tabela removia visualmente
+      o lançamento recém-criado antes de o INSERT aparecer na consulta.
+    */
+    syncWholesaleLaunchRecordsFromCloud({showStatus:false})
       .then(ok=>{
-        if(ok){
+        if(ok&&!readWholesalePendingQueue().length){
           updateCloudStatus("Salvo • lançamento confirmado no Supabase");
           showUndoToast("Lançamento confirmado e compartilhado com todos.");
-          return syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+          showSavedWholesaleLaunch(id);
+          return;
         }
         showUndoToast("Lançamento pendente; será reenviado automaticamente.");
       })
-      .catch(()=>{});
+      .catch(error=>{
+        console.warn("Lançamento preservado localmente; sincronização pendente:",error);
+        showUndoToast("Lançamento preservado; aguardando confirmação do Supabase.");
+      });
 
     resetWholesaleRetailForm();
 
