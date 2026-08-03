@@ -13859,6 +13859,147 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V190 ===== */
 
+/* ===== V191: cards e imagens mobile ===== */
+.erpOrderCard,
+.erpOrderCard *{box-sizing:border-box}
+.erpOrderCard{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
+.erpDemandHeader{min-width:0}
+.erpDemandTitle{min-width:0;overflow:hidden}
+.erpDemandTitle strong,
+.erpDemandTitle span{display:block!important;max-width:100%!important;white-space:normal!important;overflow-wrap:anywhere!important;word-break:normal!important}
+.erpDemandTitle strong{line-height:1.25}
+.erpDemandTitle span{line-height:1.35}
+.erpDemandHeaderTools{min-width:0}
+.erpDemandBadges{min-width:0!important;flex-wrap:wrap!important}
+.erpDemandBadge{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.erpOrderCompactSummary{min-width:0}
+.erpOrderCompactSummary>span,
+.erpDemandSummaryGrid>span{min-width:0!important;overflow-wrap:anywhere!important}
+.erpOrderCompactSummary>span b,
+.erpDemandSummaryGrid>span b{display:block}
+.erpOrderExpanded,
+.erpDemandSection,
+.erpKanbanProductBox,
+.erpDemandFooter{min-width:0;max-width:100%}
+.erpDemandNotes{white-space:pre-wrap;overflow-wrap:anywhere}
+.erpArtworkChip{max-width:100%;min-width:0;overflow:hidden}
+.erpArtworkChip.hasImage{display:grid!important;grid-template-columns:56px minmax(0,1fr)!important;grid-template-rows:auto auto!important;align-items:center!important;text-align:left!important}
+.erpArtworkChip.hasImage img{grid-row:1 / 3!important;width:56px!important;height:56px!important;max-width:56px!important;border-radius:9px!important;object-fit:contain!important;background:#07101f!important}
+.erpArtworkChip.hasImage span{min-width:0;white-space:normal;overflow-wrap:anywhere}
+.erpArtworkChip.hasImage small{color:#93c5fd;font-size:10px;font-weight:700}
+
+.erpOrderArtworkGallery{min-width:0;max-width:100%;overflow:hidden}
+.erpOrderArtworkGallery>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-width:100%;overflow:visible;padding:0;scroll-snap-type:none}
+.erpOrderArtworkGallery button{position:relative;display:grid;grid-template-columns:50px minmax(0,1fr);grid-template-rows:auto auto;width:100%;min-width:0;max-width:none;min-height:58px;padding:4px 7px 4px 4px;gap:2px 7px;overflow:hidden;touch-action:manipulation}
+.erpOrderArtworkGallery img{grid-row:1 / 3;width:50px;height:50px;border-radius:8px;object-fit:contain!important;background:#07101f}
+.erpOrderArtworkGallery button span{align-self:end;min-width:0;white-space:normal;overflow-wrap:anywhere;line-height:1.2}
+.erpOrderArtworkGallery button small{align-self:start;color:#93c5fd;font-size:9px;font-weight:750;letter-spacing:.02em}
+.erpOrderArtworkGallery button::after{content:"↗";position:absolute;right:5px;top:4px;color:#bfdbfe;font-size:10px;opacity:.8}
+
+.erpArtworkViewer{padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));background:transparent}
+.erpArtworkViewerBackdrop{background:rgba(2,6,23,.92);backdrop-filter:blur(6px)}
+.erpArtworkViewerBox{position:relative;z-index:1;display:grid;grid-template-rows:auto minmax(0,1fr) auto;width:min(1100px,96vw);height:min(92dvh,850px);max-width:1100px;max-height:92dvh;margin:0;padding:12px;border:1px solid rgba(148,163,184,.28);border-radius:18px;background:#07101f;box-shadow:0 24px 80px rgba(0,0,0,.5);overflow:hidden}
+.erpArtworkViewerHead{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0;margin:0 0 10px}
+.erpArtworkViewerHead>div:first-child{min-width:0}
+.erpArtworkViewerHead h3{max-width:100%;margin:2px 0 0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:16px}
+.erpArtworkViewerTools{display:flex;align-items:center;gap:5px;flex:0 0 auto}
+.erpArtworkViewerTools button{display:inline-grid;place-items:center;width:44px;min-width:44px;height:44px;min-height:44px;padding:0;border:1px solid rgba(148,163,184,.28);border-radius:10px;background:#132239;color:#f8fafc;font-size:18px;font-weight:800;line-height:1;touch-action:manipulation}
+.erpArtworkViewerTools button:hover,
+.erpArtworkViewerTools button:focus-visible{border-color:#60a5fa;background:#1b3151;outline:2px solid rgba(96,165,250,.34);outline-offset:1px}
+.erpArtworkViewerTools #erpArtworkViewerZoomLabel{width:auto;min-width:58px;padding:0 9px;font-size:12px}
+.erpArtworkViewerTools .erpArtworkViewerClose{border-color:rgba(248,113,113,.4);background:#3b1720;color:#fecaca;font-size:28px}
+.erpArtworkViewerCanvas{position:relative;display:grid;place-items:center;min-width:0;min-height:0;width:100%;height:100%;overflow:hidden;border:1px solid rgba(148,163,184,.16);border-radius:12px;background:#020617;touch-action:none;overscroll-behavior:contain;cursor:zoom-in;user-select:none}
+.erpArtworkViewerCanvas.isZoomed{cursor:grab}
+.erpArtworkViewerCanvas.isZoomed:active{cursor:grabbing}
+.erpArtworkViewerCanvas img{display:block;width:auto;height:auto;max-width:100%;max-height:100%;object-fit:contain;object-position:center;transform-origin:center center;will-change:transform;-webkit-user-drag:none;user-select:none}
+.erpArtworkViewerLoading{position:absolute;inset:0;z-index:2;display:none;place-items:center;align-content:center;gap:10px;padding:20px;background:rgba(2,6,23,.86);color:#cbd5e1;font-size:13px;text-align:center;pointer-events:none}
+.erpArtworkViewerLoading span{width:28px;height:28px;border:3px solid rgba(148,163,184,.25);border-top-color:#60a5fa;border-radius:50%;animation:erpArtworkViewerSpin .8s linear infinite}
+.erpArtworkViewerBox.isLoading .erpArtworkViewerLoading{display:grid}
+.erpArtworkViewerBox.hasError .erpArtworkViewerCanvas img{display:none}
+.erpArtworkViewerBox.hasError .erpArtworkViewerCanvas::after{content:"Não foi possível abrir esta imagem.";display:block;max-width:280px;padding:16px;color:#fecaca;font-size:13px;text-align:center}
+.erpArtworkViewerBox>p{min-height:18px;margin:8px 2px 0;color:#94a3b8;font-size:12px;line-height:1.35}
+@keyframes erpArtworkViewerSpin{to{transform:rotate(360deg)}}
+
+@media(max-width:760px){
+  .erpKanbanBoard,
+  #erpKanban{max-width:100%}
+  .erpKanbanCol:not(.isCollapsed){flex:0 0 min(100%,calc(100vw - 20px))!important;width:min(100%,calc(100vw - 20px))!important;min-width:min(100%,calc(100vw - 20px))!important;max-width:calc(100vw - 20px)!important}
+  .erpKanbanList{min-width:0;padding:7px}
+  .erpOrderCard{width:100%!important;max-width:100%!important;padding:9px!important;border-radius:13px!important}
+  .erpDemandHeader{grid-template-columns:44px minmax(0,1fr) auto!important;gap:7px!important;align-items:start!important}
+  .erpDemandHeaderTools{grid-column:auto!important;justify-content:flex-end!important}
+  .erpDemandHeaderTools .erpOrderCollapseBtn{width:auto!important;min-width:82px!important;height:44px!important;min-height:44px!important;padding:0 8px!important}
+  .erpDragHandle,
+  .erpOrderCollapseBtn,
+  .erpCardMenuToggle{min-width:44px!important;min-height:44px!important}
+  .erpOrderCollapseBtn{padding:0 8px}
+  .erpOrderCollapseLabel{font-size:10px}
+  .erpDemandTitle strong{font-size:14px}
+  .erpDemandTitle span{margin-top:3px;font-size:11px}
+  .erpDemandBadges{gap:5px;margin-top:6px}
+  .erpDemandBadge{font-size:9px}
+  .erpOrderCompactSummary{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important;margin-top:7px!important}
+  .erpOrderCompactSummary>span{min-height:42px;padding:6px 7px;font-size:11px;line-height:1.25}
+  .erpOrderCompactSummary>span b{margin-bottom:2px;font-size:9px}
+  .erpArtworkIndicator{grid-column:1 / -1!important}
+  .erpOrderArtworkGallery{margin-top:6px;padding:7px}
+  .erpOrderArtworkGallery>div{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .erpOrderArtworkGallery button{min-height:56px}
+  .erpOrderExpanded{gap:7px;margin-top:7px}
+  .erpDemandSection{padding:8px;border-radius:10px}
+  .erpDemandSectionTitle{gap:5px;font-size:11px;flex-wrap:wrap}
+  .erpDemandSummaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:5px!important}
+  .erpDemandSummaryGrid>span{padding:6px;font-size:11px}
+  .erpKanbanProductBox{padding:8px}
+  .erpArtworkChip.hasImage{grid-template-columns:52px minmax(0,1fr)!important}
+  .erpArtworkChip.hasImage img{width:52px!important;height:52px!important}
+  .erpDemandFooter{gap:7px}
+  .erpDemandFooter>.small,
+  .erpDemandFooter>.primary,
+  .erpDemandFooter button{min-height:44px}
+  .erpArtworkViewer{padding:0}
+  .erpArtworkViewerBox,
+  body.erpSectorRestricted .erpArtworkViewerBox{width:100%!important;height:100dvh!important;max-width:100%!important;max-height:100dvh!important;padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left))!important;border:0!important;border-radius:0!important}
+  .erpArtworkViewerHead{gap:6px;margin-bottom:7px}
+  .erpArtworkViewerHead small{font-size:8px}
+  .erpArtworkViewerHead h3{font-size:14px}
+  .erpArtworkViewerTools{gap:3px}
+  .erpArtworkViewerTools button{width:44px;min-width:44px;height:44px}
+  .erpArtworkViewerTools #erpArtworkViewerZoomLabel{display:none}
+  .erpArtworkViewerCanvas{border-radius:9px}
+  .erpArtworkViewerBox>p{margin-top:6px;font-size:11px}
+}
+
+@media(max-width:360px){
+  .erpKanbanList{padding:5px}
+  .erpOrderCard{padding:8px!important}
+  .erpDemandHeader{grid-template-columns:42px minmax(0,1fr) 42px!important;gap:5px!important}
+  .erpDragHandle,
+  .erpOrderCollapseBtn{min-width:42px;width:42px;padding:0}
+  .erpDemandHeaderTools .erpOrderCollapseBtn{width:44px!important;min-width:44px!important;padding:0!important}
+  .erpOrderCollapseLabel{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .erpOrderArtworkGallery button{grid-template-columns:44px minmax(0,1fr);padding-right:5px}
+  .erpOrderArtworkGallery img{width:44px;height:48px}
+  .erpOrderArtworkGallery button span{font-size:10px}
+  .erpArtworkViewerHead>div:first-child{display:none}
+  .erpArtworkViewerTools{width:100%;justify-content:flex-end}
+}
+
+@media(max-height:500px) and (orientation:landscape){
+  .erpArtworkViewerBox,
+  body.erpSectorRestricted .erpArtworkViewerBox{height:100dvh;max-height:100dvh;padding-top:max(6px,env(safe-area-inset-top));padding-bottom:max(6px,env(safe-area-inset-bottom))}
+  .erpArtworkViewerHead{margin-bottom:4px}
+  .erpArtworkViewerHead small{display:none}
+  .erpArtworkViewerTools button{height:44px;min-height:44px}
+  .erpArtworkViewerBox>p{margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .erpArtworkViewerLoading span{animation-duration:1.5s}
+  .erpArtworkViewerCanvas img{transition:none}
+}
+/* ===== FIM V191 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -13949,7 +14090,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V190</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V191</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15112,13 +15253,21 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   </div>
 
   <div id="erpArtworkViewer" class="erpArtworkViewer noPrint" hidden>
-    <div class="erpArtworkViewerBackdrop" onclick="closeErpArtworkViewer()"></div>
+    <div class="erpArtworkViewerBackdrop" onclick="closeErpArtworkViewer()" aria-hidden="true"></div>
     <div id="erpArtworkViewerBox" class="erpArtworkViewerBox" role="dialog" aria-modal="true" aria-labelledby="erpArtworkViewerTitle">
       <div class="erpArtworkViewerHead">
         <div><small>ESTAMPA DO MODELO</small><h3 id="erpArtworkViewerTitle">Visualização da estampa</h3></div>
-        <button type="button" class="secondary" onclick="closeErpArtworkViewer()">Fechar</button>
+        <div class="erpArtworkViewerTools" aria-label="Controles da imagem">
+          <button type="button" onclick="erpArtworkViewerZoomBy(-0.25)" aria-label="Diminuir imagem" title="Diminuir">−</button>
+          <button id="erpArtworkViewerZoomLabel" type="button" onclick="erpArtworkViewerResetZoom()" aria-label="Restaurar tamanho da imagem" title="Restaurar tamanho">100%</button>
+          <button type="button" onclick="erpArtworkViewerZoomBy(0.25)" aria-label="Ampliar imagem" title="Ampliar">＋</button>
+          <button id="erpArtworkViewerClose" type="button" class="erpArtworkViewerClose" onclick="closeErpArtworkViewer()" aria-label="Fechar visualizador de imagem" title="Fechar">×</button>
+        </div>
       </div>
-      <img id="erpArtworkViewerImage" alt="Imagem ampliada da estampa">
+      <div id="erpArtworkViewerCanvas" class="erpArtworkViewerCanvas" aria-label="Área da imagem. Use pinça, roda do mouse ou os botões para ampliar.">
+        <div class="erpArtworkViewerLoading" role="status"><span></span>Carregando imagem…</div>
+        <img id="erpArtworkViewerImage" alt="Imagem ampliada da estampa" draggable="false">
+      </div>
       <p id="erpArtworkViewerMeta">Imagem vinculada ao pedido.</p>
     </div>
   </div>
@@ -16023,7 +16172,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V190";
+const APP_BUILD_VERSION="V191";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v188";
 
 async function clearOldPwaCacheOnce(){
@@ -16040,7 +16189,7 @@ async function clearOldPwaCacheOnce(){
       localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
     }
   }catch(e){
-    console.warn("Recuperação segura de cache V190 não concluída:",e);
+    console.warn("Recuperação segura de cache V191 não concluída:",e);
     status="error";
   }
   return status;
@@ -20029,7 +20178,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V190 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V191 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25947,7 +26096,7 @@ const ERP_REALTIME_CORE_TABLE="wisent_erp_v2_orders";
 
 function defaultErpTestState(){
   return {
-    version:"V190",
+    version:"V191",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26384,7 +26533,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V190";
+  data.version="V191";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26637,7 +26786,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V190",
+    version:"V191",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -29156,7 +29305,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V190";
+  normalized.version="V191";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -29400,6 +29549,10 @@ function erpProductArtworkSrc(product){
   return String(product?.artworkImage||product?.artworkUrl||product?.artworkURL||erpArtworkStoragePublicUrl(product?.artworkStoragePath)||"").trim();
 }
 
+function erpProductArtworkOriginalSrc(product){
+  return String(product?.artworkUrl||product?.artworkURL||erpArtworkStoragePublicUrl(product?.artworkStoragePath)||product?.artworkImage||"").trim();
+}
+
 function erpProductHasArtworkReference(product){
   return erpProductHasArtwork(product)||!!product?.artworkOmittedFromCloud||!!String(product?.artworkName||"").trim();
 }
@@ -29424,18 +29577,18 @@ function openErpArtworkViewer(trigger){
     return;
   }
   const label=trigger?.dataset?.artworkLabel||row?.dataset?.artworkName||"Estampa vinculada ao modelo";
-  showErpArtworkViewer(src,label);
+  showErpArtworkViewer(src,label,"",trigger);
 }
 
-function openErpOrderArtworkViewer(orderId,productId){
+function openErpOrderArtworkViewer(orderId,productId,trigger=null){
   const order=(readErpTestData().orders||[]).find(item=>String(item.id)===String(orderId));
   const product=erpNormalizeOrderProducts(order||{}).find(item=>String(item.id)===String(productId));
-  const src=erpProductArtworkSrc(product);
+  const src=erpProductArtworkOriginalSrc(product);
   if(!order||!product||!src){
     alert("A foto desta estampa não está disponível neste aparelho. Edite o pedido e envie a imagem novamente para sincronizá-la.");
     return;
   }
-  showErpArtworkViewer(src,erpArtworkLabel(product),`${order.number||"Pedido"} • ${product.model||"Modelo"}`);
+  showErpArtworkViewer(src,erpArtworkLabel(product),`${order.number||"Pedido"} • ${product.model||"Modelo"}`,trigger);
 }
 
 function erpOrderArtworkGallery(order,products=erpNormalizeOrderProducts(order)){
@@ -29443,39 +29596,262 @@ function erpOrderArtworkGallery(order,products=erpNormalizeOrderProducts(order))
   if(!available.length)return "";
   return `<div class="erpOrderArtworkGallery" aria-label="Imagens dos modelos do pedido">
     <span class="erpOrderArtworkGalleryLabel">Imagens dos modelos</span>
-    <div>${available.map((product,index)=>`<button type="button" onclick="openErpOrderArtworkViewer('${order.id}','${product.id}')" aria-label="Visualizar imagem do modelo ${esc(product.model||String(index+1))}" title="Abrir imagem de ${esc(product.model||`Modelo ${index+1}`)}"><img src="${esc(erpProductArtworkSrc(product))}" alt="Imagem do modelo ${esc(product.model||String(index+1))}" loading="lazy"><span>${esc(product.model||`Modelo ${index+1}`)}</span></button>`).join("")}</div>
+    <div>${available.map((product,index)=>`<button type="button" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget)" aria-label="Visualizar imagem do modelo ${esc(product.model||String(index+1))}" title="Abrir imagem de ${esc(product.model||`Modelo ${index+1}`)}"><img src="${esc(erpProductArtworkSrc(product))}" alt="Imagem do modelo ${esc(product.model||String(index+1))}" loading="lazy"><span>${esc(product.model||`Modelo ${index+1}`)}</span><small aria-hidden="true">Ampliar</small></button>`).join("")}</div>
   </div>`;
 }
 
-function showErpArtworkViewer(src,label,context=""){
-  const modal=$("erpArtworkViewer");
-  const image=$("erpArtworkViewerImage");
-  const box=$("erpArtworkViewerBox");
-  if(!modal||!image)return;
-  if(box){box.classList.add("isLoading");box.classList.remove("hasError");}
-  image.onload=()=>{
-    if(box)box.classList.remove("isLoading","hasError");
-    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent=`${context?`${context} • `:""}Toque ou use o gesto de zoom para conferir os detalhes da arte.`;
-  };
-  image.onerror=()=>{
-    if(box){box.classList.remove("isLoading");box.classList.add("hasError");}
-    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Não foi possível carregar esta foto. Edite o pedido e envie a estampa novamente para renovar a imagem sincronizada.";
-  };
-  image.src=src;
-  if($("erpArtworkViewerTitle"))$("erpArtworkViewerTitle").textContent=label;
-  if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Carregando foto da estampa...";
-  modal.hidden=false;
-  document.body.style.overflow="hidden";
+const erpArtworkViewerState={
+  open:false,
+  openingSrc:"",
+  scale:1,
+  x:0,
+  y:0,
+  pointers:new Map(),
+  pinchDistance:0,
+  pinchScale:1,
+  panStartX:0,
+  panStartY:0,
+  panOriginX:0,
+  panOriginY:0,
+  moved:false,
+  trigger:null,
+  scrollX:0,
+  scrollY:0,
+  boardScrollLeft:0,
+  columnScrolls:[],
+  bodyStyles:null,
+  htmlOverflow:"",
+  historyPushed:false,
+  interactionsReady:false
+};
+
+function erpArtworkViewerClamp(value,min,max){
+  return Math.min(max,Math.max(min,value));
 }
 
-function closeErpArtworkViewer(){
+function erpArtworkViewerApplyTransform(){
+  const image=$("erpArtworkViewerImage");
+  const canvas=$("erpArtworkViewerCanvas");
+  const zoomLabel=$("erpArtworkViewerZoomLabel");
+  if(!image||!canvas)return;
+  erpArtworkViewerState.scale=erpArtworkViewerClamp(erpArtworkViewerState.scale,1,4);
+  if(erpArtworkViewerState.scale===1){
+    erpArtworkViewerState.x=0;
+    erpArtworkViewerState.y=0;
+  }else{
+    const maxX=Math.max(0,(canvas.clientWidth*(erpArtworkViewerState.scale-1))/2);
+    const maxY=Math.max(0,(canvas.clientHeight*(erpArtworkViewerState.scale-1))/2);
+    erpArtworkViewerState.x=erpArtworkViewerClamp(erpArtworkViewerState.x,-maxX,maxX);
+    erpArtworkViewerState.y=erpArtworkViewerClamp(erpArtworkViewerState.y,-maxY,maxY);
+  }
+  image.style.transform=`translate3d(${erpArtworkViewerState.x}px,${erpArtworkViewerState.y}px,0) scale(${erpArtworkViewerState.scale})`;
+  canvas.classList.toggle("isZoomed",erpArtworkViewerState.scale>1);
+  if(zoomLabel)zoomLabel.textContent=`${Math.round(erpArtworkViewerState.scale*100)}%`;
+}
+
+function erpArtworkViewerResetZoom(){
+  erpArtworkViewerState.scale=1;
+  erpArtworkViewerState.x=0;
+  erpArtworkViewerState.y=0;
+  erpArtworkViewerApplyTransform();
+}
+
+function erpArtworkViewerZoomBy(delta){
+  erpArtworkViewerState.scale=erpArtworkViewerClamp(erpArtworkViewerState.scale+Number(delta||0),1,4);
+  erpArtworkViewerApplyTransform();
+}
+
+function erpArtworkViewerInstallInteractions(){
+  if(erpArtworkViewerState.interactionsReady)return;
+  const canvas=$("erpArtworkViewerCanvas");
+  if(!canvas)return;
+  const pointDistance=()=>{
+    const points=[...erpArtworkViewerState.pointers.values()];
+    if(points.length<2)return 0;
+    return Math.hypot(points[1].x-points[0].x,points[1].y-points[0].y);
+  };
+  canvas.addEventListener("pointerdown",event=>{
+    if(event.target.closest?.("button"))return;
+    event.stopPropagation();
+    canvas.setPointerCapture?.(event.pointerId);
+    erpArtworkViewerState.pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+    erpArtworkViewerState.moved=false;
+    if(erpArtworkViewerState.pointers.size===1){
+      erpArtworkViewerState.panStartX=event.clientX;
+      erpArtworkViewerState.panStartY=event.clientY;
+      erpArtworkViewerState.panOriginX=erpArtworkViewerState.x;
+      erpArtworkViewerState.panOriginY=erpArtworkViewerState.y;
+    }else if(erpArtworkViewerState.pointers.size===2){
+      erpArtworkViewerState.pinchDistance=pointDistance();
+      erpArtworkViewerState.pinchScale=erpArtworkViewerState.scale;
+    }
+  });
+  canvas.addEventListener("pointermove",event=>{
+    if(!erpArtworkViewerState.pointers.has(event.pointerId))return;
+    event.preventDefault();
+    const previous=erpArtworkViewerState.pointers.get(event.pointerId);
+    erpArtworkViewerState.pointers.set(event.pointerId,{x:event.clientX,y:event.clientY});
+    if(Math.abs(event.clientX-previous.x)+Math.abs(event.clientY-previous.y)>2)erpArtworkViewerState.moved=true;
+    if(erpArtworkViewerState.pointers.size>=2){
+      const distance=pointDistance();
+      if(erpArtworkViewerState.pinchDistance>0){
+        erpArtworkViewerState.scale=erpArtworkViewerClamp(erpArtworkViewerState.pinchScale*(distance/erpArtworkViewerState.pinchDistance),1,4);
+      }
+    }else if(erpArtworkViewerState.scale>1){
+      erpArtworkViewerState.x=erpArtworkViewerState.panOriginX+(event.clientX-erpArtworkViewerState.panStartX);
+      erpArtworkViewerState.y=erpArtworkViewerState.panOriginY+(event.clientY-erpArtworkViewerState.panStartY);
+    }
+    erpArtworkViewerApplyTransform();
+  },{passive:false});
+  const releasePointer=event=>{
+    erpArtworkViewerState.pointers.delete(event.pointerId);
+    if(erpArtworkViewerState.pointers.size===1){
+      const remaining=[...erpArtworkViewerState.pointers.values()][0];
+      erpArtworkViewerState.panStartX=remaining.x;
+      erpArtworkViewerState.panStartY=remaining.y;
+      erpArtworkViewerState.panOriginX=erpArtworkViewerState.x;
+      erpArtworkViewerState.panOriginY=erpArtworkViewerState.y;
+    }
+  };
+  canvas.addEventListener("pointerup",releasePointer);
+  canvas.addEventListener("pointercancel",releasePointer);
+  canvas.addEventListener("dblclick",event=>{
+    event.preventDefault();
+    event.stopPropagation();
+    erpArtworkViewerState.scale=erpArtworkViewerState.scale>1?1:2;
+    erpArtworkViewerApplyTransform();
+  });
+  canvas.addEventListener("wheel",event=>{
+    if(!erpArtworkViewerState.open)return;
+    event.preventDefault();
+    erpArtworkViewerZoomBy(event.deltaY<0?.2:-.2);
+  },{passive:false});
+  canvas.addEventListener("click",event=>{
+    if(event.target===canvas&&!erpArtworkViewerState.moved&&erpArtworkViewerState.scale===1)closeErpArtworkViewer();
+  });
+  window.addEventListener("popstate",()=>{
+    if(erpArtworkViewerState.open)closeErpArtworkViewer({fromPopState:true});
+  });
+  erpArtworkViewerState.interactionsReady=true;
+}
+
+function showErpArtworkViewer(src,label,context="",trigger=null){
   const modal=$("erpArtworkViewer");
+  const image=$("erpArtworkViewerImage");
+  const box=$("erpArtworkViewerBox");
+  if(!modal||!image||!box||!src)return;
+  if(erpArtworkViewerState.open&&erpArtworkViewerState.openingSrc===src)return;
+  erpArtworkViewerInstallInteractions();
+  const firstOpen=!erpArtworkViewerState.open;
+  if(firstOpen){
+    erpArtworkViewerState.trigger=trigger||document.activeElement;
+    erpArtworkViewerState.scrollX=window.scrollX;
+    erpArtworkViewerState.scrollY=window.scrollY;
+    erpArtworkViewerState.boardScrollLeft=$("erpKanbanBoard")?.scrollLeft||$("erpKanban")?.scrollLeft||0;
+    erpArtworkViewerState.columnScrolls=[...document.querySelectorAll(".erpKanbanList")].map(list=>({list,top:list.scrollTop,left:list.scrollLeft}));
+    erpArtworkViewerState.bodyStyles={
+      overflow:document.body.style.overflow,
+      position:document.body.style.position,
+      top:document.body.style.top,
+      left:document.body.style.left,
+      width:document.body.style.width
+    };
+    erpArtworkViewerState.htmlOverflow=document.documentElement.style.overflow;
+  }
+  erpArtworkViewerState.open=true;
+  erpArtworkViewerState.openingSrc=String(src);
+  erpArtworkViewerState.pointers.clear();
+  erpArtworkViewerResetZoom();
+  box.classList.add("isLoading");
+  box.classList.remove("hasError");
+  image.onload=()=>{
+    box.classList.remove("isLoading","hasError");
+    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent=`${context?`${context} • `:""}Use pinça, arraste ou os controles para conferir os detalhes.`;
+  };
+  image.onerror=()=>{
+    box.classList.remove("isLoading");
+    box.classList.add("hasError");
+    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Não foi possível carregar esta imagem. O pedido não foi alterado; tente novamente ou renove o anexo ao editar.";
+  };
+  image.src=src;
+  if($("erpArtworkViewerTitle"))$("erpArtworkViewerTitle").textContent=label||"Visualização da estampa";
+  if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Carregando imagem original da estampa...";
+  modal.hidden=false;
+  document.body.style.overflow="hidden";
+  document.body.style.position="fixed";
+  document.body.style.top=`-${erpArtworkViewerState.scrollY}px`;
+  document.body.style.left=`-${erpArtworkViewerState.scrollX}px`;
+  document.body.style.width="100%";
+  document.documentElement.style.overflow="hidden";
+  if(firstOpen&&!erpArtworkViewerState.historyPushed){
+    try{
+      history.pushState({...history.state,erpArtworkViewer:true},"",location.href);
+      erpArtworkViewerState.historyPushed=true;
+    }catch(error){
+      erpArtworkViewerState.historyPushed=false;
+    }
+  }
+  const captureViewerBoardPosition=()=>{
+    if(!erpArtworkViewerState.open)return;
+    erpArtworkViewerState.boardScrollLeft=$("erpKanbanBoard")?.scrollLeft||$("erpKanban")?.scrollLeft||0;
+    erpArtworkViewerState.columnScrolls=[...document.querySelectorAll(".erpKanbanList")].map(list=>({list,top:list.scrollTop,left:list.scrollLeft}));
+  };
+  requestAnimationFrame(()=>{
+    captureViewerBoardPosition();
+    $("erpArtworkViewerClose")?.focus?.({preventScroll:true});
+  });
+  setTimeout(captureViewerBoardPosition,180);
+}
+
+function closeErpArtworkViewer(options={}){
+  const modal=$("erpArtworkViewer");
+  if(!erpArtworkViewerState.open&&(!modal||modal.hidden))return;
+  const shouldGoBack=!options.fromPopState&&erpArtworkViewerState.historyPushed;
+  erpArtworkViewerState.open=false;
+  erpArtworkViewerState.openingSrc="";
+  erpArtworkViewerState.pointers.clear();
   if(modal)modal.hidden=true;
   const image=$("erpArtworkViewerImage");
-  if(image){image.onload=null;image.onerror=null;image.removeAttribute("src");}
+  if(image){
+    image.onload=null;
+    image.onerror=null;
+    image.removeAttribute("src");
+    image.style.transform="";
+  }
   const box=$("erpArtworkViewerBox");
   if(box)box.classList.remove("isLoading","hasError");
-  document.body.style.overflow="";
+  const saved=erpArtworkViewerState.bodyStyles||{};
+  document.body.style.overflow=saved.overflow||"";
+  document.body.style.position=saved.position||"";
+  document.body.style.top=saved.top||"";
+  document.body.style.left=saved.left||"";
+  document.body.style.width=saved.width||"";
+  document.documentElement.style.overflow=erpArtworkViewerState.htmlOverflow||"";
+  const returnScrollX=erpArtworkViewerState.scrollX;
+  const returnScrollY=erpArtworkViewerState.scrollY;
+  const boardBeforeClose=$("erpKanbanBoard")||$("erpKanban");
+  const returnBoardScroll=boardBeforeClose?.scrollLeft??erpArtworkViewerState.boardScrollLeft;
+  const returnColumnScrolls=[...document.querySelectorAll(".erpKanbanList")].map(list=>({list,top:list.scrollTop,left:list.scrollLeft}));
+  const restoreViewerPosition=()=>{
+    window.scrollTo(returnScrollX,returnScrollY);
+    const board=$("erpKanbanBoard")||$("erpKanban");
+    if(board)board.scrollLeft=returnBoardScroll;
+    returnColumnScrolls.forEach(item=>{
+      if(item.list?.isConnected){item.list.scrollTop=item.top;item.list.scrollLeft=item.left;}
+    });
+  };
+  restoreViewerPosition();
+  requestAnimationFrame(restoreViewerPosition);
+  setTimeout(restoreViewerPosition,180);
+  try{erpArtworkViewerState.trigger?.focus?.({preventScroll:true});}catch(error){}
+  erpArtworkViewerState.trigger=null;
+  erpArtworkViewerState.bodyStyles=null;
+  erpArtworkViewerState.columnScrolls=[];
+  if(options.fromPopState)erpArtworkViewerState.historyPushed=false;
+  if(shouldGoBack){
+    erpArtworkViewerState.historyPushed=false;
+    try{history.back();}catch(error){}
+  }
 }
 
 function erpCompressArtworkFile(file,maxSize=640,quality=.58){
@@ -30861,7 +31237,7 @@ function erpProductBoxes(order,limit=3){
       </div>
       ${product.reference?`<small>${esc(product.reference)}</small>`:""}
       <div class="erpProductColorSummary">${product.colors.map(color=>`<span><b>${esc(color.color||"Sem cor")}</b> ${ERP_SIZES.filter(size=>Number(color.sizes?.[size]||0)>0).map(size=>`${size}:${Number(color.sizes[size])}`).join(" • ")||"0 peças"}</span>`).join("")}</div>
-      ${erpProductHasArtwork(product)?`<button type="button" class="erpArtworkChip hasImage" onclick="openErpOrderArtworkViewer('${order.id}','${product.id}')" aria-label="Visualizar foto da estampa ${esc(erpArtworkLabel(product))}" title="Clique ou toque para ampliar"><img src="${esc(erpProductArtworkSrc(product))}" alt="Estampa do modelo ${esc(product.model||"")}" loading="lazy"><span>${esc(erpArtworkLabel(product))}</span></button>`:erpProductHasArtworkReference(product)?`<button type="button" class="erpArtworkChip pending" onclick="openErpOrderArtworkViewer('${order.id}','${product.id}')"><span>${esc(erpArtworkLabel(product))}</span></button>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
+      ${erpProductHasArtwork(product)?`<button type="button" class="erpArtworkChip hasImage" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget)" aria-label="Visualizar foto da estampa ${esc(erpArtworkLabel(product))}" title="Clique ou toque para ampliar"><img src="${esc(erpProductArtworkSrc(product))}" alt="Estampa do modelo ${esc(product.model||"")}" loading="lazy"><span>${esc(erpArtworkLabel(product))}</span><small aria-hidden="true">Toque para ampliar</small></button>`:erpProductHasArtworkReference(product)?`<button type="button" class="erpArtworkChip pending" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget)"><span>${esc(erpArtworkLabel(product))}</span></button>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
       <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
       ${isCostura?`<div class="erpSewingAssignment">
         <span><b>Costura</b>${esc(product.sewingWorker||"Sem responsável")}</span>
@@ -31881,7 +32257,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V190:",error);
+    console.error("Falha ao mover demanda V191:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
