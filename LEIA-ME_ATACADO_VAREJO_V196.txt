@@ -1,0 +1,28 @@
+WISENT V196 - ATACADO E VAREJO COMPARTILHADO
+
+ORDEM OBRIGATÓRIA
+1. No Supabase SQL Editor, execute SUPABASE_ATACADO_VAREJO_COMPARTILHADO_V196.sql.
+2. Depois execute VALIDAR_ATACADO_VAREJO_V196.sql.
+3. Confirme que a tabela foi criada, que os registros antigos foram migrados e que a publicação Realtime aparece no resultado.
+4. Publique no GitHub, juntos: index.html, service-worker.js, manifest.json e pdf-lib.min.js.
+
+TABELA OFICIAL
+public.wisent_wholesale_retail_sales
+
+HISTÓRICO
+public.wisent_wholesale_retail_sales_history
+
+O SQL NÃO APAGA OS REGISTROS ANTIGOS
+As linhas antigas wholesale_launch_* da tabela personalizacao são apenas copiadas para a nova tabela. A tabela antiga e os dados legados permanecem intactos.
+
+COMPORTAMENTO
+- Cada lançamento possui uma linha própria.
+- Criação, edição e exclusão usam RPC com controle de versão.
+- Exclusão é lógica e mantém histórico.
+- Realtime trata INSERT, UPDATE e DELETE/soft delete.
+- A fila offline existente foi preservada e passa a enviar para a tabela V196.
+- O Supabase substitui caches antigos após a confirmação.
+- “Salvo” aparece somente após resposta positiva do Supabase.
+
+VALIDAÇÃO EM CAMPO
+Use duas contas em dois aparelhos. Crie no primeiro, edite no segundo, exclua no primeiro e confirme as três alterações no outro sem atualizar a página. Depois repita uma criação offline e religue a internet.
