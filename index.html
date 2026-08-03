@@ -13859,7 +13859,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V190 ===== */
 
-/* ===== V196: sincronização profissional por módulo ===== */
+/* ===== V197: sincronização profissional por módulo ===== */
 .erpOrderCard,
 .erpOrderCard *{box-sizing:border-box}
 .erpOrderCard{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
@@ -13998,7 +13998,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   .erpArtworkViewerLoading span{animation-duration:1.5s}
   .erpArtworkViewerCanvas img{transition:none}
 }
-/* ===== V196 KANBAN SETORIAL COMPLETO ===== */
+/* ===== V197 KANBAN SETORIAL COMPLETO ===== */
 .erpOwnSectorBadge{display:none}
 .erpDragHandle:disabled{cursor:not-allowed!important;opacity:.3!important;filter:saturate(.35)}
 
@@ -14069,7 +14069,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     touch-action:none!important;
   }
 }
-/* ===== FIM V196 ===== */
+/* ===== FIM V197 ===== */
 
 </style>
 
@@ -14161,7 +14161,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V196</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V197</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16143,7 +16143,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V196 — Atacado e Varejo compartilhado e versionado.
+  V197 — Atacado e Varejo compartilhado e versionado.
   Cada lançamento possui uma linha própria no Supabase; localStorage e
   painel_state são somente cache de recuperação, nunca a fonte oficial.
 */
@@ -16154,7 +16154,10 @@ const WHOLESALE_SEED_KEY=KEY+"_wholesale_seed_table_v196";
 const WHOLESALE_TABLE="wisent_wholesale_retail_sales";
 const WHOLESALE_UPSERT_RPC="wisent_wholesale_retail_upsert";
 const WHOLESALE_DELETE_RPC="wisent_wholesale_retail_soft_delete";
-const WHOLESALE_REALTIME_SEEN_KEY=KEY+"_wholesale_realtime_seen_v196";
+const WHOLESALE_REALTIME_SEEN_KEY=KEY+"_wholesale_realtime_seen_v197";
+const WHOLESALE_SYNC_META_KEY=KEY+"_wholesale_sync_meta_v197";
+const WHOLESALE_REALTIME_TOPIC="realtime:wisent-wholesale-v197";
+const WHOLESALE_PULL_PAGE_SIZE=1000;
 let wholesaleFlushBusy=false;
 let wholesaleSyncBusy=false;
 let wholesaleSyncWatchersInstalled=false;
@@ -16166,6 +16169,9 @@ let wholesaleRealtimeHeartbeatRef=0;
 let wholesaleRealtimeJoinRef=0;
 let wholesaleRealtimeConnected=false;
 let wholesaleRealtimeReconnectAttempt=0;
+let wholesaleLastSuccessfulSyncAt=0;
+let wholesaleRealtimeLastEventAt=0;
+let wholesaleBroadcastChannel=null;
 
 const WHOLESALE_DRAFT_PREFIX=KEY+"_wholesale_draft_v117_";
 const SYSTEM_AUDIT_KEY=KEY+"_system_audit_v117";
@@ -16336,20 +16342,20 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V196";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v196";
+const APP_BUILD_VERSION="V197";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v197";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V196.
+      versão anterior são responsabilidade exclusiva do Service Worker V197.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V196 não concluída:",e);
+    console.warn("Verificação segura de cache V197 não concluída:",e);
     status="error";
   }
   return status;
@@ -16366,9 +16372,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=196",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=197",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=196");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=197");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -17519,7 +17525,7 @@ function timeoutBool(promise,ms=12000){
 
 async function flushCriticalRecordQueues(){
   /*
-    V196:
+    V197:
     O painel geral confirma apenas suas listas próprias. Private Label e
     Insumos possuem confirmação independente para evitar conflito entre filas.
   */
@@ -17573,7 +17579,7 @@ async function flushStrictSharedSave(){
     if(stateOk&&recordsOk){
       markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
       setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
-      updateCloudDebug("confirmação V196: painel geral confirmado; módulos críticos usam tabelas individuais");
+      updateCloudDebug("confirmação V197: painel geral confirmado; módulos críticos usam tabelas individuais");
       return true;
     }
 
@@ -17849,10 +17855,12 @@ function mergeWholesaleCollections(...collections){
       return;
     }
 
+    const currentVersion=Math.max(0,Number(current._wholesaleVersion||0));
+    const nextVersion=Math.max(0,Number(item._wholesaleVersion||0));
     const currentTime=wholesaleRecordTime(current);
     const nextTime=wholesaleRecordTime(item);
 
-    if(nextTime>=currentTime){
+    if(nextVersion>currentVersion||(nextVersion===currentVersion&&nextTime>=currentTime)){
       map.set(id,cloneSafe(item,item));
     }
   });
@@ -17993,7 +18001,9 @@ async function fetchWholesaleTableRecord(legacyId,{includeDeleted=true}={}){
     "limit=1"
   ].filter(Boolean).join("&");
   const response=await fetchWithTimeout(`${SUPABASE_URL}/rest/v1/${WHOLESALE_TABLE}?${query}`,{
-    method:"GET",headers:cloudHeaders()
+    method:"GET",
+    headers:{...cloudHeaders(),"Cache-Control":"no-cache","Pragma":"no-cache"},
+    cache:"no-store"
   },12000);
   if(!response.ok){
     const detail=await response.text();
@@ -18093,6 +18103,7 @@ async function flushWholesalePendingQueue(){
       queue=latest;
     }
 
+    wholesaleBroadcastSync("saved");
     updateCloudStatus("Salvo • lançamentos de Atacado e Varejo confirmados no Supabase");
     updateCloudDebug(`Atacado e Varejo confirmado na tabela ${WHOLESALE_TABLE}; fila offline vazia`);
     return true;
@@ -18106,15 +18117,32 @@ async function flushWholesalePendingQueue(){
   }
 }
 
-function applyWholesaleCloudRecords(records){
+function applyWholesaleCloudRecords(records,{syncStartedAt=0}={}){
   const current=Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[];
   const pending=readWholesalePendingQueue();
   const cloudItems=(records||[]).filter(record=>record&&record.id&&record.deleted!==true);
   const pendingItems=pending
     .map(x=>x.record)
     .filter(x=>x&&x.deleted!==true);
-  const pendingDeletes=new Set(pending.filter(entry=>entry.record?.deleted===true).map(entry=>String(entry.id)));
-  let merged=mergeWholesaleCollections(cloudItems,pendingItems)
+  const pendingDeletes=new Set(
+    pending
+      .filter(entry=>entry.record?.deleted===true)
+      .map(entry=>String(entry.id))
+  );
+  const cloudIds=new Set(cloudItems.map(item=>String(item.id)));
+  const pendingIds=new Set(pendingItems.map(item=>String(item.id)));
+
+  /*
+    Uma leitura completa pode ter começado antes de um INSERT/UPDATE chegar por Realtime.
+    Nesse caso, não deixe a resposta mais antiga apagar a alteração mais nova já recebida.
+  */
+  const newerDuringSync=current.filter(item=>{
+    const id=String(item?.id||"");
+    if(!id||cloudIds.has(id)||pendingIds.has(id)||pendingDeletes.has(id))return false;
+    return syncStartedAt>0&&wholesaleRecordTime(item)>syncStartedAt;
+  });
+
+  const merged=mergeWholesaleCollections(cloudItems,pendingItems,newerDuringSync)
     .filter(item=>!pendingDeletes.has(String(item.id)));
 
   const before=JSON.stringify(current);
@@ -18139,38 +18167,85 @@ function applyWholesaleCloudRecords(records){
 }
 
 async function fetchWholesaleCloudRecords(){
-  const url=`${SUPABASE_URL}/rest/v1/${WHOLESALE_TABLE}?deleted_at=is.null&select=*&order=updated_at.desc&limit=5000`;
+  const all=[];
+  let offset=0;
 
-  const response=await fetchWithTimeout(url,{
-    method:"GET",
-    headers:cloudHeaders()
-  },12000);
+  while(true){
+    const url=
+      `${SUPABASE_URL}/rest/v1/${WHOLESALE_TABLE}`+
+      `?deleted_at=is.null&select=*&order=updated_at.desc`+
+      `&limit=${WHOLESALE_PULL_PAGE_SIZE}&offset=${offset}`;
 
-  if(!response.ok){
-    const text=await response.text();
-    throw new Error(`Tabela ${WHOLESALE_TABLE}: HTTP ${response.status} ${text.slice(0,180)}`);
+    const response=await fetchWithTimeout(url,{
+      method:"GET",
+      headers:{...cloudHeaders(),"Cache-Control":"no-cache","Pragma":"no-cache"},
+      cache:"no-store"
+    },15000);
+
+    if(!response.ok){
+      const body=await response.text();
+      throw new Error(`Tabela ${WHOLESALE_TABLE}: HTTP ${response.status} ${body.slice(0,180)}`);
+    }
+
+    const rows=await response.json();
+    const page=Array.isArray(rows)?rows:[];
+    all.push(...page);
+
+    if(page.length<WHOLESALE_PULL_PAGE_SIZE)break;
+    offset+=page.length;
+
+    if(offset>100000){
+      throw new Error("Proteção de paginação acionada em Atacado e Varejo");
+    }
   }
 
-  const rows=await response.json();
-  return (Array.isArray(rows)?rows:[]).map(wholesaleRecordFromTableRow).filter(Boolean);
+  return all.map(wholesaleRecordFromTableRow).filter(Boolean);
 }
 
 async function syncWholesaleLaunchRecordsFromCloud({showStatus=false}={}){
   if(wholesaleSyncBusy)return false;
+  if(navigator.onLine===false){
+    if(showStatus)updateCloudStatus("Offline • lançamentos preservados neste aparelho",true);
+    return false;
+  }
+
   wholesaleSyncBusy=true;
+  const syncStartedAt=Date.now();
 
   try{
-    const flushed=await flushWholesalePendingQueue();
-    if(flushed===false)return false;
+    /*
+      A fila local e a leitura compartilhada são independentes.
+      Mesmo se um envio pendente falhar, continue puxando os lançamentos dos outros usuários.
+    */
+    let flushed=true;
+    try{
+      flushed=await flushWholesalePendingQueue();
+    }catch(error){
+      flushed=false;
+      console.warn("Fila local pendente; leitura compartilhada continuará:",error);
+    }
 
     const records=await fetchWholesaleCloudRecords();
-    const changed=applyWholesaleCloudRecords(records);
+    const changed=applyWholesaleCloudRecords(records,{syncStartedAt});
+    wholesaleLastSuccessfulSyncAt=Date.now();
+
+    try{
+      localStorage.setItem(WHOLESALE_SYNC_META_KEY,JSON.stringify({
+        syncedAt:new Date(wholesaleLastSuccessfulSyncAt).toISOString(),
+        count:records.length,
+        realtime:wholesaleRealtimeConnected
+      }));
+    }catch(error){}
 
     if(showStatus){
-      updateCloudStatus(changed
-        ?"Lista compartilhada atualizada."
-        :"Lista compartilhada já está atualizada.");
-      updateCloudDebug(`${records.length} lançamento(s) conferido(s) na tabela ${WHOLESALE_TABLE}`);
+      if(flushed===false||readWholesalePendingQueue().length){
+        updateCloudStatus("Lista compartilhada atualizada • há alteração local aguardando confirmação",true);
+      }else{
+        updateCloudStatus(changed
+          ?"Lista compartilhada atualizada para todos."
+          :"Lista compartilhada já está atualizada.");
+      }
+      updateCloudDebug(`${records.length} lançamento(s) oficial(is) conferido(s) na tabela ${WHOLESALE_TABLE}`);
     }
 
     return true;
@@ -18243,24 +18318,61 @@ function wholesaleRealtimeFingerprint(row,eventType="UPDATE"){
   return [eventType,row?.id||"",row?.legacy_id||"",row?.version||"",row?.updated_at||row?.deleted_at||""].join("|");
 }
 
+function wholesaleBroadcastSync(reason="update"){
+  try{
+    wholesaleBroadcastChannel?.postMessage({
+      type:"wholesale-sync",
+      reason,
+      at:Date.now()
+    });
+  }catch(error){}
+}
+
+function installWholesaleBroadcastChannel(){
+  if(wholesaleBroadcastChannel||typeof BroadcastChannel==="undefined")return;
+  try{
+    wholesaleBroadcastChannel=new BroadcastChannel("wisent-wholesale-v197");
+    wholesaleBroadcastChannel.addEventListener("message",event=>{
+      if(event?.data?.type!=="wholesale-sync")return;
+      syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+    });
+  }catch(error){
+    wholesaleBroadcastChannel=null;
+  }
+}
+
 async function wholesaleRealtimeApplyEvent(eventData){
   const source=eventData?.record?.id?eventData.record:eventData?.oldRecord||{};
   const eventType=String(eventData?.type||"UPDATE").toUpperCase();
   const fingerprint=wholesaleRealtimeFingerprint(source,eventType);
   if(!source.id||wholesaleRealtimeReadSeen().includes(fingerprint))return false;
-  wholesaleRealtimeRememberSeen(fingerprint);
 
   try{
     let row=source;
     if(eventType!=="DELETE"&&!source.payload){
       row=await fetchWholesaleTableRecord(source.legacy_id||source.id,{includeDeleted:true});
     }
+
     const record=eventType==="DELETE"
-      ? {id:String(source.legacy_id||source.id),deleted:true,deletedAt:source.deleted_at||source.updated_at||new Date().toISOString(),updatedAt:source.updated_at||"",_wholesaleVersion:Number(source.version||1)}
+      ? {
+          id:String(source.legacy_id||source.id),
+          deleted:true,
+          deletedAt:source.deleted_at||source.updated_at||new Date().toISOString(),
+          updatedAt:source.updated_at||"",
+          _wholesaleVersion:Number(source.version||1)
+        }
       : wholesaleRecordFromTableRow(row);
+
     if(!record)return false;
-    wholesaleApplySingleOfficialRecord(record,{renderNow:true});
-    updateCloudStatus(`Sincronizado • ${record.deleted?"lançamento removido":"Atacado e Varejo atualizado"} em tempo real`);
+
+    const applied=wholesaleApplySingleOfficialRecord(record,{renderNow:true});
+    wholesaleRealtimeRememberSeen(fingerprint);
+    wholesaleRealtimeLastEventAt=Date.now();
+
+    if(applied){
+      updateCloudStatus(`Sincronizado • ${record.deleted?"lançamento removido":"Atacado e Varejo atualizado"} em tempo real`);
+      wholesaleBroadcastSync("realtime");
+    }
     return true;
   }catch(error){
     console.warn("Realtime de Atacado e Varejo será recuperado pela sincronização completa:",error);
@@ -18272,20 +18384,30 @@ async function wholesaleRealtimeApplyEvent(eventData){
 function wholesaleRealtimeMessage(raw){
   let message=null;
   try{message=JSON.parse(raw?.data||raw||"");}catch(error){return;}
+
   if(message.event==="phx_reply"&&String(message.ref||"")===String(wholesaleRealtimeJoinRef)){
     wholesaleRealtimeConnected=message.payload?.status==="ok";
     if(wholesaleRealtimeConnected){
       wholesaleRealtimeReconnectAttempt=0;
+      updateCloudStatus("Tempo real conectado • Atacado e Varejo compartilhado");
       setTimeout(()=>syncWholesaleLaunchRecordsFromCloud({showStatus:false}),40);
+    }else{
+      updateCloudStatus("Realtime indisponível • usando sincronização automática",true);
+      try{wholesaleRealtimeSocket?.close();}catch(error){}
+      scheduleWholesaleRealtimeReconnect();
     }
     return;
   }
+
   if(message.event==="phx_error"||message.event==="phx_close"){
     wholesaleRealtimeConnected=false;
     try{wholesaleRealtimeSocket?.close();}catch(error){}
+    scheduleWholesaleRealtimeReconnect();
     return;
   }
+
   if(message.event!=="postgres_changes")return;
+
   const payload=message.payload?.data||message.payload||{};
   wholesaleRealtimeApplyEvent({
     type:payload.type||"UPDATE",
@@ -18313,7 +18435,7 @@ function connectWholesaleRealtime(){
     socket.addEventListener("open",()=>{
       const ref=String(++wholesaleRealtimeJoinRef);
       socket.send(JSON.stringify({
-        topic:"realtime:wisent-wholesale-v196",
+        topic:WHOLESALE_REALTIME_TOPIC,
         event:"phx_join",
         payload:{config:{broadcast:{ack:false,self:false},presence:{enabled:false},postgres_changes:[{event:"*",schema:"public",table:WHOLESALE_TABLE}],private:false},access_token:SUPABASE_ANON_KEY},
         ref,join_ref:ref
@@ -18337,13 +18459,20 @@ function connectWholesaleRealtime(){
 function installWholesaleSyncWatchers(){
   if(wholesaleSyncWatchersInstalled)return;
   wholesaleSyncWatchersInstalled=true;
+
+  installWholesaleBroadcastChannel();
   connectWholesaleRealtime();
 
   clearInterval(wholesaleRealtimeHeartbeatTimer);
   wholesaleRealtimeHeartbeatTimer=setInterval(()=>{
     try{
       if(wholesaleRealtimeSocket?.readyState===1){
-        wholesaleRealtimeSocket.send(JSON.stringify({topic:"phoenix",event:"heartbeat",payload:{},ref:`wholesale-heartbeat-${++wholesaleRealtimeHeartbeatRef}`}));
+        wholesaleRealtimeSocket.send(JSON.stringify({
+          topic:"phoenix",
+          event:"heartbeat",
+          payload:{},
+          ref:`wholesale-heartbeat-${++wholesaleRealtimeHeartbeatRef}`
+        }));
       }
     }catch(error){}
   },25000);
@@ -18351,33 +18480,44 @@ function installWholesaleSyncWatchers(){
   window.addEventListener("online",()=>{
     scheduleCloudSave(50);
     connectWholesaleRealtime();
-    flushWholesalePendingQueue()
-      .then(()=>syncWholesaleLaunchRecordsFromCloud({showStatus:true}));
+    syncWholesaleLaunchRecordsFromCloud({showStatus:true});
   });
+
   window.addEventListener("offline",()=>{
     wholesaleRealtimeConnected=false;
     try{wholesaleRealtimeSocket?.close();}catch(error){}
     updateCloudStatus("Offline • Atacado e Varejo preservado na fila deste aparelho",true);
   });
 
-  window.addEventListener("focus",()=>{
+  const refreshSharedWholesale=()=>{
     connectWholesaleRealtime();
     syncWholesaleLaunchRecordsFromCloud({showStatus:false});
-  });
+  };
+
+  window.addEventListener("focus",refreshSharedWholesale);
+  window.addEventListener("pageshow",refreshSharedWholesale);
 
   document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible"){
-      connectWholesaleRealtime();
-      syncWholesaleLaunchRecordsFromCloud({showStatus:false});
-    }
+    if(document.visibilityState==="visible")refreshSharedWholesale();
   });
 
   clearInterval(wholesalePollTimer);
   wholesalePollTimer=setInterval(()=>{
-    if(document.hidden)return;
+    if(document.hidden||navigator.onLine===false)return;
     connectWholesaleRealtime();
-    syncWholesaleLaunchRecordsFromCloud({showStatus:false});
-  },30000);
+
+    /*
+      Realtime é a via principal. A leitura periódica é a rede de segurança
+      para aparelhos que suspenderam o navegador ou perderam eventos.
+    */
+    const staleRealtime=!wholesaleRealtimeConnected||
+      !wholesaleRealtimeLastEventAt||
+      Date.now()-wholesaleRealtimeLastEventAt>45000;
+
+    if(staleRealtime||Date.now()-wholesaleLastSuccessfulSyncAt>15000){
+      syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+    }
+  },12000);
 }
 
 function collectWholesaleCandidatesFromDevice(){
@@ -20593,7 +20733,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V196 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V197 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -20630,7 +20770,7 @@ updateCloudStatus("VERSÃO V196 carregada. Conectando ao Supabase...");
 
         state=JSON.parse(row.valor);
 
-        /* V196: painel_state não é fonte de Atacado e Varejo. */
+        /* V197: painel_state não é fonte de Atacado e Varejo. */
         state.wholesaleRetail=mergeWholesaleCollections(localWholesaleBeforeCloud);
 
         state.launches=mergeInfluencerLaunchCollections(
@@ -21078,13 +21218,13 @@ async function forcePatchPersonalizacaoState(statePayload,expectedToken){
 async function cloudSaveNow(){
   if(cloudSaveInFlight){
     if(cloudSaveStale()){
-      console.warn("Salvamento anterior liberado pelo monitor de segurança V196");
+      console.warn("Salvamento anterior liberado pelo monitor de segurança V197");
       cloudSaveInFlight=null;
       cloudSaveStartedAt=0;
       markSharedSavePending("painel","watchdog liberou salvamento travado",latestSharedSaveToken);
       updateStrictMutationStatus(latestSharedSaveToken,"retrying","watchdog liberou salvamento travado");
       setSaveUiState("retrying","salvamento anterior travou; nova tentativa agendada",true);
-      updateCloudDebug("monitor V196 liberou uma tentativa antiga; dados locais preservados");
+      updateCloudDebug("monitor V197 liberou uma tentativa antiga; dados locais preservados");
       scheduleCloudSaveRetry();
     }else{
       return cloudSaveInFlight;
@@ -21180,9 +21320,9 @@ async function cloudSaveNow(){
 
       if(result&&result.timeout){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
-        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V196");
+        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V196: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V197: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -21303,10 +21443,10 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V196: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V197: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
-        updateCloudDebug("V196: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
+        updateCloudDebug("V197: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
       }
     }catch(e){
       console.warn("Salvamento inicial ignorado:",e);
@@ -26576,7 +26716,7 @@ const ERP_REALTIME_CORE_TABLE="wisent_erp_v2_orders";
 
 function defaultErpTestState(){
   return {
-    version:"V196",
+    version:"V197",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -27013,7 +27153,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V196";
+  data.version="V197";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -27368,7 +27508,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V196",
+    version:"V197",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -29972,7 +30112,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V196";
+  normalized.version="V197";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -32994,7 +33134,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V196:",error);
+    console.error("Falha ao mover demanda V197:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
