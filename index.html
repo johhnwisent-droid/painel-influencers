@@ -13859,7 +13859,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V190 ===== */
 
-/* ===== V193: sincronização profissional por módulo ===== */
+/* ===== V194: sincronização profissional por módulo ===== */
 .erpOrderCard,
 .erpOrderCard *{box-sizing:border-box}
 .erpOrderCard{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
@@ -13998,7 +13998,78 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   .erpArtworkViewerLoading span{animation-duration:1.5s}
   .erpArtworkViewerCanvas img{transition:none}
 }
-/* ===== FIM V193 ===== */
+/* ===== V194 KANBAN SETORIAL MOBILE COMPLETO ===== */
+.erpOwnSectorBadge{display:none}
+.erpDragHandle:disabled{cursor:not-allowed!important;opacity:.3!important;filter:saturate(.35)}
+
+@media(max-width:760px){
+  body.erpSectorRestricted:not(.erpSupplyOnly):not(.erpSectorSupplies) #erpKanban.erpKanban.restricted{
+    display:flex!important;
+    grid-template-columns:none!important;
+    width:100%!important;
+    max-width:100%!important;
+    gap:10px!important;
+    padding:2px 2px 14px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scroll-snap-type:x mandatory!important;
+    scroll-padding-inline:2px!important;
+    overscroll-behavior-x:contain!important;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-x pan-y;
+  }
+
+  body.erpSectorRestricted:not(.erpSupplyOnly):not(.erpSectorSupplies) #erpKanban>.erpKanbanCol{
+    flex:0 0 calc(100vw - 38px)!important;
+    width:calc(100vw - 38px)!important;
+    min-width:calc(100vw - 38px)!important;
+    max-width:calc(100vw - 38px)!important;
+    max-height:calc(100dvh - 190px)!important;
+    scroll-snap-align:center!important;
+    scroll-snap-stop:always;
+  }
+
+  body.erpSectorRestricted:not(.erpSupplyOnly):not(.erpSectorSupplies) #erpKanban>.erpKanbanCol.isCollapsed{
+    flex:0 0 148px!important;
+    width:148px!important;
+    min-width:148px!important;
+    max-width:148px!important;
+    scroll-snap-align:start!important;
+  }
+
+  body.erpSectorRestricted:not(.erpSupplyOnly):not(.erpSectorSupplies) #erpKanban>.erpKanbanCol.isOwnSector{
+    border-color:rgba(96,165,250,.58)!important;
+    box-shadow:0 0 0 1px rgba(96,165,250,.18),0 12px 32px rgba(0,0,0,.26)!important;
+  }
+
+  body.erpSectorRestricted:not(.erpSupplyOnly):not(.erpSectorSupplies) .erpOwnSectorBadge{
+    display:inline-flex!important;
+    align-items:center;
+    min-height:22px;
+    margin-left:6px;
+    padding:3px 7px;
+    border:1px solid rgba(96,165,250,.34);
+    border-radius:999px;
+    background:rgba(37,99,235,.14);
+    color:#bfdbfe;
+    font-size:9px;
+    font-weight:850;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+  }
+
+  body.erpSectorRestricted:not(.erpSupplyOnly):not(.erpSectorSupplies) #erpKanban .erpKanbanList{
+    max-height:calc(100dvh - 292px)!important;
+    overflow-y:auto!important;
+    overscroll-behavior-y:contain!important;
+    touch-action:pan-x pan-y;
+  }
+
+  body.erpSectorRestricted:not(.erpSupplyOnly):not(.erpSectorSupplies) #erpKanban .erpDragHandle{
+    touch-action:none!important;
+  }
+}
+/* ===== FIM V194 ===== */
 
 </style>
 
@@ -14090,7 +14161,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V193</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V194</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16254,20 +16325,20 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V193";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v193";
+const APP_BUILD_VERSION="V194";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v194";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V193.
+      versão anterior são responsabilidade exclusiva do Service Worker V194.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V193 não concluída:",e);
+    console.warn("Verificação segura de cache V194 não concluída:",e);
     status="error";
   }
   return status;
@@ -16284,9 +16355,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=193",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=194",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=193");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=194");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -17437,7 +17508,7 @@ function timeoutBool(promise,ms=12000){
 
 async function flushCriticalRecordQueues(){
   /*
-    V193:
+    V194:
     O painel geral confirma apenas suas listas próprias. Private Label e
     Insumos possuem confirmação independente para evitar conflito entre filas.
   */
@@ -17491,7 +17562,7 @@ async function flushStrictSharedSave(){
     if(stateOk&&recordsOk){
       markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
       setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
-      updateCloudDebug("confirmação V193: painel geral confirmado; Private Label e Insumos usam sincronização própria");
+      updateCloudDebug("confirmação V194: painel geral confirmado; Private Label e Insumos usam sincronização própria");
       return true;
     }
 
@@ -20292,7 +20363,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V193 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V194 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -20779,13 +20850,13 @@ async function forcePatchPersonalizacaoState(statePayload,expectedToken){
 async function cloudSaveNow(){
   if(cloudSaveInFlight){
     if(cloudSaveStale()){
-      console.warn("Salvamento anterior liberado pelo monitor de segurança V193");
+      console.warn("Salvamento anterior liberado pelo monitor de segurança V194");
       cloudSaveInFlight=null;
       cloudSaveStartedAt=0;
       markSharedSavePending("painel","watchdog liberou salvamento travado",latestSharedSaveToken);
       updateStrictMutationStatus(latestSharedSaveToken,"retrying","watchdog liberou salvamento travado");
       setSaveUiState("retrying","salvamento anterior travou; nova tentativa agendada",true);
-      updateCloudDebug("monitor V193 liberou uma tentativa antiga; dados locais preservados");
+      updateCloudDebug("monitor V194 liberou uma tentativa antiga; dados locais preservados");
       scheduleCloudSaveRetry();
     }else{
       return cloudSaveInFlight;
@@ -20881,9 +20952,9 @@ async function cloudSaveNow(){
 
       if(result&&result.timeout){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
-        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V193");
+        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V194");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V193: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V194: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -21004,10 +21075,10 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V193: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V194: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
-        updateCloudDebug("V193: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
+        updateCloudDebug("V194: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
       }
     }catch(e){
       console.warn("Salvamento inicial ignorado:",e);
@@ -25969,6 +26040,10 @@ function erpRestrictedStage(){
   return "";
 }
 
+function isErpSectorMobileBoard(){
+  return isErpSectorRestrictedUser()&&typeof window.matchMedia==="function"&&window.matchMedia("(max-width: 760px)").matches;
+}
+
 function erpRestrictedRoleLabel(){
   const stage=erpRestrictedStage();
   return stage?`Setor ${stage}`:"";
@@ -26059,7 +26134,16 @@ function showPage(id){
   setPageClass(currentPage);
 
   if(currentPage==="erpTest"&&isErpSectorRestrictedUser()&&$("erpKanbanStageFilter")){
-    $("erpKanbanStageFilter").value=erpRestrictedStage();
+    const roleKey=erpUserRoleNormalized();
+    if(isErpSectorMobileBoard()){
+      if(erpSectorMobileFilterRole!==roleKey){
+        $("erpKanbanStageFilter").value="";
+        erpSectorMobileFilterRole=roleKey;
+        erpSectorMobilePositioned=false;
+      }
+    }else{
+      $("erpKanbanStageFilter").value=erpRestrictedStage();
+    }
   }
 
   if(!samePage){
@@ -26149,6 +26233,10 @@ let erpBoardViewportListenerInstalled=false;
 let erpBoardDragOverlay=null;
 let erpBoardAutoScrollFrame=null;
 let erpBoardLastPointer=null;
+let erpSectorMobileFilterRole="";
+let erpSectorMobilePositionRole="";
+let erpSectorMobilePositioned=false;
+let erpSectorMobileWasActive=false;
 const ERP_UI_PREFERENCE_DB_NAME="wisent_erp_ui_preferences_v184";
 const ERP_UI_PREFERENCE_STORE="preferences";
 const erpUiPreferenceMemory=new Map();
@@ -26219,7 +26307,7 @@ const ERP_REALTIME_CORE_TABLE="wisent_erp_v2_orders";
 
 function defaultErpTestState(){
   return {
-    version:"V193",
+    version:"V194",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26656,7 +26744,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V193";
+  data.version="V194";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -27011,7 +27099,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V193",
+    version:"V194",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -29078,7 +29166,7 @@ function openErpRealtimeArrival(){
   if(toast)toast.classList.remove("show");
   showPage("erpTest");
   showErpModule("pedidos");
-  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value=erpRestrictedStage()||"";
+  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value=isErpSectorMobileBoard()?"":(erpRestrictedStage()||"");
   if($("erpSearch")&&erpRealtimeArrivalOrderId)$("erpSearch").value="";
   renderErpTest();
 }
@@ -29615,7 +29703,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V193";
+  normalized.version="V194";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -31045,6 +31133,25 @@ function erpOrderLate(order){return !!(order.dueDate&&order.stage!=="Finalizado"
 function erpOrderUrgent(order){return String(order.priority||"").toLowerCase().includes("urgente");}
 function erpNextStage(stage){const idx=ERP_STAGES.indexOf(stage);return idx<0||idx>=ERP_STAGES.length-1?stage:ERP_STAGES[idx+1];}
 function erpPreviousStage(stage){const idx=ERP_STAGES.indexOf(stage);return idx<=0?stage:ERP_STAGES[idx-1];}
+
+function erpSectorCanMoveStages(fromStage,toStage){
+  if(!isErpSectorRestrictedUser())return true;
+  const ownStage=erpRestrictedStage();
+  const nextStage=erpNextStage(ownStage);
+  if(!ownStage)return false;
+  if(!isErpSectorMobileBoard())return fromStage===ownStage;
+  if(fromStage===ownStage&&toStage===ownStage)return true;
+  if(fromStage===ownStage&&toStage===nextStage)return true;
+  if(fromStage===nextStage&&toStage===ownStage)return true;
+  return false;
+}
+
+function erpSectorCanDragOrder(order){
+  if(!isErpSectorRestrictedUser())return true;
+  const stage=String(order?.stage||"Pedido");
+  const ownStage=erpRestrictedStage();
+  return stage===ownStage||stage===erpNextStage(ownStage);
+}
 function erpStageDueFrom(startValue=new Date().toISOString()){
   const start=new Date(startValue);
   start.setDate(start.getDate()+ERP_STAGE_DEFAULT_DAYS);
@@ -31620,7 +31727,10 @@ function erpVisibleKanbanStages(){
   const restricted=isErpSectorRestrictedUser();
   const selected=$("erpKanbanStageFilter")?.value||"";
 
-  if(restricted)return [erpRestrictedStage()];
+  if(restricted){
+    if(isErpSectorMobileBoard())return selected&&ERP_STAGES.includes(selected)?[selected]:ERP_STAGES;
+    return [erpRestrictedStage()];
+  }
   if(selected&&ERP_STAGES.includes(selected))return [selected];
 
   return ERP_STAGES;
@@ -32072,14 +32182,21 @@ function erpBoardRecentHistory(order,limit=3){
   return `<div class="erpDemandHistory">${history.map(item=>`<div><time>${esc(item.at?new Date(item.at).toLocaleString("pt-BR",{day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}):dateBR(item.date))}</time><span>${esc(item.from||"Início")} → ${esc(item.to||item.stage||"-")}<br>${esc(item.user||"Sistema")}</span></div>`).join("")}</div>`;
 }
 
-function erpBoardMoveOptions(current){
-  return ERP_STAGES.map(stage=>`<option value="${esc(stage)}" ${stage===current?"selected":""}>${esc(stage)}</option>`).join("");
+function erpBoardMoveOptions(current,restricted=false){
+  const stages=restricted
+    ?ERP_STAGES.filter(stage=>stage===current||erpSectorCanMoveStages(current,stage))
+    :ERP_STAGES;
+  return stages.map(stage=>`<option value="${esc(stage)}" ${stage===current?"selected":""}>${esc(stage)}</option>`).join("");
 }
 
 function erpRenderOrderCard(order,stage,restricted,total=0){
   const restrictedStage=erpRestrictedStage();
   const canAdvance=stage!=="Finalizado"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
-  const canReturn=stage!=="Pedido"&&(!restricted||(order.stage||"Pedido")===restrictedStage);
+  const canReturn=stage!=="Pedido"&&(!restricted||(isErpSectorMobileBoard()
+    ?(order.stage||"Pedido")===erpNextStage(restrictedStage)
+    :(order.stage||"Pedido")===restrictedStage));
+  const canDrag=!restricted||erpSectorCanDragOrder(order);
+  const canChooseStage=!restricted||canAdvance||canReturn;
   const products=erpNormalizeOrderProducts(order);
   const collapsed=erpBoardIsCardCollapsed(order.id,total);
   const deadline=erpBoardDeadlineInfo(order);
@@ -32091,7 +32208,7 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
 
   return `<article class="erpOrderCard ${collapsed?"isCollapsed":""} ${deadline.kind==="late"?"stageLate":""}" style="--card-stage:var(--stage-color)" data-order-id="${esc(order.id)}" data-stage="${esc(stage)}" aria-expanded="${String(!collapsed)}">
     <div class="erpDemandHeader">
-      <button type="button" class="erpDragHandle erpBoardFocus" draggable="false" data-drag-order="${esc(order.id)}" aria-label="Arrastar pedido ${esc(order.number||"")}. Use as setas para mover com o teclado." title="Segure e arraste esta demanda">⠿</button>
+      <button type="button" class="erpDragHandle erpBoardFocus" draggable="false" ${canDrag?`data-drag-order="${esc(order.id)}" aria-label="Arrastar pedido ${esc(order.number||"")}. Use as setas para mover com o teclado." title="Segure e arraste esta demanda"`:`disabled aria-label="Pedido disponível somente para consulta neste setor" title="Somente consulta"`}>⠿</button>
       <div class="erpDemandTitle"><strong>${esc(title)}</strong><span>${esc(order.number||"Sem número")} • ${esc(order.client||"Cliente não informado")}</span></div>
       <div class="erpDemandHeaderTools"><button type="button" class="erpOrderCollapseBtn" data-toggle-order="${esc(order.id)}" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir pedido":"Minimizar pedido"}" title="${collapsed?"Expandir grade, modelos e anexos":"Minimizar esta demanda"}"><span class="erpOrderCollapseIcon" aria-hidden="true">${collapsed?"＋":"−"}</span><span class="erpOrderCollapseLabel">${collapsed?"Expandir":"Minimizar"}</span></button></div>
     </div>
@@ -32126,7 +32243,7 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
           ${!restricted&&isWisentAdmin()?`<button type="button" onclick="openErpPaymentModal('${order.id}')">Pagamentos</button>`:""}
           <button type="button" onclick="exportErpOrderPDF('${order.id}',this)">Exportar PDF</button>
           ${canReturn?`<button type="button" onclick="returnErpOrderToPreviousStage('${order.id}')">Voltar etapa</button>`:""}
-          <select class="erpBoardMoveSelect" aria-label="Mover pedido para outra etapa" onchange="erpBoardMoveBySelect('${order.id}',this.value);this.value='${esc(stage)}'">${erpBoardMoveOptions(stage)}</select>
+          ${canChooseStage?`<select class="erpBoardMoveSelect" aria-label="Mover pedido para outra etapa" onchange="erpBoardMoveBySelect('${order.id}',this.value);this.value='${esc(stage)}'">${erpBoardMoveOptions(stage,restricted)}</select>`:""}
           ${restricted?"":`<button type="button" class="danger" onclick="deleteErpOrder('${order.id}')">Excluir pedido</button>`}
         </div></div>
       </div>
@@ -32137,6 +32254,8 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
 function renderErpKanban(data){
   const target=$("erpKanban");
   if(!target)return;
+  const previousBoardScroll=target.scrollLeft||0;
+  const previousColumnScrolls=new Map(Array.from(target.querySelectorAll(".erpKanbanList[data-board-list]")).map(list=>[list.dataset.boardList,list.scrollTop||0]));
 
   if(!erpUiPreferenceHydrationStarted)void hydrateErpUiPreferences();
   erpBoardInstallDelegatedEvents();
@@ -32152,6 +32271,12 @@ function renderErpKanban(data){
   if(document.querySelector(".erpBoardFinanceFilter"))document.querySelector(".erpBoardFinanceFilter").hidden=!isWisentAdmin();
 
   const restricted=isErpSectorRestrictedUser();
+  const mobileSectorBoard=isErpSectorMobileBoard();
+  const ownStage=restricted?erpRestrictedStage():"";
+  if(mobileSectorBoard&&!erpSectorMobileWasActive&&$("erpKanbanStageFilter")){
+    $("erpKanbanStageFilter").value="";
+    erpSectorMobilePositioned=false;
+  }
   const stages=erpVisibleKanbanStages();
   const orders=erpBoardFilteredOrders(data);
   const columnState=erpBoardColumnState();
@@ -32160,6 +32285,7 @@ function renderErpKanban(data){
 
   target.classList.toggle("restricted",restricted);
   target.classList.toggle("singleStage",stages.length===1);
+  target.classList.toggle("mobileSectorAllStages",mobileSectorBoard&&stages.length>1);
 
   target.innerHTML=stages.map(stage=>{
     const stageOrders=orders.filter(o=>(o.stage||"Pedido")===stage);
@@ -32170,9 +32296,9 @@ function renderErpKanban(data){
     const visible=stageOrders.slice(0,limit);
     const collapsed=!!columnState[stage];
 
-    return `<section class="erpKanbanCol ${restricted?"sectorOnly":""} ${collapsed?"isCollapsed":""} stage-${stageKey}" data-board-stage="${esc(stage)}" aria-label="Coluna ${esc(stage)}" aria-expanded="${String(!collapsed)}">
+    return `<section class="erpKanbanCol ${restricted?"sectorOnly":""} ${stage===ownStage?"isOwnSector":""} ${collapsed?"isCollapsed":""} stage-${stageKey}" data-board-stage="${esc(stage)}" aria-label="Coluna ${esc(stage)}" aria-expanded="${String(!collapsed)}">
       <div class="erpKanbanHead" data-column-header="${esc(stage)}" role="button" tabindex="0" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Recolher"} setor ${esc(stage)}">
-        <div class="erpStageTitle"><span class="erpStageIcon">${esc(erpStageIcon(stage))}</span><div><strong>${esc(stage)}</strong><small>${stageOrders.length} pedido(s)</small></div></div>
+        <div class="erpStageTitle"><span class="erpStageIcon">${esc(erpStageIcon(stage))}</span><div><strong>${esc(stage)}${stage===ownStage?`<span class="erpOwnSectorBadge">Seu setor</span>`:""}</strong><small>${stageOrders.length} pedido(s)</small></div></div>
         <div class="erpColumnTools"><button type="button" data-toggle-column="${esc(stage)}" aria-expanded="${String(!collapsed)}" aria-label="${collapsed?"Expandir":"Recolher"} coluna ${esc(stage)}" title="${collapsed?"Mostrar as demandas de "+esc(stage):"Guardar as demandas de "+esc(stage)}">${collapsed?"＋":"−"}</button></div>
         <div class="erpColumnMetrics"><span>${stagePieces} peça(s)</span>${lateCount?`<span class="late">• ${lateCount} atrasado(s)</span>`:"<span>• nenhum atraso</span>"}</div>
       </div>
@@ -32183,8 +32309,7 @@ function renderErpKanban(data){
     </section>`;
   }).join("");
 
-  if(restricted){
-    const ownStage=erpRestrictedStage();
+  if(restricted&&!mobileSectorBoard){
     const nextStage=erpNextStage(ownStage);
     if(nextStage&&nextStage!==ownStage){
       target.insertAdjacentHTML("beforeend",`<section class="erpKanbanCol erpSectorHandoffDrop stage-${erpStageKey(nextStage)}" data-board-stage="${esc(nextStage)}" aria-label="Soltar para enviar a ${esc(nextStage)}"><div class="erpKanbanList" data-board-list="${esc(nextStage)}">Solte aqui para avançar para ${esc(nextStage)}</div></section>`);
@@ -32192,6 +32317,31 @@ function renderErpKanban(data){
   }
 
   erpBoardBindDragAndDrop();
+  requestAnimationFrame(()=>{
+    previousColumnScrolls.forEach((scrollTop,stage)=>{
+      const list=target.querySelector(`.erpKanbanList[data-board-list="${CSS.escape(String(stage))}"]`);
+      if(list)list.scrollTop=scrollTop;
+    });
+  });
+  if(mobileSectorBoard){
+    const roleKey=erpUserRoleNormalized();
+    if(!erpSectorMobileWasActive||erpSectorMobilePositionRole!==roleKey){
+      erpSectorMobilePositioned=false;
+      erpSectorMobilePositionRole=roleKey;
+    }
+    requestAnimationFrame(()=>{
+      if(!target.isConnected)return;
+      if(stages.length===1){target.scrollLeft=0;erpSectorMobilePositioned=true;return;}
+      if(!erpSectorMobilePositioned){
+        const ownColumn=target.querySelector(`.erpKanbanCol[data-board-stage="${CSS.escape(ownStage)}"]`);
+        if(ownColumn)target.scrollLeft=Math.max(0,ownColumn.offsetLeft-target.offsetLeft);
+        erpSectorMobilePositioned=true;
+      }else{
+        target.scrollLeft=previousBoardScroll;
+      }
+    });
+  }
+  erpSectorMobileWasActive=mobileSectorBoard;
   erpBoardSetState(orders.length?`${orders.length} demanda(s) exibida(s) • atualização por pedido ativa.`:"Nenhuma demanda encontrada para os filtros selecionados.");
 }
 
@@ -32202,7 +32352,8 @@ function erpBoardClearDropStyles(){
 function erpBoardCanDropStage(sourceStage,targetStage){
   const sourceIndex=ERP_STAGES.indexOf(sourceStage);
   const targetIndex=ERP_STAGES.indexOf(targetStage);
-  return sourceIndex>=0&&targetIndex>=0&&Math.abs(targetIndex-sourceIndex)<=1;
+  if(sourceIndex<0||targetIndex<0||Math.abs(targetIndex-sourceIndex)>1)return false;
+  return erpSectorCanMoveStages(sourceStage,targetStage);
 }
 
 function erpBoardCreateDragOverlay(card){
@@ -32484,8 +32635,10 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
   const fromStage=String(order.stage||"Pedido");
   const toStage=String(targetStage||fromStage);
   if(!ERP_STAGES.includes(toStage)){alert("A etapa selecionada não faz parte do fluxo Private Label.");return false;}
-  if(isErpSectorRestrictedUser()&&fromStage!==erpRestrictedStage()){
-    alert("Este pedido não pertence mais à etapa do seu setor.");
+  if(isErpSectorRestrictedUser()&&!erpSectorCanMoveStages(fromStage,toStage)){
+    alert(isErpSectorMobileBoard()
+      ?"Seu setor pode avançar a própria demanda ou recuperar da etapa seguinte para o seu setor."
+      :"Este pedido não pertence mais à etapa do seu setor.");
     scheduleErpRealtimeCloudRefresh(0);
     return false;
   }
@@ -32573,7 +32726,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V193:",error);
+    console.error("Falha ao mover demanda V194:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
