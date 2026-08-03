@@ -16143,7 +16143,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V197 — Atacado e Varejo compartilhado e versionado.
+  V199 — Atacado e Varejo compartilhado com confirmação oficial por lançamento.
   Cada lançamento possui uma linha própria no Supabase; localStorage e
   painel_state são somente cache de recuperação, nunca a fonte oficial.
 */
@@ -16154,9 +16154,9 @@ const WHOLESALE_SEED_KEY=KEY+"_wholesale_seed_table_v196";
 const WHOLESALE_TABLE="wisent_wholesale_retail_sales";
 const WHOLESALE_UPSERT_RPC="wisent_wholesale_retail_upsert";
 const WHOLESALE_DELETE_RPC="wisent_wholesale_retail_soft_delete";
-const WHOLESALE_REALTIME_SEEN_KEY=KEY+"_wholesale_realtime_seen_v197";
-const WHOLESALE_SYNC_META_KEY=KEY+"_wholesale_sync_meta_v197";
-const WHOLESALE_REALTIME_TOPIC="realtime:wisent-wholesale-v197";
+const WHOLESALE_REALTIME_SEEN_KEY=KEY+"_wholesale_realtime_seen_v199";
+const WHOLESALE_SYNC_META_KEY=KEY+"_wholesale_sync_meta_v199";
+const WHOLESALE_REALTIME_TOPIC="realtime:wisent-wholesale-v199";
 const WHOLESALE_PULL_PAGE_SIZE=1000;
 let wholesaleFlushBusy=false;
 let wholesaleSyncBusy=false;
@@ -16172,6 +16172,7 @@ let wholesaleRealtimeReconnectAttempt=0;
 let wholesaleLastSuccessfulSyncAt=0;
 let wholesaleRealtimeLastEventAt=0;
 let wholesaleBroadcastChannel=null;
+let wholesalePendingMemory=[];
 
 const WHOLESALE_DRAFT_PREFIX=KEY+"_wholesale_draft_v117_";
 const SYSTEM_AUDIT_KEY=KEY+"_system_audit_v117";
@@ -16342,8 +16343,8 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V198";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v198";
+const APP_BUILD_VERSION="V199";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v199";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
@@ -17890,21 +17891,48 @@ function writeWholesaleSnapshot(rows=state.wholesaleRetail||[]){
   }
 }
 
+function normalizeWholesalePendingQueue(queue){
+  const map=new Map();
+  (Array.isArray(queue)?queue:[]).forEach(entry=>{
+    if(!entry||!entry.id||!entry.record)return;
+    const id=String(entry.id);
+    const current=map.get(id);
+    const currentTime=Date.parse(current?.queuedAt||"")||0;
+    const nextTime=Date.parse(entry.queuedAt||"")||0;
+    if(!current||nextTime>=currentTime)map.set(id,cloneSafe(entry,entry));
+  });
+  return [...map.values()];
+}
+
 function readWholesalePendingQueue(){
+  let stored=[];
   try{
     const raw=localStorage.getItem(WHOLESALE_PENDING_KEY);
     const parsed=raw?JSON.parse(raw):[];
-    return Array.isArray(parsed)?parsed.filter(x=>x&&x.id&&x.record):[];
+    stored=Array.isArray(parsed)?parsed:[];
   }catch(e){
-    return [];
+    console.warn("Não foi possível ler a fila local de lançamentos:",e);
   }
+  return normalizeWholesalePendingQueue([...(stored||[]),...(wholesalePendingMemory||[])]);
 }
 
 function writeWholesalePendingQueue(queue){
+  const normalized=normalizeWholesalePendingQueue(queue);
+  wholesalePendingMemory=cloneSafe(normalized,normalized)||[];
   try{
-    localStorage.setItem(WHOLESALE_PENDING_KEY,JSON.stringify(Array.isArray(queue)?queue:[]));
+    localStorage.setItem(WHOLESALE_PENDING_KEY,JSON.stringify(normalized));
+    const confirmed=JSON.parse(localStorage.getItem(WHOLESALE_PENDING_KEY)||"[]");
+    const confirmedIds=new Set((Array.isArray(confirmed)?confirmed:[]).map(item=>String(item?.id||"")));
+    const expectedIds=normalized.map(item=>String(item.id));
+    if(expectedIds.some(id=>!confirmedIds.has(id))){
+      throw new Error("a leitura de confirmação não encontrou todos os lançamentos da fila");
+    }
+    return true;
   }catch(e){
-    console.warn("Não foi possível gravar a fila local de lançamentos:",e);
+    console.warn("Fila local indisponível ou sem espaço; mantendo cópia em memória:",e);
+    updateCloudStatus("Pendente • lançamento protegido nesta sessão; aguardando Supabase",true);
+    updateCloudDebug("Atacado e Varejo: fila local não confirmou a gravação; fallback em memória ativo");
+    return false;
   }
 }
 
@@ -18013,6 +18041,19 @@ async function fetchWholesaleTableRecord(legacyId,{includeDeleted=true}={}){
   return Array.isArray(rows)&&rows[0]?rows[0]:null;
 }
 
+async function fetchConfirmedWholesaleRecord(legacyId,{minimumVersion=1,attempts=5}={}){
+  let lastRow=null;
+  for(let attempt=0;attempt<Math.max(1,attempts);attempt++){
+    lastRow=await fetchWholesaleTableRecord(legacyId,{includeDeleted:true});
+    const record=wholesaleRecordFromTableRow(lastRow);
+    if(record&&String(record.id)===String(legacyId)&&record.deleted!==true&&Number(record._wholesaleVersion||0)>=Number(minimumVersion||1)){
+      return record;
+    }
+    await new Promise(resolve=>setTimeout(resolve,250*(attempt+1)));
+  }
+  return null;
+}
+
 async function wholesaleCallRpc(name,body){
   const response=await fetchWithTimeout(`${SUPABASE_URL}/rest/v1/rpc/${name}`,{
     method:"POST",headers:cloudHeaders(),body:JSON.stringify(body)
@@ -18096,8 +18137,17 @@ async function flushWholesalePendingQueue(){
         continue;
       }
 
-      const confirmed=wholesaleRecordFromTableRow(result?.record||await fetchWholesaleTableRecord(entry.id,{includeDeleted:true}));
-      if(confirmed)wholesaleApplySingleOfficialRecord(confirmed,{renderNow:true});
+      let confirmed=wholesaleRecordFromTableRow(result?.record||null);
+      if(!confirmed||String(confirmed.id)!==String(entry.id)||confirmed.deleted===true){
+        confirmed=await fetchConfirmedWholesaleRecord(entry.id,{
+          minimumVersion:Math.max(1,Number(result?.record?.version||baseVersion||1)),
+          attempts:6
+        });
+      }
+      if(!confirmed||String(confirmed.id)!==String(entry.id)||confirmed.deleted===true){
+        throw new Error(`Supabase não confirmou o lançamento ${entry.id}; ele continuará na fila e não será marcado como salvo`);
+      }
+      wholesaleApplySingleOfficialRecord(confirmed,{renderNow:true});
       const latest=readWholesalePendingQueue().filter(item=>String(item.mutationId||item.queuedAt)!==String(entry.mutationId||entry.queuedAt));
       writeWholesalePendingQueue(latest);
       queue=latest;
@@ -18120,42 +18170,41 @@ async function flushWholesalePendingQueue(){
 function applyWholesaleCloudRecords(records,{syncStartedAt=0}={}){
   const current=Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[];
   const pending=readWholesalePendingQueue();
-  const cloudItems=(records||[]).filter(record=>record&&record.id&&record.deleted!==true);
   const pendingItems=pending
-    .map(x=>x.record)
-    .filter(x=>x&&x.deleted!==true);
+    .map(entry=>entry.record)
+    .filter(record=>record&&record.id&&record.deleted!==true);
+  const pendingUpserts=new Set(pendingItems.map(record=>String(record.id)));
   const pendingDeletes=new Set(
     pending
       .filter(entry=>entry.record?.deleted===true)
       .map(entry=>String(entry.id))
   );
-  const cloudIds=new Set(cloudItems.map(item=>String(item.id)));
-  const pendingIds=new Set(pendingItems.map(item=>String(item.id)));
 
-  /*
-    Uma leitura completa pode ter começado antes de um INSERT/UPDATE chegar por Realtime.
-    Nesse caso, não deixe a resposta mais antiga apagar a alteração mais nova já recebida.
-  */
-  const newerDuringSync=current.filter(item=>{
-    const id=String(item?.id||"");
-    if(!id||cloudIds.has(id)||pendingIds.has(id)||pendingDeletes.has(id))return false;
-
-    /*
-      Proteção V198:
-      uma leitura da nuvem pode ter começado antes da confirmação do lançamento
-      recém-salvo. Nesse intervalo, a fila pode ser esvaziada e a resposta antiga
-      ainda não conter a nova linha. Preserve o registro local confirmado até que
-      uma leitura posterior traga a mesma linha oficialmente.
-    */
-    const unsyncedVersion=Number(item?._wholesaleVersion||0)===0;
-    const isLastSaved=String(lastSavedWholesaleId||"")===id&&(Date.now()-wholesaleRecordTime(item))<120000;
-    const savedNearSync=syncStartedAt>0&&wholesaleRecordTime(item)>=(syncStartedAt-10000);
-
-    return unsyncedVersion||isLastSaved||savedNearSync;
+  const cloudItems=[];
+  const cloudDeletedIds=new Set();
+  (records||[]).forEach(record=>{
+    if(!record||!record.id)return;
+    if(record.deleted===true)cloudDeletedIds.add(String(record.id));
+    else cloudItems.push(record);
   });
 
-  const merged=mergeWholesaleCollections(cloudItems,pendingItems,newerDuringSync)
-    .filter(item=>!pendingDeletes.has(String(item.id)));
+  /*
+    V199: uma leitura completa serve para acrescentar/atualizar registros.
+    A ausência de um ID na resposta nunca é tratada como exclusão. Exclusões
+    só acontecem por deleted_at explícito, evento Realtime DELETE ou fila local.
+  */
+  let merged=mergeWholesaleCollections(current,cloudItems,pendingItems);
+
+  if(cloudDeletedIds.size){
+    merged=merged.filter(item=>{
+      const id=String(item.id);
+      return pendingUpserts.has(id)||!cloudDeletedIds.has(id);
+    });
+  }
+
+  if(pendingDeletes.size){
+    merged=merged.filter(item=>!pendingDeletes.has(String(item.id)));
+  }
 
   const before=JSON.stringify(current);
   const after=JSON.stringify(merged);
@@ -18185,7 +18234,7 @@ async function fetchWholesaleCloudRecords(){
   while(true){
     const url=
       `${SUPABASE_URL}/rest/v1/${WHOLESALE_TABLE}`+
-      `?deleted_at=is.null&select=*&order=updated_at.desc`+
+      `?select=*&order=updated_at.desc`+
       `&limit=${WHOLESALE_PULL_PAGE_SIZE}&offset=${offset}`;
 
     const response=await fetchWithTimeout(url,{
@@ -18343,7 +18392,7 @@ function wholesaleBroadcastSync(reason="update"){
 function installWholesaleBroadcastChannel(){
   if(wholesaleBroadcastChannel||typeof BroadcastChannel==="undefined")return;
   try{
-    wholesaleBroadcastChannel=new BroadcastChannel("wisent-wholesale-v197");
+    wholesaleBroadcastChannel=new BroadcastChannel("wisent-wholesale-v199");
     wholesaleBroadcastChannel.addEventListener("message",event=>{
       if(event?.data?.type!=="wholesale-sync")return;
       syncWholesaleLaunchRecordsFromCloud({showStatus:false});
@@ -35096,22 +35145,27 @@ if($("wholesaleForm")){
     updateCloudStatus("Pendente • confirmando lançamento de Atacado e Varejo no Supabase",true);
     showUndoToast("Lançamento preservado na fila. Confirmando no Supabase...");
     /*
-      V198: usa um único fluxo serializado (enviar -> confirmar -> reler).
+      V199: usa confirmação oficial por ID antes de concluir (enviar -> confirmar -> reler).
       Evita a corrida em que uma leitura antiga da tabela removia visualmente
       o lançamento recém-criado antes de o INSERT aparecer na consulta.
     */
     syncWholesaleLaunchRecordsFromCloud({showStatus:false})
-      .then(ok=>{
-        if(ok&&!readWholesalePendingQueue().length){
-          updateCloudStatus("Salvo • lançamento confirmado no Supabase");
+      .then(async ok=>{
+        const official=ok?await fetchConfirmedWholesaleRecord(id,{minimumVersion:1,attempts:4}):null;
+        if(official){
+          wholesaleApplySingleOfficialRecord(official,{renderNow:true});
+          updateCloudStatus("Salvo • lançamento confirmado no Supabase e visível para todos");
+          updateCloudDebug(`Atacado e Varejo: lançamento ${id} confirmado por leitura exata na tabela ${WHOLESALE_TABLE}`);
           showUndoToast("Lançamento confirmado e compartilhado com todos.");
           showSavedWholesaleLaunch(id);
           return;
         }
-        showUndoToast("Lançamento pendente; será reenviado automaticamente.");
+        updateCloudStatus("Pendente • o Supabase ainda não confirmou este lançamento",true);
+        showUndoToast("Lançamento preservado; aguardando confirmação real do Supabase.");
       })
       .catch(error=>{
         console.warn("Lançamento preservado localmente; sincronização pendente:",error);
+        updateCloudStatus("Pendente • lançamento preservado; aguardando confirmação do Supabase",true);
         showUndoToast("Lançamento preservado; aguardando confirmação do Supabase.");
       });
 
