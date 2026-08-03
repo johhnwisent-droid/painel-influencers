@@ -13859,7 +13859,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V190 ===== */
 
-/* ===== V191: cards e imagens mobile ===== */
+/* ===== V192: inicialização segura, cards e imagens mobile ===== */
 .erpOrderCard,
 .erpOrderCard *{box-sizing:border-box}
 .erpOrderCard{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
@@ -13998,7 +13998,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   .erpArtworkViewerLoading span{animation-duration:1.5s}
   .erpArtworkViewerCanvas img{transition:none}
 }
-/* ===== FIM V191 ===== */
+/* ===== FIM V192 ===== */
 
 </style>
 
@@ -14090,7 +14090,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V191</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V192</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15981,6 +15981,88 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </section>
 </main>
 </div>
+<script>
+(function(){
+  "use strict";
+  window.__WISENT_BOOT_OK__=false;
+  window.__WISENT_BOOT_ERROR__="";
+
+  function visibleApplication(){
+    var login=document.getElementById("loginScreen");
+    var active=document.querySelector(".view.active");
+    if(active&&active.getBoundingClientRect().height>20)return true;
+    if(login&&getComputedStyle(login).display!=="none"&&login.getBoundingClientRect().height>20)return true;
+    return false;
+  }
+
+  function showBootRecovery(reason){
+    if(window.__WISENT_BOOT_OK__||visibleApplication())return;
+    var panel=document.getElementById("wisentBootRecovery");
+    if(!panel){
+      panel=document.createElement("section");
+      panel.id="wisentBootRecovery";
+      panel.setAttribute("role","alert");
+      panel.setAttribute("aria-live","assertive");
+      panel.innerHTML='<div style="width:min(92vw,460px);padding:24px;border:1px solid rgba(148,163,184,.3);border-radius:18px;background:#0f172a;color:#f8fafc;box-shadow:0 24px 80px rgba(0,0,0,.5);font-family:Inter,system-ui,sans-serif"><strong style="display:block;font-size:19px">Recuperação segura do aplicativo</strong><p id="wisentBootRecoveryMessage" style="margin:10px 0 18px;color:#cbd5e1;font-size:14px;line-height:1.5">A inicialização demorou além do esperado.</p><div style="display:grid;grid-template-columns:1fr;gap:10px"><button type="button" onclick="window.__wisentEmergencyReload()" style="min-height:46px;border:0;border-radius:11px;background:#2563eb;color:#fff;font-weight:800">Tentar abrir novamente</button><button type="button" onclick="window.__wisentOpenPreviousVersion()" style="min-height:46px;border:1px solid #475569;border-radius:11px;background:#172033;color:#e2e8f0;font-weight:750">Abrir atualização anterior</button></div><small style="display:block;margin-top:14px;color:#94a3b8;line-height:1.4">Seus dados não são apagados por esta recuperação.</small></div>';
+      panel.style.cssText="position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;padding:20px;background:#020617";
+      document.body.appendChild(panel);
+    }
+    var message=document.getElementById("wisentBootRecoveryMessage");
+    if(message)message.textContent=reason||"Não foi possível concluir a abertura do aplicativo.";
+    panel.hidden=false;
+  }
+
+  window.__wisentEmergencyReload=function(){
+    try{
+      var url=new URL(location.href);
+      url.searchParams.delete("wisent_rollback");
+      url.searchParams.set("wisent_retry",String(Date.now()));
+      location.replace(url.toString());
+    }catch(error){location.reload();}
+  };
+
+  window.__wisentOpenPreviousVersion=function(){
+    try{
+      var url=new URL(location.href);
+      url.searchParams.set("wisent_rollback","1");
+      url.searchParams.set("wisent_retry",String(Date.now()));
+      location.replace(url.toString());
+    }catch(error){location.reload();}
+  };
+
+  window.__wisentMarkBootOk=function(version){
+    window.__WISENT_BOOT_OK__=true;
+    var panel=document.getElementById("wisentBootRecovery");
+    if(panel)panel.hidden=true;
+    try{
+      if(navigator.serviceWorker&&navigator.serviceWorker.controller){
+        navigator.serviceWorker.controller.postMessage({type:"BOOT_OK",version:String(version||"")});
+      }
+      var url=new URL(location.href);
+      if(url.searchParams.has("wisent_rollback")||url.searchParams.has("wisent_retry")){
+        url.searchParams.delete("wisent_rollback");
+        url.searchParams.delete("wisent_retry");
+        history.replaceState(history.state,"",url.toString());
+      }
+    }catch(error){}
+  };
+
+  window.addEventListener("error",function(event){
+    if(window.__WISENT_BOOT_OK__)return;
+    window.__WISENT_BOOT_ERROR__=String(event&&event.message||"Erro de inicialização");
+    setTimeout(function(){showBootRecovery("O aplicativo encontrou uma falha ao iniciar. Você pode tentar novamente ou abrir a atualização anterior.");},120);
+  });
+  window.addEventListener("unhandledrejection",function(event){
+    if(window.__WISENT_BOOT_OK__)return;
+    var reason=event&&event.reason;
+    window.__WISENT_BOOT_ERROR__=String(reason&&reason.message||reason||"Falha de inicialização");
+    setTimeout(function(){showBootRecovery("A conexão ou o cache interrompeu a inicialização. Nenhum dado foi apagado.");},120);
+  });
+  setTimeout(function(){
+    if(!window.__WISENT_BOOT_OK__)showBootRecovery("A abertura está demorando além do normal. Tente recarregar com segurança.");
+  },12000);
+})();
+</script>
 <script src="./pdf-lib.min.js"></script>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827", "authUsers": [{"id": "admin", "name": "Administrador", "username": "admin", "password": "1234", "role": "Admin", "active": true}]}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": [], "wholesaleRetail": []};
@@ -16172,24 +16254,20 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V191";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v188";
+const APP_BUILD_VERSION="V192";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v192";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
   try{
-    const alreadyRecovered=localStorage.getItem(APP_CACHE_RECOVERY_KEY)==="ok";
-
-    if(!alreadyRecovered){
-      if("caches" in window){
-        const keys=await caches.keys();
-        const obsolete=keys.filter(key=>/wisent|painel/i.test(key)&&!key.includes("v188"));
-        await Promise.all(obsolete.map(key=>caches.delete(key)));
-      }
-      localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
-    }
+    /*
+      A página nunca apaga o cache ativo. A troca atômica e a retenção da
+      versão anterior são responsabilidade exclusiva do Service Worker V192.
+      Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
+    */
+    localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Recuperação segura de cache V191 não concluída:",e);
+    console.warn("Verificação segura de cache V192 não concluída:",e);
     status="error";
   }
   return status;
@@ -16204,7 +16282,12 @@ function registerPwa(){
 
     try{
       const hadController=Boolean(navigator.serviceWorker.controller);
-      const reg=await navigator.serviceWorker.register("./service-worker.js?v=188");
+      let reg=null;
+      try{
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=192",{updateViaCache:"none"});
+      }catch(registerError){
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=192");
+      }
 
       reg.addEventListener("updatefound",()=>{
         const worker=reg.installing;
@@ -16217,6 +16300,9 @@ function registerPwa(){
       });
 
       navigator.serviceWorker.addEventListener("controllerchange",()=>{
+        if(window.__WISENT_BOOT_OK__&&navigator.serviceWorker.controller){
+          navigator.serviceWorker.controller.postMessage({type:"BOOT_OK",version:APP_BUILD_VERSION});
+        }
         if(hadController&&!window.__pwaControllerNotified){
           window.__pwaControllerNotified=true;
           showPwaUpdateToast();
@@ -16224,6 +16310,9 @@ function registerPwa(){
       });
 
       setTimeout(()=>reg.update().catch(()=>{}),1200);
+      if(window.__WISENT_BOOT_OK__&&navigator.serviceWorker.controller){
+        navigator.serviceWorker.controller.postMessage({type:"BOOT_OK",version:APP_BUILD_VERSION});
+      }
     }catch(e){
       console.warn("PWA não registrado:",e);
     }
@@ -20178,7 +20267,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V191 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V192 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -20820,6 +20909,7 @@ async function startApp(){
     resetWholesaleRetailForm();
     render();
     initMobileEnhancements();
+    await hydrateErpDurableSnapshotIfNeeded();
 
     const loaded=await cloudLoad().catch(e=>{
       console.error("Falha controlada no cloudLoad:",e);
@@ -26050,6 +26140,12 @@ const ERP_TEST_LAST_SYNC_KEY=KEY+"_wisent_erp_test_last_sync_shared";
 const ERP_TEST_AUDIT_KEY=KEY+"_wisent_erp_test_audit_log_v152";
 const ERP_TEST_BACKUP_KEY=KEY+"_wisent_erp_test_auto_backup_v152";
 const ERP_TEST_SECURITY_GUIDE_KEY=KEY+"_wisent_erp_test_security_guide_seen_v152";
+const ERP_LAST_NONEMPTY_SNAPSHOT_KEY=KEY+"_private_label_last_nonempty_snapshot";
+const ERP_INTENTIONAL_EMPTY_KEY=KEY+"_private_label_intentional_empty";
+const ERP_DURABLE_DB_NAME="wisent_private_label_durable_v1";
+const ERP_DURABLE_STORE="snapshots";
+const ERP_DURABLE_RECORD_ID="private_label";
+let erpDurableWriteTimer=null;
 let erpTestFlushBusy=false;
 let erpTestSyncBusy=false;
 let erpTestSyncTimer=null;
@@ -26096,7 +26192,7 @@ const ERP_REALTIME_CORE_TABLE="wisent_erp_v2_orders";
 
 function defaultErpTestState(){
   return {
-    version:"V191",
+    version:"V192",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26533,7 +26629,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V191";
+  data.version="V192";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26603,6 +26699,84 @@ function normalizeErpTestData(raw){
   return data;
 }
 
+function erpHasPrivateLabelRecords(data){
+  return Array.isArray(data?.orders)&&data.orders.length>0;
+}
+
+function erpDurableOpen(){
+  return new Promise((resolve,reject)=>{
+    if(!window.indexedDB){reject(new Error("IndexedDB indisponível"));return;}
+    const request=indexedDB.open(ERP_DURABLE_DB_NAME,1);
+    request.onupgradeneeded=()=>{
+      const db=request.result;
+      if(!db.objectStoreNames.contains(ERP_DURABLE_STORE))db.createObjectStore(ERP_DURABLE_STORE,{keyPath:"id"});
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error||new Error("Falha ao abrir snapshot durável"));
+  });
+}
+
+async function erpDurableWrite(data){
+  const normalized=normalizeErpTestData(data);
+  if(!erpHasPrivateLabelRecords(normalized))return false;
+  const db=await erpDurableOpen();
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction(ERP_DURABLE_STORE,"readwrite");
+    tx.objectStore(ERP_DURABLE_STORE).put({
+      id:ERP_DURABLE_RECORD_ID,
+      data:normalized,
+      orderCount:normalized.orders.length,
+      savedAt:new Date().toISOString(),
+      version:APP_BUILD_VERSION
+    });
+    tx.oncomplete=()=>resolve(true);
+    tx.onerror=()=>reject(tx.error||new Error("Falha ao gravar snapshot durável"));
+  });
+  db.close();
+  return true;
+}
+
+function scheduleErpDurableWrite(data){
+  if(!erpHasPrivateLabelRecords(data))return;
+  clearTimeout(erpDurableWriteTimer);
+  const snapshot=normalizeErpTestData(cloneSafe(data,data));
+  erpDurableWriteTimer=setTimeout(()=>{
+    erpDurableWrite(snapshot).catch(error=>console.warn("Snapshot durável do Private Label adiado:",error));
+  },80);
+}
+
+async function erpDurableRead(){
+  try{
+    const db=await erpDurableOpen();
+    const row=await new Promise((resolve,reject)=>{
+      const tx=db.transaction(ERP_DURABLE_STORE,"readonly");
+      const request=tx.objectStore(ERP_DURABLE_STORE).get(ERP_DURABLE_RECORD_ID);
+      request.onsuccess=()=>resolve(request.result||null);
+      request.onerror=()=>reject(request.error||new Error("Falha ao ler snapshot durável"));
+    });
+    db.close();
+    return row?.data?normalizeErpTestData(row.data):null;
+  }catch(error){
+    return null;
+  }
+}
+
+async function hydrateErpDurableSnapshotIfNeeded(){
+  const current=readErpTestData();
+  if(erpHasPrivateLabelRecords(current)){
+    scheduleErpDurableWrite(current);
+    return false;
+  }
+  try{
+    if(localStorage.getItem(ERP_INTENTIONAL_EMPTY_KEY)==="1")return false;
+  }catch(error){}
+  const durable=await erpDurableRead();
+  if(!erpHasPrivateLabelRecords(durable))return false;
+  erpLocalWriteOnly(durable);
+  setErpSyncStatus("Private Label recuperado do snapshot seguro deste aparelho");
+  return true;
+}
+
 function readErpTestSnapshot(){
   try{
     const raw=localStorage.getItem(ERP_TEST_SNAPSHOT_KEY);
@@ -26641,11 +26815,20 @@ function clearErpWindowFallback(){
 function erpLocalWriteOnly(data){
   const normalized=normalizeErpTestData(data);
   const serialized=JSON.stringify(normalized);
+  const preserveNonEmpty=()=>{
+    if(!erpHasPrivateLabelRecords(normalized))return;
+    try{
+      localStorage.setItem(ERP_LAST_NONEMPTY_SNAPSHOT_KEY,serialized);
+      localStorage.removeItem(ERP_INTENTIONAL_EMPTY_KEY);
+    }catch(error){}
+    scheduleErpDurableWrite(normalized);
+  };
   try{
     localStorage.setItem(ERP_TEST_KEY,serialized);
     clearErpWindowFallback();
     writeErpTestSnapshot(normalized);
-    autoBackupErpTestData(normalized,"write");
+    preserveNonEmpty();
+    if(erpHasPrivateLabelRecords(normalized)||!readErpAutoBackup())autoBackupErpTestData(normalized,"write");
     return true;
   }catch(e){
     console.warn("Falha ao salvar Private Label localmente:",e);
@@ -26655,7 +26838,8 @@ function erpLocalWriteOnly(data){
       localStorage.setItem(ERP_TEST_KEY,serialized);
       clearErpWindowFallback();
       writeErpTestSnapshot(normalized);
-      autoBackupErpTestData(normalized,"write-recovered");
+      preserveNonEmpty();
+      if(erpHasPrivateLabelRecords(normalized)||!readErpAutoBackup())autoBackupErpTestData(normalized,"write-recovered");
       return true;
     }catch(retryError){}
     try{
@@ -26684,6 +26868,15 @@ function readErpTestData(){
       return snapshot;
     }
 
+    const lastNonEmptyRaw=localStorage.getItem(ERP_LAST_NONEMPTY_SNAPSHOT_KEY);
+    if(lastNonEmptyRaw){
+      const lastNonEmpty=normalizeErpTestData(JSON.parse(lastNonEmptyRaw));
+      if(erpHasPrivateLabelRecords(lastNonEmpty)){
+        erpLocalWriteOnly(lastNonEmpty);
+        return lastNonEmpty;
+      }
+    }
+
     const data=defaultErpTestState();
     erpLocalWriteOnly(data);
     return normalizeErpTestData(data);
@@ -26693,6 +26886,11 @@ function readErpTestData(){
     if(emergency)return emergency;
     const snapshot=readErpTestSnapshot();
     if(snapshot)return snapshot;
+    try{
+      const lastNonEmptyRaw=localStorage.getItem(ERP_LAST_NONEMPTY_SNAPSHOT_KEY);
+      const lastNonEmpty=lastNonEmptyRaw?normalizeErpTestData(JSON.parse(lastNonEmptyRaw)):null;
+      if(erpHasPrivateLabelRecords(lastNonEmpty))return lastNonEmpty;
+    }catch(error){}
     return normalizeErpTestData(defaultErpTestState());
   }
 }
@@ -26786,7 +26984,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V191",
+    version:"V192",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28114,9 +28312,10 @@ async function syncErpV2FromCloud(options={}){
     return false;
   }
   try{
+    const localBefore=readErpTestData();
     const [
       orders,products,clients,inventory,finance,employees,settings,
-      stageEvents,standbyEvents,sewingEvents
+      stageEvents,standbyEvents,sewingEvents,deletedOrders
     ]=await Promise.all([
       erpV2FetchAll("wisent_erp_v2_orders"),
       erpV2FetchAll("wisent_erp_v2_products"),
@@ -28127,11 +28326,12 @@ async function syncErpV2FromCloud(options={}){
       erpV2FetchAll("wisent_erp_v2_settings"),
       erpV2FetchAll("wisent_erp_v2_stage_events"),
       erpV2FetchAll("wisent_erp_v2_standby_events"),
-      erpV2FetchAll("wisent_erp_v2_sewing_events")
+      erpV2FetchAll("wisent_erp_v2_sewing_events"),
+      erpV2FetchRowsWhere("wisent_erp_v2_orders","deleted_at=not.is.null")
     ]);
-    const rowsByType={orders,products,clients,inventory,finance,employees,settings,stageEvents,standbyEvents,sewingEvents};
+    const rowsByType={orders,products,clients,inventory,finance,employees,settings,stageEvents,standbyEvents,sewingEvents,deletedOrders};
     erpV2CacheRemoteVersions(rowsByType);
-    const official=erpV2OfficialDataFromRows(rowsByType,readErpTestData());
+    const official=erpV2OfficialDataFromRows(rowsByType,localBefore);
     const [colors,sizes,payments,supplies,rules,commissions,financialSummaries]=await Promise.all([
       erpV174FetchOptional("wisent_erp_v2_product_colors"),
       erpV174FetchOptional("wisent_erp_v2_product_size_quantities"),
@@ -28141,9 +28341,30 @@ async function syncErpV2FromCloud(options={}){
       erpV174FetchOptional("wisent_erp_commissions"),
       erpV174FetchView("wisent_erp_v2_order_financial_summary")
     ]);
-    erpLocalWriteOnly(erpApplyV174DomainRows(official,{colors,sizes,payments,supplies,rules,commissions,financialSummaries}));
+    let legacy=null;
+    try{legacy=await fetchErpTestCloudData();}catch(error){
+      console.info("Fonte legada do Private Label indisponível nesta sincronização; cache preservado.");
+    }
+
+    let protectedData=mergeErpTestData(localBefore,legacy||localBefore);
+    protectedData=mergeErpTestData(protectedData,official);
+
+    const deletedIds=new Set((deletedOrders||[]).flatMap(row=>[row?.id,row?.legacy_id]).filter(Boolean).map(String));
+    if(deletedIds.size){
+      protectedData.orders=(protectedData.orders||[]).filter(order=>
+        !deletedIds.has(String(order?.id||""))&&!deletedIds.has(String(order?._v2Id||""))
+      );
+    }
+
+    protectedData=erpApplyV174DomainRows(protectedData,{colors,sizes,payments,supplies,rules,commissions,financialSummaries});
+    const hadConfirmedOrders=erpHasPrivateLabelRecords(localBefore)||erpHasPrivateLabelRecords(legacy);
+    if(hadConfirmedOrders&&!erpHasPrivateLabelRecords(protectedData)){
+      throw new Error("Sincronização vazia bloqueada para proteger os pedidos confirmados");
+    }
+
+    erpLocalWriteOnly(protectedData);
     if(currentPage==="erpTest")renderErpTest();
-    setErpSyncStatus("ERP V2 sincronizado • tabelas oficiais atualizadas");
+    setErpSyncStatus("Private Label sincronizado • dados setoriais protegidos");
     return true;
   }catch(e){
     console.error("Falha ao ler ERP V2:",e);
@@ -29305,7 +29526,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V191";
+  normalized.version="V192";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -30997,6 +31218,9 @@ function deleteErpOrder(id){
   const existing=(data.orders||[]).find(o=>String(o.id)===String(id));
   if(existing)queueErpRelationalDeleteOrder(existing);
   data.orders=data.orders.filter(o=>String(o.id)!==String(id));
+  if(!data.orders.length){
+    try{localStorage.setItem(ERP_INTENTIONAL_EMPTY_KEY,"1");}catch(error){}
+  }
   const cardState=readErpOrderCardCollapse();
   delete cardState[id];
   void writeErpUiPreference(ERP_BOARD_CARD_COLLAPSE_KEY,cardState);
@@ -32257,7 +32481,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V191:",error);
+    console.error("Falha ao mover demanda V192:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
@@ -34328,7 +34552,9 @@ setTimeout(()=>{
 window.currentPage=window.currentPage||"dashboard";
 currentPage=window.currentPage;
 setPageClass(currentPage);
-startApp().catch(e=>{
+startApp().then(()=>{
+  if(typeof window.__wisentMarkBootOk==="function")window.__wisentMarkBootOk(APP_BUILD_VERSION);
+}).catch(e=>{
   console.error("Erro no startApp recuperado:",e);
   updateCloudStatus("Painel recuperado em modo seguro.",true);
   updateCloudDebug(e.message||String(e));
@@ -34336,6 +34562,7 @@ startApp().catch(e=>{
     cloudBooting=false;
     initAuthUi();
   }catch(_){}
+  if(typeof window.__wisentMarkBootOk==="function")window.__wisentMarkBootOk(APP_BUILD_VERSION);
 });
 </script>
 </body></html>
