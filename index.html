@@ -13835,6 +13835,30 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V189 ===== */
 
+/* ===== V190: menu setorial compacto, imagens e Realtime resiliente ===== */
+.erpOrderArtworkGallery{display:grid;gap:6px;margin-top:8px;padding:8px;border:1px solid rgba(96,165,250,.18);border-radius:11px;background:rgba(15,27,44,.72)}
+.erpOrderArtworkGalleryLabel{color:#a9b9ce;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.erpOrderArtworkGallery>div{display:flex;gap:7px;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;padding-bottom:2px;scrollbar-width:thin}
+.erpOrderArtworkGallery button{display:grid;grid-template-columns:38px minmax(70px,1fr);flex:0 0 auto;width:auto;min-width:122px;max-width:170px;min-height:46px;padding:4px 8px 4px 4px;align-items:center;gap:7px;border:1px solid rgba(148,163,184,.22);border-radius:9px;background:#132239;color:#eef5ff;text-align:left;scroll-snap-align:start}
+.erpOrderArtworkGallery button:hover,.erpOrderArtworkGallery button:focus-visible{border-color:#60a5fa;background:#182b46;outline:none}
+.erpOrderArtworkGallery img{width:38px;height:38px;border-radius:7px;object-fit:cover;background:#09111e}
+.erpOrderArtworkGallery button span{overflow:hidden;font-size:11px;font-weight:750;white-space:nowrap;text-overflow:ellipsis}
+
+@media(max-width:760px){
+  body.erpSectorRestricted .side{display:flex!important;flex-direction:column!important;width:min(76vw,278px)!important;max-width:calc(100vw - 54px)!important;padding:calc(10px + env(safe-area-inset-top)) 10px calc(10px + env(safe-area-inset-bottom))!important;border-radius:0 18px 18px 0!important;overflow:hidden!important}
+  body.erpSectorRestricted .menu{display:flex!important;flex:0 0 auto!important;width:100%!important;margin:0!important;padding:56px 0 0!important;flex-direction:column!important;gap:7px!important;overflow-y:auto!important}
+  body.erpSectorRestricted .menu button[data-page="erpTest"],
+  body.erpSectorRestricted .menu button[data-page="suppliesPage"],
+  body.erpSectorRestricted .menu .erpSectorLogout{box-sizing:border-box!important;flex:0 0 46px!important;width:100%!important;min-width:0!important;max-width:100%!important;height:46px!important;min-height:46px!important;max-height:46px!important;margin:0!important;padding:0 13px!important;align-items:center!important;justify-content:flex-start!important;border-radius:11px!important;font-size:13px!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  body.erpSectorRestricted .menu .erpSectorLogout{margin-top:8px!important;border-color:rgba(248,113,113,.22)!important;background:rgba(127,29,29,.18)!important;color:#fecaca!important}
+  body.erpSectorRestricted .mobileMenuOverlay{background:rgba(2,6,23,.66)!important}
+  body.erpSectorRestricted .erpOrderArtworkGallery{margin-top:6px;padding:7px}
+  body.erpSectorRestricted .erpOrderArtworkGallery button{min-width:116px;min-height:46px}
+  body.erpSectorRestricted .erpArtworkViewerBox{width:100%!important;max-width:100%!important}
+  body.erpSectorRestricted .erpArtworkViewerBox>img{width:100%!important;max-width:100%!important;object-fit:contain!important}
+}
+/* ===== FIM V190 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -13925,7 +13949,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V189</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V190</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15999,7 +16023,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V189";
+const APP_BUILD_VERSION="V190";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v188";
 
 async function clearOldPwaCacheOnce(){
@@ -16016,7 +16040,7 @@ async function clearOldPwaCacheOnce(){
       localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
     }
   }catch(e){
-    console.warn("Recuperação segura de cache V189 não concluída:",e);
+    console.warn("Recuperação segura de cache V190 não concluída:",e);
     status="error";
   }
   return status;
@@ -20005,7 +20029,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V189 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V190 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25885,6 +25909,9 @@ let erpRealtimeSocket=null;
 let erpRealtimeConnected=false;
 let erpRealtimeInstalled=false;
 let erpRealtimeJoinRef=0;
+let erpRealtimeCoreJoinRef="";
+const erpRealtimeJoinMeta=new Map();
+const erpRealtimeJoinedTables=new Set();
 let erpRealtimeHeartbeatRef=0;
 let erpRealtimeReconnectTimer=null;
 let erpRealtimeReconnectAttempt=0;
@@ -25916,10 +25943,11 @@ const ERP_REALTIME_TABLES=[
   "wisent_erp_commissions",
   "wisent_erp_supply_requests"
 ];
+const ERP_REALTIME_CORE_TABLE="wisent_erp_v2_orders";
 
 function defaultErpTestState(){
   return {
-    version:"V189",
+    version:"V190",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26356,7 +26384,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V189";
+  data.version="V190";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26609,7 +26637,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V189",
+    version:"V190",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28944,15 +28972,45 @@ function scheduleErpRealtimeCloudRefresh(delay=180){
   },delay);
 }
 
+function erpRealtimeJoinTable(socket,table,required=false){
+  const ref=String(++erpRealtimeJoinRef);
+  const topic=`realtime:wisent-erp-v190-${String(table).replace(/[^a-z0-9_]/gi,"-")}`;
+  const meta={ref,topic,table,required};
+  erpRealtimeJoinMeta.set(ref,meta);
+  if(required)erpRealtimeCoreJoinRef=ref;
+  socket.send(JSON.stringify({
+    topic,
+    event:"phx_join",
+    payload:{
+      config:{
+        broadcast:{ack:false,self:false},
+        presence:{enabled:false},
+        postgres_changes:[{event:"*",schema:"public",table}],
+        private:false
+      },
+      access_token:SUPABASE_ANON_KEY
+    },
+    ref,
+    join_ref:ref
+  }));
+}
+
 function handleErpRealtimeMessage(raw){
   let message=null;
   try{message=JSON.parse(raw?.data||raw||"");}catch(e){return;}
 
-  if(message.event==="phx_reply"&&String(message.ref)===String(erpRealtimeJoinRef)){
+  if(message.event==="phx_reply"&&erpRealtimeJoinMeta.has(String(message.ref))){
+    const meta=erpRealtimeJoinMeta.get(String(message.ref));
     const joined=message.payload?.status==="ok";
-    erpRealtimeSetConnected(joined);
-    if(joined)scheduleErpRealtimeCloudRefresh(40);
-    if(!joined){
+    if(joined)erpRealtimeJoinedTables.add(meta.table);
+    else erpRealtimeJoinedTables.delete(meta.table);
+    if(meta.required){
+      erpRealtimeSetConnected(joined);
+      if(joined)scheduleErpRealtimeCloudRefresh(40);
+    }else if(!joined){
+      console.info(`Realtime opcional indisponível para ${meta.table}; pedidos continuam conectados e a sincronização incremental fará a recuperação.`);
+    }
+    if(meta.required&&!joined){
       try{erpRealtimeSocket?.close();}catch(e){}
       scheduleErpRealtimeReconnect();
     }
@@ -28960,6 +29018,12 @@ function handleErpRealtimeMessage(raw){
   }
 
   if(message.event==="phx_error"||message.event==="phx_close"){
+    const meta=[...erpRealtimeJoinMeta.values()].find(item=>item.topic===message.topic);
+    if(meta&&!meta.required){
+      erpRealtimeJoinedTables.delete(meta.table);
+      console.info(`Canal opcional ${meta.table} será recuperado por sincronização incremental.`);
+      return;
+    }
     erpRealtimeSetConnected(false);
     try{erpRealtimeSocket?.close();}catch(e){}
     return;
@@ -28991,27 +29055,11 @@ function connectErpRealtime(){
     erpRealtimeSocket=socket;
 
     socket.addEventListener("open",()=>{
-      erpRealtimeJoinRef+=1;
-      const postgresChanges=ERP_REALTIME_TABLES.flatMap(table=>["INSERT","UPDATE","DELETE"].map(event=>({
-        event,
-        schema:"public",
-        table
-      })));
-      socket.send(JSON.stringify({
-        topic:"realtime:wisent-erp-v170",
-        event:"phx_join",
-        payload:{
-          config:{
-            broadcast:{ack:false,self:false},
-            presence:{enabled:false},
-            postgres_changes:postgresChanges,
-            private:false
-          },
-          access_token:SUPABASE_ANON_KEY
-        },
-        ref:String(erpRealtimeJoinRef),
-        join_ref:String(erpRealtimeJoinRef)
-      }));
+      erpRealtimeJoinMeta.clear();
+      erpRealtimeJoinedTables.clear();
+      erpRealtimeCoreJoinRef="";
+      erpRealtimeJoinTable(socket,ERP_REALTIME_CORE_TABLE,true);
+      ERP_REALTIME_TABLES.filter(table=>table!==ERP_REALTIME_CORE_TABLE).forEach(table=>erpRealtimeJoinTable(socket,table,false));
     });
 
     socket.addEventListener("message",handleErpRealtimeMessage);
@@ -29108,7 +29156,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V189";
+  normalized.version="V190";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -29337,8 +29385,19 @@ function erpProductHasArtwork(product){
   return !!erpProductArtworkSrc(product);
 }
 
+function erpArtworkStoragePublicUrl(path){
+  const value=String(path||"").trim();
+  if(!value)return "";
+  if(/^(data:image|https?:\/\/|blob:)/i.test(value))return value;
+  const clean=value
+    .replace(/^\/+/,"")
+    .replace(/^storage\/v1\/object\/public\//i,"")
+    .replace(/^object\/public\//i,"");
+  return clean.includes("/")?`${SUPABASE_URL}/storage/v1/object/public/${clean}`:"";
+}
+
 function erpProductArtworkSrc(product){
-  return String(product?.artworkImage||product?.artworkUrl||product?.artworkURL||"").trim();
+  return String(product?.artworkImage||product?.artworkUrl||product?.artworkURL||erpArtworkStoragePublicUrl(product?.artworkStoragePath)||"").trim();
 }
 
 function erpProductHasArtworkReference(product){
@@ -29377,6 +29436,15 @@ function openErpOrderArtworkViewer(orderId,productId){
     return;
   }
   showErpArtworkViewer(src,erpArtworkLabel(product),`${order.number||"Pedido"} • ${product.model||"Modelo"}`);
+}
+
+function erpOrderArtworkGallery(order,products=erpNormalizeOrderProducts(order)){
+  const available=(products||[]).filter(erpProductHasArtwork);
+  if(!available.length)return "";
+  return `<div class="erpOrderArtworkGallery" aria-label="Imagens dos modelos do pedido">
+    <span class="erpOrderArtworkGalleryLabel">Imagens dos modelos</span>
+    <div>${available.map((product,index)=>`<button type="button" onclick="openErpOrderArtworkViewer('${order.id}','${product.id}')" aria-label="Visualizar imagem do modelo ${esc(product.model||String(index+1))}" title="Abrir imagem de ${esc(product.model||`Modelo ${index+1}`)}"><img src="${esc(erpProductArtworkSrc(product))}" alt="Imagem do modelo ${esc(product.model||String(index+1))}" loading="lazy"><span>${esc(product.model||`Modelo ${index+1}`)}</span></button>`).join("")}</div>
+  </div>`;
 }
 
 function showErpArtworkViewer(src,label,context=""){
@@ -31347,6 +31415,7 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
       <span><b>Responsável</b>${esc(responsible)}</span>
       <span class="erpArtworkIndicator ${hasArtwork?"hasArtwork":""}"><b>Estampa</b>${hasArtwork?"Anexada":"Sem imagem"}</span>
     </div>
+    ${erpOrderArtworkGallery(order,products)}
     ${collapsed?"":`<div class="erpOrderExpanded">
       <section class="erpDemandSection"><div class="erpDemandSectionTitle">Produção <span>Etapa ${currentIndex+1} de ${ERP_STAGES.length}</span></div>${erpOrderStageProgress(order)}</section>
       <section class="erpDemandSection"><div class="erpDemandSectionTitle">Resumo</div><div class="erpDemandSummaryGrid">
@@ -31812,7 +31881,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V189:",error);
+    console.error("Falha ao mover demanda V190:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
