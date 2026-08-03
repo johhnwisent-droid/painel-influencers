@@ -1,5 +1,5 @@
-const WISENT_VERSION="V194";
-const WISENT_CACHE="wisent-erp-static-v194";
+const WISENT_VERSION="V195";
+const WISENT_CACHE="wisent-erp-static-v195";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";

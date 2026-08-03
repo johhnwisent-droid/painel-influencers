@@ -13750,7 +13750,7 @@ body.erpBoardDragging .erpBoardWorkspace{user-select:none!important}
 body.erpBoardDragging{cursor:grabbing!important;user-select:none!important}
 body.erpBoardDragging .erpKanban{scroll-snap-type:none!important;scroll-behavior:auto!important}
 body.erpSectorRestricted:not(.erpSupplyOnly) .menu button[data-page="erpTest"],
-body.erpSectorRestricted:not(.erpSupplyOnly) .menu button[data-page="suppliesPage"]{display:flex!important}
+body.erpSectorRestricted.erpSectorCanSupplies:not(.erpSupplyOnly) .menu button[data-page="suppliesPage"]{display:flex!important}
 body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module="pedidos"]{display:none!important}
 body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module="insumos"]{display:flex!important;justify-content:center!important;width:100%!important}
 .erpSupplyRelatedOrder{display:block;margin:8px 0;padding:8px 10px;border:1px solid rgba(96,165,250,.18);border-radius:9px;background:rgba(37,99,235,.08);color:#bfd7ff;font-weight:650}
@@ -13793,7 +13793,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   body.erpSectorRestricted .side{display:flex!important;width:min(86vw,320px)!important}
   body.erpSectorRestricted .menu button{display:none!important}
   body.erpSectorRestricted:not(.erpSupplyOnly) .menu button[data-page="erpTest"],
-  body.erpSectorRestricted:not(.erpSupplyOnly) .menu button[data-page="suppliesPage"],
+  body.erpSectorRestricted.erpSectorCanSupplies:not(.erpSupplyOnly) .menu button[data-page="suppliesPage"],
   body.erpSectorRestricted .menu .erpSectorLogout{display:flex!important;min-height:48px!important;align-items:center!important}
   body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="suppliesPage"]{display:flex!important}
   body.erpSectorRestricted .brand{display:none!important}
@@ -13859,7 +13859,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V190 ===== */
 
-/* ===== V194: sincronização profissional por módulo ===== */
+/* ===== V195: sincronização profissional por módulo ===== */
 .erpOrderCard,
 .erpOrderCard *{box-sizing:border-box}
 .erpOrderCard{width:100%!important;max-width:100%!important;min-width:0!important;overflow-x:hidden!important}
@@ -13998,7 +13998,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   .erpArtworkViewerLoading span{animation-duration:1.5s}
   .erpArtworkViewerCanvas img{transition:none}
 }
-/* ===== V194 KANBAN SETORIAL MOBILE COMPLETO ===== */
+/* ===== V195 KANBAN SETORIAL COMPLETO ===== */
 .erpOwnSectorBadge{display:none}
 .erpDragHandle:disabled{cursor:not-allowed!important;opacity:.3!important;filter:saturate(.35)}
 
@@ -14069,7 +14069,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     touch-action:none!important;
   }
 }
-/* ===== FIM V194 ===== */
+/* ===== FIM V195 ===== */
 
 </style>
 
@@ -14161,7 +14161,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V194</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V195</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16325,20 +16325,20 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V194";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v194";
+const APP_BUILD_VERSION="V195";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v195";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V194.
+      versão anterior são responsabilidade exclusiva do Service Worker V195.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V194 não concluída:",e);
+    console.warn("Verificação segura de cache V195 não concluída:",e);
     status="error";
   }
   return status;
@@ -16355,9 +16355,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=194",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=195",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=194");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=195");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -17508,7 +17508,7 @@ function timeoutBool(promise,ms=12000){
 
 async function flushCriticalRecordQueues(){
   /*
-    V194:
+    V195:
     O painel geral confirma apenas suas listas próprias. Private Label e
     Insumos possuem confirmação independente para evitar conflito entre filas.
   */
@@ -17562,7 +17562,7 @@ async function flushStrictSharedSave(){
     if(stateOk&&recordsOk){
       markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
       setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
-      updateCloudDebug("confirmação V194: painel geral confirmado; Private Label e Insumos usam sincronização própria");
+      updateCloudDebug("confirmação V195: painel geral confirmado; Private Label e Insumos usam sincronização própria");
       return true;
     }
 
@@ -18918,13 +18918,13 @@ function runLocalSystemAudit(){
   }
 
   if(
-    String(isErpSectorRestrictedUser).includes("corte")&&
-    String(isErpSectorRestrictedUser).includes("costura")&&
+    String(erpRoleProductionStage).includes("Conferência")&&
+    String(erpRoleProductionStage).includes("Embalagem")&&
     String(showPage).includes("nextPage=\"erpTest\"")&&
-    String(showErpModule).includes("isErpSectorRestrictedUser()?\"pedidos\"")&&
-    String(erpVisibleKanbanStages).includes("erpRestrictedStage")
+    String(showErpModule).includes("isErpSectorRestrictedUser()?sectorTarget")&&
+    String(erpVisibleKanbanStages).includes("ERP_STAGES")
   ){
-    auditAdd(report,"pass","ERP_SECTOR_KANBAN_LOGIN","Perfis Corte e Costura ficam restritos ao Kanban ERP da própria etapa.");
+    auditAdd(report,"pass","ERP_SECTOR_KANBAN_LOGIN","Perfis operacionais visualizam o Kanban completo e executam somente as ações permitidas para o próprio setor.");
   }else{
     auditAdd(report,"warn","ERP_SECTOR_KANBAN_LOGIN","Não foi possível confirmar toda a restrição de login setorial do ERP.");
   }
@@ -20363,7 +20363,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V194 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V195 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -20850,13 +20850,13 @@ async function forcePatchPersonalizacaoState(statePayload,expectedToken){
 async function cloudSaveNow(){
   if(cloudSaveInFlight){
     if(cloudSaveStale()){
-      console.warn("Salvamento anterior liberado pelo monitor de segurança V194");
+      console.warn("Salvamento anterior liberado pelo monitor de segurança V195");
       cloudSaveInFlight=null;
       cloudSaveStartedAt=0;
       markSharedSavePending("painel","watchdog liberou salvamento travado",latestSharedSaveToken);
       updateStrictMutationStatus(latestSharedSaveToken,"retrying","watchdog liberou salvamento travado");
       setSaveUiState("retrying","salvamento anterior travou; nova tentativa agendada",true);
-      updateCloudDebug("monitor V194 liberou uma tentativa antiga; dados locais preservados");
+      updateCloudDebug("monitor V195 liberou uma tentativa antiga; dados locais preservados");
       scheduleCloudSaveRetry();
     }else{
       return cloudSaveInFlight;
@@ -20952,9 +20952,9 @@ async function cloudSaveNow(){
 
       if(result&&result.timeout){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
-        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V194");
+        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V195");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V194: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V195: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -21075,10 +21075,10 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V194: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V195: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
-        updateCloudDebug("V194: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
+        updateCloudDebug("V195: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
       }
     }catch(e){
       console.warn("Salvamento inicial ignorado:",e);
@@ -26011,9 +26011,33 @@ function applyErpTechnicalMapAccess(){
   return allowed;
 }
 
+function erpRoleProductionStage(roleValue=erpUserRoleNormalized()){
+  const role=String(roleValue||"")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g," ")
+    .trim();
+  const aliases=[
+    {stage:"Conferência",names:["conferencia","controle de qualidade"]},
+    {stage:"Embalagem",names:["embalagem"]},
+    {stage:"Finalizado",names:["finalizado"]},
+    {stage:"Estampa",names:["estampa","estamparia"]},
+    {stage:"Entrega",names:["entrega","expedicao"]},
+    {stage:"Costura",names:["costura"]},
+    {stage:"Corte",names:["corte"]},
+    {stage:"Pedido",names:["pedido","pedidos"]}
+  ];
+  const prefixes=["funcionario ","setor ","responsavel ","operador ","colaborador "];
+  for(const entry of aliases){
+    if(entry.names.includes(role))return entry.stage;
+    if(entry.names.some(name=>prefixes.some(prefix=>role===prefix+name)))return entry.stage;
+  }
+  return "";
+}
+
 function isErpSectorRestrictedUser(){
-  const role=erpUserRoleNormalized();
-  return role==="corte"||role==="costura";
+  return !!erpRoleProductionStage();
 }
 
 function isErpSupplyOnlyUser(){
@@ -26026,18 +26050,15 @@ function isErpScopedRestrictedUser(){
 }
 
 function erpSectorCanAccessSupplies(){
-  return isErpSectorRestrictedUser()||isErpSupplyOnlyUser()||isWisentAdmin();
+  return ["Corte","Costura"].includes(erpRoleProductionStage())||isErpSupplyOnlyUser()||isWisentAdmin();
 }
 
 function erpSectorIsViewingSupplies(){
-  return isErpSectorRestrictedUser()&&currentPage==="suppliesPage";
+  return isErpSectorRestrictedUser()&&erpSectorCanAccessSupplies()&&currentPage==="suppliesPage";
 }
 
 function erpRestrictedStage(){
-  const role=erpUserRoleNormalized();
-  if(role==="corte")return "Corte";
-  if(role==="costura")return "Costura";
-  return "";
+  return erpRoleProductionStage();
 }
 
 function isErpSectorMobileBoard(){
@@ -26059,10 +26080,11 @@ function applyErpSectorAccessControl(){
   document.body.classList.toggle("erpSectorRestricted",restricted);
   document.body.classList.toggle("erpSupplyOnly",supplyOnly);
   document.body.classList.toggle("erpSectorSupplies",sectorSupplies);
+  document.body.classList.toggle("erpSectorCanSupplies",erpSectorCanAccessSupplies());
 
   if(restricted){
     document.querySelectorAll(".menu button").forEach(btn=>{
-      const allowedPages=supplyOnly?["suppliesPage"]:["erpTest","suppliesPage"];
+      const allowedPages=supplyOnly?["suppliesPage"]:["erpTest",...(erpSectorCanAccessSupplies()?["suppliesPage"]:[])];
       btn.style.display=allowedPages.includes(btn.dataset.page)?"":"none";
     });
 
@@ -26096,7 +26118,7 @@ function applyErpSectorAccessControl(){
     notice.innerHTML=restricted
       ? (supplyOnly||sectorSupplies)
         ? `<strong>Insumos • ${esc(stage||"Colaborador")}</strong><span>Crie e acompanhe as solicitações permitidas para este login.</span>`
-        : `<strong>${esc(erpRestrictedRoleLabel())}</strong><span>Demandas liberadas para execução neste setor.</span><small id="erpRealtimeSectorStatus" class="erpRealtimeSectorStatus ${erpRealtimeStatus}">${erpRealtimeStatus==="connected"?"Tempo real conectado":erpRealtimeStatus==="offline"?"Sem conexão":"Reconectando"}</small>`
+        : `<strong>${esc(erpRestrictedRoleLabel())}</strong><span>Todos os pedidos estão visíveis; as ações permanecem limitadas ao fluxo deste setor.</span><small id="erpRealtimeSectorStatus" class="erpRealtimeSectorStatus ${erpRealtimeStatus}">${erpRealtimeStatus==="connected"?"Tempo real conectado":erpRealtimeStatus==="offline"?"Sem conexão":"Reconectando"}</small>`
       : "";
   }
 }
@@ -26109,7 +26131,7 @@ function showPage(id){
   if(isErpSupplyOnlyUser()&&nextPage!=="suppliesPage"){
     nextPage="suppliesPage";
     id="suppliesPage";
-  }else if(isErpSectorRestrictedUser()&&!(["erpTest","suppliesPage"].includes(nextPage))){
+  }else if(isErpSectorRestrictedUser()&&!(nextPage==="erpTest"||(nextPage==="suppliesPage"&&erpSectorCanAccessSupplies()))){
     nextPage="erpTest";
     id="erpTest";
   }
@@ -26135,14 +26157,10 @@ function showPage(id){
 
   if(currentPage==="erpTest"&&isErpSectorRestrictedUser()&&$("erpKanbanStageFilter")){
     const roleKey=erpUserRoleNormalized();
-    if(isErpSectorMobileBoard()){
-      if(erpSectorMobileFilterRole!==roleKey){
-        $("erpKanbanStageFilter").value="";
-        erpSectorMobileFilterRole=roleKey;
-        erpSectorMobilePositioned=false;
-      }
-    }else{
-      $("erpKanbanStageFilter").value=erpRestrictedStage();
+    if(erpSectorMobileFilterRole!==roleKey){
+      $("erpKanbanStageFilter").value="";
+      erpSectorMobileFilterRole=roleKey;
+      erpSectorMobilePositioned=false;
     }
   }
 
@@ -26168,7 +26186,7 @@ function showPage(id){
     if(currentPage==="commissionsPage")ensureErpCommissionAutoCalculated();
   }
   if(currentPage==="erpTest"||currentPage==="suppliesPage"){
-    setTimeout(()=>refreshErpWorkspaceFromCloud({reason:"page-entry"}),0);
+    setTimeout(()=>refreshErpWorkspaceFromCloud({reason:"page-entry",force:true}),0);
   }
 }
 
@@ -26307,7 +26325,7 @@ const ERP_REALTIME_CORE_TABLE="wisent_erp_v2_orders";
 
 function defaultErpTestState(){
   return {
-    version:"V194",
+    version:"V195",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26443,7 +26461,7 @@ function erpProductionReadinessChecks(){
     {key:"offline_queue",label:"Fila offline",ok:true,warn:queue.length>0,detail:queue.length?`${queue.length} item(ns) pendente(s) de envio.`:"Fila vazia ou pronta para preservar alterações offline."},
     {key:"cloud_sync",label:"Sincronização compartilhada",ok:!!lastSync||queue.length===0,warn:!lastSync,detail:lastSync?`Última sincronização: ${new Date(lastSync).toLocaleString("pt-BR")}`:"Ainda aguardando primeira confirmação de nuvem neste aparelho."},
     {key:"sector_users",label:"Usuários por setor",ok:hasSectorUsers,warn:!hasSectorUsers,detail:hasSectorUsers?"Perfis Corte e Costura detectados.":"Cadastre ao menos um login Corte e um login Costura."},
-    {key:"kanban_restricted",label:"Kanban setorial",ok:String(isErpSectorRestrictedUser).includes("corte")&&String(renderErpKanban).includes("erpVisibleKanbanStages"),warn:false,detail:"Corte/Costura ficam restritos ao board da própria etapa e recebem as demandas completas em tempo real."},
+    {key:"kanban_restricted",label:"Kanban setorial",ok:String(erpRoleProductionStage).includes("Conferência")&&String(renderErpKanban).includes("erpVisibleKanbanStages"),warn:false,detail:"Todos os setores operacionais visualizam o board completo e recebem as demandas em tempo real, com ações limitadas ao próprio fluxo."},
     {key:"audit_log",label:"Trilha de auditoria",ok:true,warn:auditRows.length<1,detail:auditRows.length?`${auditRows.length} evento(s) locais registrados.`:"Será alimentada conforme o ERP for usado."},
     {key:"auto_backup",label:"Backup automático",ok:!!backup,warn:!backup,detail:backup?`Último backup local: ${new Date(backup.at).toLocaleString("pt-BR")}`:"Será criado na próxima alteração do ERP."},
     {key:"pdf_report",label:"Relatório PDF",ok:typeof exportErpReportPDF==="function",warn:false,detail:"Relatório PDF disponível para produção mensal."},
@@ -26744,7 +26762,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V194";
+  data.version="V195";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -27099,7 +27117,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V194",
+    version:"V195",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -29166,7 +29184,7 @@ function openErpRealtimeArrival(){
   if(toast)toast.classList.remove("show");
   showPage("erpTest");
   showErpModule("pedidos");
-  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value=isErpSectorMobileBoard()?"":(erpRestrictedStage()||"");
+  if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value="";
   if($("erpSearch")&&erpRealtimeArrivalOrderId)$("erpSearch").value="";
   renderErpTest();
 }
@@ -29703,7 +29721,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V194";
+  normalized.version="V195";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -29815,7 +29833,7 @@ function showErpModule(module){
   const requested=module||"dashboard";
   const mapBlocked=requested==="mapa"&&!isErpTechnicalMapAdmin();
   const commissionBlocked=requested==="comissoes"&&!isWisentAdmin();
-  const sectorTarget=erpSectorIsViewingSupplies()&&requested==="insumos"?"insumos":"pedidos";
+  const sectorTarget=erpSectorCanAccessSupplies()&&erpSectorIsViewingSupplies()&&requested==="insumos"?"insumos":"pedidos";
   const target=isErpSupplyOnlyUser()?"insumos":(isErpSectorRestrictedUser()?sectorTarget:((mapBlocked||commissionBlocked)?"dashboard":requested));
 
   if(mapBlocked)showUndoToast("Área disponível somente para a conta principal de administrador.");
@@ -31150,7 +31168,7 @@ function erpSectorCanDragOrder(order){
   if(!isErpSectorRestrictedUser())return true;
   const stage=String(order?.stage||"Pedido");
   const ownStage=erpRestrictedStage();
-  return stage===ownStage||stage===erpNextStage(ownStage);
+  return stage===ownStage||(isErpSectorMobileBoard()&&stage===erpNextStage(ownStage));
 }
 function erpStageDueFrom(startValue=new Date().toISOString()){
   const start=new Date(startValue);
@@ -31728,8 +31746,7 @@ function erpVisibleKanbanStages(){
   const selected=$("erpKanbanStageFilter")?.value||"";
 
   if(restricted){
-    if(isErpSectorMobileBoard())return selected&&ERP_STAGES.includes(selected)?[selected]:ERP_STAGES;
-    return [erpRestrictedStage()];
+    return selected&&ERP_STAGES.includes(selected)?[selected]:ERP_STAGES;
   }
   if(selected&&ERP_STAGES.includes(selected))return [selected];
 
@@ -32311,7 +32328,7 @@ function renderErpKanban(data){
 
   if(restricted&&!mobileSectorBoard){
     const nextStage=erpNextStage(ownStage);
-    if(nextStage&&nextStage!==ownStage){
+    if(nextStage&&nextStage!==ownStage&&!stages.includes(nextStage)){
       target.insertAdjacentHTML("beforeend",`<section class="erpKanbanCol erpSectorHandoffDrop stage-${erpStageKey(nextStage)}" data-board-stage="${esc(nextStage)}" aria-label="Soltar para enviar a ${esc(nextStage)}"><div class="erpKanbanList" data-board-list="${esc(nextStage)}">Solte aqui para avançar para ${esc(nextStage)}</div></section>`);
     }
   }
@@ -32726,7 +32743,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V194:",error);
+    console.error("Falha ao mover demanda V195:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
