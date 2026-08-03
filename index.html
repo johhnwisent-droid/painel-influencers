@@ -13782,6 +13782,59 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V187 ===== */
 
+/* ===== V189: operação setorial mobile e estado Realtime ===== */
+.erpSectorLogout{display:none}
+.erpRealtimeSectorStatus{display:inline-flex;align-items:center;gap:7px;width:max-content;color:#fbbf24;font-size:11px;font-weight:700}
+.erpRealtimeSectorStatus::before{content:"";width:7px;height:7px;border-radius:999px;background:currentColor;box-shadow:0 0 0 3px rgba(251,191,36,.12)}
+.erpRealtimeSectorStatus.connected{color:#34d399}
+.erpRealtimeSectorStatus.offline{color:#f87171}
+
+@media(max-width:760px){
+  body.erpSectorRestricted .side{display:flex!important;width:min(86vw,320px)!important}
+  body.erpSectorRestricted .menu button{display:none!important}
+  body.erpSectorRestricted:not(.erpSupplyOnly) .menu button[data-page="erpTest"],
+  body.erpSectorRestricted:not(.erpSupplyOnly) .menu button[data-page="suppliesPage"],
+  body.erpSectorRestricted .menu .erpSectorLogout{display:flex!important;min-height:48px!important;align-items:center!important}
+  body.erpSectorRestricted.erpSupplyOnly .menu button[data-page="suppliesPage"]{display:flex!important}
+  body.erpSectorRestricted .brand{display:none!important}
+  body.erpSectorRestricted .menu{padding-top:68px!important;gap:8px!important}
+  body.erpSectorRestricted .mobileBottomNav{display:none!important}
+  body.erpSectorRestricted .main{overflow-x:hidden!important;padding:70px 10px 18px!important}
+  body.erpSectorRestricted #erpTest{overflow-x:hidden!important}
+  body.erpSectorRestricted .erpHero,
+  body.erpSectorRestricted .erpModuleTabs,
+  body.erpSectorRestricted .erpBoardHeader,
+  body.erpSectorRestricted .erpBoardQuickActions,
+  body.erpSectorRestricted .erpBoardState{display:none!important}
+  body.erpSectorRestricted .erpBoardWorkspace{padding:8px!important;margin:0!important;border-radius:14px!important}
+  body.erpSectorRestricted .erpSectorAccessNotice{display:flex!important;flex-direction:column!important;gap:4px!important;margin:0 0 8px!important;padding:10px 12px!important;border:1px solid rgba(96,165,250,.22)!important;border-radius:12px!important;background:#0f1b2c!important}
+  body.erpSectorRestricted .erpSectorAccessNotice strong{font-size:15px!important}
+  body.erpSectorRestricted .erpSectorAccessNotice span{display:none!important}
+  body.erpSectorRestricted .erpBoardControls{display:grid!important;grid-template-columns:minmax(0,1fr) 48px!important;gap:8px!important;margin:0 0 8px!important}
+  body.erpSectorRestricted .erpBoardControls input{min-height:46px!important;font-size:16px!important}
+  body.erpSectorRestricted .erpBoardControls>button{min-height:46px!important;padding:0!important;font-size:0!important}
+  body.erpSectorRestricted .erpBoardControls>button::before{content:"☰";font-size:20px!important}
+  body.erpSectorRestricted #erpBoardFilters label:first-child{display:none!important}
+  body.erpSectorRestricted .erpKanban{width:100%!important;margin:0!important;padding:0!important;overflow-x:hidden!important;scroll-snap-type:none!important}
+  body.erpSectorRestricted .erpKanbanCol,
+  body.erpSectorRestricted .erpKanban.singleStage .erpKanbanCol{flex:0 0 100%!important;width:100%!important;min-width:0!important;max-width:100%!important;max-height:calc(100dvh - 190px)!important}
+  body.erpSectorRestricted .erpOrderCard{padding:10px!important;border-radius:13px!important}
+  body.erpSectorRestricted .erpDemandHeader{grid-template-columns:44px minmax(0,1fr) auto!important;gap:8px!important}
+  body.erpSectorRestricted .erpDragHandle,
+  body.erpSectorRestricted .erpOrderCollapseBtn{min-width:44px!important;min-height:44px!important}
+  body.erpSectorRestricted .erpOrderCompactSummary{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important}
+  body.erpSectorRestricted .erpDemandFooter{grid-template-columns:1fr!important}
+  body.erpSectorRestricted .erpDemandFooter>.primary{width:100%!important;min-height:48px!important;font-size:14px!important}
+  body.erpSectorRestricted .erpCardMenu{display:none!important}
+  body.erpSectorRestricted .erpStageProgress small{font-size:9px!important}
+  body.erpSectorRestricted.erpSectorSupplies .erpBoardWorkspace{display:none!important}
+  body.erpSectorRestricted .erpSectorHandoffDrop{display:none!important}
+  body.erpSectorRestricted.erpBoardDragging .erpSectorHandoffDrop{display:flex!important;position:fixed!important;z-index:9997!important;right:12px!important;bottom:14px!important;left:12px!important;width:auto!important;min-width:0!important;max-width:none!important;height:86px!important;min-height:86px!important;align-items:center!important;justify-content:center!important;border:2px dashed #60a5fa!important;background:rgba(15,27,44,.96)!important;box-shadow:0 18px 50px rgba(0,0,0,.48)!important}
+  body.erpSectorRestricted .erpSectorHandoffDrop .erpKanbanList{display:flex!important;min-height:0!important;align-items:center!important;justify-content:center!important;overflow:visible!important;color:#dbeafe!important;font-size:14px!important;font-weight:800!important}
+  body.erpSectorRestricted .erpSectorHandoffDrop.isDropTarget{border-color:#34d399!important;background:rgba(6,78,59,.96)!important}
+}
+/* ===== FIM V189 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -13866,12 +13919,13 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
       <button data-page="collaborators">Colaboradores</button>
       <button data-page="erpTest" data-erp-test-nav>Private Label</button>
       <button data-page="suppliesPage">Insumos para Comprar</button>
+      <button type="button" class="erpSectorLogout" data-sector-logout onclick="logoutUser()">Sair</button>
       <button data-page="commissionsPage" data-admin-commission>Gestão de Comissões</button>
       <button data-page="settings">Personalizar</button>
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V188</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V189</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15945,7 +15999,7 @@ function reloadAppNow(){
   }
   window.location.reload();
 }
-const APP_BUILD_VERSION="V188";
+const APP_BUILD_VERSION="V189";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v188";
 
 async function clearOldPwaCacheOnce(){
@@ -15962,7 +16016,7 @@ async function clearOldPwaCacheOnce(){
       localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
     }
   }catch(e){
-    console.warn("Recuperação segura de cache V188 não concluída:",e);
+    console.warn("Recuperação segura de cache V189 não concluída:",e);
     status="error";
   }
   return status;
@@ -19951,7 +20005,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V188 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO V189 carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -25682,8 +25736,8 @@ function applyErpSectorAccessControl(){
     notice.hidden=!restricted;
     notice.innerHTML=restricted
       ? (supplyOnly||sectorSupplies)
-        ? `<strong>Acesso operacional — Insumos para Comprar</strong><span>${sectorSupplies?`Você pode alternar pelo menu entre o Kanban do setor ${esc(stage)} e esta página de solicitações.`:`Este perfil pode criar, consultar e acompanhar solicitações de insumos.`} Funções administrativas e demais módulos ficam indisponíveis.</span>`
-        : `<strong>Acesso operacional — ${esc(erpRestrictedRoleLabel())}</strong><span>No celular, este login visualiza todas as etapas e pode filtrar um setor. As ações de produção continuam limitadas às permissões do seu cargo.</span><small id="erpRealtimeSectorStatus" class="erpRealtimeSectorStatus ${erpRealtimeConnected?"connected":""}">${erpRealtimeConnected?"Tempo real conectado":"Tempo real reconectando"}</small>`
+        ? `<strong>Insumos • ${esc(stage||"Colaborador")}</strong><span>Crie e acompanhe as solicitações permitidas para este login.</span>`
+        : `<strong>${esc(erpRestrictedRoleLabel())}</strong><span>Demandas liberadas para execução neste setor.</span><small id="erpRealtimeSectorStatus" class="erpRealtimeSectorStatus ${erpRealtimeStatus}">${erpRealtimeStatus==="connected"?"Tempo real conectado":erpRealtimeStatus==="offline"?"Sem conexão":"Reconectando"}</small>`
       : "";
   }
 }
@@ -25719,6 +25773,10 @@ function showPage(id){
   currentPage=resolvedPage;
   window.currentPage=currentPage;
   setPageClass(currentPage);
+
+  if(currentPage==="erpTest"&&isErpSectorRestrictedUser()&&$("erpKanbanStageFilter")){
+    $("erpKanbanStageFilter").value=erpRestrictedStage();
+  }
 
   if(!samePage){
     document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
@@ -25834,11 +25892,22 @@ let erpRealtimeHeartbeatTimer=null;
 let erpRealtimeSyncTimer=null;
 let erpRealtimeArrivalTimer=null;
 let erpRealtimeArrivalOrderId="";
+let erpRealtimeStatus="reconnecting";
+let erpRealtimeInstalledAt=0;
+let erpRealtimeDeltaBusy=false;
+let erpRealtimeDeltaQueued=false;
+const erpRealtimeHydrationTimers=new Map();
+const erpRealtimeHydrationActive=new Map();
 const erpRealtimeStageByOrder=new Map();
 const erpRealtimeSeenEvents=new Set();
+const ERP_REALTIME_EVENT_SEEN_KEY=KEY+"_erp_realtime_events_seen_v189";
+const ERP_REALTIME_NOTIFICATION_SEEN_KEY=KEY+"_erp_sector_notification_seen_v189";
+const ERP_REALTIME_LAST_DELTA_KEY=KEY+"_erp_realtime_last_delta_v189";
 const ERP_REALTIME_TABLES=[
   "wisent_erp_v2_orders",
   "wisent_erp_v2_products",
+  "wisent_erp_v2_product_colors",
+  "wisent_erp_v2_product_size_quantities",
   "wisent_erp_v2_stage_events",
   "wisent_erp_v2_standby_events",
   "wisent_erp_v2_sewing_events",
@@ -25850,7 +25919,7 @@ const ERP_REALTIME_TABLES=[
 
 function defaultErpTestState(){
   return {
-    version:"V188",
+    version:"V189",
     createdAt:new Date().toISOString(),
     orders:[],
     clients:[],
@@ -26287,7 +26356,7 @@ function normalizeErpTestData(raw){
   const defaults=defaultErpTestState();
   const data=ensurePlainObject(raw,defaults);
 
-  data.version="V188";
+  data.version="V189";
   data.createdAt=data.createdAt||defaults.createdAt;
   data.updatedAt=data.updatedAt||"";
   data.updatedBy=data.updatedBy||"";
@@ -26540,7 +26609,7 @@ function mergeErpTestData(localData,remoteData){
 
   const merged={
     ...base,
-    version:"V188",
+    version:"V189",
     createdAt:local.createdAt||remote.createdAt||new Date().toISOString(),
     updatedAt:base.updatedAt||new Date().toISOString(),
     updatedBy:base.updatedBy||"",
@@ -28391,8 +28460,9 @@ function erpRealtimePrimeStages(){
 function updateErpRealtimeUi(){
   const status=$("erpRealtimeSectorStatus");
   if(status){
-    status.textContent=erpRealtimeConnected?"Tempo real conectado":"Tempo real reconectando";
-    status.classList.toggle("connected",erpRealtimeConnected);
+    status.textContent=erpRealtimeStatus==="connected"?"Tempo real conectado":erpRealtimeStatus==="offline"?"Sem conexão":"Reconectando";
+    status.classList.toggle("connected",erpRealtimeStatus==="connected");
+    status.classList.toggle("offline",erpRealtimeStatus==="offline");
   }
   if(erpRealtimeConnected&&$("erpSyncStatus")){
     setErpSyncStatus("ERP em tempo real • atualizações instantâneas entre os setores");
@@ -28401,6 +28471,7 @@ function updateErpRealtimeUi(){
 
 function erpRealtimeSetConnected(value){
   erpRealtimeConnected=!!value;
+  erpRealtimeStatus=value?"connected":(navigator.onLine===false?"offline":"reconnecting");
   if(value)erpRealtimeReconnectAttempt=0;
   updateErpRealtimeUi();
 }
@@ -28417,8 +28488,51 @@ function erpRealtimeEventData(message){
   };
 }
 
+function erpRealtimeReadSeen(key){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(key)||"[]");
+    return Array.isArray(parsed)?parsed.map(String):[];
+  }catch(error){return [];}
+}
+
+function erpRealtimeRememberSeen(key,fingerprint,limit=320){
+  if(!fingerprint)return false;
+  const list=erpRealtimeReadSeen(key);
+  if(list.includes(fingerprint))return false;
+  list.push(fingerprint);
+  try{localStorage.setItem(key,JSON.stringify(list.slice(-limit)));}catch(error){}
+  return true;
+}
+
+function erpRealtimeWasSeen(key,fingerprint){
+  return erpRealtimeReadSeen(key).includes(String(fingerprint||""));
+}
+
+function erpRealtimeStableFingerprint(eventData){
+  const record=eventData?.record||{};
+  const oldRecord=eventData?.oldRecord||{};
+  return [
+    String(eventData?.table||""),
+    String(eventData?.type||"").toUpperCase(),
+    record.id||oldRecord.id||"",
+    record.order_id||oldRecord.order_id||"",
+    record.stage||oldRecord.stage||record.to_stage||oldRecord.to_stage||"",
+    record.updated_at||oldRecord.updated_at||eventData?.commitTimestamp||""
+  ].join("|");
+}
+
+function erpRealtimeTouchDelta(timestamp){
+  const incoming=String(timestamp||"");
+  if(!incoming)return;
+  try{
+    const current=localStorage.getItem(ERP_REALTIME_LAST_DELTA_KEY)||"";
+    if(!current||incoming>current)localStorage.setItem(ERP_REALTIME_LAST_DELTA_KEY,incoming);
+  }catch(error){}
+}
+
 function erpRealtimeArrivalFingerprint(record,stage,eventData){
   return [
+    currentUser?.id||currentUser?.username||erpUserRoleNormalized()||"device",
     record?.id||record?.legacy_id||record?.number||"",
     stage||"",
     record?.updated_at||eventData?.commitTimestamp||""
@@ -28430,8 +28544,9 @@ function notifyErpSectorArrival(record,stage,eventData={}){
   if(!targetStage||stage!==targetStage)return;
 
   const fingerprint=erpRealtimeArrivalFingerprint(record,stage,eventData);
-  if(erpRealtimeSeenEvents.has(fingerprint))return;
+  if(erpRealtimeSeenEvents.has(fingerprint)||erpRealtimeWasSeen(ERP_REALTIME_NOTIFICATION_SEEN_KEY,fingerprint))return;
   erpRealtimeSeenEvents.add(fingerprint);
+  erpRealtimeRememberSeen(ERP_REALTIME_NOTIFICATION_SEEN_KEY,fingerprint,180);
   if(erpRealtimeSeenEvents.size>120){
     const first=erpRealtimeSeenEvents.values().next().value;
     erpRealtimeSeenEvents.delete(first);
@@ -28458,6 +28573,10 @@ function notifyErpSectorArrival(record,stage,eventData={}){
   }catch(e){}
 
   try{
+    if(typeof playErpSound==="function")playErpSound("sectorArrival");
+  }catch(e){}
+
+  try{
     if(typeof Notification!=="undefined"&&Notification.permission==="granted"){
       new Notification(`Private Label • ${stage}`,{
         body:`${orderNumber}${client?` • ${client}`:""} chegou no seu setor.`,
@@ -28477,90 +28596,335 @@ function openErpRealtimeArrival(){
   renderErpTest();
 }
 
-async function hydrateErpRealtimeDemand(eventData,expectedStage){
-  const record=eventData?.record||{};
-  const orderUuid=String(record.id||"").trim();
-  if(!orderUuid)return false;
+async function erpRealtimeFetchOptionalWhere(table,query){
+  try{return await erpV2FetchRowsWhere(table,query);}catch(error){
+    console.info(`Realtime: ${table} será sincronizada em uma próxima tentativa.`,error?.message||error);
+    return [];
+  }
+}
 
-  const encodedId=encodeURIComponent(orderUuid);
-  const local=readErpTestData();
+async function erpRealtimeFetchViewWhere(table,query){
+  try{
+    const response=await fetchWithTimeout(
+      `${SUPABASE_URL}/rest/v1/${encodeURIComponent(table)}?${query}&select=*`,
+      {method:"GET",headers:cloudHeaders()},12000
+    );
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const rows=await response.json();
+    return Array.isArray(rows)?rows:[];
+  }catch(error){return [];}
+}
 
-  for(let attempt=0;attempt<4;attempt++){
-    if(attempt)await new Promise(resolve=>setTimeout(resolve,[0,280,700,1400][attempt]));
-    try{
-      const [orders,products,stageEvents,standbyEvents,sewingEvents]=await Promise.all([
-        erpV2FetchRowsWhere("wisent_erp_v2_orders",`id=eq.${encodedId}&deleted_at=is.null`),
-        erpV2FetchRowsWhere("wisent_erp_v2_products",`order_id=eq.${encodedId}&deleted_at=is.null`),
-        erpV2FetchRowsWhere("wisent_erp_v2_stage_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
-        erpV2FetchRowsWhere("wisent_erp_v2_standby_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
-        erpV2FetchRowsWhere("wisent_erp_v2_sewing_events",`order_id=eq.${encodedId}&deleted_at=is.null`)
-      ]);
-
-      if(!orders.length||String(orders[0].stage||"")!==String(expectedStage||""))continue;
-
-      const rowsByType={
-        orders,products,stageEvents,standbyEvents,sewingEvents,
-        clients:[],inventory:[],finance:[],employees:[],settings:[]
-      };
-      erpV2CacheRemoteVersions(rowsByType);
-      const partial=erpV2OfficialDataFromRows(rowsByType,local);
-      const incoming=partial.orders?.[0];
-      if(!incoming)continue;
-
-      const current=readErpTestData();
-      const index=(current.orders||[]).findIndex(order=>
-        String(order._v2Id||"")===orderUuid||
-        String(order.id||"")===String(incoming.id||"")
-      );
-      if(index>=0)current.orders[index]=incoming;
-      else current.orders.push(incoming);
-
-      erpLocalWriteOnly(normalizeErpTestData(current));
-      erpRealtimeStageByOrder.set(orderUuid,String(incoming.stage||expectedStage));
-      if(incoming.id)erpRealtimeStageByOrder.set(String(incoming.id),String(incoming.stage||expectedStage));
-
-      if($("erpKanbanStageFilter"))$("erpKanbanStageFilter").value=erpRestrictedStage()||expectedStage||"";
-      if($("erpSearch"))$("erpSearch").value="";
-      if(currentPage==="erpTest"){
-        showErpModule("pedidos");
-        renderErpTest();
+function erpRealtimeFindOrderUuidByRelation(field,value){
+  const target=String(value||"");
+  if(!target)return "";
+  for(const order of readErpTestData().orders||[]){
+    if(field==="order"&&(String(order._v2Id||"")===target||String(order.id||"")===target))return String(order._v2Id||target);
+    for(const product of erpNormalizeOrderProducts(order)){
+      if(field==="product"&&String(product._v2Id||"")===target)return String(order._v2Id||"");
+      for(const color of product.colors||[]){
+        if(field==="color"&&String(color._v2Id||color.id||"")===target)return String(order._v2Id||"");
       }
-      setErpSyncStatus(`Demanda ${incoming.number||""} recebida e confirmada em ${expectedStage}`);
-      return true;
-    }catch(error){
-      console.warn(`Tentativa ${attempt+1} de carregar demanda recebida:`,error);
+    }
+  }
+  return "";
+}
+
+async function erpRealtimeResolveOrderUuid(eventData){
+  const record=eventData?.record||eventData?.oldRecord||{};
+  const oldRecord=eventData?.oldRecord||{};
+  const table=String(eventData?.table||"");
+  if(table==="wisent_erp_v2_orders")return String(record.id||oldRecord.id||"");
+  const direct=String(record.order_id||oldRecord.order_id||"");
+  if(direct)return direct;
+
+  if(table==="wisent_erp_v2_product_colors"){
+    const productId=String(record.product_id||oldRecord.product_id||"");
+    const local=erpRealtimeFindOrderUuidByRelation("product",productId);
+    if(local)return local;
+    const products=await erpRealtimeFetchOptionalWhere("wisent_erp_v2_products",`id=eq.${encodeURIComponent(productId)}`);
+    return String(products[0]?.order_id||"");
+  }
+
+  if(table==="wisent_erp_v2_product_size_quantities"){
+    const colorId=String(record.color_id||oldRecord.color_id||"");
+    const local=erpRealtimeFindOrderUuidByRelation("color",colorId);
+    if(local)return local;
+    const colors=await erpRealtimeFetchOptionalWhere("wisent_erp_v2_product_colors",`id=eq.${encodeURIComponent(colorId)}`);
+    const productId=String(colors[0]?.product_id||"");
+    if(!productId)return "";
+    const products=await erpRealtimeFetchOptionalWhere("wisent_erp_v2_products",`id=eq.${encodeURIComponent(productId)}`);
+    return String(products[0]?.order_id||"");
+  }
+  return "";
+}
+
+function erpRealtimeUpdateColumnMetrics(stage,orders){
+  const board=$("erpKanban");
+  const column=board?.querySelector(`.erpKanbanCol[data-board-stage="${CSS.escape(String(stage||""))}"]`);
+  if(!column)return;
+  if(column.classList.contains("erpSectorHandoffDrop"))return;
+  const stageOrders=(orders||[]).filter(order=>(order.stage||"Pedido")===stage);
+  const pieces=stageOrders.reduce((sum,order)=>sum+erpOrderQtyTotal(order),0);
+  const late=stageOrders.filter(order=>erpBoardDeadlineInfo(order).kind==="late").length;
+  const count=column.querySelector(".erpStageTitle small");
+  if(count)count.textContent=`${stageOrders.length} pedido(s)`;
+  const metrics=column.querySelector(".erpColumnMetrics");
+  if(metrics)metrics.innerHTML=`<span>${pieces} peça(s)</span>${late?`<span class="late">• ${late} atrasado(s)</span>`:"<span>• nenhum atraso</span>"}`;
+
+  const list=column.querySelector(".erpKanbanList");
+  if(!list)return;
+  list.querySelectorAll(".erpBoardEmpty,.erpBoardLoadMore").forEach(element=>element.remove());
+  const limit=Number(erpBoardColumnLimits.get(stage)||ERP_BOARD_BATCH_SIZE);
+  if(!list.querySelector(".erpOrderCard")){
+    const empty=document.createElement("div");
+    empty.className="erpBoardEmpty";
+    empty.textContent="Nenhuma demanda nesta etapa.";
+    list.appendChild(empty);
+  }
+  if(stageOrders.length>limit){
+    const loadMore=document.createElement("button");
+    loadMore.type="button";
+    loadMore.className="erpBoardLoadMore";
+    loadMore.textContent=`Carregar mais ${Math.min(ERP_BOARD_BATCH_SIZE,stageOrders.length-limit)} demanda(s)`;
+    loadMore.addEventListener("click",()=>erpBoardLoadMore(stage));
+    list.appendChild(loadMore);
+  }
+}
+
+function erpRealtimeReconcileOrderCard(orderId,previousStage=""){
+  const board=$("erpKanban");
+  if(!board||currentPage!=="erpTest")return true;
+  const boardScroll=board.scrollLeft;
+  const listScroll=new Map(Array.from(board.querySelectorAll(".erpKanbanList[data-board-list]")).map(list=>[list.dataset.boardList,list.scrollTop]));
+  const data=readErpTestData();
+  const filtered=erpBoardFilteredOrders(data);
+  const stages=erpVisibleKanbanStages();
+  const order=(data.orders||[]).find(item=>String(item.id||"")===String(orderId||"")||String(item._v2Id||"")===String(orderId||""));
+  const localId=String(order?.id||orderId||"");
+
+  board.querySelectorAll(".erpOrderCard[data-order-id]").forEach(card=>{
+    if(String(card.dataset.orderId||"")===localId||String(card.dataset.orderId||"")===String(orderId||""))card.remove();
+  });
+
+  if(order&&stages.includes(order.stage||"Pedido")&&filtered.some(item=>String(item.id)===String(order.id))){
+    const stage=order.stage||"Pedido";
+    const stageOrders=filtered.filter(item=>(item.stage||"Pedido")===stage);
+    const limit=Number(erpBoardColumnLimits.get(stage)||ERP_BOARD_BATCH_SIZE);
+    const index=stageOrders.findIndex(item=>String(item.id)===String(order.id));
+    const list=board.querySelector(`.erpKanbanList[data-board-list="${CSS.escape(stage)}"]`);
+    if(list&&index>=0&&index<limit){
+      list.querySelectorAll(".erpBoardEmpty").forEach(element=>element.remove());
+      const template=document.createElement("template");
+      template.innerHTML=erpRenderOrderCard(order,stage,isErpSectorRestrictedUser(),filtered.length).trim();
+      const card=template.content.firstElementChild;
+      const nextOrder=stageOrders[index+1];
+      const nextCard=nextOrder?Array.from(list.querySelectorAll(".erpOrderCard[data-order-id]")).find(item=>String(item.dataset.orderId)===String(nextOrder.id)):null;
+      const loadMore=list.querySelector(".erpBoardLoadMore");
+      if(card)list.insertBefore(card,nextCard||loadMore||null);
     }
   }
 
-  setErpSyncStatus(`Aviso recebido em ${expectedStage} • buscando os dados completos do pedido`,true);
-  scheduleErpRealtimeCloudRefresh(600);
+  const affected=new Set([previousStage,order?.stage||""].filter(Boolean));
+  affected.forEach(stage=>erpRealtimeUpdateColumnMetrics(stage,filtered));
+  renderErpKanbanMobileSummary(filtered,stages);
+  erpBoardBindDragAndDrop();
+  board.scrollLeft=boardScroll;
+  listScroll.forEach((scrollTop,stage)=>{
+    const list=board.querySelector(`.erpKanbanList[data-board-list="${CSS.escape(stage)}"]`);
+    if(list)list.scrollTop=scrollTop;
+  });
+  return true;
+}
+
+function erpRealtimeRemoveOrder(orderUuid,eventData={}){
+  const data=readErpTestData();
+  const index=(data.orders||[]).findIndex(order=>String(order._v2Id||"")===String(orderUuid)||String(order.id||"")===String(orderUuid));
+  if(index<0)return true;
+  const [removed]=data.orders.splice(index,1);
+  erpLocalWriteOnly(data);
+  erpRealtimeStageByOrder.delete(String(orderUuid));
+  erpRealtimeStageByOrder.delete(String(removed.id||""));
+  const collapse=readErpOrderCardCollapse();
+  if(Object.prototype.hasOwnProperty.call(collapse,removed.id)){
+    delete collapse[removed.id];
+    void writeErpUiPreference(ERP_BOARD_CARD_COLLAPSE_KEY,collapse);
+  }
+  erpRealtimeReconcileOrderCard(removed.id,removed.stage||eventData?.oldRecord?.stage||"");
+  setErpSyncStatus(`Pedido ${removed.number||""} removido em tempo real`);
+  return true;
+}
+
+async function hydrateErpRealtimeDemand(orderUuid,eventData={}){
+  const encodedId=encodeURIComponent(String(orderUuid||""));
+  if(!encodedId)return false;
+
+  for(let attempt=0;attempt<4;attempt++){
+    if(attempt)await new Promise(resolve=>setTimeout(resolve,[0,220,600,1250][attempt]));
+    try{
+      const orders=await erpV2FetchRowsWhere("wisent_erp_v2_orders",`id=eq.${encodedId}`);
+      const orderRow=orders[0];
+      if(!orderRow||orderRow.deleted_at)return erpRealtimeRemoveOrder(orderUuid,eventData);
+
+      const [products,stageEvents,standbyEvents,sewingEvents,productionSteps,payments,financialSummaries]=await Promise.all([
+        erpV2FetchRowsWhere("wisent_erp_v2_products",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpV2FetchRowsWhere("wisent_erp_v2_stage_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpRealtimeFetchOptionalWhere("wisent_erp_v2_standby_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpRealtimeFetchOptionalWhere("wisent_erp_v2_sewing_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpRealtimeFetchOptionalWhere("wisent_erp_v2_production_steps",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpRealtimeFetchOptionalWhere("wisent_erp_v2_payments",`order_id=eq.${encodedId}&deleted_at=is.null`),
+        erpRealtimeFetchViewWhere("wisent_erp_v2_order_financial_summary",`order_id=eq.${encodedId}`)
+      ]);
+
+      const productIds=products.map(row=>String(row.id)).filter(Boolean);
+      const colors=productIds.length?await erpRealtimeFetchOptionalWhere("wisent_erp_v2_product_colors",`product_id=in.(${productIds.map(encodeURIComponent).join(",")})&deleted_at=is.null`):[];
+      const colorIds=colors.map(row=>String(row.id)).filter(Boolean);
+      const sizes=colorIds.length?await erpRealtimeFetchOptionalWhere("wisent_erp_v2_product_size_quantities",`color_id=in.(${colorIds.map(encodeURIComponent).join(",")})&deleted_at=is.null`):[];
+      const rowsByType={orders:[orderRow],products,stageEvents,standbyEvents,sewingEvents,clients:[],inventory:[],finance:[],employees:[],settings:[]};
+      erpV2CacheRemoteVersions({...rowsByType,colors,sizes,payments,productionSteps});
+      const partial=erpApplyV174DomainRows(erpV2OfficialDataFromRows(rowsByType,readErpTestData()),{colors,sizes,payments,financialSummaries});
+      const incoming=partial.orders?.[0];
+      if(!incoming)continue;
+      incoming._productionSteps=productionSteps;
+
+      const data=readErpTestData();
+      const index=(data.orders||[]).findIndex(order=>String(order._v2Id||"")===String(orderUuid)||String(order.id||"")===String(incoming.id||""));
+      const current=index>=0?data.orders[index]:null;
+      const currentVersion=Number(current?._v2Version||0);
+      const incomingVersion=Number(incoming._v2Version||0);
+      if(current&&currentVersion>incomingVersion)return true;
+      if(current&&currentVersion===incomingVersion&&String(current.updatedAt||"")>String(incoming.updatedAt||""))return true;
+
+      const previousStage=String(current?.stage||erpRealtimeStageByOrder.get(String(orderUuid))||eventData?.oldRecord?.stage||"");
+      if(index>=0)data.orders[index]=incoming;else data.orders.push(incoming);
+      erpLocalWriteOnly(normalizeErpTestData(data));
+      erpRealtimeStageByOrder.set(String(orderUuid),String(incoming.stage||"Pedido"));
+      erpRealtimeStageByOrder.set(String(incoming.id||""),String(incoming.stage||"Pedido"));
+      erpRealtimeReconcileOrderCard(incoming.id,previousStage);
+
+      if(previousStage!==incoming.stage&&incoming.stage===erpRestrictedStage()){
+        notifyErpSectorArrival({...orderRow,number:incoming.number,client:incoming.client},incoming.stage,eventData);
+      }
+      setErpSyncStatus(`Pedido ${incoming.number||""} atualizado em tempo real`);
+      return true;
+    }catch(error){
+      console.warn(`Realtime: tentativa ${attempt+1} de atualizar ${orderUuid}:`,error);
+    }
+  }
+  setErpSyncStatus("Tempo real aguardando confirmação do Supabase; dados locais preservados",true);
   return false;
 }
 
+function erpRealtimeScheduleHydration(orderUuid,eventData,fingerprint){
+  const key=String(orderUuid||"");
+  if(!key)return false;
+  const pending=erpRealtimeHydrationTimers.get(key)||{events:[],timer:null};
+  pending.events.push({eventData,fingerprint});
+  clearTimeout(pending.timer);
+  pending.timer=setTimeout(async()=>{
+    erpRealtimeHydrationTimers.delete(key);
+    const previous=erpRealtimeHydrationActive.get(key);
+    if(previous)await previous.catch(()=>{});
+    const task=hydrateErpRealtimeDemand(key,pending.events[pending.events.length-1]?.eventData||{});
+    erpRealtimeHydrationActive.set(key,task);
+    const ok=await task.catch(()=>false);
+    erpRealtimeHydrationActive.delete(key);
+    pending.events.forEach(item=>{
+      if(ok){
+        erpRealtimeRememberSeen(ERP_REALTIME_EVENT_SEEN_KEY,item.fingerprint);
+        erpRealtimeTouchDelta(item.eventData?.commitTimestamp||item.eventData?.record?.updated_at);
+      }else erpRealtimeSeenEvents.delete(item.fingerprint);
+    });
+    if(!ok)scheduleErpRealtimeCloudRefresh(900);
+  },120);
+  erpRealtimeHydrationTimers.set(key,pending);
+  return true;
+}
+
+function erpRealtimeNormalizeSupply(row){
+  return {id:String(row.id),item:row.item||"",qty:Number(row.quantity||0),unit:row.unit||"un",priority:row.priority||"Normal",note:row.note||"",sector:row.requesting_sector||"",orderV2Id:row.order_id||"",status:row.status||"Solicitado",buyer:row.buyer_responsible||"",createdAt:row.created_at||"",updatedAt:row.updated_at||"",createdBy:row.created_by||""};
+}
+
+async function erpRealtimeApplySupplyEvent(eventData){
+  const source=eventData.record?.id?eventData.record:eventData.oldRecord||{};
+  const id=String(source.id||"");
+  if(!id)return false;
+  const data=readErpTestData();
+  const index=(data.supplies||[]).findIndex(item=>String(item.id)===id);
+  const deleted=String(eventData.type||"").toUpperCase()==="DELETE"||Boolean(source.deleted_at);
+  if(deleted){if(index>=0)data.supplies.splice(index,1);}else{
+    const rows=await erpRealtimeFetchOptionalWhere("wisent_erp_supply_requests",`id=eq.${encodeURIComponent(id)}`);
+    const row=rows[0]||source;
+    const normalized=erpRealtimeNormalizeSupply(row);
+    if(index>=0)data.supplies[index]=normalized;else data.supplies.push(normalized);
+  }
+  erpLocalWriteOnly(data);
+  if(currentPage==="suppliesPage"||document.querySelector('[data-erp-panel="insumos"]:not([hidden])'))renderErpSupplies();
+  return true;
+}
+
 async function erpRealtimeInspectArrival(eventData){
-  if(eventData.table!=="wisent_erp_v2_orders")return;
-  const record=eventData.record||{};
-  const key=String(record.id||record.legacy_id||"");
-  const legacyKey=String(record.legacy_id||"");
-  const stage=String(record.stage||"");
-  if(!key||!stage)return;
+  const fingerprint=erpRealtimeStableFingerprint(eventData);
+  if(!fingerprint||erpRealtimeSeenEvents.has(fingerprint)||erpRealtimeWasSeen(ERP_REALTIME_EVENT_SEEN_KEY,fingerprint))return false;
+  const committedAt=Date.parse(eventData.commitTimestamp||eventData.record?.updated_at||"");
+  if(!eventData.fromDelta&&erpRealtimeInstalledAt&&Number.isFinite(committedAt)&&committedAt<erpRealtimeInstalledAt-5000)return false;
+  erpRealtimeSeenEvents.add(fingerprint);
+  if(erpRealtimeSeenEvents.size>600)erpRealtimeSeenEvents.delete(erpRealtimeSeenEvents.values().next().value);
 
-  const previous=String(
-    eventData.oldRecord?.stage||
-    erpRealtimeStageByOrder.get(key)||
-    (legacyKey?erpRealtimeStageByOrder.get(legacyKey):"")||
-    ""
-  );
+  if(eventData.table==="wisent_erp_supply_requests"){
+    const ok=await erpRealtimeApplySupplyEvent(eventData).catch(()=>false);
+    if(ok){erpRealtimeRememberSeen(ERP_REALTIME_EVENT_SEEN_KEY,fingerprint);erpRealtimeTouchDelta(eventData.commitTimestamp||eventData.record?.updated_at);}
+    else erpRealtimeSeenEvents.delete(fingerprint);
+    return ok;
+  }
 
-  erpRealtimeStageByOrder.set(key,stage);
-  if(legacyKey)erpRealtimeStageByOrder.set(legacyKey,stage);
+  if(eventData.table==="wisent_erp_commissions"){
+    erpRealtimeRememberSeen(ERP_REALTIME_EVENT_SEEN_KEY,fingerprint);
+    erpRealtimeTouchDelta(eventData.commitTimestamp||eventData.record?.updated_at);
+    return true;
+  }
 
-  if(stage!==previous){
-    const targetStage=erpRestrictedStage();
-    if(targetStage&&stage===targetStage){
-      const hydrated=await hydrateErpRealtimeDemand(eventData,stage);
-      if(hydrated)notifyErpSectorArrival(record,stage,eventData);
+  const orderUuid=await erpRealtimeResolveOrderUuid(eventData);
+  if(!orderUuid){erpRealtimeSeenEvents.delete(fingerprint);return false;}
+  const source=eventData.record?.id?eventData.record:eventData.oldRecord||{};
+  const deleted=eventData.table==="wisent_erp_v2_orders"&&(String(eventData.type||"").toUpperCase()==="DELETE"||Boolean(source.deleted_at));
+  if(deleted){
+    const ok=erpRealtimeRemoveOrder(orderUuid,eventData);
+    if(ok){erpRealtimeRememberSeen(ERP_REALTIME_EVENT_SEEN_KEY,fingerprint);erpRealtimeTouchDelta(eventData.commitTimestamp||source.updated_at);}
+    return ok;
+  }
+  return erpRealtimeScheduleHydration(orderUuid,eventData,fingerprint);
+}
+
+async function erpRealtimeSyncDelta(){
+  if(!erpV2Phase2Enabled())return syncErpTestCloud({showStatus:false});
+  if(erpRealtimeDeltaBusy){erpRealtimeDeltaQueued=true;return false;}
+  erpRealtimeDeltaBusy=true;
+  try{
+    await flushErpV2Outbox();
+    const since=localStorage.getItem(ERP_REALTIME_LAST_DELTA_KEY)||new Date(erpRealtimeInstalledAt||Date.now()).toISOString();
+    const tables=ERP_REALTIME_TABLES.filter(table=>table!=="wisent_erp_commissions");
+    const settled=await Promise.allSettled(tables.map(table=>erpV2FetchRowsWhere(table,`updated_at=gt.${encodeURIComponent(since)}&limit=500`)));
+    let newest=since;
+    for(let index=0;index<settled.length;index++){
+      const result=settled[index];
+      if(result.status!=="fulfilled")continue;
+      for(const record of result.value){
+        const timestamp=String(record.updated_at||record.created_at||"");
+        if(timestamp>newest)newest=timestamp;
+        const eventData={table:tables[index],type:record.deleted_at?"DELETE":"UPDATE",record,oldRecord:{},commitTimestamp:timestamp,fromDelta:true};
+        await erpRealtimeInspectArrival(eventData);
+      }
     }
+    erpRealtimeTouchDelta(newest||new Date().toISOString());
+    updateErpRealtimeUi();
+    return true;
+  }catch(error){
+    console.warn("Sincronização incremental do ERP adiada:",error);
+    return false;
+  }finally{
+    erpRealtimeDeltaBusy=false;
+    if(erpRealtimeDeltaQueued){erpRealtimeDeltaQueued=false;setTimeout(erpRealtimeSyncDelta,80);}
   }
 }
 
@@ -28569,13 +28933,10 @@ function scheduleErpRealtimeCloudRefresh(delay=180){
   erpRealtimeSyncTimer=setTimeout(async()=>{
     try{
       if(erpV2Phase2Enabled()){
-        await flushErpV2Outbox();
-        await syncErpV2FromCloud({showStatus:false});
+        await erpRealtimeSyncDelta();
       }else{
         await syncErpTestCloud({showStatus:false});
       }
-      erpRealtimePrimeStages();
-      if(currentPage==="erpTest")renderErpTest();
       updateErpRealtimeUi();
     }catch(e){
       console.warn("Atualização em tempo real adiada:",e);
@@ -28590,6 +28951,7 @@ function handleErpRealtimeMessage(raw){
   if(message.event==="phx_reply"&&String(message.ref)===String(erpRealtimeJoinRef)){
     const joined=message.payload?.status==="ok";
     erpRealtimeSetConnected(joined);
+    if(joined)scheduleErpRealtimeCloudRefresh(40);
     if(!joined){
       try{erpRealtimeSocket?.close();}catch(e){}
       scheduleErpRealtimeReconnect();
@@ -28608,18 +28970,17 @@ function handleErpRealtimeMessage(raw){
   erpRealtimeInspectArrival(eventData).catch(error=>{
     console.warn("Falha ao confirmar demanda recebida em tempo real:",error);
   });
-  scheduleErpRealtimeCloudRefresh();
 }
 
 function scheduleErpRealtimeReconnect(){
   clearTimeout(erpRealtimeReconnectTimer);
-  if(navigator.onLine===false)return;
+  if(navigator.onLine===false){erpRealtimeSetConnected(false);return;}
   const delay=Math.min(20000,1200*Math.pow(1.7,Math.min(erpRealtimeReconnectAttempt++,6)));
   erpRealtimeReconnectTimer=setTimeout(connectErpRealtime,delay);
 }
 
 function connectErpRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false){erpRealtimeSetConnected(false);return false;}
   if(erpRealtimeSocket&&[0,1].includes(erpRealtimeSocket.readyState))return true;
 
   clearTimeout(erpRealtimeReconnectTimer);
@@ -28631,11 +28992,11 @@ function connectErpRealtime(){
 
     socket.addEventListener("open",()=>{
       erpRealtimeJoinRef+=1;
-      const postgresChanges=ERP_REALTIME_TABLES.map(table=>({
-        event:"*",
+      const postgresChanges=ERP_REALTIME_TABLES.flatMap(table=>["INSERT","UPDATE","DELETE"].map(event=>({
+        event,
         schema:"public",
         table
-      }));
+      })));
       socket.send(JSON.stringify({
         topic:"realtime:wisent-erp-v170",
         event:"phx_join",
@@ -28671,6 +29032,10 @@ function connectErpRealtime(){
 function installErpRealtime(){
   if(erpRealtimeInstalled)return;
   erpRealtimeInstalled=true;
+  erpRealtimeInstalledAt=Date.now();
+  try{
+    if(!localStorage.getItem(ERP_REALTIME_LAST_DELTA_KEY))localStorage.setItem(ERP_REALTIME_LAST_DELTA_KEY,new Date(erpRealtimeInstalledAt).toISOString());
+  }catch(error){}
   erpRealtimePrimeStages();
   connectErpRealtime();
 
@@ -28692,7 +29057,7 @@ function installErpRealtime(){
     connectErpRealtime();
     scheduleErpRealtimeCloudRefresh(80);
   });
-  window.addEventListener("offline",()=>erpRealtimeSetConnected(false));
+  window.addEventListener("offline",()=>{erpRealtimeSetConnected(false);setErpSyncStatus("Sem conexão • dados locais preservados",true);});
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState==="visible"){
       connectErpRealtime();
@@ -28712,25 +29077,25 @@ function installErpTestSyncWatchers(){
   erpTestSyncWatchersInstalled=true;
 
   window.addEventListener("online",()=>{
-    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:true}));
+    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>erpRealtimeSyncDelta());
     else flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:true}));
   });
 
   window.addEventListener("focus",()=>{
-    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:false}));
+    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>erpRealtimeSyncDelta());
     else syncErpTestCloud({showStatus:false});
   });
 
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState==="visible"){
-      if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:false}));
+      if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>erpRealtimeSyncDelta());
       else syncErpTestCloud({showStatus:false});
     }
   });
 
   setInterval(()=>{
     if(document.hidden)return;
-    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>syncErpV2FromCloud({showStatus:false}));
+    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>erpRealtimeSyncDelta());
     else{
       flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:false}));
       if(erpRelationalEnabled())flushErpRelationalSyncQueue();
@@ -28743,7 +29108,7 @@ function writeErpTestData(data,options={}){
   const normalized=normalizeErpTestData(data);
   const audit=currentAuditInfo();
 
-  normalized.version="V188";
+  normalized.version="V189";
   normalized.updatedAt=options.keepUpdatedAt?normalized.updatedAt:(audit.at||new Date().toISOString());
   normalized.updatedBy=options.keepUpdatedAt?normalized.updatedBy:(audit.name||"Sistema");
 
@@ -30494,9 +30859,8 @@ function populateErpKanbanStageFilter(){
 function erpVisibleKanbanStages(){
   const restricted=isErpSectorRestrictedUser();
   const selected=$("erpKanbanStageFilter")?.value||"";
-  const mobile=typeof window.matchMedia==="function"&&window.matchMedia("(max-width:760px)").matches;
 
-  if(restricted&&!mobile)return [erpRestrictedStage()];
+  if(restricted)return [erpRestrictedStage()];
   if(selected&&ERP_STAGES.includes(selected))return [selected];
 
   return ERP_STAGES;
@@ -31058,6 +31422,14 @@ function renderErpKanban(data){
     </section>`;
   }).join("");
 
+  if(restricted){
+    const ownStage=erpRestrictedStage();
+    const nextStage=erpNextStage(ownStage);
+    if(nextStage&&nextStage!==ownStage){
+      target.insertAdjacentHTML("beforeend",`<section class="erpKanbanCol erpSectorHandoffDrop stage-${erpStageKey(nextStage)}" data-board-stage="${esc(nextStage)}" aria-label="Soltar para enviar a ${esc(nextStage)}"><div class="erpKanbanList" data-board-list="${esc(nextStage)}">Solte aqui para avançar para ${esc(nextStage)}</div></section>`);
+    }
+  }
+
   erpBoardBindDragAndDrop();
   erpBoardSetState(orders.length?`${orders.length} demanda(s) exibida(s) • atualização por pedido ativa.`:"Nenhuma demanda encontrada para os filtros selecionados.");
 }
@@ -31440,7 +31812,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V188:",error);
+    console.error("Falha ao mover demanda V189:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
@@ -33499,7 +33871,7 @@ document.addEventListener("keydown",e=>{
 if($("loginForm"))$("loginForm").addEventListener("submit",handleLoginSubmit);
 if($("paidEditForm"))$("paidEditForm").addEventListener("submit",savePaidAdjustmentFromForm);
 
-document.querySelectorAll(".menu button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",()=>{syncMonthInputs();if($("accBalanceMonth")?.value){setAccumulationExportMonth();}render();});
+document.querySelectorAll(".menu button[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",()=>{syncMonthInputs();if($("accBalanceMonth")?.value){setAccumulationExportMonth();}render();});
 setTimeout(()=>{
   const el=$("cloudStatus");
   if(el&&el.textContent==="Conectando à nuvem..."){
