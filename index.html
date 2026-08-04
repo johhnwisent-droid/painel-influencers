@@ -14071,6 +14071,86 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V197 ===== */
 
+
+/* ===== V200 • PERÍODO PROFISSIONAL DO ATACADO E VAREJO ===== */
+#wholesaleRetail .wholesaleSummaryGridV200{margin-bottom:14px}
+#wholesaleRetail .wholesalePeriodPanelV200{
+  padding:18px 20px;
+  border:1px solid #cbd5e1;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+  box-shadow:0 12px 30px rgba(15,23,42,.06);
+}
+#wholesaleRetail .wholesalePeriodHeadV200{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:16px;
+}
+#wholesaleRetail .wholesalePeriodHeadV200 h3{
+  margin:3px 0 4px;font-size:18px;letter-spacing:-.02em;color:#0f172a;
+}
+#wholesaleRetail .wholesalePeriodHeadV200 p{
+  margin:0;color:#64748b;font-size:13px;line-height:1.45;
+}
+#wholesaleRetail .wholesalePeriodEyebrowV200{
+  display:block;color:#2563eb;font-size:11px;line-height:1.2;font-weight:900;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+#wholesaleRetail .wholesalePeriodCurrentV200{
+  min-width:220px;padding:12px 14px;border:1px solid #bfdbfe;border-radius:14px;background:#eff6ff;
+}
+#wholesaleRetail .wholesalePeriodCurrentV200 small{
+  display:block;margin-bottom:4px;color:#64748b;font-size:11px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+#wholesaleRetail .wholesalePeriodCurrentV200 strong{
+  display:block;color:#1d4ed8;font-size:15px;line-height:1.3;
+}
+#wholesaleRetail .wholesalePeriodControlsV200{
+  display:grid;grid-template-columns:minmax(170px,220px) minmax(190px,240px) minmax(240px,1fr) auto;
+  align-items:end;gap:12px;
+}
+#wholesaleRetail .wholesalePeriodControlsV200 label{
+  display:grid;gap:7px;color:#475569;font-size:12px;font-weight:800;
+}
+#wholesaleRetail .wholesalePeriodControlsV200 input{
+  min-height:46px;border-color:#cbd5e1;background:#fff;
+}
+#wholesaleRetail .wholesaleRangeBoxV200{
+  min-height:46px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;
+}
+#wholesaleRetail .wholesaleRangeBoxV200>small{
+  display:block;margin-bottom:3px;color:#64748b;font-size:10px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+#wholesaleRetail .wholesalePeriodActionsV200{
+  display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;
+}
+#wholesaleRetail .wholesalePeriodActionsV200 button{min-height:44px;white-space:nowrap}
+#wholesaleRetail .wholesaleLaunchListPanel .wholesaleListFilters{
+  grid-template-columns:minmax(150px,190px) minmax(150px,190px) auto!important;
+}
+#wholesaleRetail .wholesaleLaunchListPanel .panelHead{align-items:flex-start}
+@media(max-width:1100px){
+  #wholesaleRetail .wholesalePeriodControlsV200{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #wholesaleRetail .wholesalePeriodActionsV200{justify-content:flex-start}
+}
+@media(max-width:760px){
+  #wholesaleRetail .wholesalePeriodPanelV200{padding:14px;border-radius:16px}
+  #wholesaleRetail .wholesalePeriodHeadV200{display:grid;gap:12px}
+  #wholesaleRetail .wholesalePeriodCurrentV200{min-width:0;width:100%}
+  #wholesaleRetail .wholesalePeriodControlsV200{grid-template-columns:1fr;gap:10px}
+  #wholesaleRetail .wholesalePeriodActionsV200{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;
+  }
+  #wholesaleRetail .wholesalePeriodActionsV200 button{
+    width:100%;padding:10px 8px;font-size:12px;
+  }
+  #wholesaleRetail .wholesaleLaunchListPanel .wholesaleListFilters{
+    grid-template-columns:1fr!important;
+  }
+}
+@media(max-width:390px){
+  #wholesaleRetail .wholesalePeriodActionsV200{grid-template-columns:1fr}
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -14161,7 +14241,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V199</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V200</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14244,15 +14324,49 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
 
     <section id="wholesaleRetail" class="view">
-      <div class="grid">
-        <div class="card"><small>Total vendido</small><strong id="wholesaleDayTotal">R$ 0,00</strong></div>
-        <div class="card"><small>Pedidos</small><strong id="wholesaleDayCount">0</strong></div>
-        <div class="card"><small>Frete somado</small><strong id="wholesaleDayFreight">R$ 0,00</strong></div>
-        <div class="card"><small>Descontos aplicados</small><strong id="wholesaleDayDiscount">R$ 0,00</strong></div>
+      <div class="grid wholesaleSummaryGridV200">
+        <div class="card"><small>Total vendido no período</small><strong id="wholesaleDayTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Pedidos no período</small><strong id="wholesaleDayCount">0</strong></div>
+        <div class="card"><small>Frete somado no período</small><strong id="wholesaleDayFreight">R$ 0,00</strong></div>
+        <div class="card"><small>Descontos aplicados no período</small><strong id="wholesaleDayDiscount">R$ 0,00</strong></div>
       </div>
 
+      <div class="panel wholesalePeriodPanelV200" id="wholesalePeriodPanel">
+        <div class="wholesalePeriodHeadV200">
+          <div>
+            <span class="wholesalePeriodEyebrowV200">Período dos resultados</span>
+            <h3>Filtrar vendas por mês ou intervalo</h3>
+            <p>Ao entrar, o mês atual é selecionado automaticamente. Os cards e a lista sempre usam o mesmo período.</p>
+          </div>
+          <div class="wholesalePeriodCurrentV200">
+            <small>Período em análise</small>
+            <strong id="wholesaleActivePeriodLabel">Mês atual</strong>
+          </div>
+        </div>
 
-      
+        <div class="wholesalePeriodControlsV200">
+          <label>Mês
+            <input id="wholesaleFilterMonth" type="month" onchange="applyWholesaleMonthFilter()">
+          </label>
+
+          <label>Selecionar dia ou período
+            <input id="wholesaleFilterRangePicker" type="date" onchange="selectWholesaleRangeDate(this.value)">
+          </label>
+
+          <div class="wholesaleRangeBox wholesaleRangeBoxV200">
+            <small>Datas selecionadas</small>
+            <div id="wholesaleRangeStatus" class="wholesaleRangeStatus">
+              <span class="empty">Nenhum período selecionado</span>
+            </div>
+          </div>
+
+          <div class="wholesalePeriodActionsV200">
+            <button class="secondary" type="button" onclick="setWholesaleCurrentMonth()">Este mês</button>
+            <button class="secondary" type="button" onclick="setWholesaleToday()">Hoje</button>
+            <button class="secondary" type="button" onclick="showAllWholesaleDates()">Ver todos</button>
+          </div>
+        </div>
+      </div>
 
       <div class="panel">
         <div class="panelHead">
@@ -14455,21 +14569,6 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
             <span class="muted">Todos os lançamentos aparecem aqui para todos os colaboradores. Use data ou tipo apenas se quiser filtrar.</span>
           </div>
           <div class="filters wholesaleListFilters wholesaleListDateFiltersV122">
-            <label>Mês inteiro
-              <input id="wholesaleFilterMonth" type="month" onchange="applyWholesaleMonthFilter()">
-            </label>
-
-            <label>Escolher período
-              <input id="wholesaleFilterRangePicker" type="date" onchange="selectWholesaleRangeDate(this.value)">
-            </label>
-
-            <div class="wholesaleRangeBox">
-              <small>Período filtrado</small>
-              <div id="wholesaleRangeStatus" class="wholesaleRangeStatus">
-                <span class="empty">Nenhum período selecionado</span>
-              </div>
-            </div>
-
             <label>Tipo
               <select id="wholesaleFilterType" onchange="renderWholesaleRetail()">
                 <option value="">Todos</option>
@@ -14482,7 +14581,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
             </label>
 
             <div class="wholesaleListFilterActions">
-              <button class="secondary" type="button" onclick="clearWholesaleDateFilter()">Ver todos</button>
+              <button class="secondary" type="button" onclick="clearWholesaleSecondaryFilters()">Limpar tipo/status</button>
               <button class="primary" type="button" onclick="exportWholesaleRetailPDF()">Exportar PDF</button>
             </div>
           </div>
@@ -16346,8 +16445,8 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V199";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v199_fix1";
+const APP_BUILD_VERSION="V200";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v200";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
@@ -16376,9 +16475,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=199-fix1",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=200",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=199-fix1");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=200");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -17583,7 +17682,7 @@ async function flushStrictSharedSave(){
     if(stateOk&&recordsOk){
       markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
       setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
-      updateCloudDebug("confirmação V199: painel geral confirmado; módulos críticos usam tabelas individuais");
+      updateCloudDebug("confirmação V197: painel geral confirmado; módulos críticos usam tabelas individuais");
       return true;
     }
 
@@ -20797,7 +20896,7 @@ function installProductChoiceSyncWatchers(){
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
   cloudOfficialSourceReachable=false;
-updateCloudStatus("VERSÃO V199 carregada. Conectando ao Supabase...");
+updateCloudStatus("VERSÃO "+APP_BUILD_VERSION+" carregada. Conectando ao Supabase...");
   updateCloudDebug("enviando verificação de leitura para a tabela personalizacao como fonte oficial");
 
   try{
@@ -21282,13 +21381,13 @@ async function forcePatchPersonalizacaoState(statePayload,expectedToken){
 async function cloudSaveNow(){
   if(cloudSaveInFlight){
     if(cloudSaveStale()){
-      console.warn("Salvamento anterior liberado pelo monitor de segurança V199");
+      console.warn("Salvamento anterior liberado pelo monitor de segurança V197");
       cloudSaveInFlight=null;
       cloudSaveStartedAt=0;
       markSharedSavePending("painel","watchdog liberou salvamento travado",latestSharedSaveToken);
       updateStrictMutationStatus(latestSharedSaveToken,"retrying","watchdog liberou salvamento travado");
       setSaveUiState("retrying","salvamento anterior travou; nova tentativa agendada",true);
-      updateCloudDebug("monitor V199 liberou uma tentativa antiga; dados locais preservados");
+      updateCloudDebug("monitor V197 liberou uma tentativa antiga; dados locais preservados");
       scheduleCloudSaveRetry();
     }else{
       return cloudSaveInFlight;
@@ -21384,9 +21483,9 @@ async function cloudSaveNow(){
 
       if(result&&result.timeout){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
-        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V199");
+        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V199: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V197: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -21507,10 +21606,10 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V199: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V197: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
-        updateCloudDebug("V199: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
+        updateCloudDebug("V197: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
       }
     }catch(e){
       console.warn("Salvamento inicial ignorado:",e);
@@ -25415,12 +25514,33 @@ function compactProductText(product){
 }
 
 
+const WHOLESALE_PERIOD_MODE_KEY=KEY+"_wholesale_period_mode_v200";
+
 function wholesaleListFilterMonth(){
   return String($("wholesaleFilterMonth")?.value||"").trim();
 }
 
+function wholesaleCurrentMonth(){
+  return normalizeDateOnly(today()).slice(0,7);
+}
+
 function wholesaleRangeStorageKey(){
-  return KEY+"_wholesale_range_filter_v122";
+  return KEY+"_wholesale_range_filter_v200";
+}
+
+function readWholesalePeriodMode(){
+  try{
+    const mode=String(sessionStorage.getItem(WHOLESALE_PERIOD_MODE_KEY)||"").trim();
+    return ["month","range","all"].includes(mode)?mode:"month";
+  }catch(e){
+    return "month";
+  }
+}
+
+function writeWholesalePeriodMode(mode){
+  const normalized=["month","range","all"].includes(mode)?mode:"month";
+  try{sessionStorage.setItem(WHOLESALE_PERIOD_MODE_KEY,normalized);}catch(e){}
+  return normalized;
 }
 
 function normalizeWholesaleRange(range){
@@ -25461,6 +25581,31 @@ function writeWholesaleRange(range){
   return normalized;
 }
 
+function ensureWholesaleDefaultPeriod(){
+  const mode=readWholesalePeriodMode();
+  const range=readWholesaleRange();
+  const month=wholesaleListFilterMonth();
+
+  if(mode==="all"){
+    return;
+  }
+
+  if(mode==="range"&&(range.start||range.end)){
+    if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+    return;
+  }
+
+  if(!/^\d{4}-\d{2}$/.test(month)){
+    if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value=wholesaleCurrentMonth();
+  }
+
+  if(range.start||range.end){
+    writeWholesaleRange({start:"",end:""});
+  }
+
+  writeWholesalePeriodMode("month");
+}
+
 function selectWholesaleRangeDate(value){
   const date=normalizeDateOnly(value);
 
@@ -25471,13 +25616,6 @@ function selectWholesaleRangeDate(value){
   if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
 
   const current=readWholesaleRange();
-
-  /*
-    Um único campo de data funciona como seletor de período:
-    - primeira seleção define o início;
-    - segunda seleção define o final;
-    - depois de fechado, o próximo clique começa um novo período.
-  */
   let next;
 
   if(!current.start || (current.start&&current.end)){
@@ -25489,6 +25627,7 @@ function selectWholesaleRangeDate(value){
     });
   }
 
+  writeWholesalePeriodMode("range");
   writeWholesaleRange(next);
 
   if($("wholesaleFilterRangePicker")){
@@ -25518,16 +25657,16 @@ function renderWholesaleRangeStatus(range=readWholesaleRange()){
 
   if(normalized.start&&normalized.end){
     const sameDay=normalized.start===normalized.end;
-    box.innerHTML=`<button type="button" class="wholesaleRangeChip" onclick="clearWholesaleRange()" title="Limpar período">${sameDay?dateBR(normalized.start):`${dateBR(normalized.start)} até ${dateBR(normalized.end)}`} <span>×</span></button>`;
+    box.innerHTML=`<button type="button" class="wholesaleRangeChip" onclick="setWholesaleCurrentMonth()" title="Limpar período e voltar ao mês atual">${sameDay?dateBR(normalized.start):`${dateBR(normalized.start)} até ${dateBR(normalized.end)}`} <span>×</span></button>`;
     return;
   }
 
   if(normalized.start&&!normalized.end){
-    box.innerHTML=`<span class="wholesaleRangePending">Início: ${dateBR(normalized.start)} • escolha a data final</span><button type="button" class="wholesaleRangeClear" onclick="clearWholesaleRange()">limpar</button>`;
+    box.innerHTML=`<span class="wholesaleRangePending">Início: ${dateBR(normalized.start)} • escolha a data final</span><button type="button" class="wholesaleRangeClear" onclick="setWholesaleCurrentMonth()">limpar</button>`;
     return;
   }
 
-  box.innerHTML=`<span class="empty">Nenhum período selecionado</span>`;
+  box.innerHTML=`<span class="empty">Use uma data para iniciar o período</span>`;
 }
 
 function applyWholesaleMonthFilter(){
@@ -25535,14 +25674,47 @@ function applyWholesaleMonthFilter(){
 
   if(month){
     clearWholesaleRange({renderNow:false});
+    writeWholesalePeriodMode("month");
+  }else{
+    writeWholesalePeriodMode("all");
   }
 
+  renderWholesaleRetail();
+}
+
+function setWholesaleCurrentMonth(){
+  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value=wholesaleCurrentMonth();
+  clearWholesaleRange({renderNow:false});
+  writeWholesalePeriodMode("month");
+  renderWholesaleRetail();
+}
+
+function setWholesaleToday(){
+  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+  const date=normalizeDateOnly(today());
+  writeWholesaleRange({start:date,end:date});
+  writeWholesalePeriodMode("range");
+  if($("wholesaleFilterRangePicker"))$("wholesaleFilterRangePicker").value="";
+  renderWholesaleRetail();
+}
+
+function showAllWholesaleDates(){
+  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+  clearWholesaleRange({renderNow:false});
+  writeWholesalePeriodMode("all");
+  renderWholesaleRetail();
+}
+
+function clearWholesaleSecondaryFilters(){
+  if($("wholesaleFilterStatus"))$("wholesaleFilterStatus").value="";
+  if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
   renderWholesaleRetail();
 }
 
 function wholesaleListDateFilterLabel(){
   const range=readWholesaleRange();
   const month=wholesaleListFilterMonth();
+  const mode=readWholesalePeriodMode();
 
   if(range.start&&range.end){
     return range.start===range.end
@@ -25551,18 +25723,25 @@ function wholesaleListDateFilterLabel(){
   }
 
   if(range.start&&!range.end){
-    return `Data inicial escolhida: ${dateBR(range.start)}`;
+    return `Data: ${dateBR(range.start)}`;
   }
 
-  if(month){
-    return `Mês inteiro: ${monthLabel(month)}`;
+  if(/^\d{4}-\d{2}$/.test(month)){
+    return `Mês: ${monthLabel(month)}`;
   }
 
-  return "Todas as datas";
+  return mode==="all"?"Todas as datas":`Mês: ${monthLabel(wholesaleCurrentMonth())}`;
+}
+
+function renderWholesaleActivePeriodLabel(){
+  const label=$("wholesaleActivePeriodLabel");
+  if(label)label.textContent=wholesaleListDateFilterLabel();
 }
 
 
 function wholesaleRetailRows(){
+  ensureWholesaleDefaultPeriod();
+
   const type=String($("wholesaleFilterType")?.value||"").trim();
   const status=String($("wholesaleFilterStatus")?.value||"").trim();
   const month=wholesaleListFilterMonth();
@@ -25576,7 +25755,7 @@ function wholesaleRetailRows(){
        puxa todo o intervalo entre os dois.
     2) Se só escolheu o primeiro dia, puxa apenas aquele dia enquanto aguarda o final.
     3) Se nenhum período foi escolhido e houver mês selecionado, puxa o mês inteiro.
-    4) Se nada for preenchido, mostra tudo.
+    4) Ao entrar, usa o mês atual; "Ver todos" libera todas as datas.
   */
   if(range.start||range.end){
     const start=range.start||range.end;
@@ -25615,7 +25794,9 @@ function wholesaleRetailRows(){
 function renderWholesaleRetail(){
   if(!$("wholesaleRows"))return;
 
+  ensureWholesaleDefaultPeriod();
   renderWholesaleRangeStatus();
+  renderWholesaleActivePeriodLabel();
   calcWholesaleRetail();
 
   const rows=wholesaleRetailRows();
@@ -25660,9 +25841,14 @@ function renderWholesaleRetail(){
 function showSavedWholesaleLaunch(savedId){
   lastSavedWholesaleId=savedId;
 
-  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+  const savedItem=(state.wholesaleRetail||[]).find(item=>String(item.id)===String(savedId));
+  const savedMonth=normalizeDateOnly(savedItem?.date||today()).slice(0,7);
+
+  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value=savedMonth;
   clearWholesaleRange({renderNow:false});
+  writeWholesalePeriodMode("month");
   if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
+  if($("wholesaleFilterStatus"))$("wholesaleFilterStatus").value="";
 
   renderWholesaleRetail();
   renderWholesaleCollaboratorPanel();
@@ -25899,11 +26085,9 @@ function deleteWholesaleRetail(id){
 }
 
 function clearWholesaleDateFilter(){
-  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
   if($("wholesaleFilterStatus"))$("wholesaleFilterStatus").value="";
-  clearWholesaleRange({renderNow:false});
   if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
-  renderWholesaleRetail();
+  showAllWholesaleDates();
 }
 
 
@@ -33198,7 +33382,7 @@ async function erpBoardMoveOrder(orderId,targetStage,targetOrderId="",placement=
     showUndoToast(fromStage===toStage?"Ordem da coluna atualizada.":`Pedido ${order.number||""} movido para ${toStage}.`);
     return true;
   }catch(error){
-    console.error("Falha ao mover demanda V199:",error);
+    console.error("Falha ao mover demanda V197:",error);
     erpBoardSetState("Falha de rede: o card voltou à posição confirmada no banco.","error");
     renderErpKanban(readErpTestData());
     return false;
@@ -35138,8 +35322,9 @@ if($("wholesaleForm")){
     writeWholesaleSnapshot(state.wholesaleRetail);
     queueWholesaleCloudRecord(item);
 
-    if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
-  clearWholesaleRange({renderNow:false});
+    if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value=item.month||date.slice(0,7);
+    clearWholesaleRange({renderNow:false});
+    writeWholesalePeriodMode("month");
     if($("wholesaleFilterType"))$("wholesaleFilterType").value="";
     if($("wholesaleFilterStatus"))$("wholesaleFilterStatus").value="";
 
