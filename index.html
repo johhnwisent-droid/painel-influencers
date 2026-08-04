@@ -1297,7 +1297,7 @@ input[type="month"]:focus{
   border-color:var(--primary);
   box-shadow:0 0 0 4px rgba(37,99,235,.10);
 }
-/* V207: em controles nativos de mês, capitalize somente o nome do mês.
+/* V208: em controles nativos de mês, capitalize somente o nome do mês.
    Ex.: “agosto de 2026” passa a ser exibido como “Agosto de 2026”. */
 input[type="month"]::-webkit-datetime-edit-month-field{
   text-transform:capitalize;
@@ -14300,83 +14300,30 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
 
 
-/* ===== V207 — RELATÓRIO PDF COM SALDO PROGRESSIVO REAL ===== */
-.reportBalanceLedger{
-  margin:18px 0 8px;
-  border:1px solid #e5e7eb;
-  border-radius:18px;
-  overflow:hidden;
-  background:#fff;
-}
-.reportBalanceLedgerHeader{
+
+/* ===== V208 — RELATÓRIO LIMPO + PROTEÇÃO DOS LANÇAMENTOS ===== */
+.launchMonthDataNotice{
   display:flex;
-  align-items:flex-start;
+  align-items:center;
   justify-content:space-between;
-  gap:16px;
-  padding:15px 16px;
-  background:#f8fafc;
-  border-bottom:1px solid #e5e7eb;
-}
-.reportBalanceLedgerHeader strong{
-  display:block;
-  font-size:15px;
-  color:#111827;
-}
-.reportBalanceLedgerHeader span{
-  display:block;
-  margin-top:4px;
-  font-size:12px;
-  line-height:1.45;
-  color:#64748b;
-}
-.reportBalanceTable{
-  width:100%;
-  min-width:0!important;
-  border-collapse:collapse;
-}
-.reportBalanceTable th,
-.reportBalanceTable td{
-  padding:11px 14px;
-  border-bottom:1px solid #eef2f7;
-  white-space:normal;
-  vertical-align:middle;
-}
-.reportBalanceTable th{
-  background:#fff;
-  color:#64748b;
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-}
-.reportBalanceTable th:not(:first-child),
-.reportBalanceTable td:not(:first-child){
-  text-align:right;
-}
-.reportBalanceTable tbody tr:last-child td{
-  border-bottom:0;
-}
-.reportBalanceTable .reportBalanceFinal td{
-  background:#f8fafc;
-  font-weight:900;
-  color:#0f172a;
-}
-.reportBalanceValue{
-  font-weight:850;
-  font-variant-numeric:tabular-nums;
-}
-.reportBalanceValue.product{color:#1d4ed8;}
-.reportBalanceValue.cash{color:#047857;}
-.reportBalanceDeduction{color:#b45309;font-weight:800;}
-.reportBalanceNote{
-  margin:12px 0 0;
+  gap:14px;
+  margin:0 0 14px;
   padding:12px 14px;
   border:1px solid #bfdbfe;
   border-radius:14px;
   background:#eff6ff;
   color:#1e3a8a;
-  font-size:12px;
-  line-height:1.5;
+  font-size:13px;
+  line-height:1.45;
 }
+.launchMonthDataNotice strong{color:#1e3a8a;}
+.launchMonthDataNoticeActions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  flex:0 0 auto;
+}
+.launchMonthDataNoticeActions button{min-height:38px;}
 @media(max-width:650px){
   #reports .filters{
     grid-template-columns:1fr;
@@ -14386,30 +14333,17 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   #reports .filters button{
     width:100%;
   }
-  .reportBalanceLedger{
-    border-radius:14px;
+  .launchMonthDataNotice{
+    display:grid;
+    grid-template-columns:1fr;
+    border-radius:12px;
   }
-  .reportBalanceLedgerHeader{
-    display:block;
+  .launchMonthDataNoticeActions{
+    display:grid;
+    grid-template-columns:1fr;
+    width:100%;
   }
-  .reportBalanceTable th,
-  .reportBalanceTable td{
-    padding:10px 9px;
-    font-size:11px;
-  }
-  .reportBalanceTable th:first-child,
-  .reportBalanceTable td:first-child{
-    width:48%;
-  }
-}
-@media print{
-  .reportBalanceLedger{
-    break-inside:avoid;
-    box-shadow:none;
-  }
-  .reportBalanceNote{
-    break-inside:avoid;
-  }
+  .launchMonthDataNoticeActions button{width:100%;}
 }
 
 </style>
@@ -14502,7 +14436,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V207</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V208</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14554,7 +14488,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
           <div class="actions two"><button class="primary" id="launchSubmitButton" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="cancelLaunchForm()">Cancelar</button></div>
         </form>
       </div>
-      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><label class="dateMini">Mês<input id="launchMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="primary" onclick="exportLaunchesPDF()">Exportar para PDF</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><label class="dateMini">Mês<input id="launchMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="primary" onclick="exportLaunchesPDF()">Exportar para PDF</button></div></div><div id="launchMonthDataNotice" class="launchMonthDataNotice hidden"></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
 
       <div class="panel printPanel launchListPrintPanel printOnly">
         <div id="launchListPrintArea" class="printArea launchListPdf">
@@ -15593,52 +15527,14 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
               <strong id="reportSold">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Saldo atual em produtos</small>
+              <small>Comissão disponível em produtos</small>
               <strong id="reportProduct">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Saldo atual em dinheiro</small>
+              <small>Comissão disponível em dinheiro</small>
               <strong id="reportCash">R$ 0,00</strong>
             </div>
           </div>
-
-          <div class="reportBalanceLedger">
-            <div class="reportBalanceLedgerHeader">
-              <div>
-                <strong>Evolução das comissões</strong>
-                <span id="reportBalancePeriodText">Saldo trazido, comissões geradas e valores utilizados no período.</span>
-              </div>
-            </div>
-            <table class="reportBalanceTable">
-              <thead>
-                <tr><th>Movimento</th><th>Produtos</th><th>Dinheiro</th></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Saldo trazido de meses anteriores</td>
-                  <td><span id="reportOpeningProduct" class="reportBalanceValue product">R$ 0,00</span></td>
-                  <td><span id="reportOpeningCash" class="reportBalanceValue cash">R$ 0,00</span></td>
-                </tr>
-                <tr>
-                  <td id="reportEarnedMonthLabel">Comissões geradas no mês</td>
-                  <td><span id="reportEarnedProduct" class="reportBalanceValue product">R$ 0,00</span></td>
-                  <td><span id="reportEarnedCash" class="reportBalanceValue cash">R$ 0,00</span></td>
-                </tr>
-                <tr>
-                  <td>Utilizado, pago ou zerado no mês</td>
-                  <td><span id="reportDeductedProduct" class="reportBalanceDeduction">R$ 0,00</span></td>
-                  <td><span id="reportDeductedCash" class="reportBalanceDeduction">R$ 0,00</span></td>
-                </tr>
-                <tr class="reportBalanceFinal">
-                  <td id="reportClosingMonthLabel">Saldo disponível ao final do mês</td>
-                  <td><span id="reportClosingProduct" class="reportBalanceValue product">R$ 0,00</span></td>
-                  <td><span id="reportClosingCash" class="reportBalanceValue cash">R$ 0,00</span></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <p id="reportBalanceNote" class="reportBalanceNote">O saldo é calculado cronologicamente até o último dia do mês escolhido.</p>
           <p id="reportFooter" class="pdfFooterClean"></p>
         </div>
       </div>
@@ -16565,10 +16461,10 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V207 — Relatório PDF com saldo progressivo real por influencer.
-  - Traz o saldo restante dos meses anteriores até a competência selecionada.
-  - Soma as comissões do mês e desconta resgates, pagamentos, zeragens e ajustes.
-  - Mantém movimentos posteriores fora de relatórios históricos.
+  V208 — Relatório PDF limpo com saldo real + recuperação segura de lançamentos.
+  - Mantém internamente o saldo progressivo por influencer, sem exibir a evolução no PDF.
+  - Preserva o mês selecionado e avisa quando os lançamentos estão em outra competência.
+  - Recupera registros ausentes de snapshots, filas e backups locais sem sobrescrever IDs existentes.
   Cada lançamento possui uma linha própria no Supabase. Realtime atualiza
   apenas o registro afetado; leituras completas convergem todos os aparelhos
   para o mesmo estado oficial. localStorage e painel_state são somente
@@ -16782,20 +16678,22 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V207";
+const APP_BUILD_VERSION="V208";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
+const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
+let launchRecoveryPreCloudCandidatesV208=[];
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V207.
+      versão anterior são responsabilidade exclusiva do Service Worker V208.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V207 não concluída:",e);
+    console.warn("Verificação segura de cache V208 não concluída:",e);
     status="error";
   }
   return status;
@@ -16812,9 +16710,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=207",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=208",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=207");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=208");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -20688,7 +20586,11 @@ function applyInfluencerLaunchCloudRecords(records){
 
   const pendingItems=pending
     .map(x=>x.record)
-    .filter(x=>x&&x.deleted!==true);
+    .filter(x=>x&&x.deleted!==true&&!tombstones.has(String(x.id)));
+
+  if(tombstones.size){
+    writeInfluencerLaunchPendingQueue(pending.filter(entry=>!tombstones.has(String(entry?.id||entry?.record?.id||""))));
+  }
 
   merged=mergeInfluencerLaunchCollections(merged,pendingItems);
 
@@ -20754,14 +20656,29 @@ async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
   try{
     await flushInfluencerLaunchPendingQueue();
 
-    const records=await fetchInfluencerLaunchCloudRecords();
-    const changed=applyInfluencerLaunchCloudRecords(records);
+    let records=await fetchInfluencerLaunchCloudRecords();
+    let changed=applyInfluencerLaunchCloudRecords(records);
+
+    const cloudIds=new Set(records.map(row=>String(row?.id||"")).filter(Boolean));
+    const tombstones=new Set(records.filter(row=>row?.deleted===true).map(row=>String(row.id)));
+    const missingInCloud=(state.launches||[]).filter(row=>
+      row?.id&&row.deleted!==true&&!cloudIds.has(String(row.id))&&!tombstones.has(String(row.id))
+    );
+
+    if(missingInCloud.length){
+      queueAllInfluencerLaunchRows(missingInCloud);
+      const flushed=await flushInfluencerLaunchPendingQueue();
+      if(flushed){
+        records=await fetchInfluencerLaunchCloudRecords();
+        changed=applyInfluencerLaunchCloudRecords(records)||changed;
+      }
+    }
 
     if(showStatus){
       updateCloudStatus(changed
         ?"Lançamentos dos influencers atualizados."
         :"Lançamentos dos influencers já estão atualizados.");
-      updateCloudDebug(records.length+" lançamentos individuais conferidos");
+      updateCloudDebug(records.length+" lançamentos individuais conferidos"+(missingInCloud.length?` • ${missingInCloud.length} registro(s) recuperado(s) e reenviado(s)`:""));
     }
 
     return true;
@@ -20933,6 +20850,33 @@ function deepExtractInfluencerLaunchCandidates(value,source,out,seen,depth=0){
     if(key==="settings"&&depth>2)return;
     deepExtractInfluencerLaunchCandidates(val,`${source}.${key}`,out,seen,depth+1);
   });
+}
+
+function collectTrustedInfluencerLaunchRecoveryCandidatesV208(){
+  const found=[];
+  const seen=new WeakSet();
+  const sources=[
+    {source:"estado carregado antes da nuvem",value:state},
+    {source:"snapshot individual V119",value:readInfluencerLaunchSnapshot()},
+    {source:"fila individual V119",value:readInfluencerLaunchPendingQueue()},
+    {source:"estado local principal",value:readStorageByKey(KEY)}
+  ];
+
+  try{
+    if(window.name)sources.push({source:"window.name",value:window.name});
+  }catch(e){}
+
+  try{
+    readUndoStack().slice(-20).forEach((entry,index)=>{
+      sources.push({source:`histórico desfazer recente ${index+1}`,value:entry?.state});
+    });
+  }catch(e){}
+
+  sources.forEach(entry=>{
+    deepExtractInfluencerLaunchCandidates(entry.value,entry.source,found,seen,0);
+  });
+
+  return mergeInfluencerLaunchCollections(found);
 }
 
 function collectInfluencerLaunchCandidatesDeepScan(){
@@ -22029,7 +21973,7 @@ async function cloudSaveNow(){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
         updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V207: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V208: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -22071,7 +22015,17 @@ async function startApp(){
     preserveMediaFromLegacy(state);
     normalize();
 
-    if($("globalMonth"))$("globalMonth").value=currentMonth();
+    launchRecoveryPreCloudCandidatesV208=collectTrustedInfluencerLaunchRecoveryCandidatesV208();
+    const currentLaunchIdsV208=new Set((state.launches||[]).map(row=>String(row?.id||"")).filter(Boolean));
+    const missingLaunchesV208=launchRecoveryPreCloudCandidatesV208.filter(row=>row?.id&&!currentLaunchIdsV208.has(String(row.id)));
+    if(missingLaunchesV208.length){
+      missingLaunchesV208.forEach(row=>{row.autoRecoveredV208=true;});
+      state.launches=mergeInfluencerLaunchCollections(state.launches||[],missingLaunchesV208);
+      writeInfluencerLaunchSnapshot(state.launches);
+      try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+    }
+
+    if($("globalMonth"))$("globalMonth").value=readPersistedSelectedMonth()||currentMonth();
 
     populate();
     resetLaunchForm();
@@ -22091,7 +22045,8 @@ async function startApp(){
 
     if(loaded){
       normalize();
-      if($("globalMonth"))$("globalMonth").value=$("globalMonth").value||currentMonth();
+      if($("globalMonth"))$("globalMonth").value=$("globalMonth").value||readPersistedSelectedMonth()||currentMonth();
+      persistSelectedMonth(selectedMonth());
       populate();
       resetLaunchForm();
       resetInfForm();
@@ -22150,7 +22105,7 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V207: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V208: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
         updateCloudDebug("V203: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
@@ -22409,7 +22364,28 @@ function normalize(){
 
   repairPaidAdjustments();
 }
-function selectedMonth(){return $("globalMonth").value||currentMonth();}
+function validMonthValue(value){
+  return /^\d{4}-\d{2}$/.test(String(value||""))?String(value):"";
+}
+function readPersistedSelectedMonth(){
+  try{return validMonthValue(localStorage.getItem(GLOBAL_MONTH_SELECTION_KEY));}catch(e){return "";}
+}
+function persistSelectedMonth(value){
+  const month=validMonthValue(value);
+  if(!month)return;
+  try{localStorage.setItem(GLOBAL_MONTH_SELECTION_KEY,month);}catch(e){}
+}
+function selectedMonth(){
+  return validMonthValue($("globalMonth")?.value)||readPersistedSelectedMonth()||currentMonth();
+}
+function applySelectedMonth(value,{renderNow=true}={}){
+  const month=validMonthValue(value)||currentMonth();
+  if($("globalMonth"))$("globalMonth").value=month;
+  persistSelectedMonth(month);
+  syncMonthInputs();
+  if(renderNow)render();
+  return month;
+}
 const MONTH_NAMES_PT_BR=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 function monthLabel(m){
   const [y,mo]=String(m||"").split("-");
@@ -22571,8 +22547,59 @@ function renderDashboard(){
     </td>
   </tr>`).join(""):`<tr><td colspan="6">Sem lançamentos no mês.</td></tr>`;
 }
+function launchMonthCounts(){
+  const counts=new Map();
+  (state.launches||[]).forEach(row=>{
+    const month=validMonthValue(row?.month)||(normalizeDateOnly(row?.date)||"").slice(0,7);
+    if(!month)return;
+    counts.set(month,(counts.get(month)||0)+1);
+  });
+  return counts;
+}
+function openLaunchMonth(month){
+  applySelectedMonth(month);
+  showPage("launches");
+}
+function renderLaunchMonthDataNotice(rows){
+  const notice=$("launchMonthDataNotice");
+  if(!notice)return;
+
+  if((rows||[]).length){
+    notice.classList.add("hidden");
+    notice.innerHTML="";
+    return;
+  }
+
+  const counts=launchMonthCounts();
+  const selected=selectedMonth();
+  const available=[...counts.entries()]
+    .filter(([month,count])=>month!==selected&&count>0)
+    .sort((a,b)=>b[0].localeCompare(a[0]));
+
+  if(!available.length){
+    notice.classList.remove("hidden");
+    notice.innerHTML=`
+      <div><strong>Nenhum lançamento encontrado em ${esc(monthLabel(selected))}.</strong><br>
+      O sistema também pode procurar registros preservados em snapshots, filas e backups deste aparelho.</div>
+      <div class="launchMonthDataNoticeActions">
+        <button type="button" class="secondary small" onclick="recoverInfluencerLaunchesDeepScan()">Procurar lançamentos</button>
+      </div>`;
+    return;
+  }
+
+  const [month,count]=available[0];
+  notice.classList.remove("hidden");
+  notice.innerHTML=`
+    <div><strong>Nenhum lançamento em ${esc(monthLabel(selected))}.</strong><br>
+    Existem ${count} lançamento(s) em ${esc(monthLabel(month))}. Eles não foram apagados; estão em outra competência.</div>
+    <div class="launchMonthDataNoticeActions">
+      <button type="button" class="primary small" onclick="openLaunchMonth('${esc(month)}')">Abrir ${esc(monthLabel(month))}</button>
+      <button type="button" class="secondary small" onclick="recoverInfluencerLaunchesDeepScan()">Procurar mais</button>
+    </div>`;
+}
 function renderLaunches(){
   const rows=filteredLaunches();
+  renderLaunchMonthDataNotice(rows);
   $("launchRows").innerHTML=rows.length?rows.map(l=>{
     const i=infById(l.influencerId)||{};
     const paidDisabled=!!l.accumulate;
@@ -27051,7 +27078,7 @@ function renderPix(){$("pixRows").innerHTML=state.influencers.length?state.influ
 function updatePix(id,val){const i=infById(id);if(i){i.pix=val;save();}}
 function copyPix(id){const i=infById(id);if(!i||!i.pix){alert("Este influencer ainda não tem chave PIX.");return}navigator.clipboard&&navigator.clipboard.writeText(i.pix);alert("Chave PIX copiada.");}
 
-/* ===== V207 — MOTOR DE SALDO PROGRESSIVO DO RELATÓRIO PDF ===== */
+/* ===== V208 — MOTOR INTERNO DE SALDO REAL DO RELATÓRIO PDF ===== */
 function reportMonthRange(month=selectedMonth()){
   const normalized=/^\d{4}-\d{2}$/.test(String(month||""))?String(month):currentMonth();
   return {month:normalized,start:`${normalized}-01`,end:monthEndDate(normalized)};
@@ -27287,7 +27314,7 @@ function reportCommissionSnapshot(infId,month=selectedMonth()){
     monthEvents
   };
 }
-/* ===== FIM V207 — MOTOR DE SALDO PROGRESSIVO ===== */
+/* ===== FIM V208 — MOTOR INTERNO DE SALDO REAL ===== */
 
 function renderReport(){
   const inf=infById($("reportInfluencer").value);
@@ -27302,7 +27329,6 @@ function renderReport(){
   $("reportTitle").textContent=state.settings.pdfTitle;
   $("reportMsg").textContent=state.settings.pdfMessage;
   $("reportFooter").textContent=state.settings.pdfFooter;
-
   const pdfLogo=state.settings.pdfLogo||"";
   $("reportLogo").style.display=pdfLogo?"block":"none";
   if(pdfLogo)$("reportLogo").src=pdfLogo;
@@ -27312,23 +27338,10 @@ function renderReport(){
   const monthText=monthLabel(snapshot.range.month);
   $("reportName").textContent=inf?inf.name:"Selecione um influencer";
   $("reportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
-  $("reportPeriod").textContent=`Competência: ${monthText} • posição até ${dateBR(snapshot.range.end)}`;
+  $("reportPeriod").textContent=`Competência: ${monthText} • saldo disponível até ${dateBR(snapshot.range.end)}`;
   $("reportSold").textContent=money(snapshot.sold);
   $("reportProduct").textContent=money(snapshot.closing.product);
   $("reportCash").textContent=money(snapshot.closing.cash);
-
-  if($("reportOpeningProduct"))$("reportOpeningProduct").textContent=money(snapshot.opening.product);
-  if($("reportOpeningCash"))$("reportOpeningCash").textContent=money(snapshot.opening.cash);
-  if($("reportEarnedProduct"))$("reportEarnedProduct").textContent=money(snapshot.earnedProduct);
-  if($("reportEarnedCash"))$("reportEarnedCash").textContent=money(snapshot.earnedCash);
-  if($("reportDeductedProduct"))$("reportDeductedProduct").textContent=money(snapshot.deductedProduct);
-  if($("reportDeductedCash"))$("reportDeductedCash").textContent=money(snapshot.deductedCash);
-  if($("reportClosingProduct"))$("reportClosingProduct").textContent=money(snapshot.closing.product);
-  if($("reportClosingCash"))$("reportClosingCash").textContent=money(snapshot.closing.cash);
-  if($("reportEarnedMonthLabel"))$("reportEarnedMonthLabel").textContent=`Comissões geradas em ${monthText}`;
-  if($("reportClosingMonthLabel"))$("reportClosingMonthLabel").textContent=`Saldo disponível ao final de ${monthText}`;
-  if($("reportBalancePeriodText"))$("reportBalancePeriodText").textContent=`Posição acumulada até ${dateBR(snapshot.range.end)}, preservando o saldo restante dos meses anteriores.`;
-  if($("reportBalanceNote"))$("reportBalanceNote").textContent=`Cálculo cronológico: saldo anterior + comissões geradas em ${monthText} − valores utilizados, pagos ou zerados até ${dateBR(snapshot.range.end)}. Movimentos posteriores não alteram este relatório.`;
 }
 
 function printReport(){
@@ -27474,7 +27487,7 @@ function syncMonthInputs(){
   if($("paidMonth")&&!$("paidMonth").value)$("paidMonth").value=month;
 }
 function syncPanelMonth(value){
-  if(value&&$("globalMonth"))$("globalMonth").value=value;
+  if(value)applySelectedMonth(value,{renderNow:false});
   syncMonthInputs();
   render();
 }
@@ -36003,12 +36016,8 @@ function exportReportCSV(){
     ["Competência",monthLabel(snapshot.range.month)],
     ["Posição até",dateBR(snapshot.range.end)],
     ["Total vendido no mês",snapshot.sold],
-    [],
-    ["Movimento","Produtos","Dinheiro"],
-    ["Saldo trazido de meses anteriores",snapshot.opening.product,snapshot.opening.cash],
-    ["Comissões geradas no mês",snapshot.earnedProduct,snapshot.earnedCash],
-    ["Utilizado, pago ou zerado no mês",snapshot.deductedProduct,snapshot.deductedCash],
-    ["Saldo disponível ao final do mês",snapshot.closing.product,snapshot.closing.cash]
+    ["Comissão disponível em produtos",snapshot.closing.product],
+    ["Comissão disponível em dinheiro",snapshot.closing.cash]
   ],`relatorio-${inf.coupon}-${snapshot.range.month}.csv`);
 }
 
@@ -36427,7 +36436,7 @@ document.addEventListener("keydown",e=>{
 if($("loginForm"))$("loginForm").addEventListener("submit",handleLoginSubmit);
 if($("paidEditForm"))$("paidEditForm").addEventListener("submit",savePaidAdjustmentFromForm);
 
-document.querySelectorAll(".menu button[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",()=>{syncMonthInputs();if($("accBalanceMonth")?.value){setAccumulationExportMonth();}render();});
+document.querySelectorAll(".menu button[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));$("globalMonth").addEventListener("change",()=>{persistSelectedMonth($("globalMonth").value);syncMonthInputs();if($("accBalanceMonth")?.value){setAccumulationExportMonth();}render();});
 setTimeout(()=>{
   const el=$("cloudStatus");
   if(el&&el.textContent==="Conectando à nuvem..."){
