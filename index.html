@@ -16341,7 +16341,10 @@ function reloadAppNow(){
   if(navigator.serviceWorker&&navigator.serviceWorker.controller){
     navigator.serviceWorker.controller.postMessage({type:"SKIP_WAITING"});
   }
-  window.location.reload();
+  const url=new URL(window.location.href);
+  url.searchParams.set("v",APP_BUILD_VERSION);
+  url.searchParams.set("sw",Date.now().toString());
+  window.location.replace(url.toString());
 }
 const APP_BUILD_VERSION="V199";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v199";
@@ -16351,12 +16354,12 @@ async function clearOldPwaCacheOnce(){
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V197.
+      versão anterior são responsabilidade exclusiva do Service Worker V199.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V197 não concluída:",e);
+    console.warn("Verificação segura de cache V199 não concluída:",e);
     status="error";
   }
   return status;
@@ -16373,9 +16376,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=198",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=199",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=198");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=199");
       }
 
       reg.addEventListener("updatefound",()=>{
