@@ -124,6 +124,9 @@ self.addEventListener("fetch",event=>{
         if(contentType.includes("text/html")){
           const html=await response.clone().text();
           if(html.length<1000||!html.toLowerCase().includes("</html>"))throw new Error("HTML incompleto");
+          if(!html.includes('APP_BUILD_VERSION="'+WISENT_VERSION+'"')){
+            throw new Error("index.html de rede ainda não corresponde à "+WISENT_VERSION);
+          }
         }
         const cache=await caches.open(WISENT_CACHE);
         await cache.put("./index.html",response.clone());
