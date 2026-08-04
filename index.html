@@ -14152,7 +14152,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 
 
-/* ===== V203 • APENAS PERÍODO DOS RESULTADOS RESPONSIVO NO CELULAR ===== */
+/* ===== V203 preservado • APENAS PERÍODO DOS RESULTADOS RESPONSIVO NO CELULAR ===== */
 @media(max-width:760px){
   #wholesaleRetail .wholesalePeriodPanelV200,
   #wholesaleRetail .wholesalePeriodHeadV200,
@@ -14214,6 +14214,81 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
   #wholesaleRetail .wholesalePeriodActionsV200 button:nth-child(3){
     grid-column:auto;
+  }
+}
+
+
+/* ===== V204 • LANÇAMENTOS POR DATA ESPECÍFICA OU MÊS INTEIRO ===== */
+#launches .launchPeriodSelectorV204{
+  grid-column:1/-1;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#f8fafc;
+}
+#launches .launchPeriodSelectorV204 strong{
+  display:block;
+  margin-bottom:3px;
+  color:var(--text);
+  font-size:13px;
+}
+#launches .launchPeriodSelectorV204 .muted{
+  display:block;
+  line-height:1.35;
+}
+#launches .launchPeriodTabsV204{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(150px,1fr));
+  gap:8px;
+  min-width:330px;
+}
+#launches .launchPeriodTabsV204 button{
+  min-height:42px;
+  padding:9px 12px;
+  border:1px solid #cbd5e1;
+  background:#fff;
+  color:#334155;
+  box-shadow:none;
+}
+#launches .launchPeriodTabsV204 button.active{
+  border-color:var(--accent);
+  background:var(--accent);
+  color:#fff;
+}
+#launches .launchPeriodTagV204{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#eef2ff;
+  color:#3730a3;
+  font-size:11px;
+  font-weight:900;
+  white-space:nowrap;
+}
+@media(max-width:760px){
+  #launches .launchPeriodSelectorV204{
+    display:grid;
+    grid-template-columns:minmax(0,1fr);
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    padding:12px;
+  }
+  #launches .launchPeriodTabsV204{
+    grid-template-columns:minmax(0,1fr);
+    min-width:0;
+    width:100%;
+  }
+  #launches .launchPeriodTabsV204 button{
+    width:100%;
+    min-width:0;
+    white-space:normal;
   }
 }
 
@@ -14307,7 +14382,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V203</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V204</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14332,7 +14407,32 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
     <section id="launches" class="view">
       <div class="panel"><div class="panelHead"><h3>Novo lançamento</h3><span class="muted">Marque Acumular para jogar o saldo na carteira do influencer.</span></div>
-        <form id="launchForm" class="form"><input type="hidden" id="launchId"><label>Data<input type="date" id="launchDate" required></label><label>Influencer/Cupom<select id="launchInfluencer" required></select></label><label>Origem da venda<select id="launchOrigin"></select></label><label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label><label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label><label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label><label>Status<select id="launchStatus"></select></label><label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label><label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label><label class="two">Observação<input id="launchNotes"></label><div class="actions two"><button class="primary" id="launchSubmitButton" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="cancelLaunchForm()">Cancelar</button></div></form>
+        <form id="launchForm" class="form">
+          <input type="hidden" id="launchId">
+          <input type="hidden" id="launchPeriodMode" value="day">
+          <div class="launchPeriodSelectorV204">
+            <div>
+              <strong>Período do lançamento</strong>
+              <span id="launchPeriodHint" class="muted">Use uma data específica para registrar uma venda individual.</span>
+            </div>
+            <div class="launchPeriodTabsV204" role="group" aria-label="Período do lançamento">
+              <button type="button" class="active" data-launch-period-mode="day" aria-pressed="true" onclick="setLaunchPeriodMode('day')">Data específica</button>
+              <button type="button" data-launch-period-mode="month" aria-pressed="false" onclick="setLaunchPeriodMode('month')">Mês inteiro</button>
+            </div>
+          </div>
+          <label id="launchDateField">Data específica<input type="date" id="launchDate" required></label>
+          <label id="launchMonthField" class="hidden">Mês inteiro<input type="month" id="launchEntryMonth"></label>
+          <label>Influencer/Cupom<select id="launchInfluencer" required></select></label>
+          <label>Origem da venda<select id="launchOrigin"></select></label>
+          <label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label>
+          <label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label>
+          <label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label>
+          <label>Status<select id="launchStatus"></select></label>
+          <label>PDF enviado?<input class="checkbox" type="checkbox" id="launchPdfSent"></label>
+          <label>Acumular?<input class="checkbox" type="checkbox" id="launchAccumulate"></label>
+          <label class="two">Observação<input id="launchNotes"></label>
+          <div class="actions two"><button class="primary" id="launchSubmitButton" type="submit">Salvar lançamento</button><button class="secondary" type="button" onclick="cancelLaunchForm()">Cancelar</button></div>
+        </form>
       </div>
       <div class="panel"><div class="panelHead"><h3>Lançamentos do mês</h3><div class="filters"><label class="dateMini">Mês<input id="launchMonthPanel" type="month" onchange="syncPanelMonth(this.value)"></label><select id="filterInfluencer" onchange="render()"></select><select id="filterOrigin" onchange="render()"></select><button class="primary" onclick="exportLaunchesPDF()">Exportar para PDF</button></div></div><div class="tableWrap"><table><thead><tr><th>Data</th><th>Origem</th><th>Cupom</th><th>Influencer</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Status</th><th>PDF enviado</th><th>Acumular</th><th>Pago</th><th>Ações</th></tr></thead><tbody id="launchRows"></tbody></table></div></div>
 
@@ -16308,7 +16408,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V203 — Atacado e Varejo compartilhado com reconciliação autoritativa.
+  V204 — Lançamentos por data específica ou total consolidado do mês inteiro.
   Cada lançamento possui uma linha própria no Supabase. Realtime atualiza
   apenas o registro afetado; leituras completas convergem todos os aparelhos
   para o mesmo estado oficial. localStorage e painel_state são somente
@@ -16522,7 +16622,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V203";
+const APP_BUILD_VERSION="V204";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 
 async function clearOldPwaCacheOnce(){
@@ -16530,12 +16630,12 @@ async function clearOldPwaCacheOnce(){
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V203.
+      versão anterior são responsabilidade exclusiva do Service Worker V204.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V203 não concluída:",e);
+    console.warn("Verificação segura de cache V204 não concluída:",e);
     status="error";
   }
   return status;
@@ -16552,9 +16652,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=203",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=204",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=203");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=204");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -21769,7 +21869,7 @@ async function cloudSaveNow(){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
         updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V203: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V204: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -21890,7 +21990,7 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V203: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V204: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
         updateCloudDebug("V203: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
@@ -22009,6 +22109,10 @@ function normalize(){
     l.id=l.id||uid();
     l.date=l.date||today();
     l.month=l.month||(l.date||today()).slice(0,7);
+    l.periodMode=l.periodMode==="month"?"month":"day";
+    if(l.periodMode==="month"&&!/^\d{4}-\d{2}$/.test(String(l.month||""))){
+      l.month=(l.date||today()).slice(0,7);
+    }
     l.influencerId=l.influencerId||"";
     l.origin=l.origin||"Site";
     l.sold=Math.max(0,finiteNumber(l.sold,0));
@@ -22171,6 +22275,51 @@ function resetInfluencerCache(){
 function infById(id){return influencerMap().get(String(id));}
 function totalLaunch(l){return Number(l.productCommission||0)+Number(l.cashCommission||0);}
 function monthLaunches(){return state.launches.filter(l=>(l.month||(l.date||"").slice(0,7))===selectedMonth());}
+function launchPeriodModeOf(row){return row?.periodMode==="month"?"month":"day";}
+function launchPeriodLabel(row){
+  if(launchPeriodModeOf(row)==="month"){
+    const month=row?.month||(row?.date||"").slice(0,7);
+    return month?`Mês inteiro · ${monthLabel(month)}`:"Mês inteiro";
+  }
+  return dateBR(row?.date||"");
+}
+function setLaunchPeriodMode(mode,{saveDraft=true}={}){
+  const normalized=mode==="month"?"month":"day";
+  const modeInput=$("launchPeriodMode");
+  const dateField=$("launchDateField");
+  const monthField=$("launchMonthField");
+  const dateInput=$("launchDate");
+  const monthInput=$("launchEntryMonth");
+  const hint=$("launchPeriodHint");
+
+  if(modeInput)modeInput.value=normalized;
+
+  if(normalized==="month"){
+    const fallbackMonth=(dateInput?.value||today()).slice(0,7)||selectedMonth()||currentMonth();
+    if(monthInput&&!monthInput.value)monthInput.value=fallbackMonth;
+    if(dateField)dateField.classList.add("hidden");
+    if(monthField)monthField.classList.remove("hidden");
+    if(dateInput)dateInput.required=false;
+    if(monthInput)monthInput.required=true;
+    if(hint)hint.textContent="Use Mês inteiro para registrar o total consolidado que o influencer vendeu naquele mês.";
+  }else{
+    const fallbackDate=monthInput?.value?`${monthInput.value}-01`:today();
+    if(dateInput&&!dateInput.value)dateInput.value=fallbackDate;
+    if(monthField)monthField.classList.add("hidden");
+    if(dateField)dateField.classList.remove("hidden");
+    if(monthInput)monthInput.required=false;
+    if(dateInput)dateInput.required=true;
+    if(hint)hint.textContent="Use uma data específica para registrar uma venda individual.";
+  }
+
+  document.querySelectorAll("[data-launch-period-mode]").forEach(button=>{
+    const active=button.dataset.launchPeriodMode===normalized;
+    button.classList.toggle("active",active);
+    button.setAttribute("aria-pressed",active?"true":"false");
+  });
+
+  if(saveDraft&&typeof saveLaunchFormDraft==="function")saveLaunchFormDraft();
+}
 function stats(rows){return rows.reduce((a,l)=>{a.sold+=Number(l.sold||0);a.product+=Number(l.productCommission||0);a.cash+=Number(l.cashCommission||0);a.total=a.product+a.cash;a.count++;return a;},{sold:0,product:0,cash:0,total:0,count:0});}
 let lastThemeSignature="";
 function applyTheme(){
@@ -22221,7 +22370,13 @@ function fillSelect(id,options,blank){const el=$(id);if(!el)return;const old=el.
 function populate(){const infl=state.influencers.map(i=>({value:i.id,label:`${i.name} (${i.coupon})`}));fillSelect("launchInfluencer",infl);fillSelect("productInfluencer",infl);fillSelect("reportInfluencer",infl,"Selecione influencer");fillSelect("accReportInfluencer",infl,"Selecione influencer");fillSelect("filterInfluencer",infl,"Todos os influencers");fillSelect("launchOrigin",state.settings.origins.map(o=>({value:o,label:o})));fillSelect("filterOrigin",state.settings.origins.map(o=>({value:o,label:o})),"Todas as origens");fillSelect("launchStatus",state.settings.statuses.map(s=>({value:s,label:s})));}
 
 function filteredLaunches(){
-  return monthLaunches();
+  const influencerId=$("filterInfluencer")?.value||"";
+  const origin=$("filterOrigin")?.value||"";
+
+  return monthLaunches().filter(row=>
+    (!influencerId||String(row.influencerId)===String(influencerId))&&
+    (!origin||String(row.origin||"")===String(origin))
+  );
 }
 
 function renderDashboard(){
@@ -22256,7 +22411,7 @@ function renderLaunches(){
     const i=infById(l.influencerId)||{};
     const paidDisabled=!!l.accumulate;
     return `<tr>
-      <td>${dateBR(l.date)}</td>
+      <td>${launchPeriodLabel(l)}</td>
       <td>${esc(l.origin)}</td>
       <td><span class="mobileCouponText">${esc(i.coupon||"-")}</span></td>
       <td><span class="mobileKeyText mobileInfluencerName">${esc(i.name||"-")}</span></td>
@@ -22980,7 +23135,9 @@ function captureLaunchFormDraft(){
 
   return {
     id:$("launchId")?.value||"",
+    periodMode:$("launchPeriodMode")?.value==="month"?"month":"day",
     date:$("launchDate")?.value||today(),
+    month:$("launchEntryMonth")?.value||($("launchDate")?.value||today()).slice(0,7),
     influencerId:$("launchInfluencer")?.value||"",
     origin:$("launchOrigin")?.value||"Site",
     sold:finiteNumber($("launchSold")?.value,0),
@@ -23052,6 +23209,8 @@ function applyLaunchDraftToForm(draft){
 
   if($("launchId"))$("launchId").value=draft.id||"";
   if($("launchDate"))$("launchDate").value=draft.date||today();
+  if($("launchEntryMonth"))$("launchEntryMonth").value=draft.month||(draft.date||today()).slice(0,7);
+  setLaunchPeriodMode(draft.periodMode==="month"?"month":"day",{saveDraft:false});
   if($("launchInfluencer"))$("launchInfluencer").value=draft.influencerId||"";
   if($("launchOrigin"))$("launchOrigin").value=draft.origin||"Site";
   if($("launchSold"))$("launchSold").value=finiteNumber(draft.sold,0)||"";
@@ -23137,9 +23296,38 @@ function lockLaunchSubmit(){
   return true;
 }
 
-function resetLaunchForm(){$("launchForm").reset();$("launchId").value="";$("launchDate").value=today();$("launchAccumulate").checked=false;if(state.influencers[0])$("launchInfluencer").value=state.influencers[0].id;if(state.settings.origins[0])$("launchOrigin").value=state.settings.origins[0];if(state.settings.statuses[0])$("launchStatus").value=state.settings.statuses[0];calcLaunch();}
+function resetLaunchForm(){
+  $("launchForm").reset();
+  $("launchId").value="";
+  $("launchDate").value=today();
+  if($("launchEntryMonth"))$("launchEntryMonth").value=currentMonth();
+  setLaunchPeriodMode("day",{saveDraft:false});
+  $("launchAccumulate").checked=false;
+  if(state.influencers[0])$("launchInfluencer").value=state.influencers[0].id;
+  if(state.settings.origins[0])$("launchOrigin").value=state.settings.origins[0];
+  if(state.settings.statuses[0])$("launchStatus").value=state.settings.statuses[0];
+  calcLaunch();
+}
 function autoCommission(){if($("launchId").value)return;const inf=infById($("launchInfluencer").value);const sold=Number($("launchSold").value||0);if(inf&&sold){$("launchProduct").value=(sold*Number(inf.productRate||0)/100).toFixed(2);$("launchCash").value=(sold*Number(inf.cashRate||0)/100).toFixed(2);}calcLaunch();}
-function editLaunch(id){const l=state.launches.find(x=>x.id===id);if(!l)return;showPage("launches");$("launchId").value=l.id;$("launchDate").value=l.date;$("launchInfluencer").value=l.influencerId;$("launchOrigin").value=l.origin;$("launchSold").value=l.sold;$("launchProduct").value=l.productCommission;$("launchCash").value=l.cashCommission;$("launchStatus").value=l.status;$("launchPdfSent").checked=!!l.pdfSent;$("launchAccumulate").checked=!!l.accumulate;$("launchNotes").value=l.notes||"";calcLaunch();}
+function editLaunch(id){
+  const l=state.launches.find(x=>x.id===id);
+  if(!l)return;
+  showPage("launches");
+  $("launchId").value=l.id;
+  $("launchDate").value=l.date||today();
+  if($("launchEntryMonth"))$("launchEntryMonth").value=l.month||(l.date||today()).slice(0,7);
+  setLaunchPeriodMode(launchPeriodModeOf(l),{saveDraft:false});
+  $("launchInfluencer").value=l.influencerId;
+  $("launchOrigin").value=l.origin;
+  $("launchSold").value=l.sold;
+  $("launchProduct").value=l.productCommission;
+  $("launchCash").value=l.cashCommission;
+  $("launchStatus").value=l.status;
+  $("launchPdfSent").checked=!!l.pdfSent;
+  $("launchAccumulate").checked=!!l.accumulate;
+  $("launchNotes").value=l.notes||"";
+  calcLaunch();
+}
 function deleteLaunch(id){
   if(confirm("Excluir este lançamento?")){
     const audit=currentAuditInfo();
@@ -35255,7 +35443,7 @@ function renderLaunchesPDF(){
     ].filter(Boolean).join(" • ")||"-";
 
     return `<tr>
-      <td>${dateBR(l.date)}</td>
+      <td>${launchPeriodLabel(l)}</td>
       <td>${esc(l.origin||"-")}</td>
       <td>${esc(i.coupon||"-")}</td>
       <td><span class="pdfName">${esc(i.name||"-")}</span></td>
@@ -35291,7 +35479,7 @@ function exportLaunchesPDF(){
 }
 
 
-function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[dateBR(l.date),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
+function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[launchPeriodLabel(l),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
 
 function exportAccumulationHistoryCSV(){
   const rows=accumulationPeriodHistory(accumulationExportPeriod());
@@ -35406,7 +35594,21 @@ $("launchForm").addEventListener("submit",e=>{
   if(!infId){alert("Selecione um influencer.");return}
   if(sold<=0){alert("Informe o valor vendido.");return}
 
-  const date=$("launchDate").value||today();
+  const periodMode=$("launchPeriodMode")?.value==="month"?"month":"day";
+  const selectedEntryMonth=$("launchEntryMonth")?.value||"";
+  const selectedEntryDate=$("launchDate")?.value||"";
+
+  if(periodMode==="month"&&!/^\d{4}-\d{2}$/.test(selectedEntryMonth)){
+    alert("Selecione o mês inteiro do lançamento.");
+    return;
+  }
+  if(periodMode==="day"&&!/^\d{4}-\d{2}-\d{2}$/.test(selectedEntryDate)){
+    alert("Selecione a data específica da venda.");
+    return;
+  }
+
+  const month=periodMode==="month"?selectedEntryMonth:selectedEntryDate.slice(0,7);
+  const date=periodMode==="month"?`${month}-01`:selectedEntryDate;
   const id=$("launchId").value||uid();
   const old=state.launches.find(l=>l.id===id);
   const accumulate=$("launchAccumulate").checked;
@@ -35415,7 +35617,8 @@ $("launchForm").addEventListener("submit",e=>{
   const item={
     id,
     date,
-    month:date.slice(0,7),
+    month,
+    periodMode,
     influencerId:infId,
     origin:$("launchOrigin").value||"Site",
     sold,
@@ -35458,6 +35661,7 @@ $("launchForm").addEventListener("submit",e=>{
     .catch(()=>{});
 
   resetLaunchForm();
+  syncPanelMonth(month);
   showPage("launches");
 });
 $("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId").value||uid();const item={id,name:$("infName").value.trim(),coupon:$("infCoupon").value.trim(),productRate:Number($("infProductRate").value||0),cashRate:Number($("infCashRate").value||0),instagram:$("infInstagram").value,whatsapp:$("infWhatsapp").value,pix:(infById(id)||{}).pix||""};if(!item.name||!item.coupon){alert("Informe nome e cupom.");return}const idx=state.influencers.findIndex(i=>i.id===id);if(idx>=0)state.influencers[idx]=item;else state.influencers.push(item);save();resetInfForm();render();});
