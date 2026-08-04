@@ -1297,7 +1297,7 @@ input[type="month"]:focus{
   border-color:var(--primary);
   box-shadow:0 0 0 4px rgba(37,99,235,.10);
 }
-/* V206: em controles nativos de mês, capitalize somente o nome do mês.
+/* V207: em controles nativos de mês, capitalize somente o nome do mês.
    Ex.: “agosto de 2026” passa a ser exibido como “Agosto de 2026”. */
 input[type="month"]::-webkit-datetime-edit-month-field{
   text-transform:capitalize;
@@ -14298,6 +14298,120 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   }
 }
 
+
+
+/* ===== V207 — RELATÓRIO PDF COM SALDO PROGRESSIVO REAL ===== */
+.reportBalanceLedger{
+  margin:18px 0 8px;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  overflow:hidden;
+  background:#fff;
+}
+.reportBalanceLedgerHeader{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  padding:15px 16px;
+  background:#f8fafc;
+  border-bottom:1px solid #e5e7eb;
+}
+.reportBalanceLedgerHeader strong{
+  display:block;
+  font-size:15px;
+  color:#111827;
+}
+.reportBalanceLedgerHeader span{
+  display:block;
+  margin-top:4px;
+  font-size:12px;
+  line-height:1.45;
+  color:#64748b;
+}
+.reportBalanceTable{
+  width:100%;
+  min-width:0!important;
+  border-collapse:collapse;
+}
+.reportBalanceTable th,
+.reportBalanceTable td{
+  padding:11px 14px;
+  border-bottom:1px solid #eef2f7;
+  white-space:normal;
+  vertical-align:middle;
+}
+.reportBalanceTable th{
+  background:#fff;
+  color:#64748b;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.reportBalanceTable th:not(:first-child),
+.reportBalanceTable td:not(:first-child){
+  text-align:right;
+}
+.reportBalanceTable tbody tr:last-child td{
+  border-bottom:0;
+}
+.reportBalanceTable .reportBalanceFinal td{
+  background:#f8fafc;
+  font-weight:900;
+  color:#0f172a;
+}
+.reportBalanceValue{
+  font-weight:850;
+  font-variant-numeric:tabular-nums;
+}
+.reportBalanceValue.product{color:#1d4ed8;}
+.reportBalanceValue.cash{color:#047857;}
+.reportBalanceDeduction{color:#b45309;font-weight:800;}
+.reportBalanceNote{
+  margin:12px 0 0;
+  padding:12px 14px;
+  border:1px solid #bfdbfe;
+  border-radius:14px;
+  background:#eff6ff;
+  color:#1e3a8a;
+  font-size:12px;
+  line-height:1.5;
+}
+@media(max-width:650px){
+  #reports .filters{
+    grid-template-columns:1fr;
+  }
+  #reports .filters .dateMini,
+  #reports .filters select,
+  #reports .filters button{
+    width:100%;
+  }
+  .reportBalanceLedger{
+    border-radius:14px;
+  }
+  .reportBalanceLedgerHeader{
+    display:block;
+  }
+  .reportBalanceTable th,
+  .reportBalanceTable td{
+    padding:10px 9px;
+    font-size:11px;
+  }
+  .reportBalanceTable th:first-child,
+  .reportBalanceTable td:first-child{
+    width:48%;
+  }
+}
+@media print{
+  .reportBalanceLedger{
+    break-inside:avoid;
+    box-shadow:none;
+  }
+  .reportBalanceNote{
+    break-inside:avoid;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -14388,7 +14502,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V206</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V207</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15475,19 +15589,56 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
           <div class="pdfThreeCards">
             <div class="pdfBox">
-              <small>Total vendido</small>
+              <small>Total vendido no mês</small>
               <strong id="reportSold">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Comissão em produtos</small>
+              <small>Saldo atual em produtos</small>
               <strong id="reportProduct">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Comissão em dinheiro</small>
+              <small>Saldo atual em dinheiro</small>
               <strong id="reportCash">R$ 0,00</strong>
             </div>
           </div>
 
+          <div class="reportBalanceLedger">
+            <div class="reportBalanceLedgerHeader">
+              <div>
+                <strong>Evolução das comissões</strong>
+                <span id="reportBalancePeriodText">Saldo trazido, comissões geradas e valores utilizados no período.</span>
+              </div>
+            </div>
+            <table class="reportBalanceTable">
+              <thead>
+                <tr><th>Movimento</th><th>Produtos</th><th>Dinheiro</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Saldo trazido de meses anteriores</td>
+                  <td><span id="reportOpeningProduct" class="reportBalanceValue product">R$ 0,00</span></td>
+                  <td><span id="reportOpeningCash" class="reportBalanceValue cash">R$ 0,00</span></td>
+                </tr>
+                <tr>
+                  <td id="reportEarnedMonthLabel">Comissões geradas no mês</td>
+                  <td><span id="reportEarnedProduct" class="reportBalanceValue product">R$ 0,00</span></td>
+                  <td><span id="reportEarnedCash" class="reportBalanceValue cash">R$ 0,00</span></td>
+                </tr>
+                <tr>
+                  <td>Utilizado, pago ou zerado no mês</td>
+                  <td><span id="reportDeductedProduct" class="reportBalanceDeduction">R$ 0,00</span></td>
+                  <td><span id="reportDeductedCash" class="reportBalanceDeduction">R$ 0,00</span></td>
+                </tr>
+                <tr class="reportBalanceFinal">
+                  <td id="reportClosingMonthLabel">Saldo disponível ao final do mês</td>
+                  <td><span id="reportClosingProduct" class="reportBalanceValue product">R$ 0,00</span></td>
+                  <td><span id="reportClosingCash" class="reportBalanceValue cash">R$ 0,00</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p id="reportBalanceNote" class="reportBalanceNote">O saldo é calculado cronologicamente até o último dia do mês escolhido.</p>
           <p id="reportFooter" class="pdfFooterClean"></p>
         </div>
       </div>
@@ -16414,7 +16565,10 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V206 — Meses exibidos com inicial maiúscula em todo o sistema.
+  V207 — Relatório PDF com saldo progressivo real por influencer.
+  - Traz o saldo restante dos meses anteriores até a competência selecionada.
+  - Soma as comissões do mês e desconta resgates, pagamentos, zeragens e ajustes.
+  - Mantém movimentos posteriores fora de relatórios históricos.
   Cada lançamento possui uma linha própria no Supabase. Realtime atualiza
   apenas o registro afetado; leituras completas convergem todos os aparelhos
   para o mesmo estado oficial. localStorage e painel_state são somente
@@ -16628,7 +16782,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V206";
+const APP_BUILD_VERSION="V207";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 
 async function clearOldPwaCacheOnce(){
@@ -16636,12 +16790,12 @@ async function clearOldPwaCacheOnce(){
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V206.
+      versão anterior são responsabilidade exclusiva do Service Worker V207.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V206 não concluída:",e);
+    console.warn("Verificação segura de cache V207 não concluída:",e);
     status="error";
   }
   return status;
@@ -16658,9 +16812,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=206",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=207",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=206");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=207");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -21875,7 +22029,7 @@ async function cloudSaveNow(){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
         updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V206: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V207: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -21996,7 +22150,7 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V206: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V207: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
         updateCloudDebug("V203: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
@@ -26896,13 +27050,254 @@ function deleteProduct(id){
 function renderPix(){$("pixRows").innerHTML=state.influencers.length?state.influencers.map(i=>`<tr><td>${esc(i.name)}</td><td>${esc(i.coupon)}</td><td><input value="${esc(i.pix||"")}" onchange="updatePix('${i.id}',this.value)" placeholder="Digite a chave PIX"></td><td><button class="small secondary" onclick="copyPix('${i.id}')">Copiar</button></td></tr>`).join(""):`<tr><td colspan="4">Nenhum influencer cadastrado.</td></tr>`;}
 function updatePix(id,val){const i=infById(id);if(i){i.pix=val;save();}}
 function copyPix(id){const i=infById(id);if(!i||!i.pix){alert("Este influencer ainda não tem chave PIX.");return}navigator.clipboard&&navigator.clipboard.writeText(i.pix);alert("Chave PIX copiada.");}
+
+/* ===== V207 — MOTOR DE SALDO PROGRESSIVO DO RELATÓRIO PDF ===== */
+function reportMonthRange(month=selectedMonth()){
+  const normalized=/^\d{4}-\d{2}$/.test(String(month||""))?String(month):currentMonth();
+  return {month:normalized,start:`${normalized}-01`,end:monthEndDate(normalized)};
+}
+
+function reportDateBefore(date){
+  const normalized=normalizeDateOnly(date);
+  if(!normalized)return "";
+  const value=new Date(`${normalized}T12:00:00`);
+  value.setDate(value.getDate()-1);
+  const y=value.getFullYear();
+  const m=String(value.getMonth()+1).padStart(2,"0");
+  const d=String(value.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
+}
+
+function reportEventMonth(value){
+  const date=normalizeDateOnly(value);
+  return date?date.slice(0,7):"";
+}
+
+function reportActivePaidAdjustmentsForInfluencer(infId,asOfDate){
+  const map=new Map();
+  (state.paidAdjustments||[])
+    .filter(row=>row&&row.influencerId===infId&&row.status!=="Cancelado")
+    .sort((a,b)=>{
+      const at=Date.parse(a.updatedAt||a.createdAt||a.date||"")||0;
+      const bt=Date.parse(b.updatedAt||b.createdAt||b.date||"")||0;
+      if(at!==bt)return at-bt;
+      return String(a.id||"").localeCompare(String(b.id||""));
+    })
+    .forEach(row=>{
+      const month=/^\d{4}-\d{2}$/.test(String(row.month||""))
+        ? String(row.month)
+        : reportEventMonth(row.date);
+      if(!month||`${month}-01`>asOfDate)return;
+      map.set(month,row);
+    });
+  return map;
+}
+
+function reportHistoryPaymentType(type){
+  return type==="cash_paid"||type==="product_paid"||type==="product_choice_paid";
+}
+
+function reportCommissionLedgerEvents(infId,asOfDate){
+  const end=normalizeDateOnly(asOfDate)||today();
+  const events=[];
+  const activeAdjustments=reportActivePaidAdjustmentsForInfluencer(infId,end);
+
+  const historyRows=(state.accumulationHistory||[])
+    .filter(row=>{
+      const date=normalizeDateOnly(row.createdAt||row.date);
+      return row&&row.influencerId===infId&&date&&date<=end&&accumulationHistoryTypesThatCloseBalance().has(row.type);
+    });
+
+  const historyRelatedIds=new Set(historyRows.map(row=>String(row.relatedId||"")).filter(Boolean));
+  const historyKeys=new Set(historyRows.map(row=>`${normalizeDateOnly(row.createdAt||row.date)}|${row.type}`));
+
+  (state.launches||[]).forEach(row=>{
+    const date=normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"");
+    if(!row||row.influencerId!==infId||row.status==="Cancelado"||!date||date>end)return;
+
+    events.push({
+      at:`${date}T09:00:00.000`,date,order:10,kind:"commission_earned",
+      product:Number(row.productCommission||0),cash:Number(row.cashCommission||0),sold:Number(row.sold||0),source:row
+    });
+
+    if(!row.paid)return;
+    const paidMonth=/^\d{4}-\d{2}$/.test(String(row.paidMonth||""))
+      ? String(row.paidMonth)
+      : (reportEventMonth(row.paidAt)||date.slice(0,7));
+    if(activeAdjustments.has(paidMonth))return;
+
+    let paidDate=normalizeDateOnly(row.paidAt);
+    if(!paidDate||paidDate.slice(0,7)!==paidMonth)paidDate=monthEndDate(paidMonth);
+    if(!paidDate||paidDate>end)return;
+
+    events.push({
+      at:`${paidDate}T18:00:00.000`,date:paidDate,order:60,kind:"launch_settled",
+      product:Number(row.productCommission||0),cash:Number(row.cashCommission||0),source:row
+    });
+  });
+
+  (state.redemptions||[]).forEach(row=>{
+    const date=normalizeDateOnly(row.date);
+    if(!row||row.influencerId!==infId||row.status==="Cancelado"||!date||date>end)return;
+    const month=date.slice(0,7);
+    if(activeAdjustments.has(month))return;
+
+    const relatedId=`product-choice-${row.id}`;
+    const matchedHistory=historyRelatedIds.has(relatedId)||
+      historyKeys.has(`${date}|product_choice_paid`)||
+      historyKeys.has(`${date}|product_paid`)||
+      (String(row.name||"")==="Saldo em produtos zerado no pagamento"&&historyKeys.has(`${date}|cash_paid`));
+    if(matchedHistory)return;
+
+    events.push({
+      at:`${date}T12:00:00.000`,date,order:20,kind:"product_used",
+      amount:Number(row.used||0),closeCash:isProductChoiceRedemption(row),source:row
+    });
+  });
+
+  (state.cashPayments||[]).forEach(row=>{
+    const date=normalizeDateOnly(row.date);
+    if(!row||row.influencerId!==infId||row.status==="Cancelado"||!date||date>end)return;
+    const month=/^\d{4}-\d{2}$/.test(String(row.month||""))?String(row.month):date.slice(0,7);
+    if(activeAdjustments.has(month))return;
+
+    const relatedId=row.productRedemptionId?`product-choice-${row.productRedemptionId}`:"";
+    const matchedHistory=(relatedId&&historyRelatedIds.has(relatedId))||
+      (row.productRedemptionId&&historyKeys.has(`${date}|product_choice_paid`))||
+      (!row.productRedemptionId&&historyKeys.has(`${date}|cash_paid`));
+    if(matchedHistory)return;
+
+    events.push({
+      at:`${date}T13:00:00.000`,date,order:30,kind:"cash_used",
+      amount:Number(row.cash||row.amount||0),closeProduct:!row.productRedemptionId,source:row
+    });
+  });
+
+  historyRows.forEach(row=>{
+    const date=normalizeDateOnly(row.createdAt||row.date);
+    const month=date.slice(0,7);
+    if(activeAdjustments.has(month)&&reportHistoryPaymentType(row.type))return;
+    events.push({
+      at:row.createdAt||`${date}T23:59:59.000`,date,order:90,kind:"history_checkpoint",source:row
+    });
+  });
+
+  activeAdjustments.forEach((row,month)=>{
+    let date=normalizeDateOnly(row.date);
+    if(!date||date.slice(0,7)!==month)date=monthEndDate(month);
+    if(!date||date>end)return;
+    events.push({
+      at:`${date}T23:30:00.000`,date,order:80,kind:"paid_adjustment",
+      paymentType:String(row.paymentType||""),amount:Number(row.amount||0),source:row
+    });
+  });
+
+  return events.sort((a,b)=>{
+    const byTime=String(a.at||"").localeCompare(String(b.at||""));
+    if(byTime)return byTime;
+    return Number(a.order||0)-Number(b.order||0);
+  });
+}
+
+function reportCommissionBalanceAt(infId,asOfDate){
+  let product=0;
+  let cash=0;
+  const processed=[];
+
+  reportCommissionLedgerEvents(infId,asOfDate).forEach(event=>{
+    const beforeProduct=Math.max(0,Number(product||0));
+    const beforeCash=Math.max(0,Number(cash||0));
+
+    if(event.kind==="commission_earned"){
+      product+=Math.max(0,Number(event.product||0));
+      cash+=Math.max(0,Number(event.cash||0));
+    }else if(event.kind==="launch_settled"){
+      product=Math.max(0,product-Math.max(0,Number(event.product||0)));
+      cash=Math.max(0,cash-Math.max(0,Number(event.cash||0)));
+    }else if(event.kind==="product_used"){
+      product=Math.max(0,product-Math.max(0,Number(event.amount||0)));
+      if(event.closeCash)cash=0;
+    }else if(event.kind==="cash_used"){
+      cash=Math.max(0,cash-Math.max(0,Number(event.amount||0)));
+      if(event.closeProduct)product=0;
+    }else if(event.kind==="paid_adjustment"){
+      const amount=Math.max(0,Number(event.amount||0));
+      if(event.paymentType==="Produto"){
+        product=Math.max(0,product-amount);
+        cash=0;
+      }else{
+        cash=Math.max(0,cash-amount);
+        product=0;
+      }
+    }else if(event.kind==="history_checkpoint"){
+      const row=event.source||{};
+      const productDelta=Math.max(0,Number(row.beforeProduct||0)-Number(row.afterProduct||0));
+      const cashDelta=Math.max(0,Number(row.beforeCash||0)-Number(row.afterCash||0));
+
+      if(row.type==="product_choice_paid"||row.type==="product_paid"){
+        product=Math.max(0,product-productDelta);
+        cash=0;
+      }else if(row.type==="cash_paid"){
+        cash=Math.max(0,cash-cashDelta);
+        product=0;
+      }else if(row.type==="product_zero_only"){
+        product=0;
+      }else if(row.type==="cash_zero_only"){
+        cash=0;
+      }else if(row.type==="manual_zero"){
+        product=0;
+        cash=0;
+      }else{
+        product=Math.max(0,product-productDelta);
+        cash=Math.max(0,cash-cashDelta);
+      }
+    }
+
+    product=Math.max(0,Number(product||0));
+    cash=Math.max(0,Number(cash||0));
+    processed.push({
+      ...event,
+      beforeProduct,beforeCash,
+      afterProduct:product,afterCash:cash,
+      productDeducted:Math.max(0,beforeProduct-product),
+      cashDeducted:Math.max(0,beforeCash-cash)
+    });
+  });
+
+  return {product,cash,events:processed};
+}
+
+function reportCommissionSnapshot(infId,month=selectedMonth()){
+  const range=reportMonthRange(month);
+  const openingDate=reportDateBefore(range.start);
+  const opening=openingDate?reportCommissionBalanceAt(infId,openingDate):{product:0,cash:0,events:[]};
+  const closing=reportCommissionBalanceAt(infId,range.end);
+  const monthEvents=(closing.events||[]).filter(event=>event.date>=range.start&&event.date<=range.end);
+  const earnedEvents=monthEvents.filter(event=>event.kind==="commission_earned");
+
+  return {
+    range,
+    opening,
+    closing,
+    sold:earnedEvents.reduce((sum,event)=>sum+Number(event.sold||0),0),
+    earnedProduct:earnedEvents.reduce((sum,event)=>sum+Number(event.product||0),0),
+    earnedCash:earnedEvents.reduce((sum,event)=>sum+Number(event.cash||0),0),
+    deductedProduct:monthEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0),
+    deductedCash:monthEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0),
+    monthEvents
+  };
+}
+/* ===== FIM V207 — MOTOR DE SALDO PROGRESSIVO ===== */
+
 function renderReport(){
   const inf=infById($("reportInfluencer").value);
-  const rows=inf?monthLaunches().filter(l=>l.influencerId===inf.id):[];
-
-  const sold=rows.reduce((a,l)=>a+Number(l.sold||0),0);
-  const product=rows.reduce((a,l)=>a+Number(l.productCommission||0),0);
-  const cash=rows.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+  const month=selectedMonth();
+  const snapshot=inf?reportCommissionSnapshot(inf.id,month):{
+    range:reportMonthRange(month),
+    opening:{product:0,cash:0},
+    closing:{product:0,cash:0},
+    sold:0,earnedProduct:0,earnedCash:0,deductedProduct:0,deductedCash:0
+  };
 
   $("reportTitle").textContent=state.settings.pdfTitle;
   $("reportMsg").textContent=state.settings.pdfMessage;
@@ -26914,15 +27309,36 @@ function renderReport(){
 
   applyPdfWatermark("reportWatermark");
 
+  const monthText=monthLabel(snapshot.range.month);
   $("reportName").textContent=inf?inf.name:"Selecione um influencer";
   $("reportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
-  $("reportPeriod").textContent=`Mês: ${monthLabel(selectedMonth())}`;
-  $("reportSold").textContent=money(sold);
-  $("reportProduct").textContent=money(product);
-  $("reportCash").textContent=money(cash);
+  $("reportPeriod").textContent=`Competência: ${monthText} • posição até ${dateBR(snapshot.range.end)}`;
+  $("reportSold").textContent=money(snapshot.sold);
+  $("reportProduct").textContent=money(snapshot.closing.product);
+  $("reportCash").textContent=money(snapshot.closing.cash);
+
+  if($("reportOpeningProduct"))$("reportOpeningProduct").textContent=money(snapshot.opening.product);
+  if($("reportOpeningCash"))$("reportOpeningCash").textContent=money(snapshot.opening.cash);
+  if($("reportEarnedProduct"))$("reportEarnedProduct").textContent=money(snapshot.earnedProduct);
+  if($("reportEarnedCash"))$("reportEarnedCash").textContent=money(snapshot.earnedCash);
+  if($("reportDeductedProduct"))$("reportDeductedProduct").textContent=money(snapshot.deductedProduct);
+  if($("reportDeductedCash"))$("reportDeductedCash").textContent=money(snapshot.deductedCash);
+  if($("reportClosingProduct"))$("reportClosingProduct").textContent=money(snapshot.closing.product);
+  if($("reportClosingCash"))$("reportClosingCash").textContent=money(snapshot.closing.cash);
+  if($("reportEarnedMonthLabel"))$("reportEarnedMonthLabel").textContent=`Comissões geradas em ${monthText}`;
+  if($("reportClosingMonthLabel"))$("reportClosingMonthLabel").textContent=`Saldo disponível ao final de ${monthText}`;
+  if($("reportBalancePeriodText"))$("reportBalancePeriodText").textContent=`Posição acumulada até ${dateBR(snapshot.range.end)}, preservando o saldo restante dos meses anteriores.`;
+  if($("reportBalanceNote"))$("reportBalanceNote").textContent=`Cálculo cronológico: saldo anterior + comissões geradas em ${monthText} − valores utilizados, pagos ou zerados até ${dateBR(snapshot.range.end)}. Movimentos posteriores não alteram este relatório.`;
 }
 
-function printReport(){if(!$("reportInfluencer").value){alert("Selecione um influencer.");return}document.body.classList.remove("print-accumulation");document.body.classList.add("print-report");window.print();setTimeout(()=>document.body.classList.remove("print-report"),500);}
+function printReport(){
+  if(!$("reportInfluencer").value){alert("Selecione um influencer.");return}
+  renderReport();
+  document.body.classList.remove("print-accumulation");
+  document.body.classList.add("print-report");
+  window.print();
+  setTimeout(()=>document.body.classList.remove("print-report"),500);
+}
 function markReportSent(){const inf=infById($("reportInfluencer").value);if(!inf){alert("Selecione um influencer.");return}monthLaunches().filter(l=>l.influencerId===inf.id).forEach(l=>{l.pdfSent=true;l.status="Enviado"});save();render();alert("Lançamentos marcados como enviados.");}
 function renderSettings(){
   const s=state.settings;
@@ -35580,18 +35996,20 @@ function exportReportCSV(){
     alert("Selecione um influencer.");
     return;
   }
-  const rows=monthLaunches().filter(l=>l.influencerId===inf.id);
-  const sold=rows.reduce((a,l)=>a+Number(l.sold||0),0);
-  const product=rows.reduce((a,l)=>a+Number(l.productCommission||0),0);
-  const cash=rows.reduce((a,l)=>a+Number(l.cashCommission||0),0);
+  const snapshot=reportCommissionSnapshot(inf.id,selectedMonth());
   rowsCSV([
     ["Influencer",inf.name],
     ["Cupom",inf.coupon],
-    ["Mês",monthLabel(selectedMonth())],
-    ["Total vendido",sold],
-    ["Comissão em produtos",product],
-    ["Comissão em dinheiro",cash]
-  ],`relatorio-${inf.coupon}.csv`);
+    ["Competência",monthLabel(snapshot.range.month)],
+    ["Posição até",dateBR(snapshot.range.end)],
+    ["Total vendido no mês",snapshot.sold],
+    [],
+    ["Movimento","Produtos","Dinheiro"],
+    ["Saldo trazido de meses anteriores",snapshot.opening.product,snapshot.opening.cash],
+    ["Comissões geradas no mês",snapshot.earnedProduct,snapshot.earnedCash],
+    ["Utilizado, pago ou zerado no mês",snapshot.deductedProduct,snapshot.deductedCash],
+    ["Saldo disponível ao final do mês",snapshot.closing.product,snapshot.closing.cash]
+  ],`relatorio-${inf.coupon}-${snapshot.range.month}.csv`);
 }
 
 function exportBackup(){
