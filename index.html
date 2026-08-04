@@ -1297,6 +1297,12 @@ input[type="month"]:focus{
   border-color:var(--primary);
   box-shadow:0 0 0 4px rgba(37,99,235,.10);
 }
+/* V206: em controles nativos de mês, capitalize somente o nome do mês.
+   Ex.: “agosto de 2026” passa a ser exibido como “Agosto de 2026”. */
+input[type="month"]::-webkit-datetime-edit-month-field{
+  text-transform:capitalize;
+}
+
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="month"]::-webkit-calendar-picker-indicator{
   cursor:pointer;
@@ -14218,8 +14224,8 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 
 
-/* ===== V204 • LANÇAMENTOS POR DATA ESPECÍFICA OU MÊS INTEIRO ===== */
-#launches .launchPeriodSelectorV204{
+/* ===== V205 • LANÇAMENTOS POR DATA ESPECÍFICA OU MÊS INTEIRO ===== */
+#launches .launchPeriodSelectorV205{
   grid-column:1/-1;
   display:flex;
   align-items:center;
@@ -14230,23 +14236,23 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   border-radius:16px;
   background:#f8fafc;
 }
-#launches .launchPeriodSelectorV204 strong{
+#launches .launchPeriodSelectorV205 strong{
   display:block;
   margin-bottom:3px;
   color:var(--text);
   font-size:13px;
 }
-#launches .launchPeriodSelectorV204 .muted{
+#launches .launchPeriodSelectorV205 .muted{
   display:block;
   line-height:1.35;
 }
-#launches .launchPeriodTabsV204{
+#launches .launchPeriodTabsV205{
   display:grid;
   grid-template-columns:repeat(2,minmax(150px,1fr));
   gap:8px;
   min-width:330px;
 }
-#launches .launchPeriodTabsV204 button{
+#launches .launchPeriodTabsV205 button{
   min-height:42px;
   padding:9px 12px;
   border:1px solid #cbd5e1;
@@ -14254,12 +14260,12 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   color:#334155;
   box-shadow:none;
 }
-#launches .launchPeriodTabsV204 button.active{
+#launches .launchPeriodTabsV205 button.active{
   border-color:var(--accent);
   background:var(--accent);
   color:#fff;
 }
-#launches .launchPeriodTagV204{
+#launches .launchPeriodTagV205{
   display:inline-flex;
   align-items:center;
   gap:6px;
@@ -14272,7 +14278,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   white-space:nowrap;
 }
 @media(max-width:760px){
-  #launches .launchPeriodSelectorV204{
+  #launches .launchPeriodSelectorV205{
     display:grid;
     grid-template-columns:minmax(0,1fr);
     width:100%;
@@ -14280,12 +14286,12 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     max-width:100%;
     padding:12px;
   }
-  #launches .launchPeriodTabsV204{
+  #launches .launchPeriodTabsV205{
     grid-template-columns:minmax(0,1fr);
     min-width:0;
     width:100%;
   }
-  #launches .launchPeriodTabsV204 button{
+  #launches .launchPeriodTabsV205 button{
     width:100%;
     min-width:0;
     white-space:normal;
@@ -14382,7 +14388,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V204</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V206</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14410,12 +14416,12 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
         <form id="launchForm" class="form">
           <input type="hidden" id="launchId">
           <input type="hidden" id="launchPeriodMode" value="day">
-          <div class="launchPeriodSelectorV204">
+          <div class="launchPeriodSelectorV205">
             <div>
               <strong>Período do lançamento</strong>
               <span id="launchPeriodHint" class="muted">Use uma data específica para registrar uma venda individual.</span>
             </div>
-            <div class="launchPeriodTabsV204" role="group" aria-label="Período do lançamento">
+            <div class="launchPeriodTabsV205" role="group" aria-label="Período do lançamento">
               <button type="button" class="active" data-launch-period-mode="day" aria-pressed="true" onclick="setLaunchPeriodMode('day')">Data específica</button>
               <button type="button" data-launch-period-mode="month" aria-pressed="false" onclick="setLaunchPeriodMode('month')">Mês inteiro</button>
             </div>
@@ -14424,7 +14430,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
           <label id="launchMonthField" class="hidden">Mês inteiro<input type="month" id="launchEntryMonth"></label>
           <label>Influencer/Cupom<select id="launchInfluencer" required></select></label>
           <label>Origem da venda<select id="launchOrigin"></select></label>
-          <label>Valor vendido<input type="number" id="launchSold" step="0.01" min="0" required></label>
+          <label>Valor vendido<input type="text" id="launchSold" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" aria-label="Valor vendido em reais" required></label>
           <label>Comissão em produtos<input type="number" id="launchProduct" step="0.01" min="0"></label>
           <label>Comissão em dinheiro<input type="number" id="launchCash" step="0.01" min="0"></label>
           <label>Status<select id="launchStatus"></select></label>
@@ -16408,7 +16414,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V204 — Lançamentos por data específica ou total consolidado do mês inteiro.
+  V206 — Meses exibidos com inicial maiúscula em todo o sistema.
   Cada lançamento possui uma linha própria no Supabase. Realtime atualiza
   apenas o registro afetado; leituras completas convergem todos os aparelhos
   para o mesmo estado oficial. localStorage e painel_state são somente
@@ -16622,7 +16628,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V204";
+const APP_BUILD_VERSION="V206";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 
 async function clearOldPwaCacheOnce(){
@@ -16630,12 +16636,12 @@ async function clearOldPwaCacheOnce(){
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V204.
+      versão anterior são responsabilidade exclusiva do Service Worker V206.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V204 não concluída:",e);
+    console.warn("Verificação segura de cache V206 não concluída:",e);
     status="error";
   }
   return status;
@@ -16652,9 +16658,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=204",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=206",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=204");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=206");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -21869,7 +21875,7 @@ async function cloudSaveNow(){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
         updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V204: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V206: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -21990,7 +21996,7 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V204: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V206: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
         updateCloudDebug("V203: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
@@ -22250,7 +22256,13 @@ function normalize(){
   repairPaidAdjustments();
 }
 function selectedMonth(){return $("globalMonth").value||currentMonth();}
-function monthLabel(m){const [y,mo]=m.split("-");return `${mo}/${y}`;}
+const MONTH_NAMES_PT_BR=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+function monthLabel(m){
+  const [y,mo]=String(m||"").split("-");
+  const index=Number(mo)-1;
+  if(!y||index<0||index>=MONTH_NAMES_PT_BR.length)return String(m||"-");
+  return `${MONTH_NAMES_PT_BR[index]} de ${y}`;
+}
 function dateBR(d){if(!d)return"-";const [y,m,day]=d.split("-");return `${day}/${m}/${y}`;}
 
 let influencerMapCache=null;
@@ -23118,6 +23130,52 @@ function exportPaidCSV(){
 
 function calcLaunch(){}
 
+function launchSoldCurrencyNumber(fieldOrValue=$("launchSold")){
+  const field=fieldOrValue&&typeof fieldOrValue==="object"&&"value" in fieldOrValue
+    ? fieldOrValue
+    : null;
+
+  if(field){
+    const stored=Number(field.dataset.currencyValue);
+    if(Number.isFinite(stored))return Math.max(0,stored);
+    fieldOrValue=field.value;
+  }
+
+  const raw=String(fieldOrValue??"").trim();
+  if(!raw)return 0;
+
+  if(raw.includes("R$")||raw.includes(",")){
+    const normalized=raw
+      .replace(/[^\d,-]/g,"")
+      .replace(/\./g,"")
+      .replace(",", ".");
+    return Math.max(0,finiteNumber(normalized,0));
+  }
+
+  return Math.max(0,finiteNumber(raw,0));
+}
+
+function setLaunchSoldCurrency(value,{blankWhenZero=false}={}){
+  const field=$("launchSold");
+  if(!field)return 0;
+
+  const numeric=Math.max(0,finiteNumber(value,0));
+  field.dataset.currencyValue=numeric.toFixed(2);
+  field.value=blankWhenZero&&numeric===0?"":money(numeric);
+  return numeric;
+}
+
+function handleLaunchSoldCurrencyInput(){
+  const field=$("launchSold");
+  if(!field)return;
+
+  const digits=String(field.value||"").replace(/\D/g,"");
+  const numeric=digits?Number(digits)/100:0;
+
+  setLaunchSoldCurrency(numeric,{blankWhenZero:!digits});
+  autoCommission();
+}
+
 function launchDraftUserKey(){
   return String(
     currentUser?.id||
@@ -23140,7 +23198,7 @@ function captureLaunchFormDraft(){
     month:$("launchEntryMonth")?.value||($("launchDate")?.value||today()).slice(0,7),
     influencerId:$("launchInfluencer")?.value||"",
     origin:$("launchOrigin")?.value||"Site",
-    sold:finiteNumber($("launchSold")?.value,0),
+    sold:launchSoldCurrencyNumber(),
     productCommission:finiteNumber($("launchProduct")?.value,0),
     cashCommission:finiteNumber($("launchCash")?.value,0),
     status:$("launchStatus")?.value||"Pendente",
@@ -23213,7 +23271,7 @@ function applyLaunchDraftToForm(draft){
   setLaunchPeriodMode(draft.periodMode==="month"?"month":"day",{saveDraft:false});
   if($("launchInfluencer"))$("launchInfluencer").value=draft.influencerId||"";
   if($("launchOrigin"))$("launchOrigin").value=draft.origin||"Site";
-  if($("launchSold"))$("launchSold").value=finiteNumber(draft.sold,0)||"";
+  if($("launchSold"))setLaunchSoldCurrency(draft.sold,{blankWhenZero:true});
   if($("launchProduct"))$("launchProduct").value=finiteNumber(draft.productCommission,0)||"";
   if($("launchCash"))$("launchCash").value=finiteNumber(draft.cashCommission,0)||"";
   if($("launchStatus"))$("launchStatus").value=draft.status||"Pendente";
@@ -23298,6 +23356,7 @@ function lockLaunchSubmit(){
 
 function resetLaunchForm(){
   $("launchForm").reset();
+  setLaunchSoldCurrency(0,{blankWhenZero:true});
   $("launchId").value="";
   $("launchDate").value=today();
   if($("launchEntryMonth"))$("launchEntryMonth").value=currentMonth();
@@ -23308,7 +23367,7 @@ function resetLaunchForm(){
   if(state.settings.statuses[0])$("launchStatus").value=state.settings.statuses[0];
   calcLaunch();
 }
-function autoCommission(){if($("launchId").value)return;const inf=infById($("launchInfluencer").value);const sold=Number($("launchSold").value||0);if(inf&&sold){$("launchProduct").value=(sold*Number(inf.productRate||0)/100).toFixed(2);$("launchCash").value=(sold*Number(inf.cashRate||0)/100).toFixed(2);}calcLaunch();}
+function autoCommission(){if($("launchId").value)return;const inf=infById($("launchInfluencer").value);const sold=launchSoldCurrencyNumber();if(inf&&sold){$("launchProduct").value=(sold*Number(inf.productRate||0)/100).toFixed(2);$("launchCash").value=(sold*Number(inf.cashRate||0)/100).toFixed(2);}calcLaunch();}
 function editLaunch(id){
   const l=state.launches.find(x=>x.id===id);
   if(!l)return;
@@ -23319,7 +23378,7 @@ function editLaunch(id){
   setLaunchPeriodMode(launchPeriodModeOf(l),{saveDraft:false});
   $("launchInfluencer").value=l.influencerId;
   $("launchOrigin").value=l.origin;
-  $("launchSold").value=l.sold;
+  setLaunchSoldCurrency(l.sold,{blankWhenZero:true});
   $("launchProduct").value=l.productCommission;
   $("launchCash").value=l.cashCommission;
   $("launchStatus").value=l.status;
@@ -35577,7 +35636,7 @@ async function clearAll(){
     location.reload();
   }
 }
-$("launchSold").addEventListener("input",autoCommission);$("launchInfluencer").addEventListener("change",autoCommission);$("launchProduct").addEventListener("input",calcLaunch);$("launchCash").addEventListener("input",calcLaunch);
+$("launchSold").addEventListener("input",handleLaunchSoldCurrencyInput);$("launchInfluencer").addEventListener("change",autoCommission);$("launchProduct").addEventListener("input",calcLaunch);$("launchCash").addEventListener("input",calcLaunch);
 $("launchForm").addEventListener("submit",e=>{
   e.preventDefault();
 
@@ -35589,7 +35648,7 @@ $("launchForm").addEventListener("submit",e=>{
   }
 
   const infId=$("launchInfluencer").value;
-  const sold=finiteNumber($("launchSold").value,0);
+  const sold=launchSoldCurrencyNumber();
 
   if(!infId){alert("Selecione um influencer.");return}
   if(sold<=0){alert("Informe o valor vendido.");return}
