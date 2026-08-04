@@ -14151,6 +14151,209 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   #wholesaleRetail .wholesalePeriodActionsV200{grid-template-columns:1fr}
 }
 
+
+/* ===== V201 • ATACADO E VAREJO MOBILE SEM ESTOURO LATERAL ===== */
+html,body{
+  max-width:100%;
+  overflow-x:hidden;
+}
+
+#wholesaleRetail,
+#wholesaleRetail > *,
+#wholesaleRetail .panel,
+#wholesaleRetail .card,
+#wholesaleRetail .wholesalePeriodPanelV200,
+#wholesaleRetail .wholesaleFormV91,
+#wholesaleRetail .wholesaleFormSection,
+#wholesaleRetail .sectionGrid,
+#wholesaleRetail .valueSideGrid,
+#wholesaleRetail .resultCards,
+#wholesaleRetail .finishGrid,
+#wholesaleRetail .paymentGrid,
+#wholesaleRetail .tableWrap{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+#wholesaleRetail{
+  width:100%!important;
+  margin:0!important;
+  padding:0!important;
+  overflow-x:clip!important;
+}
+
+#wholesaleRetail .panel,
+#wholesaleRetail .wholesalePeriodPanelV200{
+  width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  overflow:hidden!important;
+}
+
+#wholesaleRetail .wholesalePeriodHeadV200,
+#wholesaleRetail .wholesalePeriodControlsV200,
+#wholesaleRetail .wholesalePeriodCurrentV200,
+#wholesaleRetail .wholesaleRangeBoxV200,
+#wholesaleRetail .wholesalePeriodActionsV200,
+#wholesaleRetail .panelHead,
+#wholesaleRetail .filters{
+  min-width:0!important;
+  max-width:100%!important;
+}
+
+#wholesaleRetail input,
+#wholesaleRetail select,
+#wholesaleRetail textarea,
+#wholesaleRetail button{
+  min-width:0!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+
+#wholesaleRetail .tableWrap{
+  width:100%!important;
+  margin-left:0!important;
+  margin-right:0!important;
+  border-radius:16px!important;
+  overflow-x:auto!important;
+  overflow-y:hidden!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+
+#wholesaleRetail .wholesaleSharedBadge{
+  max-width:100%!important;
+  white-space:normal!important;
+  text-align:center!important;
+  line-height:1.25!important;
+}
+
+@media(max-width:760px){
+  .main{
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+    overflow-x:hidden!important;
+  }
+
+  #wholesaleRetail > .grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:8px!important;
+  }
+
+  #wholesaleRetail > .grid .card{
+    min-width:0!important;
+    min-height:82px!important;
+    padding:12px!important;
+    border-radius:15px!important;
+  }
+
+  #wholesaleRetail > .grid .card small{
+    font-size:10px!important;
+    line-height:1.25!important;
+    white-space:normal!important;
+  }
+
+  #wholesaleRetail > .grid .card strong{
+    font-size:18px!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+  }
+
+  #wholesaleRetail .panel,
+  #wholesaleRetail .wholesalePeriodPanelV200{
+    padding:12px!important;
+    border-radius:16px!important;
+  }
+
+  #wholesaleRetail .wholesalePeriodHeadV200{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    margin-bottom:12px!important;
+  }
+
+  #wholesaleRetail .wholesalePeriodCurrentV200,
+  #wholesaleRetail .wholesaleRangeBoxV200{
+    width:100%!important;
+    min-width:0!important;
+    border-radius:12px!important;
+  }
+
+  #wholesaleRetail .wholesalePeriodControlsV200{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    width:100%!important;
+  }
+
+  #wholesaleRetail .wholesalePeriodActionsV200{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    width:100%!important;
+  }
+
+  #wholesaleRetail .wholesalePeriodActionsV200 button{
+    width:100%!important;
+    min-height:44px!important;
+    white-space:normal!important;
+  }
+
+  #wholesaleRetail .wholesalePeriodActionsV200 button:nth-child(3){
+    grid-column:1/-1!important;
+  }
+
+  #wholesaleRetail .panelHead{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+    align-items:stretch!important;
+  }
+
+  #wholesaleRetail .wholesaleFormV91,
+  #wholesaleRetail .wholesaleFormSection,
+  #wholesaleRetail .sectionGrid,
+  #wholesaleRetail .valueSideGrid,
+  #wholesaleRetail .resultCards,
+  #wholesaleRetail .finishGrid,
+  #wholesaleRetail .paymentGrid,
+  #wholesaleRetail .paymentInlineGroup{
+    grid-template-columns:1fr!important;
+    width:100%!important;
+  }
+
+  #wholesaleRetail .wholesaleFormSection{
+    padding:12px!important;
+    border-radius:14px!important;
+  }
+
+  #wholesaleRetail .tableWrap{
+    margin:0!important;
+    border-radius:14px!important;
+  }
+
+  #wholesaleRetail .tableWrap::after{
+    border-radius:0 0 13px 13px!important;
+  }
+}
+
+@media(max-width:390px){
+  #wholesaleRetail > .grid{
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleRetail .wholesalePeriodActionsV200{
+    grid-template-columns:1fr!important;
+  }
+
+  #wholesaleRetail .wholesalePeriodActionsV200 button:nth-child(3){
+    grid-column:auto!important;
+  }
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -14241,7 +14444,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V200</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V201</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16242,15 +16445,18 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V199 — Atacado e Varejo compartilhado com confirmação oficial por lançamento.
-  Cada lançamento possui uma linha própria no Supabase; localStorage e
-  painel_state são somente cache de recuperação, nunca a fonte oficial.
+  V202 — Atacado e Varejo compartilhado com reconciliação autoritativa.
+  Cada lançamento possui uma linha própria no Supabase. Realtime atualiza
+  apenas o registro afetado; leituras completas convergem todos os aparelhos
+  para o mesmo estado oficial. localStorage e painel_state são somente
+  recuperação temporária/offline, nunca a fonte oficial quando a nuvem responde.
 */
 const WHOLESALE_RECORD_PREFIX="wholesale_launch_";
 const WHOLESALE_PENDING_KEY=KEY+"_wholesale_pending_v115";
 const WHOLESALE_SNAPSHOT_KEY=KEY+"_wholesale_snapshot_v115";
 const WHOLESALE_SEED_KEY=KEY+"_wholesale_seed_table_v196";
 const WHOLESALE_TABLE="wisent_wholesale_retail_sales";
+const WHOLESALE_HISTORY_TABLE="wisent_wholesale_retail_sales_history";
 const WHOLESALE_UPSERT_RPC="wisent_wholesale_retail_upsert";
 const WHOLESALE_DELETE_RPC="wisent_wholesale_retail_soft_delete";
 const WHOLESALE_REALTIME_SEEN_KEY=KEY+"_wholesale_realtime_seen_v199";
@@ -16259,6 +16465,13 @@ const WHOLESALE_REALTIME_TOPIC="realtime:wisent-wholesale-v199";
 const WHOLESALE_PULL_PAGE_SIZE=1000;
 let wholesaleFlushBusy=false;
 let wholesaleSyncBusy=false;
+let wholesaleSyncPromise=null;
+let wholesaleSyncRequested=false;
+let wholesaleSyncShowStatusRequested=false;
+let wholesalePullSequence=0;
+let wholesaleLastAppliedPullSequence=0;
+let wholesaleAuthoritativeReady=false;
+let wholesaleLastOfficialDigest="";
 let wholesaleSyncWatchersInstalled=false;
 let wholesalePollTimer=null;
 let wholesaleRealtimeSocket=null;
@@ -16272,6 +16485,7 @@ let wholesaleLastSuccessfulSyncAt=0;
 let wholesaleRealtimeLastEventAt=0;
 let wholesaleBroadcastChannel=null;
 let wholesalePendingMemory=[];
+const wholesaleRecentOfficialEvents=new Map();
 
 const WHOLESALE_DRAFT_PREFIX=KEY+"_wholesale_draft_v117_";
 const SYSTEM_AUDIT_KEY=KEY+"_system_audit_v117";
@@ -16445,20 +16659,20 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V200";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v200";
+const APP_BUILD_VERSION="V202";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v201";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V199.
+      versão anterior são responsabilidade exclusiva do Service Worker V201.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V199 não concluída:",e);
+    console.warn("Verificação segura de cache V201 não concluída:",e);
     status="error";
   }
   return status;
@@ -16475,9 +16689,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=200",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=202",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=200");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=202");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -18105,8 +18319,18 @@ function wholesaleApplySingleOfficialRecord(record,{renderNow=true}={}){
   const current=index>=0?rows[index]:null;
   const incomingVersion=Number(record._wholesaleVersion||0);
   const currentVersion=Number(current?._wholesaleVersion||0);
+  const incomingTime=wholesaleRecordTime(record);
+  const currentTime=wholesaleRecordTime(current);
   if(current&&currentVersion>incomingVersion)return false;
-  if(current&&currentVersion===incomingVersion&&wholesaleRecordTime(current)>wholesaleRecordTime(record))return false;
+  if(current&&currentVersion===incomingVersion&&currentTime>incomingTime)return false;
+  if(
+    current&&
+    currentVersion===incomingVersion&&
+    currentTime===incomingTime&&
+    JSON.stringify(current)===JSON.stringify(record)
+  ){
+    return false;
+  }
 
   if(record.deleted===true){
     if(index>=0)rows.splice(index,1);
@@ -18269,62 +18493,143 @@ async function flushWholesalePendingQueue(){
   }
 }
 
-function applyWholesaleCloudRecords(records,{syncStartedAt=0}={}){
+
+function wholesaleOfficialDigest(records=[]){
+  const canonical=(Array.isArray(records)?records:[])
+    .filter(record=>record&&record.id)
+    .map(record=>[
+      String(record.id),
+      Number(record._wholesaleVersion||0),
+      record.deleted===true?1:0,
+      normalizeDateOnly(record.date||""),
+      String(record.orderStatus||""),
+      Number(record.total||0).toFixed(2),
+      String(record.updatedAt||record._wholesaleUpdatedAt||"")
+    ].join("~"))
+    .sort()
+    .join("|");
+
+  let hash=2166136261;
+  for(let i=0;i<canonical.length;i++){
+    hash^=canonical.charCodeAt(i);
+    hash=Math.imul(hash,16777619);
+  }
+  return (hash>>>0).toString(16).padStart(8,"0");
+}
+
+function wholesaleIsIncomingNewer(incoming,current){
+  if(!current)return true;
+  const incomingVersion=Math.max(0,Number(incoming?._wholesaleVersion||0));
+  const currentVersion=Math.max(0,Number(current?._wholesaleVersion||0));
+  if(incomingVersion!==currentVersion)return incomingVersion>currentVersion;
+  return wholesaleRecordTime(incoming)>=wholesaleRecordTime(current);
+}
+
+
+function applyWholesaleCloudRecords(records,{syncStartedAt=0,pullSequence=0}={}){
+  if(pullSequence&&pullSequence<wholesaleLastAppliedPullSequence){
+    return false;
+  }
+
   const current=Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[];
+  const currentById=new Map(
+    current
+      .filter(record=>record&&record.id)
+      .map(record=>[String(record.id),record])
+  );
+
   const pending=readWholesalePendingQueue();
   const pendingItems=pending
     .map(entry=>entry.record)
     .filter(record=>record&&record.id&&record.deleted!==true);
-  const pendingUpserts=new Set(pendingItems.map(record=>String(record.id)));
-  const pendingDeletes=new Set(
+  const pendingUpsertIds=new Set(pendingItems.map(record=>String(record.id)));
+  const pendingDeleteIds=new Set(
     pending
-      .filter(entry=>entry.record?.deleted===true)
+      .filter(entry=>entry.record?.deleted===true||entry.operation==="delete")
       .map(entry=>String(entry.id))
   );
 
-  const cloudItems=[];
-  const cloudDeletedIds=new Set();
-  (records||[]).forEach(record=>{
+  /*
+    A resposta completa do Supabase é autoritativa. Registros que só existem
+    em cache local não permanecem visíveis quando a nuvem respondeu, exceto
+    alterações explicitamente presentes na fila pendente.
+  */
+  const cloudById=new Map();
+  (Array.isArray(records)?records:[]).forEach(record=>{
     if(!record||!record.id)return;
-    if(record.deleted===true)cloudDeletedIds.add(String(record.id));
-    else cloudItems.push(record);
+    const id=String(record.id);
+    const previous=cloudById.get(id);
+    if(!previous||wholesaleIsIncomingNewer(record,previous)){
+      cloudById.set(id,record);
+    }
+  });
+
+  const officialActive=[];
+  cloudById.forEach((cloudRecord,id)=>{
+    const currentRecord=currentById.get(id);
+    const currentIsNewer=currentRecord&&wholesaleIsIncomingNewer(currentRecord,cloudRecord);
+
+    if(cloudRecord.deleted===true){
+      if(currentIsNewer&&!pendingDeleteIds.has(id)){
+        officialActive.push(currentRecord);
+      }
+      return;
+    }
+
+    officialActive.push(currentIsNewer?currentRecord:cloudRecord);
   });
 
   /*
-    V199: uma leitura completa serve para acrescentar/atualizar registros.
-    A ausência de um ID na resposta nunca é tratada como exclusão. Exclusões
-    só acontecem por deleted_at explícito, evento Realtime DELETE ou fila local.
+    Se um evento Realtime oficial chegou depois do início desta leitura,
+    preserve esse registro mesmo que a resposta HTTP tenha sido produzida
+    alguns milissegundos antes do commit.
   */
-  let merged=mergeWholesaleCollections(current,cloudItems,pendingItems);
+  currentById.forEach((record,id)=>{
+    if(cloudById.has(id)||pendingDeleteIds.has(id))return;
+    const eventAt=Number(wholesaleRecentOfficialEvents.get(id)||0);
+    if(eventAt&&eventAt>=Number(syncStartedAt||0)&&record?._wholesaleRowId){
+      officialActive.push(record);
+    }
+  });
 
-  if(cloudDeletedIds.size){
-    merged=merged.filter(item=>{
-      const id=String(item.id);
-      return pendingUpserts.has(id)||!cloudDeletedIds.has(id);
-    });
-  }
-
-  if(pendingDeletes.size){
-    merged=merged.filter(item=>!pendingDeletes.has(String(item.id)));
+  let merged=mergeWholesaleCollections(officialActive,pendingItems);
+  if(pendingDeleteIds.size){
+    merged=merged.filter(record=>!pendingDeleteIds.has(String(record.id)));
   }
 
   const before=JSON.stringify(current);
   const after=JSON.stringify(merged);
   const changed=before!==after;
 
-  if(changed){
-    state.wholesaleRetail=merged;
-    persistWholesaleLocalCache();
+  state.wholesaleRetail=merged;
+  wholesaleAuthoritativeReady=true;
+  if(pullSequence){
+    wholesaleLastAppliedPullSequence=Math.max(
+      wholesaleLastAppliedPullSequence,
+      Number(pullSequence||0)
+    );
+  }
+  wholesaleLastOfficialDigest=wholesaleOfficialDigest(
+    Array.from(cloudById.values())
+  );
 
+  persistWholesaleLocalCache();
+
+  if(changed){
     try{
       if(currentPage==="wholesaleRetail"||currentPage==="wholesaleOrder"){
         renderWholesaleRetail();
         if(currentPage==="wholesaleOrder")renderWholesaleOrder();
       }
-    }catch(e){
-      console.warn("Renderização após sincronização ignorada:",e);
+    }catch(error){
+      console.warn("Renderização após sincronização ignorada:",error);
     }
   }
+
+  const cutoff=Date.now()-120000;
+  wholesaleRecentOfficialEvents.forEach((eventAt,id)=>{
+    if(Number(eventAt||0)<cutoff)wholesaleRecentOfficialEvents.delete(id);
+  });
 
   return changed;
 }
@@ -18365,63 +18670,104 @@ async function fetchWholesaleCloudRecords(){
   return all.map(wholesaleRecordFromTableRow).filter(Boolean);
 }
 
-async function syncWholesaleLaunchRecordsFromCloud({showStatus=false}={}){
-  if(wholesaleSyncBusy)return false;
+
+async function syncWholesaleLaunchRecordsFromCloud({showStatus=false,reason="sync"}={}){
   if(navigator.onLine===false){
     if(showStatus)updateCloudStatus("Offline • lançamentos preservados neste aparelho",true);
     return false;
   }
 
-  wholesaleSyncBusy=true;
-  const syncStartedAt=Date.now();
+  wholesaleSyncRequested=true;
+  wholesaleSyncShowStatusRequested=wholesaleSyncShowStatusRequested||showStatus;
 
-  try{
-    /*
-      A fila local e a leitura compartilhada são independentes.
-      Mesmo se um envio pendente falhar, continue puxando os lançamentos dos outros usuários.
-    */
-    let flushed=true;
-    try{
-      flushed=await flushWholesalePendingQueue();
-    }catch(error){
-      flushed=false;
-      console.warn("Fila local pendente; leitura compartilhada continuará:",error);
-    }
-
-    const records=await fetchWholesaleCloudRecords();
-    const changed=applyWholesaleCloudRecords(records,{syncStartedAt});
-    wholesaleLastSuccessfulSyncAt=Date.now();
-
-    try{
-      localStorage.setItem(WHOLESALE_SYNC_META_KEY,JSON.stringify({
-        syncedAt:new Date(wholesaleLastSuccessfulSyncAt).toISOString(),
-        count:records.length,
-        realtime:wholesaleRealtimeConnected
-      }));
-    }catch(error){}
-
-    if(showStatus){
-      if(flushed===false||readWholesalePendingQueue().length){
-        updateCloudStatus("Lista compartilhada atualizada • há alteração local aguardando confirmação",true);
-      }else{
-        updateCloudStatus(changed
-          ?"Lista compartilhada atualizada para todos."
-          :"Lista compartilhada já está atualizada.");
-      }
-      updateCloudDebug(`${records.length} lançamento(s) oficial(is) conferido(s) na tabela ${WHOLESALE_TABLE}`);
-    }
-
-    return true;
-  }catch(e){
-    console.warn("Sincronização compartilhada indisponível:",e);
-    if(showStatus){
-      updateCloudStatus("Modo local ativo. A sincronização será repetida automaticamente.",true);
-      updateCloudDebug(String(e.message||e));
-    }
-    return false;
-  }finally{
-    wholesaleSyncBusy=false;
+  if(wholesaleSyncPromise){
+    return wholesaleSyncPromise;
   }
+
+  wholesaleSyncPromise=(async()=>{
+    let overallSuccess=true;
+
+    do{
+      wholesaleSyncRequested=false;
+      const cycleShowStatus=wholesaleSyncShowStatusRequested;
+      wholesaleSyncShowStatusRequested=false;
+      const syncStartedAt=Date.now();
+      const pullSequence=++wholesalePullSequence;
+      wholesaleSyncBusy=true;
+
+      try{
+        let flushed=true;
+        try{
+          flushed=await flushWholesalePendingQueue();
+        }catch(error){
+          flushed=false;
+          console.warn("Fila local pendente; leitura compartilhada continuará:",error);
+        }
+
+        const records=await fetchWholesaleCloudRecords();
+        const changed=applyWholesaleCloudRecords(records,{
+          syncStartedAt,
+          pullSequence
+        });
+        wholesaleLastSuccessfulSyncAt=Date.now();
+
+        const activeOfficial=records.filter(record=>record&&record.deleted!==true);
+        const deletedOfficial=records.length-activeOfficial.length;
+        const digest=wholesaleOfficialDigest(records);
+
+        try{
+          localStorage.setItem(WHOLESALE_SYNC_META_KEY,JSON.stringify({
+            syncedAt:new Date(wholesaleLastSuccessfulSyncAt).toISOString(),
+            count:activeOfficial.length,
+            deleted:deletedOfficial,
+            digest,
+            realtime:wholesaleRealtimeConnected,
+            pullSequence,
+            reason
+          }));
+        }catch(error){}
+
+        if(cycleShowStatus){
+          if(flushed===false||readWholesalePendingQueue().length){
+            updateCloudStatus("Lista oficial atualizada • há alteração local aguardando confirmação",true);
+          }else{
+            updateCloudStatus(changed
+              ?"Lista oficial sincronizada para todos os colaboradores."
+              :"Todos os colaboradores já estão no mesmo estado oficial.");
+          }
+        }
+
+        updateCloudDebug(
+          `${activeOfficial.length} lançamento(s) ativo(s) oficial(is) • `+
+          `${deletedOfficial} excluído(s) • assinatura ${digest} • `+
+          `${wholesaleRealtimeConnected?"Realtime conectado":"reconciliação automática ativa"}`
+        );
+      }catch(error){
+        overallSuccess=false;
+        console.warn("Sincronização compartilhada indisponível:",error);
+        if(cycleShowStatus){
+          updateCloudStatus("Modo offline protegido. A sincronização será repetida automaticamente.",true);
+          updateCloudDebug(String(error.message||error));
+        }
+      }finally{
+        wholesaleSyncBusy=false;
+      }
+    }while(wholesaleSyncRequested&&navigator.onLine!==false);
+
+    return overallSuccess;
+  })().finally(()=>{
+    wholesaleSyncPromise=null;
+    if(wholesaleSyncRequested&&navigator.onLine!==false){
+      queueMicrotask(()=>{
+        syncWholesaleLaunchRecordsFromCloud({
+          showStatus:wholesaleSyncShowStatusRequested,
+          reason:"queued"
+        });
+      });
+    }
+  });
+
+  return wholesaleSyncPromise;
 }
 
 function activeLocalWholesaleCandidates(){
@@ -18477,8 +18823,15 @@ function wholesaleRealtimeRememberSeen(fingerprint){
   return true;
 }
 
-function wholesaleRealtimeFingerprint(row,eventType="UPDATE"){
-  return [eventType,row?.id||"",row?.legacy_id||"",row?.version||"",row?.updated_at||row?.deleted_at||""].join("|");
+function wholesaleRealtimeFingerprint(row,eventType="UPDATE",tableName=WHOLESALE_TABLE){
+  return [
+    tableName,
+    eventType,
+    row?.id||"",
+    row?.legacy_id||"",
+    row?.version||"",
+    row?.updated_at||row?.deleted_at||row?.created_at||""
+  ].join("|");
 }
 
 function wholesaleBroadcastSync(reason="update"){
@@ -18497,20 +18850,59 @@ function installWholesaleBroadcastChannel(){
     wholesaleBroadcastChannel=new BroadcastChannel("wisent-wholesale-v199");
     wholesaleBroadcastChannel.addEventListener("message",event=>{
       if(event?.data?.type!=="wholesale-sync")return;
-      syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+      syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
     });
   }catch(error){
     wholesaleBroadcastChannel=null;
   }
 }
 
+
 async function wholesaleRealtimeApplyEvent(eventData){
+  const tableName=String(eventData?.table||WHOLESALE_TABLE);
   const source=eventData?.record?.id?eventData.record:eventData?.oldRecord||{};
   const eventType=String(eventData?.type||"UPDATE").toUpperCase();
-  const fingerprint=wholesaleRealtimeFingerprint(source,eventType);
-  if(!source.id||wholesaleRealtimeReadSeen().includes(fingerprint))return false;
+  const fingerprint=wholesaleRealtimeFingerprint(source,eventType,tableName);
+
+  if(!source.id||wholesaleRealtimeReadSeen().includes(fingerprint)){
+    return false;
+  }
 
   try{
+    /*
+      O histórico funciona como uma segunda trilha de confirmação. Quando um
+      evento é inserido nele, recarregue somente a venda relacionada.
+    */
+    if(tableName===WHOLESALE_HISTORY_TABLE){
+      const legacyId=String(source.legacy_id||"");
+      if(!legacyId){
+        wholesaleRealtimeRememberSeen(fingerprint);
+        return false;
+      }
+
+      const row=await fetchWholesaleTableRecord(legacyId,{includeDeleted:true});
+      const record=wholesaleRecordFromTableRow(row);
+      if(record){
+        const applied=wholesaleApplySingleOfficialRecord(record,{renderNow:true});
+        wholesaleRecentOfficialEvents.set(String(record.id),Date.now());
+        wholesaleRealtimeLastEventAt=Date.now();
+        wholesaleRealtimeRememberSeen(fingerprint);
+
+        if(applied){
+          updateCloudStatus("Sincronizado • histórico oficial recebido em tempo real");
+          wholesaleBroadcastSync("history-realtime");
+        }
+        return true;
+      }
+
+      wholesaleRealtimeRememberSeen(fingerprint);
+      setTimeout(()=>syncWholesaleLaunchRecordsFromCloud({
+        showStatus:false,
+        reason:"history-missing-row"
+      }),250);
+      return false;
+    }
+
     let row=source;
     if(eventType!=="DELETE"&&!source.payload){
       row=await fetchWholesaleTableRecord(source.legacy_id||source.id,{includeDeleted:true});
@@ -18522,6 +18914,7 @@ async function wholesaleRealtimeApplyEvent(eventData){
           deleted:true,
           deletedAt:source.deleted_at||source.updated_at||new Date().toISOString(),
           updatedAt:source.updated_at||"",
+          _wholesaleRowId:String(source.id||""),
           _wholesaleVersion:Number(source.version||1)
         }
       : wholesaleRecordFromTableRow(row);
@@ -18529,20 +18922,27 @@ async function wholesaleRealtimeApplyEvent(eventData){
     if(!record)return false;
 
     const applied=wholesaleApplySingleOfficialRecord(record,{renderNow:true});
+    wholesaleRecentOfficialEvents.set(String(record.id),Date.now());
     wholesaleRealtimeRememberSeen(fingerprint);
     wholesaleRealtimeLastEventAt=Date.now();
 
     if(applied){
-      updateCloudStatus(`Sincronizado • ${record.deleted?"lançamento removido":"Atacado e Varejo atualizado"} em tempo real`);
+      updateCloudStatus(
+        `Sincronizado • ${record.deleted?"lançamento removido":"Atacado e Varejo atualizado"} em tempo real`
+      );
       wholesaleBroadcastSync("realtime");
     }
     return true;
   }catch(error){
-    console.warn("Realtime de Atacado e Varejo será recuperado pela sincronização completa:",error);
-    setTimeout(()=>syncWholesaleLaunchRecordsFromCloud({showStatus:false}),500);
+    console.warn("Realtime será recuperado pela reconciliação oficial:",error);
+    setTimeout(()=>syncWholesaleLaunchRecordsFromCloud({
+      showStatus:false,
+      reason:"realtime-recovery"
+    }),500);
     return false;
   }
 }
+
 
 function wholesaleRealtimeMessage(raw){
   let message=null;
@@ -18552,10 +18952,14 @@ function wholesaleRealtimeMessage(raw){
     wholesaleRealtimeConnected=message.payload?.status==="ok";
     if(wholesaleRealtimeConnected){
       wholesaleRealtimeReconnectAttempt=0;
+      wholesaleRealtimeLastEventAt=Date.now();
       updateCloudStatus("Tempo real conectado • Atacado e Varejo compartilhado");
-      setTimeout(()=>syncWholesaleLaunchRecordsFromCloud({showStatus:false}),40);
+      setTimeout(()=>syncWholesaleLaunchRecordsFromCloud({
+        showStatus:false,
+        reason:"realtime-connected"
+      }),40);
     }else{
-      updateCloudStatus("Realtime indisponível • usando sincronização automática",true);
+      updateCloudStatus("Realtime indisponível • usando reconciliação automática",true);
       try{wholesaleRealtimeSocket?.close();}catch(error){}
       scheduleWholesaleRealtimeReconnect();
     }
@@ -18573,6 +18977,7 @@ function wholesaleRealtimeMessage(raw){
 
   const payload=message.payload?.data||message.payload||{};
   wholesaleRealtimeApplyEvent({
+    table:payload.table||payload.relation?.table||WHOLESALE_TABLE,
     type:payload.type||"UPDATE",
     record:payload.record||payload.new||{},
     oldRecord:payload.old_record||payload.old||{},
@@ -18600,7 +19005,15 @@ function connectWholesaleRealtime(){
       socket.send(JSON.stringify({
         topic:WHOLESALE_REALTIME_TOPIC,
         event:"phx_join",
-        payload:{config:{broadcast:{ack:false,self:false},presence:{enabled:false},postgres_changes:[{event:"*",schema:"public",table:WHOLESALE_TABLE}],private:false},access_token:SUPABASE_ANON_KEY},
+        payload:{config:{
+          broadcast:{ack:false,self:false},
+          presence:{enabled:false},
+          postgres_changes:[
+            {event:"*",schema:"public",table:WHOLESALE_TABLE},
+            {event:"INSERT",schema:"public",table:WHOLESALE_HISTORY_TABLE}
+          ],
+          private:false
+        },access_token:SUPABASE_ANON_KEY},
         ref,join_ref:ref
       }));
     });
@@ -18626,6 +19039,14 @@ function installWholesaleSyncWatchers(){
   installWholesaleBroadcastChannel();
   connectWholesaleRealtime();
 
+  window.addEventListener("storage",event=>{
+    if(!event||![WHOLESALE_SYNC_META_KEY,WHOLESALE_PENDING_KEY].includes(event.key))return;
+    syncWholesaleLaunchRecordsFromCloud({
+      showStatus:false,
+      reason:"storage-event"
+    });
+  });
+
   clearInterval(wholesaleRealtimeHeartbeatTimer);
   wholesaleRealtimeHeartbeatTimer=setInterval(()=>{
     try{
@@ -18643,7 +19064,7 @@ function installWholesaleSyncWatchers(){
   window.addEventListener("online",()=>{
     scheduleCloudSave(50);
     connectWholesaleRealtime();
-    syncWholesaleLaunchRecordsFromCloud({showStatus:true});
+    syncWholesaleLaunchRecordsFromCloud({showStatus:true,reason:"watcher"});
   });
 
   window.addEventListener("offline",()=>{
@@ -18654,7 +19075,7 @@ function installWholesaleSyncWatchers(){
 
   const refreshSharedWholesale=()=>{
     connectWholesaleRealtime();
-    syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+    syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
   };
 
   window.addEventListener("focus",refreshSharedWholesale);
@@ -18678,7 +19099,7 @@ function installWholesaleSyncWatchers(){
       Date.now()-wholesaleRealtimeLastEventAt>45000;
 
     if(staleRealtime||Date.now()-wholesaleLastSuccessfulSyncAt>15000){
-      syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+      syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
     }
   },12000);
 }
@@ -19028,7 +19449,7 @@ async function recoverWholesaleLaunchesDeepScan(){
   }catch(e){}
 
   const synced=await flushWholesalePendingQueue();
-  await syncWholesaleLaunchRecordsFromCloud({showStatus:true});
+  await syncWholesaleLaunchRecordsFromCloud({showStatus:true,reason:"watcher"});
 
   alert(
     synced
@@ -19952,7 +20373,7 @@ async function recoverWholesaleLaunchesFromDevice(){
   }catch(e){}
 
   const synced=await flushWholesalePendingQueue();
-  await syncWholesaleLaunchRecordsFromCloud({showStatus:true});
+  await syncWholesaleLaunchRecordsFromCloud({showStatus:true,reason:"watcher"});
 
   alert(synced
     ? `${recoverable.length} lançamento(s) recuperado(s) e sincronizado(s).`
@@ -21485,7 +21906,7 @@ async function cloudSaveNow(){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
         updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V197: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V202: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -21573,7 +21994,7 @@ async function startApp(){
 
     try{
       await seedWholesaleRecordsOnce();
-      await syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+      await syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
       installWholesaleSyncWatchers();
       installWholesaleDraftProtection();
 
@@ -21606,10 +22027,10 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V197: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V202: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
-        updateCloudDebug("V197: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
+        updateCloudDebug("V202: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
       }
     }catch(e){
       console.warn("Salvamento inicial ignorado:",e);
@@ -26076,7 +26497,7 @@ function deleteWholesaleRetail(id){
         if(ok){
           updateCloudStatus("Salvo • exclusão confirmada no Supabase");
           showUndoToast("Lançamento excluído e removido dos demais dispositivos.");
-          return syncWholesaleLaunchRecordsFromCloud({showStatus:false});
+          return syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
         }
         showUndoToast("Exclusão pendente; será reenviada quando a conexão voltar.");
       })
@@ -26824,7 +27245,7 @@ function showPage(id){
   if(currentPage==="wholesaleRetail"||currentPage==="wholesaleOrder"){
     setTimeout(()=>{
       connectWholesaleRealtime();
-      syncWholesaleLaunchRecordsFromCloud({showStatus:true});
+      syncWholesaleLaunchRecordsFromCloud({showStatus:true,reason:"watcher"});
     },0);
   }
 }
