@@ -14152,205 +14152,68 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 
 
-/* ===== V201 • ATACADO E VAREJO MOBILE SEM ESTOURO LATERAL ===== */
-html,body{
-  max-width:100%;
-  overflow-x:hidden;
-}
-
-#wholesaleRetail,
-#wholesaleRetail > *,
-#wholesaleRetail .panel,
-#wholesaleRetail .card,
-#wholesaleRetail .wholesalePeriodPanelV200,
-#wholesaleRetail .wholesaleFormV91,
-#wholesaleRetail .wholesaleFormSection,
-#wholesaleRetail .sectionGrid,
-#wholesaleRetail .valueSideGrid,
-#wholesaleRetail .resultCards,
-#wholesaleRetail .finishGrid,
-#wholesaleRetail .paymentGrid,
-#wholesaleRetail .tableWrap{
-  min-width:0!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-}
-
-#wholesaleRetail{
-  width:100%!important;
-  margin:0!important;
-  padding:0!important;
-  overflow-x:clip!important;
-}
-
-#wholesaleRetail .panel,
-#wholesaleRetail .wholesalePeriodPanelV200{
-  width:100%!important;
-  margin-left:0!important;
-  margin-right:0!important;
-  overflow:hidden!important;
-}
-
-#wholesaleRetail .wholesalePeriodHeadV200,
-#wholesaleRetail .wholesalePeriodControlsV200,
-#wholesaleRetail .wholesalePeriodCurrentV200,
-#wholesaleRetail .wholesaleRangeBoxV200,
-#wholesaleRetail .wholesalePeriodActionsV200,
-#wholesaleRetail .panelHead,
-#wholesaleRetail .filters{
-  min-width:0!important;
-  max-width:100%!important;
-}
-
-#wholesaleRetail input,
-#wholesaleRetail select,
-#wholesaleRetail textarea,
-#wholesaleRetail button{
-  min-width:0!important;
-  max-width:100%!important;
-  box-sizing:border-box!important;
-}
-
-#wholesaleRetail .tableWrap{
-  width:100%!important;
-  margin-left:0!important;
-  margin-right:0!important;
-  border-radius:16px!important;
-  overflow-x:auto!important;
-  overflow-y:hidden!important;
-  -webkit-overflow-scrolling:touch!important;
-}
-
-#wholesaleRetail .wholesaleSharedBadge{
-  max-width:100%!important;
-  white-space:normal!important;
-  text-align:center!important;
-  line-height:1.25!important;
-}
-
+/* ===== V203 • APENAS PERÍODO DOS RESULTADOS RESPONSIVO NO CELULAR ===== */
 @media(max-width:760px){
-  .main{
-    width:100%!important;
-    min-width:0!important;
-    max-width:100%!important;
-    padding-left:10px!important;
-    padding-right:10px!important;
-    overflow-x:hidden!important;
+  #wholesaleRetail .wholesalePeriodPanelV200,
+  #wholesaleRetail .wholesalePeriodHeadV200,
+  #wholesaleRetail .wholesalePeriodControlsV200,
+  #wholesaleRetail .wholesalePeriodCurrentV200,
+  #wholesaleRetail .wholesaleRangeBoxV200,
+  #wholesaleRetail .wholesalePeriodActionsV200{
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    box-sizing:border-box;
   }
 
-  #wholesaleRetail > .grid{
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:8px!important;
-  }
-
-  #wholesaleRetail > .grid .card{
-    min-width:0!important;
-    min-height:82px!important;
-    padding:12px!important;
-    border-radius:15px!important;
-  }
-
-  #wholesaleRetail > .grid .card small{
-    font-size:10px!important;
-    line-height:1.25!important;
-    white-space:normal!important;
-  }
-
-  #wholesaleRetail > .grid .card strong{
-    font-size:18px!important;
-    white-space:normal!important;
-    overflow-wrap:anywhere!important;
-  }
-
-  #wholesaleRetail .panel,
   #wholesaleRetail .wholesalePeriodPanelV200{
-    padding:12px!important;
-    border-radius:16px!important;
+    margin-left:0;
+    margin-right:0;
+    overflow:hidden;
+  }
+
+  #wholesaleRetail .wholesalePeriodControlsV200 > *,
+  #wholesaleRetail .wholesalePeriodControlsV200 label,
+  #wholesaleRetail .wholesalePeriodControlsV200 input,
+  #wholesaleRetail .wholesalePeriodControlsV200 select,
+  #wholesaleRetail .wholesalePeriodActionsV200 button{
+    min-width:0;
+    max-width:100%;
+    box-sizing:border-box;
   }
 
   #wholesaleRetail .wholesalePeriodHeadV200{
-    display:grid!important;
-    grid-template-columns:1fr!important;
-    gap:10px!important;
-    margin-bottom:12px!important;
-  }
-
-  #wholesaleRetail .wholesalePeriodCurrentV200,
-  #wholesaleRetail .wholesaleRangeBoxV200{
-    width:100%!important;
-    min-width:0!important;
-    border-radius:12px!important;
+    grid-template-columns:minmax(0,1fr);
   }
 
   #wholesaleRetail .wholesalePeriodControlsV200{
-    display:grid!important;
-    grid-template-columns:1fr!important;
-    gap:10px!important;
-    width:100%!important;
+    grid-template-columns:minmax(0,1fr);
   }
 
   #wholesaleRetail .wholesalePeriodActionsV200{
-    display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:8px!important;
-    width:100%!important;
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
   }
 
   #wholesaleRetail .wholesalePeriodActionsV200 button{
-    width:100%!important;
-    min-height:44px!important;
-    white-space:normal!important;
+    width:100%;
+    min-height:44px;
+    white-space:normal;
   }
 
   #wholesaleRetail .wholesalePeriodActionsV200 button:nth-child(3){
-    grid-column:1/-1!important;
-  }
-
-  #wholesaleRetail .panelHead{
-    display:grid!important;
-    grid-template-columns:1fr!important;
-    gap:10px!important;
-    align-items:stretch!important;
-  }
-
-  #wholesaleRetail .wholesaleFormV91,
-  #wholesaleRetail .wholesaleFormSection,
-  #wholesaleRetail .sectionGrid,
-  #wholesaleRetail .valueSideGrid,
-  #wholesaleRetail .resultCards,
-  #wholesaleRetail .finishGrid,
-  #wholesaleRetail .paymentGrid,
-  #wholesaleRetail .paymentInlineGroup{
-    grid-template-columns:1fr!important;
-    width:100%!important;
-  }
-
-  #wholesaleRetail .wholesaleFormSection{
-    padding:12px!important;
-    border-radius:14px!important;
-  }
-
-  #wholesaleRetail .tableWrap{
-    margin:0!important;
-    border-radius:14px!important;
-  }
-
-  #wholesaleRetail .tableWrap::after{
-    border-radius:0 0 13px 13px!important;
+    grid-column:1/-1;
   }
 }
 
 @media(max-width:390px){
-  #wholesaleRetail > .grid{
-    grid-template-columns:1fr!important;
-  }
-
   #wholesaleRetail .wholesalePeriodActionsV200{
-    grid-template-columns:1fr!important;
+    grid-template-columns:minmax(0,1fr);
   }
 
   #wholesaleRetail .wholesalePeriodActionsV200 button:nth-child(3){
-    grid-column:auto!important;
+    grid-column:auto;
   }
 }
 
@@ -14444,7 +14307,7 @@ html,body{
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V201</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V203</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16445,7 +16308,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V202 — Atacado e Varejo compartilhado com reconciliação autoritativa.
+  V203 — Atacado e Varejo compartilhado com reconciliação autoritativa.
   Cada lançamento possui uma linha própria no Supabase. Realtime atualiza
   apenas o registro afetado; leituras completas convergem todos os aparelhos
   para o mesmo estado oficial. localStorage e painel_state são somente
@@ -16659,20 +16522,20 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V202";
-const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v201";
+const APP_BUILD_VERSION="V203";
+const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 
 async function clearOldPwaCacheOnce(){
   let status="ready";
   try{
     /*
       A página nunca apaga o cache ativo. A troca atômica e a retenção da
-      versão anterior são responsabilidade exclusiva do Service Worker V201.
+      versão anterior são responsabilidade exclusiva do Service Worker V203.
       Isso impede tela branca entre o upload do index e dos arquivos auxiliares.
     */
     localStorage.setItem(APP_CACHE_RECOVERY_KEY,"ok");
   }catch(e){
-    console.warn("Verificação segura de cache V201 não concluída:",e);
+    console.warn("Verificação segura de cache V203 não concluída:",e);
     status="error";
   }
   return status;
@@ -16689,9 +16552,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=202",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=203",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=202");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=203");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -21906,7 +21769,7 @@ async function cloudSaveNow(){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
         updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V202: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug("monitor V203: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
         scheduleCloudSaveRetry();
         return false;
       }
@@ -22027,10 +21890,10 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V202: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug("V203: fonte oficial confirmada; nenhuma alteração local pendente");
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
-        updateCloudDebug("V202: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
+        updateCloudDebug("V203: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
       }
     }catch(e){
       console.warn("Salvamento inicial ignorado:",e);
