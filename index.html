@@ -16461,7 +16461,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const CLOUD_STATE_KEY = "painel_state";
 
 /*
-  V208 — Relatório PDF limpo com saldo real + recuperação segura de lançamentos.
+  V209 — Blindagem relacional dos lançamentos de influencers + relatório PDF limpo.
   - Mantém internamente o saldo progressivo por influencer, sem exibir a evolução no PDF.
   - Preserva o mês selecionado e avisa quando os lançamentos estão em outra competência.
   - Recupera registros ausentes de snapshots, filas e backups locais sem sobrescrever IDs existentes.
@@ -16678,7 +16678,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V208";
+const APP_BUILD_VERSION="V209";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
 let launchRecoveryPreCloudCandidatesV208=[];
@@ -16710,9 +16710,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=208",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=209",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=208");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=209");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -36444,6 +36444,993 @@ setTimeout(()=>{
     updateCloudDebug("isso indica cache do GitHub ou erro antes do startApp");
   }
 },6000);
+
+/* ===== V209 BLINDAGEM DOS LANÇAMENTOS DE INFLUENCERS =====
+   Fonte oficial: public.wisent_influencer_launches.
+   O painel_state, o index.html, localStorage e IndexedDB nunca apagam a fonte oficial.
+   Cada mutação usa versão otimista, idempotência, confirmação no histórico,
+   exclusão lógica, Realtime e reconciliação completa paginada.
+*/
+const INFLUENCER_LAUNCH_TABLE_V209="wisent_influencer_launches";
+const INFLUENCER_LAUNCH_HISTORY_TABLE_V209="wisent_influencer_launches_history";
+const INFLUENCER_LAUNCH_UPSERT_RPC_V209="wisent_influencer_launch_upsert";
+const INFLUENCER_LAUNCH_DELETE_RPC_V209="wisent_influencer_launch_soft_delete";
+const INFLUENCER_LAUNCH_OUTBOX_KEY_V209=KEY+"_influencer_launch_outbox_v209";
+const INFLUENCER_LAUNCH_SNAPSHOT_KEY_V209=KEY+"_influencer_launch_official_snapshot_v209";
+const INFLUENCER_LAUNCH_CONFLICT_KEY_V209=KEY+"_influencer_launch_conflicts_v209";
+const INFLUENCER_LAUNCH_REALTIME_SEEN_KEY_V209=KEY+"_influencer_launch_realtime_seen_v209";
+const INFLUENCER_LAUNCH_DB_V209="wisent_influencer_launches_v209";
+const INFLUENCER_LAUNCH_DB_VERSION_V209=1;
+const INFLUENCER_LAUNCH_REALTIME_TOPIC_V209="realtime:wisent-influencer-launches-v209";
+const INFLUENCER_LAUNCH_PAGE_SIZE_V209=1000;
+
+const legacyLaunchV208={
+  writeSnapshot(rows){
+    try{localStorage.setItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY,JSON.stringify(Array.isArray(rows)?rows:[]));return true;}catch(error){return false;}
+  },
+  readSnapshot(){
+    try{const rows=JSON.parse(localStorage.getItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY)||"[]");return Array.isArray(rows)?rows:[];}catch(error){return [];}
+  },
+  collectRecovery:typeof collectTrustedInfluencerLaunchRecoveryCandidatesV208==="function"
+    ?collectTrustedInfluencerLaunchRecoveryCandidatesV208:null
+};
+
+let launchOfficialRowsV209=new Map();
+let launchOfficialVersionByIdV209=new Map();
+let launchOfficialReadyV209=false;
+let launchMigrationCandidatesV209=[];
+let launchMigrationPreparedV209=false;
+let launchPendingMemoryV209=[];
+let launchDbPromiseV209=null;
+let launchDbHydratedV209=false;
+let launchRealtimeSocketV209=null;
+let launchRealtimeReconnectTimerV209=null;
+let launchRealtimeHeartbeatTimerV209=null;
+let launchRealtimeHeartbeatRefV209=0;
+let launchRealtimeJoinRefV209=0;
+let launchRealtimeConnectedV209=false;
+let launchRealtimeReconnectAttemptV209=0;
+let launchRealtimeLastEventAtV209=0;
+let launchPollTimerV209=null;
+let launchSyncWatchersInstalledV209=false;
+let launchSyncPromiseV209=null;
+let launchSyncRequestedV209=false;
+let launchRealtimeDebounceV209=null;
+let launchBroadcastV209=null;
+
+function launchV209Now(){return new Date().toISOString();}
+function launchV209MutationId(id,operation="upsert"){
+  const random=(globalThis.crypto&&typeof globalThis.crypto.randomUUID==="function")
+    ?globalThis.crypto.randomUUID()
+    :Math.random().toString(36).slice(2)+Date.now().toString(36);
+  return `launch:${operation}:${String(id||"sem-id")}:${random}`;
+}
+function launchV209SafeClone(value,fallback={}){
+  try{return JSON.parse(JSON.stringify(value));}catch(error){return fallback;}
+}
+function launchV209StripMeta(record){
+  const clean=launchV209SafeClone(record,{});
+  Object.keys(clean).forEach(key=>{
+    if(key.startsWith("_launch")||key.startsWith("__sync")||key==="autoRecoveredV208")delete clean[key];
+  });
+  delete clean.deleted;
+  delete clean.deletedAt;
+  delete clean.deletedById;
+  delete clean.deletedByName;
+  delete clean.deletedByUsername;
+  return clean;
+}
+function launchV209RecordTime(record){
+  const raw=record?.updatedAt||record?.createdAt||record?.date||"";
+  const value=Date.parse(raw);
+  return Number.isFinite(value)?value:0;
+}
+function launchV209Sort(rows){
+  return (Array.isArray(rows)?rows:[]).sort((a,b)=>{
+    const month=String(b.month||"").localeCompare(String(a.month||""));
+    if(month)return month;
+    const date=String(b.date||"").localeCompare(String(a.date||""));
+    if(date)return date;
+    const time=launchV209RecordTime(b)-launchV209RecordTime(a);
+    if(time)return time;
+    return String(b.id||"").localeCompare(String(a.id||""));
+  });
+}
+function launchV209NormalizeRecord(record){
+  const item=launchV209SafeClone(record,{})||{};
+  item.id=String(item.id||uid());
+  item.date=String(item.date||today()).slice(0,10);
+  item.month=/^\d{4}-\d{2}$/.test(String(item.month||""))
+    ?String(item.month)
+    :item.date.slice(0,7);
+  item.periodMode=item.periodMode==="month"?"month":"day";
+  item.influencerId=String(item.influencerId||"");
+  item.origin=String(item.origin||"Site");
+  item.sold=Math.max(0,finiteNumber(item.sold,0));
+  item.productCommission=Math.max(0,finiteNumber(item.productCommission,0));
+  item.cashCommission=Math.max(0,finiteNumber(item.cashCommission,0));
+  item.status=String(item.status||"Pendente");
+  item.pdfSent=!!item.pdfSent;
+  item.accumulate=!!item.accumulate;
+  item.paid=item.accumulate?false:!!item.paid;
+  item.paidAt=item.accumulate?"":String(item.paidAt||"");
+  item.paidMonth=item.accumulate?"":String(item.paidMonth||"");
+  item.notes=String(item.notes||"");
+  item.createdAt=item.createdAt||item.updatedAt||launchV209Now();
+  item.updatedAt=item.updatedAt||item.createdAt;
+  return item;
+}
+function launchV209RowToRecord(row){
+  if(!row)return null;
+  let payload=row.payload;
+  if(typeof payload==="string"){
+    try{payload=JSON.parse(payload);}catch(error){payload={};}
+  }
+  const item=launchV209NormalizeRecord({...payload,id:String(row.legacy_id||payload?.id||"")});
+  if(!item.id)return null;
+  item.influencerId=String(row.influencer_id||item.influencerId||"");
+  item.date=String(row.launch_date||item.date||today()).slice(0,10);
+  item.month=String(row.launch_month||item.month||item.date.slice(0,7));
+  item.status=String(row.status||item.status||"Pendente");
+  item._launchRowId=String(row.id||"");
+  item._launchVersion=Math.max(0,Number(row.version||0));
+  item._launchMutationId=String(row.client_mutation_id||"");
+  item._launchOfficialUpdatedAt=String(row.updated_at||"");
+  item._launchOfficial=true;
+  if(row.deleted_at){
+    item.deleted=true;
+    item.deletedAt=String(row.deleted_at);
+  }
+  return item;
+}
+function launchV209RecordToRowPayload(record){
+  const clean=launchV209StripMeta(launchV209NormalizeRecord(record));
+  return clean;
+}
+
+function launchV209OpenDb(){
+  if(launchDbPromiseV209)return launchDbPromiseV209;
+  if(typeof indexedDB==="undefined")return Promise.resolve(null);
+  launchDbPromiseV209=new Promise(resolve=>{
+    try{
+      const request=indexedDB.open(INFLUENCER_LAUNCH_DB_V209,INFLUENCER_LAUNCH_DB_VERSION_V209);
+      request.onupgradeneeded=()=>{
+        const db=request.result;
+        if(!db.objectStoreNames.contains("records"))db.createObjectStore("records",{keyPath:"id"});
+        if(!db.objectStoreNames.contains("outbox"))db.createObjectStore("outbox",{keyPath:"mutationId"});
+        if(!db.objectStoreNames.contains("conflicts"))db.createObjectStore("conflicts",{keyPath:"conflictId"});
+        if(!db.objectStoreNames.contains("meta"))db.createObjectStore("meta",{keyPath:"key"});
+      };
+      request.onsuccess=()=>resolve(request.result);
+      request.onerror=()=>resolve(null);
+      request.onblocked=()=>resolve(null);
+    }catch(error){resolve(null);}
+  });
+  return launchDbPromiseV209;
+}
+async function launchV209DbPut(storeName,value){
+  const db=await launchV209OpenDb();
+  if(!db)return false;
+  return new Promise(resolve=>{
+    try{
+      const tx=db.transaction(storeName,"readwrite");
+      tx.objectStore(storeName).put(launchV209SafeClone(value,value));
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=()=>resolve(false);
+      tx.onabort=()=>resolve(false);
+    }catch(error){resolve(false);}
+  });
+}
+async function launchV209DbDelete(storeName,key){
+  const db=await launchV209OpenDb();
+  if(!db)return false;
+  return new Promise(resolve=>{
+    try{
+      const tx=db.transaction(storeName,"readwrite");
+      tx.objectStore(storeName).delete(key);
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=()=>resolve(false);
+      tx.onabort=()=>resolve(false);
+    }catch(error){resolve(false);}
+  });
+}
+async function launchV209DbAll(storeName){
+  const db=await launchV209OpenDb();
+  if(!db)return [];
+  return new Promise(resolve=>{
+    try{
+      const tx=db.transaction(storeName,"readonly");
+      const request=tx.objectStore(storeName).getAll();
+      request.onsuccess=()=>resolve(Array.isArray(request.result)?request.result:[]);
+      request.onerror=()=>resolve([]);
+    }catch(error){resolve([]);}
+  });
+}
+async function launchV209DbReplaceRecords(records){
+  const db=await launchV209OpenDb();
+  if(!db)return false;
+  return new Promise(resolve=>{
+    try{
+      const tx=db.transaction(["records","meta"],"readwrite");
+      const store=tx.objectStore("records");
+      store.clear();
+      (Array.isArray(records)?records:[]).forEach(record=>{
+        if(record?.id)store.put(launchV209SafeClone(record,record));
+      });
+      tx.objectStore("meta").put({key:"officialSnapshot",at:launchV209Now(),count:(records||[]).length,version:APP_BUILD_VERSION});
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=()=>resolve(false);
+      tx.onabort=()=>resolve(false);
+    }catch(error){resolve(false);}
+  });
+}
+async function launchV209DbReplaceOutbox(entries){
+  const db=await launchV209OpenDb();
+  if(!db)return false;
+  return new Promise(resolve=>{
+    try{
+      const tx=db.transaction("outbox","readwrite");
+      const store=tx.objectStore("outbox");
+      store.clear();
+      (Array.isArray(entries)?entries:[]).forEach(entry=>entry?.mutationId&&store.put(launchV209SafeClone(entry,entry)));
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=()=>resolve(false);
+      tx.onabort=()=>resolve(false);
+    }catch(error){resolve(false);}
+  });
+}
+
+function readInfluencerLaunchSnapshot(){
+  const groups=[];
+  try{
+    const v209=JSON.parse(localStorage.getItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY_V209)||"[]");
+    if(Array.isArray(v209))groups.push(v209);
+  }catch(error){}
+  try{
+    const legacy=legacyLaunchV208.readSnapshot?.()||[];
+    if(Array.isArray(legacy))groups.push(legacy);
+  }catch(error){}
+  return mergeInfluencerLaunchCollections(...groups);
+}
+function writeInfluencerLaunchSnapshot(rows=state.launches||[]){
+  const safe=launchV209Sort((Array.isArray(rows)?rows:[]).filter(row=>row&&row.id&&!row.deleted));
+  try{localStorage.setItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY_V209,JSON.stringify(safe));}catch(error){}
+  try{legacyLaunchV208.writeSnapshot?.(safe);}catch(error){}
+  safe.forEach(record=>{launchV209DbPut("records",record);});
+  return true;
+}
+function launchV209NormalizeOutboxEntry(entry){
+  const record=launchV209NormalizeRecord(entry?.record||{});
+  const id=String(entry?.id||record.id||"");
+  if(!id)return null;
+  record.id=id;
+  const operation=entry?.operation==="delete"||entry?.record?.deleted===true?"delete":"upsert";
+  return {
+    id,
+    record,
+    operation,
+    baseVersion:Math.max(0,Number(entry?.baseVersion??launchOfficialVersionByIdV209.get(id)??record?._launchVersion??0)),
+    mutationId:String(entry?.mutationId||launchV209MutationId(id,operation)),
+    queuedAt:String(entry?.queuedAt||launchV209Now()),
+    attempts:Math.max(0,Number(entry?.attempts||0)),
+    status:String(entry?.status||"pending"),
+    migrationCandidate:!!entry?.migrationCandidate,
+    lastError:String(entry?.lastError||"")
+  };
+}
+function readInfluencerLaunchPendingQueue(){
+  const map=new Map();
+  const collect=rows=>(Array.isArray(rows)?rows:[]).forEach(raw=>{
+    const entry=launchV209NormalizeOutboxEntry(raw);
+    if(!entry)return;
+    const current=map.get(entry.id);
+    if(!current||Date.parse(entry.queuedAt)>=Date.parse(current.queuedAt))map.set(entry.id,entry);
+  });
+  try{collect(JSON.parse(localStorage.getItem(INFLUENCER_LAUNCH_OUTBOX_KEY_V209)||"[]"));}catch(error){}
+  collect(launchPendingMemoryV209);
+  return [...map.values()].sort((a,b)=>Date.parse(a.queuedAt)-Date.parse(b.queuedAt));
+}
+function writeInfluencerLaunchPendingQueue(queue){
+  const normalized=(Array.isArray(queue)?queue:[]).map(launchV209NormalizeOutboxEntry).filter(Boolean).slice(-1000);
+  launchPendingMemoryV209=normalized;
+  try{localStorage.setItem(INFLUENCER_LAUNCH_OUTBOX_KEY_V209,JSON.stringify(normalized));}catch(error){
+    console.warn("Outbox V209 mantida em memória/IndexedDB:",error);
+  }
+  launchV209DbReplaceOutbox(normalized);
+  return normalized;
+}
+function launchV209QueueEntry(record,{migrationCandidate=false}={}){
+  if(!record?.id)return false;
+  const id=String(record.id);
+  const operation=record.deleted===true?"delete":"upsert";
+  const queue=readInfluencerLaunchPendingQueue();
+  const previous=queue.find(entry=>entry.id===id);
+  const baseVersion=previous
+    ?Math.max(0,Number(previous.baseVersion||0))
+    :Math.max(0,Number(launchOfficialVersionByIdV209.get(id)??record._launchVersion??0));
+  const entry=launchV209NormalizeOutboxEntry({
+    id,
+    record,
+    operation,
+    baseVersion,
+    mutationId:launchV209MutationId(id,operation),
+    queuedAt:launchV209Now(),
+    attempts:0,
+    status:"pending",
+    migrationCandidate
+  });
+  const next=queue.filter(item=>item.id!==id);
+  next.push(entry);
+  writeInfluencerLaunchPendingQueue(next);
+  if(operation!=="delete"){
+    writeInfluencerLaunchSnapshot(mergeInfluencerLaunchCollections(state.launches||[],[record]));
+  }
+  return true;
+}
+function queueInfluencerLaunchCloudRecord(record){
+  return launchV209QueueEntry(record,{migrationCandidate:!!record?.autoRecoveredV208});
+}
+function queueAllInfluencerLaunchRows(rows){
+  (Array.isArray(rows)?rows:[]).forEach(record=>record?.id&&launchV209QueueEntry(record,{migrationCandidate:true}));
+}
+
+async function launchV209ShadowBackup(record){
+  try{
+    if(!record?.id)return false;
+    const payload={
+      chave:INFLUENCER_LAUNCH_RECORD_PREFIX+String(record.id),
+      valor:JSON.stringify(record)
+    };
+    const response=await fetchWithTimeout(
+      SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",
+      {method:"POST",headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),body:JSON.stringify(payload)},
+      7000
+    );
+    return response.ok;
+  }catch(error){return false;}
+}
+async function launchV209FetchOne(id,{includeDeleted=true}={}){
+  const url=SUPABASE_URL+"/rest/v1/"+INFLUENCER_LAUNCH_TABLE_V209+
+    "?legacy_id=eq."+encodeURIComponent(String(id||""))+
+    "&select=id,legacy_id,influencer_id,launch_date,launch_month,status,payload,version,client_mutation_id,created_at,updated_at,deleted_at,created_by,updated_by,user_id,device_id"+
+    (includeDeleted?"":"&deleted_at=is.null")+
+    "&limit=1";
+  const response=await fetchWithTimeout(url,{method:"GET",headers:cloudHeaders({"Cache-Control":"no-cache"})},10000);
+  if(!response.ok){
+    const text=await response.text().catch(()=>"");
+    const error=new Error("HTTP "+response.status+" ao consultar lançamento: "+text.slice(0,180));
+    error.status=response.status;
+    error.body=text;
+    throw error;
+  }
+  const rows=await response.json();
+  return Array.isArray(rows)?rows[0]||null:null;
+}
+async function launchV209FetchAllRows(){
+  const all=[];
+  let offset=0;
+  let expected=null;
+  while(true){
+    const url=SUPABASE_URL+"/rest/v1/"+INFLUENCER_LAUNCH_TABLE_V209+
+      "?select=id,legacy_id,influencer_id,launch_date,launch_month,status,payload,version,client_mutation_id,created_at,updated_at,deleted_at,created_by,updated_by,user_id,device_id"+
+      "&order=updated_at.asc,id.asc&limit="+INFLUENCER_LAUNCH_PAGE_SIZE_V209+"&offset="+offset;
+    const response=await fetchWithTimeout(url,{
+      method:"GET",
+      headers:cloudHeaders({"Prefer":"count=exact","Cache-Control":"no-cache"})
+    },12000);
+    if(!response.ok){
+      const text=await response.text().catch(()=>"");
+      const error=new Error("HTTP "+response.status+" ao ler a tabela oficial V209: "+text.slice(0,220));
+      error.status=response.status;
+      error.body=text;
+      throw error;
+    }
+    const range=String(response.headers.get("content-range")||"");
+    const totalText=range.split("/")[1];
+    if(totalText&&totalText!=="*")expected=Number(totalText);
+    const rows=await response.json();
+    const batch=Array.isArray(rows)?rows:[];
+    all.push(...batch);
+    if(batch.length<INFLUENCER_LAUNCH_PAGE_SIZE_V209)break;
+    offset+=batch.length;
+    if(offset>200000)throw new Error("Proteção V209 interrompeu uma paginação anormal.");
+  }
+  if(Number.isFinite(expected)&&all.length!==expected){
+    throw new Error(`Leitura oficial incompleta: recebidos ${all.length} de ${expected} registros.`);
+  }
+  return all;
+}
+async function launchV209MutationConfirmed(mutationId){
+  if(!mutationId)return false;
+  const url=SUPABASE_URL+"/rest/v1/"+INFLUENCER_LAUNCH_HISTORY_TABLE_V209+
+    "?client_mutation_id=eq."+encodeURIComponent(mutationId)+"&select=id,legacy_id,version,action&limit=1";
+  const response=await fetchWithTimeout(url,{method:"GET",headers:cloudHeaders({"Cache-Control":"no-cache"})},9000);
+  if(!response.ok)return false;
+  const rows=await response.json();
+  return Array.isArray(rows)&&rows.length>0;
+}
+function launchV209RpcRecord(result){
+  const row=result?.record||result?.data?.record||null;
+  return row&&typeof row==="object"?row:null;
+}
+async function launchV209CallMutation(entry){
+  const audit=currentAuditInfo();
+  const deviceId=typeof getDeviceId==="function"?getDeviceId():"";
+  const record=launchV209NormalizeRecord(entry.record);
+  const baseVersion=Math.max(0,Number(entry.baseVersion||0));
+  const isDelete=entry.operation==="delete"||entry.record?.deleted===true;
+  const endpoint=isDelete?INFLUENCER_LAUNCH_DELETE_RPC_V209:INFLUENCER_LAUNCH_UPSERT_RPC_V209;
+  const body=isDelete?{
+    p_legacy_id:String(entry.id),
+    p_base_version:baseVersion,
+    p_user_name:audit.name||"Não registrado",
+    p_user_id:audit.id||"",
+    p_device_id:deviceId||"",
+    p_client_mutation_id:entry.mutationId
+  }:{
+    p_legacy_id:String(entry.id),
+    p_base_version:baseVersion,
+    p_payload:launchV209RecordToRowPayload(record),
+    p_influencer_id:String(record.influencerId||""),
+    p_launch_date:String(record.date||today()).slice(0,10),
+    p_launch_month:String(record.month||String(record.date||today()).slice(0,7)),
+    p_status:String(record.status||"Pendente"),
+    p_user_name:audit.name||record.updatedByName||record.createdByName||"Não registrado",
+    p_user_id:audit.id||record.updatedById||record.createdById||"",
+    p_device_id:deviceId||"",
+    p_client_mutation_id:entry.mutationId
+  };
+  const response=await fetchWithTimeout(
+    SUPABASE_URL+"/rest/v1/rpc/"+endpoint,
+    {method:"POST",headers:cloudHeaders({"Content-Type":"application/json","Prefer":"return=representation"}),body:JSON.stringify(body)},
+    12000
+  );
+  const text=await response.text().catch(()=>"");
+  if(!response.ok){
+    const error=new Error("HTTP "+response.status+" na RPC V209: "+text.slice(0,240));
+    error.status=response.status;
+    error.body=text;
+    throw error;
+  }
+  let result={};
+  try{result=text?JSON.parse(text):{};}catch(error){result={ok:false,status:"invalid_response",message:text.slice(0,220)};}
+  return result;
+}
+function launchV209SaveConflict(entry,remoteRow,reason){
+  const conflict={
+    conflictId:launchV209MutationId(entry.id,"conflict"),
+    id:entry.id,
+    localRecord:launchV209SafeClone(entry.record,{}),
+    remoteRecord:remoteRow?launchV209RowToRecord(remoteRow):null,
+    baseVersion:entry.baseVersion,
+    remoteVersion:Number(remoteRow?.version||0),
+    mutationId:entry.mutationId,
+    reason:String(reason||"conflito de versão"),
+    createdAt:launchV209Now()
+  };
+  try{
+    const rows=JSON.parse(localStorage.getItem(INFLUENCER_LAUNCH_CONFLICT_KEY_V209)||"[]");
+    const next=(Array.isArray(rows)?rows:[]).concat(conflict).slice(-200);
+    localStorage.setItem(INFLUENCER_LAUNCH_CONFLICT_KEY_V209,JSON.stringify(next));
+  }catch(error){}
+  launchV209DbPut("conflicts",conflict);
+  console.warn("Conflito V209 preservado para auditoria:",conflict);
+  return conflict;
+}
+function launchV209RemoveOutboxMutation(mutationId){
+  const queue=readInfluencerLaunchPendingQueue().filter(entry=>entry.mutationId!==mutationId);
+  writeInfluencerLaunchPendingQueue(queue);
+  launchV209DbDelete("outbox",mutationId);
+}
+function launchV209UpdateOutboxEntry(updated){
+  const queue=readInfluencerLaunchPendingQueue();
+  const next=queue.map(entry=>entry.mutationId===updated.mutationId?launchV209NormalizeOutboxEntry(updated):entry);
+  writeInfluencerLaunchPendingQueue(next);
+}
+async function flushInfluencerLaunchPendingQueue(){
+  if(launchFlushBusy)return false;
+  if(navigator.onLine===false)return false;
+  launchFlushBusy=true;
+  try{
+    await launchV209HydrateDurableState();
+    let queue=readInfluencerLaunchPendingQueue();
+    while(queue.length){
+      let entry=queue[0];
+      entry={...entry,status:"sending",attempts:Number(entry.attempts||0)+1,lastError:""};
+      launchV209UpdateOutboxEntry(entry);
+      let remoteRow=null;
+      try{remoteRow=await launchV209FetchOne(entry.id,{includeDeleted:true});}
+      catch(error){
+        if([404,406].includes(Number(error.status||0))||String(error.body||"").includes("PGRST205")){
+          entry.status="failed";
+          entry.lastError="Tabela V209 ainda não instalada no Supabase";
+          launchV209UpdateOutboxEntry(entry);
+          updateCloudStatus("Proteção dos lançamentos pendente: execute o SQL V209 no Supabase.",true);
+          return false;
+        }
+        throw error;
+      }
+
+      const remoteVersion=Math.max(0,Number(remoteRow?.version||0));
+      const hadExplicitBase=Number(entry.baseVersion||0)>0;
+
+      if(remoteRow&&String(remoteRow.client_mutation_id||"")===entry.mutationId){
+        launchV209RemoveOutboxMutation(entry.mutationId);
+        queue=readInfluencerLaunchPendingQueue();
+        continue;
+      }
+
+      if(remoteRow&&hadExplicitBase&&remoteVersion!==Number(entry.baseVersion)){
+        launchV209SaveConflict(entry,remoteRow,"Outro usuário alterou este lançamento antes da confirmação local.");
+        launchV209RemoveOutboxMutation(entry.mutationId);
+        queue=readInfluencerLaunchPendingQueue();
+        showUndoToast("Conflito detectado: a versão local foi preservada para auditoria e a versão oficial foi mantida.");
+        continue;
+      }
+
+      if(remoteRow&&!hadExplicitBase){
+        if(entry.migrationCandidate){
+          launchV209RemoveOutboxMutation(entry.mutationId);
+          queue=readInfluencerLaunchPendingQueue();
+          continue;
+        }
+        entry.baseVersion=remoteVersion;
+        launchV209UpdateOutboxEntry(entry);
+      }
+
+      if(!remoteRow&&hadExplicitBase){
+        launchV209SaveConflict(entry,null,"A linha oficial esperada não foi encontrada; a cópia local foi preservada.");
+        launchV209RemoveOutboxMutation(entry.mutationId);
+        queue=readInfluencerLaunchPendingQueue();
+        continue;
+      }
+
+      let result=await launchV209CallMutation(entry);
+      if(result?.ok===false&&String(result?.status||"")==="conflict"){
+        const conflictRow=result?.record||remoteRow||null;
+        launchV209SaveConflict(entry,conflictRow,"Conflito otimista devolvido pelo Supabase.");
+        launchV209RemoveOutboxMutation(entry.mutationId);
+        queue=readInfluencerLaunchPendingQueue();
+        showUndoToast("Conflito de edição preservado; a versão oficial não foi sobrescrita.");
+        continue;
+      }
+      if(result?.ok===false){
+        entry.status="failed";
+        entry.lastError=String(result?.message||result?.status||"RPC recusada");
+        launchV209UpdateOutboxEntry(entry);
+        updateCloudStatus("Lançamento preservado; o Supabase recusou a confirmação.",true);
+        return false;
+      }
+
+      let confirmed=await launchV209MutationConfirmed(entry.mutationId);
+      if(!confirmed){
+        await new Promise(resolve=>setTimeout(resolve,220));
+        confirmed=await launchV209MutationConfirmed(entry.mutationId);
+      }
+      if(!confirmed){
+        entry.status="retrying";
+        entry.lastError="RPC respondeu, mas o histórico ainda não confirmou a mutação";
+        launchV209UpdateOutboxEntry(entry);
+        updateCloudStatus("Lançamento preservado; aguardando confirmação definitiva do histórico.",true);
+        return false;
+      }
+
+      const savedRow=launchV209RpcRecord(result)||await launchV209FetchOne(entry.id,{includeDeleted:true});
+      if(savedRow){
+        launchOfficialRowsV209.set(String(savedRow.legacy_id),savedRow);
+        launchOfficialVersionByIdV209.set(String(savedRow.legacy_id),Number(savedRow.version||0));
+        const savedRecord=launchV209RowToRecord(savedRow);
+        if(savedRecord)launchV209DbPut("records",savedRecord);
+      }
+      launchV209RemoveOutboxMutation(entry.mutationId);
+      launchV209ShadowBackup(entry.operation==="delete"
+        ?{...entry.record,id:entry.id,deleted:true,deletedAt:launchV209Now()}
+        :entry.record);
+      queue=readInfluencerLaunchPendingQueue();
+    }
+    return true;
+  }catch(error){
+    console.warn("Outbox V209 preservada para nova tentativa:",error);
+    const queue=readInfluencerLaunchPendingQueue();
+    if(queue[0]){
+      queue[0].status="retrying";
+      queue[0].lastError=String(error.message||error);
+      writeInfluencerLaunchPendingQueue(queue);
+    }
+    updateCloudStatus("Lançamentos preservados. A sincronização V209 será retomada automaticamente.",true);
+    updateCloudDebug("outbox V209: "+String(error.message||error).slice(0,220));
+    return false;
+  }finally{
+    launchFlushBusy=false;
+  }
+}
+
+function launchV209CurrentOfficialRecords(){
+  return [...launchOfficialRowsV209.values()].map(launchV209RowToRecord).filter(Boolean);
+}
+function launchV209ApplyOfficialState({renderNow=true}={}){
+  const official=launchV209CurrentOfficialRecords();
+  const active=official.filter(record=>!record.deleted);
+  const deletedIds=new Set(official.filter(record=>record.deleted).map(record=>String(record.id)));
+  const pending=readInfluencerLaunchPendingQueue();
+  const map=new Map(active.map(record=>[String(record.id),record]));
+  pending.forEach(entry=>{
+    const id=String(entry.id);
+    if(entry.operation==="delete"||entry.record?.deleted===true){
+      map.delete(id);
+      return;
+    }
+    if(deletedIds.has(id)&&entry.migrationCandidate)return;
+    const pendingRecord=launchV209NormalizeRecord(entry.record);
+    pendingRecord.__syncPending=true;
+    pendingRecord.__syncMutationId=entry.mutationId;
+    pendingRecord._launchVersion=Number(entry.baseVersion||0);
+    map.set(id,pendingRecord);
+  });
+  state.launches=launchV209Sort([...map.values()]);
+  writeInfluencerLaunchSnapshot(state.launches);
+  try{
+    const compact=launchV209SafeClone(state,{});
+    localStorage.setItem(KEY,JSON.stringify(compact));
+  }catch(error){}
+  if(renderNow){
+    try{render();}catch(error){console.warn("Render V209 adiado:",error);}
+  }
+  return state.launches;
+}
+function applyInfluencerLaunchCloudRecords(records){
+  const rows=(Array.isArray(records)?records:[]).map(record=>{
+    if(record&&record.legacy_id)return record;
+    const normalized=launchV209NormalizeRecord(record||{});
+    return {
+      id:record?._launchRowId||"",
+      legacy_id:normalized.id,
+      influencer_id:normalized.influencerId,
+      launch_date:normalized.date,
+      launch_month:normalized.month,
+      status:normalized.status,
+      payload:launchV209RecordToRowPayload(normalized),
+      version:Number(record?._launchVersion||1),
+      client_mutation_id:record?._launchMutationId||"",
+      created_at:normalized.createdAt,
+      updated_at:normalized.updatedAt,
+      deleted_at:record?.deleted?record.deletedAt||launchV209Now():null
+    };
+  }).filter(row=>row.legacy_id);
+  rows.forEach(row=>{
+    launchOfficialRowsV209.set(String(row.legacy_id),row);
+    launchOfficialVersionByIdV209.set(String(row.legacy_id),Number(row.version||0));
+  });
+  launchOfficialReadyV209=true;
+  launchV209ApplyOfficialState({renderNow:true});
+  return true;
+}
+async function fetchInfluencerLaunchCloudRecords(){
+  const rows=await launchV209FetchAllRows();
+  return rows.map(launchV209RowToRecord).filter(Boolean);
+}
+function launchV209ReplaceOfficialRows(rows){
+  const next=new Map();
+  (Array.isArray(rows)?rows:[]).forEach(row=>{
+    if(row?.legacy_id)next.set(String(row.legacy_id),row);
+  });
+  if(launchOfficialRowsV209.size>0&&next.size===0){
+    throw new Error("Proteção V209 recusou substituir um conjunto oficial existente por resposta vazia.");
+  }
+  launchOfficialRowsV209=next;
+  launchOfficialVersionByIdV209=new Map([...next.entries()].map(([id,row])=>[id,Number(row.version||0)]));
+  launchOfficialReadyV209=true;
+  const records=launchV209CurrentOfficialRecords();
+  try{localStorage.setItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY_V209,JSON.stringify(records.filter(r=>!r.deleted)));}catch(error){}
+  launchV209DbReplaceRecords(records);
+  return launchV209ApplyOfficialState({renderNow:true});
+}
+function activeLocalInfluencerLaunchCandidates(){
+  const groups=[
+    Array.isArray(state.launches)?state.launches:[],
+    readInfluencerLaunchSnapshot(),
+    ...readInfluencerLaunchPendingQueue().map(entry=>[entry.record])
+  ];
+  if(legacyLaunchV208.collectRecovery){
+    try{groups.push(legacyLaunchV208.collectRecovery()||[]);}catch(error){}
+  }
+  return mergeInfluencerLaunchCollections(...groups).filter(record=>record?.id&&!record.deleted);
+}
+async function launchV209HydrateDurableState(){
+  if(launchDbHydratedV209)return true;
+  launchDbHydratedV209=true;
+  const [records,outbox]=await Promise.all([
+    launchV209DbAll("records"),
+    launchV209DbAll("outbox")
+  ]);
+  let legacyOutbox=[];
+  try{
+    const parsed=JSON.parse(localStorage.getItem(INFLUENCER_LAUNCH_PENDING_KEY)||"[]");
+    legacyOutbox=(Array.isArray(parsed)?parsed:[]).map(entry=>({
+      ...entry,
+      migrationCandidate:true,
+      status:"pending",
+      mutationId:entry?.mutationId||launchV209MutationId(entry?.id||entry?.record?.id||"legacy","upsert")
+    }));
+  }catch(error){}
+  if(records.length&&!launchOfficialReadyV209){
+    state.launches=mergeInfluencerLaunchCollections(state.launches||[],records.filter(record=>!record.deleted));
+    writeInfluencerLaunchSnapshot(state.launches);
+  }
+  if(outbox.length||legacyOutbox.length){
+    const merged=[...readInfluencerLaunchPendingQueue(),...outbox,...legacyOutbox];
+    const byId=new Map();
+    merged.map(launchV209NormalizeOutboxEntry).filter(Boolean).forEach(entry=>{
+      const current=byId.get(entry.id);
+      if(!current||Date.parse(entry.queuedAt)>=Date.parse(current.queuedAt))byId.set(entry.id,entry);
+    });
+    writeInfluencerLaunchPendingQueue([...byId.values()]);
+  }
+  return true;
+}
+async function seedInfluencerLaunchRecordsOnce(){
+  await launchV209HydrateDurableState();
+  if(!launchMigrationPreparedV209){
+    launchMigrationCandidatesV209=activeLocalInfluencerLaunchCandidates();
+    launchMigrationPreparedV209=true;
+  }
+  return true;
+}
+function launchV209QueueMissingMigrationCandidates(){
+  const knownIds=new Set([...launchOfficialRowsV209.keys()]);
+  const queuedIds=new Set(readInfluencerLaunchPendingQueue().map(entry=>entry.id));
+  let added=0;
+  launchMigrationCandidatesV209.forEach(record=>{
+    const id=String(record?.id||"");
+    if(!id||knownIds.has(id)||queuedIds.has(id)||record.deleted)return;
+    launchV209QueueEntry(record,{migrationCandidate:true});
+    queuedIds.add(id);
+    added+=1;
+  });
+  return added;
+}
+async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
+  if(launchSyncPromiseV209){
+    launchSyncRequestedV209=true;
+    return launchSyncPromiseV209;
+  }
+  launchSyncPromiseV209=(async()=>{
+    try{
+      await launchV209HydrateDurableState();
+      const firstRows=await launchV209FetchAllRows();
+      launchV209ReplaceOfficialRows(firstRows);
+      const migrated=launchV209QueueMissingMigrationCandidates();
+      const flushed=await flushInfluencerLaunchPendingQueue();
+      if(flushed||migrated){
+        const finalRows=await launchV209FetchAllRows();
+        launchV209ReplaceOfficialRows(finalRows);
+      }
+      if(showStatus){
+        const active=[...launchOfficialRowsV209.values()].filter(row=>!row.deleted_at).length;
+        const pending=readInfluencerLaunchPendingQueue().length;
+        updateCloudStatus(`Lançamentos protegidos • ${active} registro(s) oficiais${pending?` • ${pending} pendente(s)`:""}`);
+        updateCloudDebug("V209: tabela relacional, histórico imutável, Realtime e reconciliação confirmados");
+      }
+      launchBroadcastV209?.postMessage({type:"launch-sync",at:Date.now()});
+      return true;
+    }catch(error){
+      console.warn("Fonte oficial V209 indisponível; dados locais não foram apagados:",error);
+      if(showStatus){
+        updateCloudStatus("Fonte oficial V209 indisponível. Nenhum lançamento local foi apagado.",true);
+        updateCloudDebug(String(error.message||error));
+      }
+      return false;
+    }finally{
+      launchSyncPromiseV209=null;
+      if(launchSyncRequestedV209){
+        launchSyncRequestedV209=false;
+        setTimeout(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}),80);
+      }
+    }
+  })();
+  return launchSyncPromiseV209;
+}
+
+function launchV209RealtimeSeen(){
+  try{
+    const rows=JSON.parse(localStorage.getItem(INFLUENCER_LAUNCH_REALTIME_SEEN_KEY_V209)||"[]");
+    return Array.isArray(rows)?rows.map(String):[];
+  }catch(error){return [];}
+}
+function launchV209RememberRealtime(fingerprint){
+  if(!fingerprint)return false;
+  const rows=launchV209RealtimeSeen();
+  if(rows.includes(fingerprint))return false;
+  rows.push(fingerprint);
+  try{localStorage.setItem(INFLUENCER_LAUNCH_REALTIME_SEEN_KEY_V209,JSON.stringify(rows.slice(-500)));}catch(error){}
+  return true;
+}
+function launchV209RealtimeFingerprint(row,type,table){
+  return [table,type,row?.id||"",row?.legacy_id||"",row?.version||"",row?.updated_at||row?.created_at||""].join("|");
+}
+async function launchV209ApplyRealtimeEvent(payload){
+  const table=String(payload?.table||INFLUENCER_LAUNCH_TABLE_V209);
+  const type=String(payload?.type||"UPDATE").toUpperCase();
+  const source=payload?.record?.id?payload.record:payload?.oldRecord||{};
+  const fingerprint=launchV209RealtimeFingerprint(source,type,table);
+  if(launchV209RealtimeSeen().includes(fingerprint))return false;
+  try{
+    let legacyId=String(source.legacy_id||"");
+    if(table===INFLUENCER_LAUNCH_HISTORY_TABLE_V209)legacyId=String(source.legacy_id||"");
+    if(!legacyId){
+      clearTimeout(launchRealtimeDebounceV209);
+      launchRealtimeDebounceV209=setTimeout(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}),120);
+      launchV209RememberRealtime(fingerprint);
+      return false;
+    }
+    const row=await launchV209FetchOne(legacyId,{includeDeleted:true});
+    if(row){
+      launchOfficialRowsV209.set(legacyId,row);
+      launchOfficialVersionByIdV209.set(legacyId,Number(row.version||0));
+      launchOfficialReadyV209=true;
+      const record=launchV209RowToRecord(row);
+      if(record)launchV209DbPut("records",record);
+      launchV209ApplyOfficialState({renderNow:true});
+      launchRealtimeLastEventAtV209=Date.now();
+      launchV209RememberRealtime(fingerprint);
+      updateCloudStatus("Lançamentos sincronizados em tempo real.");
+      launchBroadcastV209?.postMessage({type:"launch-sync",id:legacyId,at:Date.now()});
+      return true;
+    }
+    launchV209RememberRealtime(fingerprint);
+    return false;
+  }catch(error){
+    clearTimeout(launchRealtimeDebounceV209);
+    launchRealtimeDebounceV209=setTimeout(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}),250);
+    return false;
+  }
+}
+function launchV209RealtimeMessage(raw){
+  let message=null;
+  try{message=JSON.parse(raw?.data||raw||"");}catch(error){return;}
+  if(message.event==="phx_reply"&&String(message.ref||"")===String(launchRealtimeJoinRefV209)){
+    launchRealtimeConnectedV209=message.payload?.status==="ok";
+    if(launchRealtimeConnectedV209){
+      launchRealtimeReconnectAttemptV209=0;
+      launchRealtimeLastEventAtV209=Date.now();
+      setTimeout(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}),40);
+    }else{
+      try{launchRealtimeSocketV209?.close();}catch(error){}
+      launchV209ScheduleRealtimeReconnect();
+    }
+    return;
+  }
+  if(message.event==="phx_error"||message.event==="phx_close"){
+    launchRealtimeConnectedV209=false;
+    try{launchRealtimeSocketV209?.close();}catch(error){}
+    launchV209ScheduleRealtimeReconnect();
+    return;
+  }
+  if(message.event!=="postgres_changes")return;
+  const payload=message.payload?.data||message.payload||{};
+  launchV209ApplyRealtimeEvent({
+    table:payload.table||payload.relation?.table||INFLUENCER_LAUNCH_TABLE_V209,
+    type:payload.type||"UPDATE",
+    record:payload.record||payload.new||{},
+    oldRecord:payload.old_record||payload.old||{}
+  });
+}
+function launchV209ScheduleRealtimeReconnect(){
+  clearTimeout(launchRealtimeReconnectTimerV209);
+  if(navigator.onLine===false)return;
+  const delay=Math.min(20000,900*Math.pow(1.8,Math.min(launchRealtimeReconnectAttemptV209++,6)));
+  launchRealtimeReconnectTimerV209=setTimeout(launchV209ConnectRealtime,delay);
+}
+function launchV209ConnectRealtime(){
+  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(launchRealtimeSocketV209&&[0,1].includes(launchRealtimeSocketV209.readyState))return true;
+  clearTimeout(launchRealtimeReconnectTimerV209);
+  try{
+    const base=String(SUPABASE_URL||"").replace(/^http/i,"ws").replace(/\/+$/g,"");
+    const socket=new WebSocket(`${base}/realtime/v1/websocket?apikey=${encodeURIComponent(SUPABASE_ANON_KEY)}&vsn=1.0.0`);
+    launchRealtimeSocketV209=socket;
+    socket.addEventListener("open",()=>{
+      const ref=String(++launchRealtimeJoinRefV209);
+      socket.send(JSON.stringify({
+        topic:INFLUENCER_LAUNCH_REALTIME_TOPIC_V209,
+        event:"phx_join",
+        payload:{config:{
+          broadcast:{ack:false,self:false},
+          presence:{enabled:false},
+          postgres_changes:[
+            {event:"*",schema:"public",table:INFLUENCER_LAUNCH_TABLE_V209},
+            {event:"INSERT",schema:"public",table:INFLUENCER_LAUNCH_HISTORY_TABLE_V209}
+          ],
+          private:false
+        },access_token:SUPABASE_ANON_KEY},
+        ref,join_ref:ref
+      }));
+    });
+    socket.addEventListener("message",launchV209RealtimeMessage);
+    socket.addEventListener("error",()=>{launchRealtimeConnectedV209=false;});
+    socket.addEventListener("close",()=>{
+      if(launchRealtimeSocketV209===socket)launchRealtimeSocketV209=null;
+      launchRealtimeConnectedV209=false;
+      launchV209ScheduleRealtimeReconnect();
+    });
+    return true;
+  }catch(error){
+    launchV209ScheduleRealtimeReconnect();
+    return false;
+  }
+}
+function installInfluencerLaunchSyncWatchers(){
+  if(launchSyncWatchersInstalledV209)return;
+  launchSyncWatchersInstalledV209=true;
+  if(typeof BroadcastChannel!=="undefined"){
+    try{
+      launchBroadcastV209=new BroadcastChannel("wisent-influencer-launches-v209");
+      launchBroadcastV209.addEventListener("message",event=>{
+        if(event?.data?.type==="launch-sync")syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+      });
+    }catch(error){launchBroadcastV209=null;}
+  }
+  launchV209ConnectRealtime();
+  clearInterval(launchRealtimeHeartbeatTimerV209);
+  launchRealtimeHeartbeatTimerV209=setInterval(()=>{
+    try{
+      if(launchRealtimeSocketV209?.readyState===1){
+        launchRealtimeSocketV209.send(JSON.stringify({topic:"phoenix",event:"heartbeat",payload:{},ref:`launch-heartbeat-${++launchRealtimeHeartbeatRefV209}`}));
+      }
+    }catch(error){}
+  },25000);
+  window.addEventListener("online",()=>{
+    launchV209ConnectRealtime();
+    flushInfluencerLaunchPendingQueue().then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:true}));
+  });
+  window.addEventListener("offline",()=>{
+    launchRealtimeConnectedV209=false;
+    try{launchRealtimeSocketV209?.close();}catch(error){}
+    updateCloudStatus("Offline • lançamentos preservados na outbox V209 deste aparelho",true);
+  });
+  const refresh=()=>{
+    if(navigator.onLine===false)return;
+    launchV209ConnectRealtime();
+    syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+  };
+  window.addEventListener("focus",refresh);
+  window.addEventListener("pageshow",refresh);
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible")refresh();
+  });
+  window.addEventListener("storage",event=>{
+    if([INFLUENCER_LAUNCH_OUTBOX_KEY_V209,INFLUENCER_LAUNCH_SNAPSHOT_KEY_V209].includes(event?.key))refresh();
+  });
+  clearInterval(launchPollTimerV209);
+  launchPollTimerV209=setInterval(()=>{
+    if(document.hidden||navigator.onLine===false)return;
+    launchV209ConnectRealtime();
+    const stale=!launchRealtimeConnectedV209||!launchRealtimeLastEventAtV209||Date.now()-launchRealtimeLastEventAtV209>45000;
+    if(stale)syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+  },12000);
+}
+
+window.exportInfluencerLaunchSafetyBackupV209=function(){
+  const payload={
+    generatedAt:launchV209Now(),
+    version:APP_BUILD_VERSION,
+    officialReady:launchOfficialReadyV209,
+    official:launchV209CurrentOfficialRecords(),
+    visible:state.launches||[],
+    pending:readInfluencerLaunchPendingQueue(),
+    conflicts:(()=>{try{return JSON.parse(localStorage.getItem(INFLUENCER_LAUNCH_CONFLICT_KEY_V209)||"[]");}catch(error){return [];}})()
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download=`backup-lancamentos-influencers-${today()}-${Date.now()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+};
+
 
 window.currentPage=window.currentPage||"dashboard";
 currentPage=window.currentPage;
