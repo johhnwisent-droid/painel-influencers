@@ -14436,7 +14436,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V212</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V213</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16359,11 +16359,12 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
           <div class="actions full">
             <button type="button" id="saveSettingsBtnV210" class="primary" onclick="saveSettings()">Salvar personalização</button>
+            <button type="button" class="secondary" onclick="settingsV213RunDiagnostic()">Testar conexão da Personalização</button>
             <button type="button" class="secondary" onclick="removeSystemLogo()">Remover logo do sistema</button>
             <button type="button" class="secondary" onclick="removePdfLogo()">Remover logo do PDF</button>
             <button type="button" class="secondary" onclick="removePdfWatermark()">Remover marca d'água</button>
             <button type="button" class="secondary" onclick="exportBackup()">Exportar backup</button>
-            <button type="button" class="secondary" onclick="exportWisentDataBackupV212()">Backup blindado V212</button>
+            <button type="button" class="secondary" onclick="exportWisentDataBackupV212()">Backup blindado V213</button>
             <label style="display:inline-flex">
               <span class="secondary" style="padding:10px 14px;border-radius:12px;color:#1e40af;background:#eef2ff">Importar backup</span>
               <input type="file" accept="application/json" onchange="importBackup(event)" class="hidden">
@@ -16683,7 +16684,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V212";
+const APP_BUILD_VERSION="V213";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -16716,9 +16717,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=212",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=213",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=212");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=213");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -16829,6 +16830,74 @@ let systemSettingsHeartbeatTimerV210=null;
 let systemSettingsJoinRefV210=0;
 let systemSettingsBroadcastV210=null;
 let systemSettingsInstalledV210=false;
+
+/* V213 — confirmação diagnosticável e resolução segura de concorrência. */
+const SYSTEM_SETTINGS_CONFLICT_KEY_V213=KEY+"_system_settings_conflict_v213";
+let systemSettingsOfficialPayloadV213={};
+let systemSettingsLastErrorV213=null;
+let systemSettingsLastResultV213=null;
+
+function settingsV213JsonEqual(a,b){
+  try{return JSON.stringify(a)===JSON.stringify(b);}
+  catch(error){return a===b;}
+}
+function settingsV213ThreeWayMerge(basePayload,localPayload,officialPayload){
+  const base=settingsV210Clone(basePayload,{});
+  const local=settingsV210Clone(localPayload,{});
+  const official=settingsV210Clone(officialPayload,{});
+  const merged=settingsV210Clone(official,{});
+  const conflicts=[];
+  const localChanged=[];
+  const keys=new Set([...Object.keys(base),...Object.keys(local),...Object.keys(official)]);
+  keys.forEach(key=>{
+    const b=base[key];
+    const l=local[key];
+    const o=official[key];
+    const localDiff=!settingsV213JsonEqual(l,b);
+    const officialDiff=!settingsV213JsonEqual(o,b);
+    if(localDiff)localChanged.push(key);
+    if(!localDiff)return;
+    if(!officialDiff||settingsV213JsonEqual(l,o)){
+      if(l===undefined)delete merged[key];
+      else merged[key]=settingsV210Clone(l,l);
+      return;
+    }
+    conflicts.push(key);
+  });
+  return {merged,conflicts,localChanged};
+}
+function settingsV213ErrorDiagnostic(error){
+  const status=Number(error?.status||0);
+  const raw=String(error?.message||error||"Falha desconhecida");
+  const lower=raw.toLowerCase();
+  if(navigator.onLine===false||error?.name==="AbortError"||status===0&&lower.includes("tempo"))
+    return "Sem conexão ou tempo esgotado ao acessar o Supabase.";
+  if(status===401||status===403)
+    return `Permissão recusada pelo Supabase (HTTP ${status}). Revise EXECUTE da RPC e SELECT/RLS.`;
+  if(status===404||lower.includes("pgrst202")||lower.includes("pgrst205")||lower.includes("could not find the function"))
+    return "A tabela ou a função da Personalização ainda não está disponível no cache da API. Execute o SQL de reparo V213 e aguarde a recarga do schema.";
+  if(status===413||lower.includes("payload too large")||lower.includes("request entity too large"))
+    return "A personalização ficou grande demais para uma única requisição, normalmente por logos em alta resolução.";
+  if(status===400&&lower.includes("function"))
+    return "A assinatura da função de salvamento no Supabase não corresponde ao frontend. Execute o SQL de reparo V213.";
+  if(status>=500)
+    return `O Supabase respondeu com falha temporária HTTP ${status}. A alteração permaneceu na fila local.`;
+  return raw.slice(0,420);
+}
+async function settingsV213PreserveConflict(entry,officialRow,fields=[]){
+  const conflict={
+    at:new Date().toISOString(),
+    fields:[...fields],
+    localPayload:settingsV210Clone(entry?.payload,{}),
+    basePayload:settingsV210Clone(entry?.basePayload,{}),
+    officialPayload:settingsV210Clone(officialRow?.payload,{}),
+    expectedVersion:Number(entry?.expectedVersion||0),
+    officialVersion:Number(officialRow?.version||0),
+    mutationId:String(entry?.mutationId||"")
+  };
+  await settingsV210WriteDurable(SYSTEM_SETTINGS_CONFLICT_KEY_V213,conflict);
+  return conflict;
+}
 
 function settingsV210Clone(value,fallback={}){
   try{return JSON.parse(JSON.stringify(value));}
@@ -16955,7 +17024,7 @@ function settingsV210Apply(payload,{renderNow=true,persist=true}={}){
 function settingsV210CollectFromForm(){
   state.settings=state.settings||{};
   preserveMediaFromLegacy(state);
-  const s=state.settings;
+  const s=settingsV210Clone(state.settings||{},{});
   s.systemName=$("setName")?.value||"Painel";
   s.subtitle=$("setSub")?.value||"";
   s.primaryColor=$("setPrimary")?.value||"#111827";
@@ -16987,16 +17056,23 @@ function settingsV210CollectFromForm(){
 }
 async function settingsV210FetchOfficial(){
   const url=SUPABASE_URL+`/rest/v1/${SYSTEM_SETTINGS_TABLE_V210}?id=eq.${encodeURIComponent(SYSTEM_SETTINGS_ROW_ID_V210)}&select=id,payload,version,client_mutation_id,updated_at,updated_by`;
-  const response=await fetchWithTimeout(url,{method:"GET",headers:cloudHeaders({"Cache-Control":"no-cache"}),cache:"no-store"},10000);
+  const response=await fetchWithTimeout(url,{method:"GET",headers:cloudHeaders({"Cache-Control":"no-cache","Pragma":"no-cache"}),cache:"no-store"},12000);
   const text=await response.text().catch(()=>"");
   if(!response.ok){
-    const error=new Error(`Configurações oficiais indisponíveis (HTTP ${response.status}): ${text.slice(0,180)}`);
+    const error=new Error(`Configurações oficiais indisponíveis (HTTP ${response.status}): ${text.slice(0,260)}`);
     error.status=response.status;
+    error.responseText=text;
     throw error;
   }
   let rows=[];
   try{rows=JSON.parse(text||"[]");}catch(error){rows=[];}
-  return Array.isArray(rows)?rows[0]||null:null;
+  const row=Array.isArray(rows)?rows[0]||null:null;
+  if(row?.payload){
+    systemSettingsOfficialPayloadV213=settingsV210Clone(row.payload,{});
+    systemSettingsVersionV210=Number(row.version||0);
+    systemSettingsMutationV210=String(row.client_mutation_id||"");
+  }
+  return row;
 }
 async function settingsV210Confirm(mutationId){
   const row=await settingsV210FetchOfficial();
@@ -17004,28 +17080,43 @@ async function settingsV210Confirm(mutationId){
   return row;
 }
 async function settingsV210SaveOfficial(entry){
-  const response=await fetchWithTimeout(SUPABASE_URL+`/rest/v1/rpc/${SYSTEM_SETTINGS_RPC_V210}`,{
-    method:"POST",
-    headers:cloudHeaders({"Prefer":"return=representation"}),
-    body:JSON.stringify({
-      p_payload:entry.payload,
-      p_expected_version:Number(entry.expectedVersion||0),
-      p_client_mutation_id:entry.mutationId,
-      p_updated_by:entry.updatedBy||"Sistema",
-      p_client_updated_at:entry.at||new Date().toISOString()
-    })
-  },15000);
-  const text=await response.text().catch(()=>"");
-  if(!response.ok){
-    const error=new Error(`Supabase recusou a personalização (HTTP ${response.status}): ${text.slice(0,220)}`);
-    error.status=response.status;
-    throw error;
-  }
+  const perform=async()=>{
+    const response=await fetchWithTimeout(SUPABASE_URL+`/rest/v1/rpc/${SYSTEM_SETTINGS_RPC_V210}`,{
+      method:"POST",
+      headers:cloudHeaders({"Prefer":"return=representation"}),
+      body:JSON.stringify({
+        p_payload:entry.payload,
+        p_expected_version:Number(entry.expectedVersion||0),
+        p_client_mutation_id:entry.mutationId,
+        p_updated_by:entry.updatedBy||"Sistema",
+        p_client_updated_at:entry.at||new Date().toISOString()
+      })
+    },18000);
+    const text=await response.text().catch(()=>"");
+    if(!response.ok){
+      const error=new Error(`Supabase recusou a personalização (HTTP ${response.status}): ${text.slice(0,420)}`);
+      error.status=response.status;
+      error.responseText=text;
+      throw error;
+    }
+    let row=null;
+    try{
+      const parsed=JSON.parse(text||"[]");
+      row=Array.isArray(parsed)?parsed[0]||null:parsed;
+    }catch(error){}
+    return row;
+  };
+
   let row=null;
-  try{
-    const parsed=JSON.parse(text||"[]");
-    row=Array.isArray(parsed)?parsed[0]||null:parsed;
-  }catch(error){}
+  try{row=await perform();}
+  catch(error){
+    const raw=String(error?.message||"");
+    const schemaPending=error?.status===404||raw.includes("PGRST202")||raw.includes("PGRST205")||raw.toLowerCase().includes("could not find the function");
+    if(!schemaPending)throw error;
+    await new Promise(resolve=>setTimeout(resolve,1200));
+    row=await perform();
+  }
+
   if(row&&row.applied===false)return row;
   if(!row||String(row.client_mutation_id||"")!==String(entry.mutationId))row=await settingsV210Confirm(entry.mutationId);
   if(!row)throw new Error("O Supabase recebeu a alteração, mas não confirmou a mutação da personalização.");
@@ -17035,32 +17126,72 @@ async function settingsV210SaveOfficial(entry){
 async function settingsV210FlushOutbox({showStatus=false}={}){
   if(systemSettingsSavePromiseV210)return systemSettingsSavePromiseV210;
   systemSettingsSavePromiseV210=(async()=>{
-    const entry=await settingsV210ReadDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
+    let entry=await settingsV210ReadDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
     if(!entry?.mutationId||!settingsV210ValidPayload(entry.payload))return true;
+    if(entry.blockedByConflict){
+      if(showStatus)settingsV210SetStatus("Conflito de personalização preservado. Revise os campos antes de salvar novamente.","error");
+      return "conflict";
+    }
     if(navigator.onLine===false){
       if(showStatus)settingsV210SetStatus("Sem conexão — personalização preservada e pendente para sincronizar.","offline");
       return false;
     }
     if(showStatus)settingsV210SetStatus("Salvando personalização e aguardando confirmação do Supabase...","saving");
+    systemSettingsLastErrorV213=null;
+    systemSettingsLastResultV213=null;
     try{
-      const row=await settingsV210SaveOfficial(entry);
-      systemSettingsVersionV210=Number(row.version||0);
-      systemSettingsMutationV210=String(row.client_mutation_id||"");
-      settingsV210Apply(row.payload,{renderNow:true,persist:true});
-      await settingsV210DeleteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
-      settingsV210Broadcast({type:"settings-saved",version:systemSettingsVersionV210,mutationId:systemSettingsMutationV210});
-      const applied=row.applied!==false;
-      if(showStatus)settingsV210SetStatus(applied
-        ?`Personalização salva e confirmada na nuvem • versão ${systemSettingsVersionV210}.`
-        :`Uma personalização mais recente já estava no Supabase e foi preservada • versão ${systemSettingsVersionV210}.`,
-        applied?"saved":"info");
-      return applied?true:"conflict";
-    }catch(error){
-      console.warn("Personalização V210 pendente:",error);
-      if(showStatus){
-        const missing=error?.status===404||String(error.message||"").includes("PGRST");
-        settingsV210SetStatus(missing?"Execute o SQL V210 no Supabase para ativar o salvamento oficial da Personalização.":"Falha ao confirmar na nuvem. A alteração continua preservada neste aparelho e será reenviada.","error");
+      for(let attempt=0;attempt<3;attempt++){
+        const row=await settingsV210SaveOfficial(entry);
+        systemSettingsLastResultV213=row;
+        const applied=row?.applied!==false;
+        if(applied){
+          systemSettingsVersionV210=Number(row.version||0);
+          systemSettingsMutationV210=String(row.client_mutation_id||"");
+          systemSettingsOfficialPayloadV213=settingsV210Clone(row.payload,{});
+          settingsV210Apply(row.payload,{renderNow:true,persist:true});
+          await settingsV210DeleteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
+          await settingsV210DeleteDurable(SYSTEM_SETTINGS_CONFLICT_KEY_V213);
+          settingsV210Broadcast({type:"settings-saved",version:systemSettingsVersionV210,mutationId:systemSettingsMutationV210});
+          if(showStatus)settingsV210SetStatus(`Personalização salva e confirmada na nuvem • versão ${systemSettingsVersionV210}.`,"saved");
+          return true;
+        }
+
+        const officialPayload=settingsV210Clone(row?.payload,{});
+        const officialVersion=Number(row?.version||0);
+        const basePayload=settingsV210ValidPayload(entry.basePayload)
+          ?settingsV210Clone(entry.basePayload,{})
+          :settingsV210Clone(systemSettingsOfficialPayloadV213,{});
+        const merge=settingsV213ThreeWayMerge(basePayload,entry.payload,officialPayload);
+        systemSettingsVersionV210=officialVersion;
+        systemSettingsOfficialPayloadV213=officialPayload;
+
+        if(merge.conflicts.length){
+          entry={...entry,blockedByConflict:true,conflictFields:merge.conflicts,officialVersion};
+          await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,entry);
+          await settingsV213PreserveConflict(entry,row,merge.conflicts);
+          settingsV210Apply(officialPayload,{renderNow:true,persist:true});
+          if(showStatus)settingsV210SetStatus(`Conflito preservado nos campos: ${merge.conflicts.join(", ")}. Nenhuma versão foi sobrescrita.`,"error");
+          return "conflict";
+        }
+
+        entry={
+          payload:merge.merged,
+          basePayload:officialPayload,
+          mutationId:settingsV210MutationId(),
+          expectedVersion:officialVersion,
+          updatedBy:settingsV210UserName(),
+          at:new Date().toISOString(),
+          retryCount:Number(entry.retryCount||0)+1
+        };
+        await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,entry);
+        settingsV210Apply(entry.payload,{renderNow:true,persist:true});
       }
+      throw new Error("A personalização encontrou alterações concorrentes repetidas e permaneceu na fila local.");
+    }catch(error){
+      systemSettingsLastErrorV213=error;
+      window.__wisentSettingsLastError=settingsV213ErrorDiagnostic(error);
+      console.warn("Personalização V213 pendente:",error);
+      if(showStatus)settingsV210SetStatus(`Falha ao confirmar: ${settingsV213ErrorDiagnostic(error)} A alteração continua preservada neste aparelho.`,"error");
       return false;
     }finally{
       systemSettingsSavePromiseV210=null;
@@ -17071,33 +17202,35 @@ async function settingsV210FlushOutbox({showStatus=false}={}){
 async function settingsV210SyncFromCloud({showStatus=false}={}){
   if(systemSettingsSyncPromiseV210)return systemSettingsSyncPromiseV210;
   systemSettingsSyncPromiseV210=(async()=>{
-    const pending=await settingsV210ReadDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
-    if(pending?.mutationId){
-      settingsV210Apply(pending.payload,{renderNow:true,persist:true});
-      const flushed=await settingsV210FlushOutbox({showStatus});
-      if(!flushed)return false;
-    }
     try{
+      /* V213: consulta a versão oficial antes de reenviar qualquer pendência antiga. */
       const row=await settingsV210FetchOfficial();
+      const pending=await settingsV210ReadDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
+      if(pending?.mutationId){
+        const enriched={
+          ...pending,
+          basePayload:settingsV210ValidPayload(pending.basePayload)?pending.basePayload:settingsV210Clone(row?.payload||systemSettingsOfficialPayloadV213,{}),
+          expectedVersion:Number(pending.expectedVersion||row?.version||0)
+        };
+        await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,enriched);
+        settingsV210Apply(enriched.payload,{renderNow:true,persist:true});
+        const flushed=await settingsV210FlushOutbox({showStatus});
+        if(flushed===false||flushed==="conflict")return flushed;
+        return true;
+      }
       if(row){
-        const version=Number(row.version||0);
-        if(version>=systemSettingsVersionV210){
-          systemSettingsVersionV210=version;
-          systemSettingsMutationV210=String(row.client_mutation_id||"");
-          settingsV210Apply(row.payload,{renderNow:true,persist:true});
-        }
+        settingsV210Apply(row.payload,{renderNow:true,persist:true});
         if(showStatus)settingsV210SetStatus(`Personalização sincronizada com o Supabase • versão ${systemSettingsVersionV210}.`,"saved");
         return true;
       }
       const payload=settingsV210Clone(state.settings||{},{});
-      const entry={payload,mutationId:settingsV210MutationId(),expectedVersion:0,updatedBy:settingsV210UserName(),at:new Date().toISOString()};
+      const entry={payload,basePayload:{},mutationId:settingsV210MutationId(),expectedVersion:0,updatedBy:settingsV210UserName(),at:new Date().toISOString()};
       await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,entry);
       return settingsV210FlushOutbox({showStatus});
     }catch(error){
-      if(showStatus){
-        const missing=error?.status===404||String(error.message||"").includes("PGRST");
-        settingsV210SetStatus(missing?"Salvamento oficial ainda não ativado. Execute o SQL V210 no Supabase.":"Não foi possível consultar a personalização oficial. O snapshot local foi preservado.","error");
-      }
+      systemSettingsLastErrorV213=error;
+      window.__wisentSettingsLastError=settingsV213ErrorDiagnostic(error);
+      if(showStatus)settingsV210SetStatus(`Não foi possível consultar a personalização oficial: ${settingsV213ErrorDiagnostic(error)} O snapshot local foi preservado.`,"error");
       return false;
     }finally{
       systemSettingsSyncPromiseV210=null;
@@ -17194,14 +17327,44 @@ async function settingsV210Bootstrap(){
   settingsV210InstallWatchers();
 }
 async function settingsV210Commit(payload,{successMessage="Personalização salva e confirmada na nuvem."}={}){
+  let localPayload=settingsV210Clone(payload,{});
+  const editingBase=settingsV210Clone(systemSettingsOfficialPayloadV213&&Object.keys(systemSettingsOfficialPayloadV213).length
+    ?systemSettingsOfficialPayloadV213
+    :(state.settings||{}),{});
+  let expectedVersion=systemSettingsVersionV210;
+
+  if(navigator.onLine!==false){
+    try{
+      const latest=await settingsV210FetchOfficial();
+      if(latest){
+        const merge=settingsV213ThreeWayMerge(editingBase,localPayload,latest.payload||{});
+        if(merge.conflicts.length){
+          const blocked={payload:localPayload,basePayload:editingBase,mutationId:settingsV210MutationId(),expectedVersion,updatedBy:settingsV210UserName(),at:new Date().toISOString(),blockedByConflict:true,conflictFields:merge.conflicts};
+          await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,blocked);
+          await settingsV213PreserveConflict(blocked,latest,merge.conflicts);
+          settingsV210Apply(latest.payload||{},{renderNow:true,persist:true});
+          settingsV210SetStatus(`Conflito preservado nos campos: ${merge.conflicts.join(", ")}. Nenhuma alteração foi apagada.`,"error");
+          alert(`Outra conta alterou os mesmos campos: ${merge.conflicts.join(", ")}. A versão oficial foi mantida e sua tentativa ficou preservada para auditoria.`);
+          return false;
+        }
+        localPayload=merge.merged;
+        expectedVersion=Number(latest.version||0);
+      }
+    }catch(error){
+      systemSettingsLastErrorV213=error;
+      /* Continua para a fila durável; o diagnóstico real será mostrado após a tentativa. */
+    }
+  }
+
   const entry={
-    payload:settingsV210Clone(payload,{}),
+    payload:localPayload,
+    basePayload:settingsV210Clone(systemSettingsOfficialPayloadV213||editingBase,{}),
     mutationId:settingsV210MutationId(),
-    expectedVersion:systemSettingsVersionV210,
+    expectedVersion,
     updatedBy:settingsV210UserName(),
     at:new Date().toISOString()
   };
-  await settingsV210WriteDurable(SYSTEM_SETTINGS_SNAPSHOT_KEY_V210,{payload:entry.payload,version:systemSettingsVersionV210,mutationId:entry.mutationId,at:entry.at});
+  await settingsV210WriteDurable(SYSTEM_SETTINGS_SNAPSHOT_KEY_V210,{payload:entry.payload,version:expectedVersion,mutationId:entry.mutationId,at:entry.at});
   await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,entry);
   settingsV210Apply(entry.payload,{renderNow:true,persist:true});
   save();
@@ -17211,12 +17374,41 @@ async function settingsV210Commit(payload,{successMessage="Personalização salv
     return true;
   }
   if(ok==="conflict"){
-    alert("Outra personalização mais recente já havia sido confirmada no Supabase. O sistema preservou a versão oficial mais nova para evitar sobrescrita indevida.");
+    alert("Houve uma alteração simultânea. Nenhuma versão foi sobrescrita; a tentativa local foi preservada para revisão.");
     return false;
   }
-  alert(navigator.onLine===false?"Personalização preservada neste aparelho. Ela será enviada automaticamente quando a internet voltar.":"A personalização foi preservada, mas ainda não recebeu confirmação do Supabase. Verifique se o SQL V210 foi executado.");
+  const diagnostic=settingsV213ErrorDiagnostic(systemSettingsLastErrorV213);
+  alert(navigator.onLine===false
+    ?"Personalização preservada neste aparelho. Ela será enviada automaticamente quando a internet voltar."
+    :`A personalização foi preservada, mas ainda não recebeu confirmação do Supabase. Motivo: ${diagnostic}`);
   return false;
 }
+window.settingsV213RunDiagnostic=async function(){
+  settingsV210SetStatus("Testando tabela, leitura e função de salvamento...","saving");
+  try{
+    const row=await settingsV210FetchOfficial();
+    const payload=settingsV210Clone(row?.payload||state.settings||{},{});
+    const version=Number(row?.version||0);
+    const probe={payload,basePayload:payload,mutationId:settingsV210MutationId(),expectedVersion:version,updatedBy:`Diagnóstico • ${settingsV210UserName()}`,at:new Date().toISOString()};
+    const result=await settingsV210SaveOfficial(probe);
+    if(result?.applied===false)throw new Error("A função respondeu, mas recusou a versão de diagnóstico por concorrência.");
+    systemSettingsVersionV210=Number(result?.version||version);
+    systemSettingsOfficialPayloadV213=settingsV210Clone(result?.payload||payload,{});
+    settingsV210SetStatus(`Conexão confirmada: tabela e RPC funcionando • versão ${systemSettingsVersionV210}.`,"saved");
+    alert("Teste concluído: a Personalização conseguiu ler, gravar e receber confirmação real do Supabase.");
+    return true;
+  }catch(error){
+    systemSettingsLastErrorV213=error;
+    const detail=settingsV213ErrorDiagnostic(error);
+    settingsV210SetStatus(`Falha no teste: ${detail}`,"error");
+    alert(`Diagnóstico da Personalização:
+
+${detail}
+
+Erro técnico: ${String(error?.message||error).slice(0,700)}`);
+    return false;
+  }
+};
 window.saveSettings=async function(){
   const button=$("saveSettingsBtnV210");
   const original=button?.textContent||"Salvar personalização";
@@ -17254,7 +17446,7 @@ startApp=async function(){
   try{await settingsV210Bootstrap();}
   catch(error){
     console.warn("Inicialização da personalização V210 em modo local:",error);
-    settingsV210SetStatus("Personalização carregada em modo local. Execute o SQL V210 para ativar a confirmação oficial.","error");
+    settingsV210SetStatus("Personalização carregada em modo local. Execute o SQL de reparo V213 para ativar a confirmação oficial.","error");
   }
   return result;
 };
@@ -27550,49 +27742,8 @@ function renderSettings(){
   renderAuthUsers();
 }
 
-function saveSettings(){
-  const s=state.settings;
-  preserveMediaFromLegacy(state);
-
-  s.systemName=$("setName").value||"Painel";
-  s.subtitle=$("setSub").value||"";
-  s.primaryColor=$("setPrimary").value||"#111827";
-  s.accentColor=$("setAccent").value||"#2563eb";
-  s.backgroundColor=$("setBg").value||"#f3f4f6";
-  s.cardColor=$("setCard").value||"#ffffff";
-  s.textColor=$("setText").value||"#111827";
-
-  s.mobileMenuBg=$("setMobileMenuBg").value||"#0b0f19";
-  s.mobileMenuText=$("setMobileMenuText").value||"#ffffff";
-  s.mobileMenuActiveBg=$("setMobileMenuActiveBg").value||"#ffffff";
-  s.mobileMenuActiveText=$("setMobileMenuActiveText").value||"#111827";
-  s.mobileBottomBg=$("setMobileBottomBg").value||"#0b0f19";
-  s.mobileBottomText=$("setMobileBottomText").value||"#ffffff";
-  s.mobileBottomActiveBg=$("setMobileBottomActiveBg").value||"#ffffff";
-  s.mobileBottomActiveText=$("setMobileBottomActiveText").value||"#111827";
-
-
-  s.origins=$("setOrigins").value.split(",").map(x=>x.trim()).filter(Boolean);
-  s.statuses=$("setStatuses").value.split(",").map(x=>x.trim()).filter(Boolean);
-
-  s.pdfTitle=$("setPdfTitle").value||"Relatório de comissão";
-  s.pdfMessage=$("setPdfMessage").value||"";
-  s.pdfFooter=$("setPdfFooter").value||"";
-
-  s.pdfWatermarkOpacity=Number($("setPdfWatermarkOpacity").value||0.12);
-  s.pdfWatermarkX=Number($("setPdfWatermarkX").value||50);
-  s.pdfWatermarkY=Number($("setPdfWatermarkY").value||72);
-  s.pdfWatermarkSize=Number($("setPdfWatermarkSize").value||45);
-
-  if(tempSystemLogo!==null){s.systemLogo=tempSystemLogo;tempSystemLogo=null;}
-  if(tempPdfLogo!==null){s.pdfLogo=tempPdfLogo;tempPdfLogo=null;}
-  if(tempWatermarkLogo!==null){s.pdfWatermarkLogo=tempWatermarkLogo;tempWatermarkLogo=null;}
-
-  save();
-  render();
-  alert("Personalização salva.");
-}
-
+/* V213: implementação legada de saveSettings removida.
+   A única rota ativa é window.saveSettings -> settingsV210Commit. */
 function previewSystemLogo(event){
   const f=event.target.files[0];
   if(!f)return;
@@ -27623,10 +27774,7 @@ function previewWatermarkLogo(event){
   r.readAsDataURL(f);
 }
 
-function removeSystemLogo(){state.settings.systemLogo="";tempSystemLogo=null;save();render();}
-function removePdfLogo(){state.settings.pdfLogo="";tempPdfLogo=null;save();render();}
-function removeLogo(){removeSystemLogo();}
-function removePdfWatermark(){state.settings.pdfWatermarkLogo="";tempWatermarkLogo=null;save();render();}
+/* V213: removedores legados removidos; usam confirmação oficial. */
 
 
 
