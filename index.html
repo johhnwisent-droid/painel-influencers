@@ -14438,6 +14438,32 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   body.print-report .reportOriginTable td{padding:7px 8px}
 }
 
+
+
+/* ===== V216 — RELATÓRIO PDF RESUMIDO + HISTÓRICO DIRETO ===== */
+.reportNameLinkV216{
+  display:block;border:0;background:transparent;padding:0;margin:0;
+  color:#0f172a;font:inherit;font-size:24px;font-weight:900;text-align:left;
+  cursor:pointer
+}
+.reportNameLinkV216:hover{color:#1d4ed8;text-decoration:underline;text-underline-offset:3px}
+#reportAccumulationSectionV216[hidden],
+#reportCoverageNotice[hidden],
+#reportAccumulatedOriginWrapV216[hidden],
+#reportStatusBox[hidden]{display:none!important}
+.reportAccumulatedOriginWrapV216{margin-top:14px}
+.reportAccumulatedOriginWrapV216 h4{margin:0 0 8px;font-size:13px;color:#334155}
+.reportOriginSimpleV216{max-width:620px}
+.reportOriginSimpleV216 th:last-child,
+.reportOriginSimpleV216 td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.reportAccumulatedOriginTableV216 th:nth-child(n+2),
+.reportAccumulatedOriginTableV216 td:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
+@media print{
+  body.print-report .reportNameLinkV216{color:#111827!important;text-decoration:none!important;cursor:default}
+  body.print-report #reportCoverageNotice{display:none!important}
+  body.print-report #reportOriginSectionV216{break-inside:avoid;page-break-inside:avoid}
+  body.print-report #reportAccumulationSectionV216{break-inside:avoid;page-break-inside:avoid}
+}
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -14528,7 +14554,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V215</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V216</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15630,65 +15656,57 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
           </div>
 
           <div class="pdfIdentity">
-            <h2 id="reportName">Selecione um influencer</h2>
+            <button type="button" id="reportName" class="reportNameLinkV216" onclick="openSelectedReportInfluencerHistoryV216()" title="Abrir histórico de lançamentos">Selecione um influencer</button>
             <p id="reportCoupon" class="muted">Cupom: -</p>
             <p id="reportPeriod" class="muted">Mês: -</p>
           </div>
 
           <div class="pdfThreeCards">
             <div class="pdfBox">
-              <small>Total vendido na competência</small>
+              <small>Total vendido no período</small>
               <strong id="reportSold">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Comissão em produtos gerada na competência</small>
+              <small>Comissão em produtos no período</small>
               <strong id="reportProduct">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Comissão em dinheiro gerada na competência</small>
+              <small>Comissão em dinheiro no período</small>
               <strong id="reportCash">R$ 0,00</strong>
             </div>
           </div>
 
-          <div id="reportCoverageNotice" class="reportCoverageNotice">
-            <strong>Período demonstrado neste PDF</strong>
-            <span id="reportCoverageText">Selecione um influencer para calcular o período.</span>
+          <div id="reportCoverageNotice" class="reportCoverageNotice" hidden>
+            <span id="reportCoverageText"></span>
           </div>
 
-          <div class="reportSection">
+          <div id="reportAccumulationSectionV216" class="reportSection" hidden>
             <h3>Demonstrativo do saldo acumulado</h3>
             <table class="reportBalanceTable">
               <thead><tr><th>Movimentação</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
               <tbody>
                 <tr><td>Saldo acumulado anterior</td><td id="reportOpeningProduct">R$ 0,00</td><td id="reportOpeningCash">R$ 0,00</td></tr>
-                <tr><td>Novas comissões marcadas para acumular</td><td id="reportAccumulatedProduct">R$ 0,00</td><td id="reportAccumulatedCash">R$ 0,00</td></tr>
-                <tr><td>Resgates e zeragens registrados</td><td id="reportDeductedProduct">R$ 0,00</td><td id="reportDeductedCash">R$ 0,00</td></tr>
-                <tr class="reportFinalRow"><td>Saldo acumulado disponível ao final</td><td id="reportClosingProduct">R$ 0,00</td><td id="reportClosingCash">R$ 0,00</td></tr>
+                <tr><td>Comissões acumuladas no período</td><td id="reportAccumulatedProduct">R$ 0,00</td><td id="reportAccumulatedCash">R$ 0,00</td></tr>
+                <tr><td>Resgates e zeragens</td><td id="reportDeductedProduct">R$ 0,00</td><td id="reportDeductedCash">R$ 0,00</td></tr>
+                <tr class="reportFinalRow"><td>Saldo disponível ao final</td><td id="reportClosingProduct">R$ 0,00</td><td id="reportClosingCash">R$ 0,00</td></tr>
               </tbody>
             </table>
-            <div id="reportStatusBox" class="reportStatusBox" data-type="neutral">Nenhuma movimentação calculada.</div>
-            <p class="reportSmallNote">Comissões de competências anteriores não são tratadas como comissão gerada no mês atual. Elas aparecem somente no saldo acumulado quando os lançamentos estavam marcados em “Acumular”. Resgate em produto zera o saldo em dinheiro; resgate em dinheiro zera o saldo em produto.</p>
-          </div>
-
-          <div class="reportSection">
-            <h3>Resumo por competência incluída</h3>
-            <div class="tableWrap">
-              <table class="reportMonthTable">
-                <thead><tr><th>Competência</th><th>Vendas</th><th>Comissão gerada</th><th>Marcado para acumular</th><th>Resgates/zeragens</th><th>Saldo acumulado ao final</th></tr></thead>
-                <tbody id="reportMonthRows"><tr><td colspan="6">Nenhum período calculado.</td></tr></tbody>
+            <div id="reportAccumulatedOriginWrapV216" class="reportAccumulatedOriginWrapV216" hidden>
+              <h4>Comissões acumuladas por origem</h4>
+              <table class="reportOriginTable reportAccumulatedOriginTableV216">
+                <thead><tr><th>Origem</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
+                <tbody id="reportAccumulatedOriginRowsV216"><tr><td colspan="3">Nenhuma comissão acumulada por origem.</td></tr></tbody>
               </table>
             </div>
+            <div id="reportStatusBox" class="reportStatusBox" data-type="neutral"></div>
           </div>
 
-          <div class="reportSection">
-            <h3>Vendas por origem no período demonstrado</h3>
-            <div class="tableWrap">
-              <table class="reportOriginTable">
-                <thead><tr><th>Competência</th><th>Origem</th><th>Lançamentos</th><th>Total vendido</th><th>Comissão em produtos</th><th>Comissão em dinheiro</th></tr></thead>
-                <tbody id="reportOriginRows"><tr><td colspan="6">Nenhuma origem com venda registrada.</td></tr></tbody>
-              </table>
-            </div>
-            <p class="reportOriginNote">São exibidas somente as origens que tiveram venda. Site, loja física, WhatsApp, Instagram e outras origens são somadas no total geral do influencer, sem apagar os lançamentos individuais.</p>
+          <div id="reportOriginSectionV216" class="reportSection">
+            <h3>Vendas por origem</h3>
+            <table class="reportOriginTable reportOriginSimpleV216">
+              <thead><tr><th>Origem</th><th>Total vendido</th></tr></thead>
+              <tbody id="reportOriginRows"><tr><td colspan="2">Nenhuma origem com venda registrada.</td></tr></tbody>
+            </table>
           </div>
 
           <p id="reportFooter" class="pdfFooterClean"></p>
@@ -16840,7 +16858,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V215";
+const APP_BUILD_VERSION="V216";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -16873,9 +16891,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=215",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=216",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=215");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=216");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -23205,6 +23223,8 @@ function launchOriginSummaryV215(rows=[]){
 function openInfluencerLaunchHistory(infId,month=selectedMonth()){
   const modal=$("launchInfluencerHistoryModal");
   if(!modal)return;
+  /* V216: o modal deixa a section oculta de Lançamentos e passa a abrir em qualquer página. */
+  if(modal.parentElement!==document.body)document.body.appendChild(modal);
   const inf=infById(infId)||{};
   const targetMonth=validMonthValue(month)||selectedMonth();
   const rows=launchRowsForInfluencerMonthV215(infId,targetMonth);
@@ -23248,6 +23268,12 @@ function closeInfluencerLaunchHistory(){
   modal.hidden=true;
   modal.setAttribute("aria-hidden","true");
   document.body.style.overflow="";
+}
+function openSelectedReportInfluencerHistoryV216(){
+  const infId=$("reportInfluencer")?.value||"";
+  if(!infId){alert("Selecione um influencer.");return false;}
+  openInfluencerLaunchHistory(infId,selectedMonth());
+  return true;
 }
 if(!window.__WISENT_LAUNCH_HISTORY_MODAL_V215__){
   window.__WISENT_LAUNCH_HISTORY_MODAL_V215__=true;
@@ -28023,19 +28049,24 @@ function reportAccumulationTimeline(infId,asOfDate){
 }
 
 function reportGeneratedForRange(infId,start,end){
+  const startMonth=String(start||"").slice(0,7);
+  const endMonth=String(end||"").slice(0,7);
   const rows=(state.launches||[]).filter(row=>{
-    const date=normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"");
-    return row&&row.influencerId===infId&&row.status!=="Cancelado"&&date&&date>=start&&date<=end;
+    const accountingMonth=launchRecordMonthV215(row);
+    return row&&String(row.influencerId)===String(infId)&&row.status!=="Cancelado"&&accountingMonth&&accountingMonth>=startMonth&&accountingMonth<=endMonth;
   });
   const origins=launchOriginSummaryV215(rows);
+  const accumulatedRows=rows.filter(row=>row.accumulate===true);
   return {
     rows,
+    accumulatedRows,
     sold:rows.reduce((sum,row)=>sum+Number(row.sold||0),0),
     product:rows.reduce((sum,row)=>sum+Number(row.productCommission||0),0),
     cash:rows.reduce((sum,row)=>sum+Number(row.cashCommission||0),0),
-    accumulatedProduct:rows.filter(row=>row.accumulate).reduce((sum,row)=>sum+Number(row.productCommission||0),0),
-    accumulatedCash:rows.filter(row=>row.accumulate).reduce((sum,row)=>sum+Number(row.cashCommission||0),0),
-    origins
+    accumulatedProduct:accumulatedRows.reduce((sum,row)=>sum+Number(row.productCommission||0),0),
+    accumulatedCash:accumulatedRows.reduce((sum,row)=>sum+Number(row.cashCommission||0),0),
+    origins,
+    accumulatedOrigins:launchOriginSummaryV215(accumulatedRows)
   };
 }
 
@@ -28086,26 +28117,33 @@ function reportCommissionSnapshot(infId,month=selectedMonth()){
   });
   const deductedProduct=coverageEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0);
   const deductedCash=coverageEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0);
-  const sourceRows=months.flatMap(row=>(row.generated.origins||[]).map(origin=>({
-    month:row.month,
-    origin:origin.origin,
-    count:origin.count,
-    sold:origin.sold,
-    product:origin.product,
-    cash:origin.cash
-  }))).filter(row=>row.count>0&&(row.sold!==0||row.product!==0||row.cash!==0));
+  const coverageStartMonth=coverage.start.slice(0,7);
+  const coverageEndMonth=coverage.end.slice(0,7);
+  const multiMonth=coverageStartMonth!==coverageEndMonth;
+  const displayedGenerated=multiMonth?coverageGenerated:selectedGenerated;
+  const sourceRows=(displayedGenerated.origins||[])
+    .filter(row=>Number(row.sold||0)>0)
+    .map(row=>({origin:row.origin,count:row.count,sold:row.sold}));
+  const accumulatedOriginRows=(displayedGenerated.accumulatedOrigins||[])
+    .filter(row=>Number(row.product||0)!==0||Number(row.cash||0)!==0)
+    .map(row=>({origin:row.origin,product:row.product,cash:row.cash}));
+  const hasAccumulation=Number(opening.product||0)>0||Number(opening.cash||0)>0||
+    Number(coverageGenerated.accumulatedProduct||0)>0||Number(coverageGenerated.accumulatedCash||0)>0||
+    accumulatedOriginRows.length>0;
   return {
-    range,coverage,opening,closing,
-    sold:selectedGenerated.sold,
-    earnedProduct:selectedGenerated.product,
-    earnedCash:selectedGenerated.cash,
-    coverageGenerated,
+    range,coverage,opening,closing,multiMonth,
+    sold:displayedGenerated.sold,
+    earnedProduct:displayedGenerated.product,
+    earnedCash:displayedGenerated.cash,
+    coverageGenerated,displayedGenerated,
     accumulatedProduct:coverageGenerated.accumulatedProduct,
     accumulatedCash:coverageGenerated.accumulatedCash,
     deductedProduct,deductedCash,
     status:reportRedemptionStatus(infId,coverage.start,coverage.end,closing),
     months,
     sourceRows,
+    accumulatedOriginRows,
+    hasAccumulation,
     coverageEvents
   };
 }
@@ -28121,7 +28159,8 @@ function renderReport(){
     range:reportMonthRange(month),coverage:reportMonthRange(month),
     opening:{product:0,cash:0},closing:{product:0,cash:0},
     sold:0,earnedProduct:0,earnedCash:0,accumulatedProduct:0,accumulatedCash:0,
-    deductedProduct:0,deductedCash:0,months:[],sourceRows:[],status:{type:"neutral",text:"Nenhuma movimentação calculada."}
+    deductedProduct:0,deductedCash:0,sourceRows:[],accumulatedOriginRows:[],hasAccumulation:false,
+    status:{type:"neutral",text:""}
   };
 
   $("reportTitle").textContent=state.settings.pdfTitle;
@@ -28132,21 +28171,24 @@ function renderReport(){
   if(pdfLogo)$("reportLogo").src=pdfLogo;
   applyPdfWatermark("reportWatermark");
 
-  const monthText=monthLabel(snapshot.range.month);
-  const coverageStartMonth=snapshot.coverage.start.slice(0,7);
-  const coverageEndMonth=snapshot.coverage.end.slice(0,7);
-  const multiMonth=coverageStartMonth!==coverageEndMonth;
+  const startMonth=snapshot.coverage.start.slice(0,7);
+  const endMonth=snapshot.coverage.end.slice(0,7);
+  const periodText=startMonth===endMonth
+    ?`Competência: ${monthLabel(endMonth)}`
+    :`Período consolidado: ${monthLabel(startMonth)} a ${monthLabel(endMonth)}`;
   $("reportName").textContent=inf?inf.name:"Selecione um influencer";
   $("reportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
-  $("reportPeriod").textContent=`Competência principal: ${monthText} • posição atualizada até ${dateBR(snapshot.coverage.end)}`;
+  $("reportPeriod").textContent=periodText;
   $("reportSold").textContent=money(snapshot.sold);
   $("reportProduct").textContent=money(snapshot.earnedProduct);
   $("reportCash").textContent=money(snapshot.earnedCash);
 
-  const coverageText=multiMonth
-    ?`Este PDF consolida de ${monthLabel(coverageStartMonth)} até ${monthLabel(coverageEndMonth)} porque havia competência(s) ainda não marcada(s) como enviada(s). Todos os lançamentos do mesmo influencer em cada competência — inclusive Site, Loja física, WhatsApp e Instagram — são somados automaticamente. Os cards principais acima continuam mostrando somente ${monthText}.`
-    :`Este PDF demonstra ${monthText}. Todos os lançamentos do mesmo influencer nesta competência são somados automaticamente, preservando o detalhamento por origem. Saldos anteriores aparecem abaixo somente quando estavam marcados para acumular.`;
-  if($("reportCoverageText"))$("reportCoverageText").textContent=coverageText;
+  const coverageNotice=$("reportCoverageNotice");
+  if(coverageNotice)coverageNotice.hidden=true;
+  if($("reportCoverageText"))$("reportCoverageText").textContent="";
+
+  const accumulationSection=$("reportAccumulationSectionV216");
+  if(accumulationSection)accumulationSection.hidden=!snapshot.hasAccumulation;
   if($("reportOpeningProduct"))$("reportOpeningProduct").textContent=money(snapshot.opening.product);
   if($("reportOpeningCash"))$("reportOpeningCash").textContent=money(snapshot.opening.cash);
   if($("reportAccumulatedProduct"))$("reportAccumulatedProduct").textContent=money(snapshot.accumulatedProduct);
@@ -28156,31 +28198,30 @@ function renderReport(){
   if($("reportClosingProduct"))$("reportClosingProduct").textContent=money(snapshot.closing.product);
   if($("reportClosingCash"))$("reportClosingCash").textContent=money(snapshot.closing.cash);
   if($("reportStatusBox")){
+    $("reportStatusBox").hidden=!snapshot.hasAccumulation;
     $("reportStatusBox").dataset.type=snapshot.status.type||"neutral";
-    $("reportStatusBox").textContent=snapshot.status.text||"";
+    $("reportStatusBox").textContent=snapshot.hasAccumulation?(snapshot.status.text||""):"";
   }
-  if($("reportMonthRows")){
-    $("reportMonthRows").innerHTML=snapshot.months.length?snapshot.months.map(row=>`<tr>
-      <td><strong>${esc(monthLabel(row.month))}</strong>${row.month===snapshot.range.month?'<br><span class="badge blue">Competência principal</span>':""}</td>
-      <td>${money(row.generated.sold)}</td>
-      <td>${reportDualCell(row.generated.product,row.generated.cash)}</td>
-      <td>${reportDualCell(row.generated.accumulatedProduct,row.generated.accumulatedCash)}</td>
-      <td>${reportDualCell(row.deductedProduct,row.deductedCash)}</td>
-      <td>${reportDualCell(row.closing.product,row.closing.cash)}</td>
-    </tr>`).join(""):`<tr><td colspan="6">Nenhum lançamento encontrado no período.</td></tr>`;
-  }
-  if($("reportOriginRows")){
-    $("reportOriginRows").innerHTML=(snapshot.sourceRows||[]).length?snapshot.sourceRows.map(row=>`<tr>
-      <td>${esc(monthLabel(row.month))}</td>
+
+  const accumulatedOriginWrap=$("reportAccumulatedOriginWrapV216");
+  const accumulatedOrigins=snapshot.accumulatedOriginRows||[];
+  if(accumulatedOriginWrap)accumulatedOriginWrap.hidden=!snapshot.hasAccumulation||!accumulatedOrigins.length;
+  if($("reportAccumulatedOriginRowsV216")){
+    $("reportAccumulatedOriginRowsV216").innerHTML=accumulatedOrigins.length?accumulatedOrigins.map(row=>`<tr>
       <td><strong>${esc(row.origin||"Sem origem")}</strong></td>
-      <td>${Number(row.count||0)}</td>
-      <td>${money(row.sold)}</td>
       <td>${money(row.product)}</td>
       <td>${money(row.cash)}</td>
-    </tr>`).join(""):`<tr><td colspan="6">Nenhuma origem com venda registrada no período demonstrado.</td></tr>`;
+    </tr>`).join(""):`<tr><td colspan="3">Nenhuma comissão acumulada por origem.</td></tr>`;
+  }
+
+  const sources=(snapshot.sourceRows||[]).filter(row=>Number(row.sold||0)>0);
+  if($("reportOriginRows")){
+    $("reportOriginRows").innerHTML=sources.length?sources.map(row=>`<tr>
+      <td><strong>${esc(row.origin||"Sem origem")}</strong></td>
+      <td>${money(row.sold)}</td>
+    </tr>`).join(""):`<tr><td colspan="2">Nenhuma origem com venda registrada no período.</td></tr>`;
   }
 }
-
 function printReport(){
   if(!$("reportInfluencer").value){alert("Selecione um influencer.");return}
   renderReport();
