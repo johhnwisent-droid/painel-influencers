@@ -14529,6 +14529,32 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   body.print-report #reports .pdfFooterClean{margin-top:12px;padding-top:8px;font-size:8pt}
 }
 /* ===== FIM V217 RESPONSIVO ===== */
+
+/* ===== V218 — PDF LIMPO: ORIGENS COMO FONTE ÚNICA DO DETALHAMENTO ===== */
+#reports #reportAccumulationSectionV217,
+#reports #reportOriginSectionV217{width:100%;max-width:760px;margin-left:auto;margin-right:auto}
+#reports #reportAccumulationSectionV217 h3,
+#reports #reportOriginSectionV217 h3{margin:0 0 10px;font-size:15px;line-height:1.25;color:#0f172a}
+#reports .reportOriginTable{width:100%;table-layout:fixed}
+#reports .reportOriginTable th,#reports .reportOriginTable td{overflow-wrap:anywhere;word-break:normal}
+@media(max-width:620px){
+  #reports #printArea{padding:14px!important}
+  #reports .pdfThreeCards{grid-template-columns:1fr!important;gap:8px!important}
+  #reports .pdfBox{min-width:0!important;padding:12px!important}
+  #reports .reportSection{padding:12px!important;border-radius:14px!important}
+  #reports .reportOriginTable th,#reports .reportOriginTable td{padding:8px 7px!important;font-size:10.5px!important}
+  #reports .reportAccumulatedOriginTableV217 th:first-child,#reports .reportAccumulatedOriginTableV217 td:first-child{width:40%!important}
+  #reports .reportAccumulatedOriginTableV217 th:nth-child(2),#reports .reportAccumulatedOriginTableV217 td:nth-child(2),#reports .reportAccumulatedOriginTableV217 th:nth-child(3),#reports .reportAccumulatedOriginTableV217 td:nth-child(3){width:30%!important}
+}
+@media print{
+  body.print-report #reportAccumulationSectionV217,
+  body.print-report #reportOriginSectionV217{max-width:none!important;margin:12px 0 0!important}
+  body.print-report #reportAccumulationSectionV217[hidden]{display:none!important}
+  body.print-report #reportAccumulationSectionV217,
+  body.print-report #reportOriginSectionV217{break-inside:avoid;page-break-inside:avoid}
+}
+/* ===== FIM V218 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -14619,7 +14645,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V217</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V218</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15746,24 +15772,11 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
           </div>
 
           <div id="reportAccumulationSectionV217" class="reportSection" hidden>
-            <h3>Demonstrativo do saldo acumulado</h3>
-            <table class="reportBalanceTable">
-              <thead><tr><th>Movimentação</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
-              <tbody>
-                <tr><td>Saldo acumulado anterior</td><td id="reportOpeningProduct">R$ 0,00</td><td id="reportOpeningCash">R$ 0,00</td></tr>
-                <tr><td>Comissões acumuladas no período</td><td id="reportAccumulatedProduct">R$ 0,00</td><td id="reportAccumulatedCash">R$ 0,00</td></tr>
-                <tr><td>Resgates e zeragens</td><td id="reportDeductedProduct">R$ 0,00</td><td id="reportDeductedCash">R$ 0,00</td></tr>
-                <tr class="reportFinalRow"><td>Saldo disponível ao final</td><td id="reportClosingProduct">R$ 0,00</td><td id="reportClosingCash">R$ 0,00</td></tr>
-              </tbody>
+            <h3>Comissões acumuladas por origem</h3>
+            <table class="reportOriginTable reportAccumulatedOriginTableV217">
+              <thead><tr><th>Origem</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
+              <tbody id="reportAccumulatedOriginRowsV217"><tr><td colspan="3">Nenhuma comissão acumulada por origem.</td></tr></tbody>
             </table>
-            <div id="reportAccumulatedOriginWrapV217" class="reportAccumulatedOriginWrapV217" hidden>
-              <h4>Comissões acumuladas por origem</h4>
-              <table class="reportOriginTable reportAccumulatedOriginTableV217">
-                <thead><tr><th>Origem</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
-                <tbody id="reportAccumulatedOriginRowsV217"><tr><td colspan="3">Nenhuma comissão acumulada por origem.</td></tr></tbody>
-              </table>
-            </div>
-            <div id="reportStatusBox" class="reportStatusBox" data-type="neutral"></div>
           </div>
 
           <div id="reportOriginSectionV217" class="reportSection">
@@ -16923,7 +16936,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V217";
+const APP_BUILD_VERSION="V218";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -16956,9 +16969,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=217",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=218",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=217");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=218");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -23263,11 +23276,20 @@ function renderLaunchTotals(){
 /* ===== V215 — HISTÓRICO CONSOLIDADO DE LANÇAMENTOS ===== */
 function launchRecordMonthV215(row){
   const storedAccounting=validMonthValue(row?.accountingMonth);
-  if(storedAccounting)return storedAccounting;
   const explicitMonth=validMonthValue(row?.month);
-  const dateMonth=(normalizeDateOnly(row?.date)||"").slice(0,7);
-  if(row?.periodMode==="month")return explicitMonth||dateMonth;
-  return dateMonth||explicitMonth;
+  const normalizedDate=normalizeDateOnly(row?.date);
+  const dateMonth=(normalizedDate||"").slice(0,7);
+
+  /* V218: venda de dia específico pertence sempre ao mês da própria data.
+     Isso impede um registro como 17/07 de ficar fora do relatório de julho
+     por causa de um accountingMonth legado ou preenchido incorretamente. */
+  if(row?.periodMode==="day")return dateMonth||storedAccounting||explicitMonth;
+  if(row?.periodMode==="month")return storedAccounting||explicitMonth||dateMonth;
+
+  /* Registros antigos sem periodMode: dia diferente de 01 é tratado como
+     venda específica; data no primeiro dia mantém a competência gravada. */
+  if(normalizedDate&&normalizedDate.slice(8,10)!=="01")return dateMonth||storedAccounting||explicitMonth;
+  return storedAccounting||explicitMonth||dateMonth;
 }
 
 /* ===== V217 — IDENTIDADE HISTÓRICA E ORIGENS BLINDADAS =====
@@ -23297,31 +23319,50 @@ function reportNumberV217(value){
 }
 function reportInfluencerIdentityV217(infId){
   const selected=infById(infId)||{};
-  const id=String(infId??"");
-  const coupon=reportIdentityKeyV217(selected.coupon);
-  const name=reportIdentityKeyV217(selected.name);
-  const ids=new Set([id]);
-  (state.influencers||[]).forEach(item=>{
-    if(!item)return;
-    const itemCoupon=reportIdentityKeyV217(item.coupon);
-    const itemName=reportIdentityKeyV217(item.name);
-    if(coupon&&itemCoupon===coupon)ids.add(String(item.id??""));
-    else if(!coupon&&name&&itemName===name)ids.add(String(item.id??""));
-  });
-  return {id,coupon,name,ids};
+  const ids=new Set([String(infId??"")].filter(Boolean));
+  const coupons=new Set([reportIdentityKeyV217(selected.coupon)].filter(Boolean));
+  const names=new Set([reportIdentityKeyV217(selected.name)].filter(Boolean));
+
+  /* V218: expande aliases de forma transitiva. Um lançamento antigo ligado
+     ao mesmo ID pode carregar nome/cupom históricos; esses aliases então
+     conectam outros registros legítimos do mesmo influencer sem alterar dados. */
+  const candidates=[...(state.influencers||[]),...(state.launches||[])];
+  for(let pass=0;pass<6;pass++){
+    let changed=false;
+    candidates.forEach(item=>{
+      if(!item)return;
+      const itemId=String(item.influencerId??item.id??"");
+      const linked=infById(itemId)||{};
+      const itemCoupon=reportIdentityKeyV217(item.coupon||item.influencerCoupon||linked.coupon);
+      const itemName=reportIdentityKeyV217(item.influencerName||item.name||linked.name);
+      const matches=(itemId&&ids.has(itemId))||(itemCoupon&&coupons.has(itemCoupon))||(itemName&&names.has(itemName));
+      if(!matches)return;
+      if(itemId&&!ids.has(itemId)){ids.add(itemId);changed=true;}
+      if(itemCoupon&&!coupons.has(itemCoupon)){coupons.add(itemCoupon);changed=true;}
+      if(itemName&&!names.has(itemName)){names.add(itemName);changed=true;}
+    });
+    if(!changed)break;
+  }
+  return {
+    id:String(infId??""),
+    coupon:reportIdentityKeyV217(selected.coupon),
+    name:reportIdentityKeyV217(selected.name),
+    ids,coupons,names
+  };
 }
 function reportRecordBelongsToInfluencerV217(row,infId){
   if(!row)return false;
   const identity=reportInfluencerIdentityV217(infId);
   const rowId=String(row.influencerId??"");
-  if(identity.ids.has(rowId))return true;
+  if(rowId&&identity.ids.has(rowId))return true;
   const linked=infById(rowId)||{};
   const rowCoupon=reportIdentityKeyV217(row.coupon||row.influencerCoupon||linked.coupon);
   const rowName=reportIdentityKeyV217(row.influencerName||linked.name);
   const rowIdKey=reportIdentityKeyV217(rowId);
-  if(identity.coupon&&(rowCoupon===identity.coupon||rowIdKey===identity.coupon))return true;
-  if(identity.name&&(rowName===identity.name||rowIdKey===identity.name)){
-    return !identity.coupon||!rowCoupon||rowCoupon===identity.coupon;
+  if(rowCoupon&&identity.coupons.has(rowCoupon))return true;
+  if(rowIdKey&&(identity.coupons.has(rowIdKey)||identity.names.has(rowIdKey)))return true;
+  if(rowName&&identity.names.has(rowName)){
+    return !rowCoupon||!identity.coupons.size||identity.coupons.has(rowCoupon);
   }
   return false;
 }
@@ -23341,6 +23382,63 @@ function reportOriginLabelV217(value){
   const configured=(state.settings?.origins||[]).find(item=>reportOriginKeyV217(item)===reportOriginKeyV217(raw));
   return String(configured||raw);
 }
+
+/* ===== V218 — FONTE CANÔNICA DO HISTÓRICO E DO PDF ===== */
+function reportBooleanV218(value){
+  if(value===true||value===1)return true;
+  if(value===false||value===0||value==null)return false;
+  const normalized=reportIdentityKeyV217(value);
+  return ["1","true","sim","yes","on","acumular","acumulando"].includes(normalized);
+}
+function reportLaunchRowsForRangeV218(infId,start,end){
+  const startMonth=String(start||"").slice(0,7);
+  const endMonth=String(end||"").slice(0,7);
+  return (state.launches||[])
+    .filter(row=>{
+      const accountingMonth=launchRecordMonthV215(row);
+      return row&&reportRecordBelongsToInfluencerV217(row,infId)&&row.status!=="Cancelado"&&accountingMonth&&accountingMonth>=startMonth&&accountingMonth<=endMonth;
+    })
+    .slice()
+    .sort((a,b)=>{
+      const am=launchRecordMonthV215(a)||"";
+      const bm=launchRecordMonthV215(b)||"";
+      if(am!==bm)return am.localeCompare(bm);
+      const ad=reportLaunchEffectiveDateV217(a)||`${am}-01`;
+      const bd=reportLaunchEffectiveDateV217(b)||`${bm}-01`;
+      return ad.localeCompare(bd)||String(a.createdAt||a.updatedAt||a.id||"").localeCompare(String(b.createdAt||b.updatedAt||b.id||""));
+    });
+}
+function reportAggregateLaunchRowsV218(rows=[]){
+  const validRows=(Array.isArray(rows)?rows:[]).filter(Boolean);
+  const accumulatedRows=validRows.filter(row=>reportBooleanV218(row.accumulate));
+  return {
+    rows:validRows,
+    accumulatedRows,
+    sold:validRows.reduce((sum,row)=>sum+reportNumberV217(row.sold),0),
+    product:validRows.reduce((sum,row)=>sum+reportNumberV217(row.productCommission),0),
+    cash:validRows.reduce((sum,row)=>sum+reportNumberV217(row.cashCommission),0),
+    accumulatedProduct:accumulatedRows.reduce((sum,row)=>sum+reportNumberV217(row.productCommission),0),
+    accumulatedCash:accumulatedRows.reduce((sum,row)=>sum+reportNumberV217(row.cashCommission),0),
+    origins:launchOriginSummaryV215(validRows),
+    accumulatedOrigins:launchOriginSummaryV215(accumulatedRows)
+  };
+}
+function reportGeneratedForCoverageV218(infId,coverage,selectedMonth){
+  const allRows=reportLaunchRowsForRangeV218(infId,coverage.start,coverage.end);
+  const historyIds=new Set((coverage.historyRecord?.launchIds||[]).map(value=>String(value)));
+  let includedRows;
+  if(historyIds.size){
+    includedRows=allRows.filter(row=>historyIds.has(String(row.id||"")));
+  }else if(coverage.source==="history"){
+    /* Compatibilidade com relatórios V214–V217, que ainda não gravavam IDs. */
+    includedRows=allRows;
+  }else{
+    const selected=validMonthValue(selectedMonth)||String(coverage.end||"").slice(0,7);
+    includedRows=allRows.filter(row=>launchRecordMonthV215(row)===selected||!reportBooleanV218(row.pdfSent));
+  }
+  return reportAggregateLaunchRowsV218(includedRows);
+}
+/* ===== FIM V218 ===== */
 /* ===== FIM V217 ===== */
 
 function launchRowsForInfluencerMonthV215(infId,month=selectedMonth()){
@@ -23403,7 +23501,7 @@ function openInfluencerLaunchHistory(infId,month=selectedMonth()){
     <td>${money(row.sold)}</td>
     <td>${money(row.productCommission)}</td>
     <td>${money(row.cashCommission)}</td>
-    <td>${row.accumulate?"Sim":"Não"}</td>
+    <td>${reportBooleanV218(row.accumulate)?"Sim":"Não"}</td>
     <td>${row.status==="Cancelado"?"Cancelado — não somado":esc(row.status||"-")}</td>
     <td>${esc(row.notes||"-")}</td>
   </tr>`).join(""):`<tr><td colspan="8">Nenhum lançamento encontrado para este influencer em ${esc(monthLabel(targetMonth))}.</td></tr>`;
@@ -25029,7 +25127,7 @@ function accumulationLedgerEventsForInfluencer(infId,asOfDate=today()){
 
   (state.launches||[]).forEach(l=>{
     const date=reportLaunchEffectiveDateV217(l);
-    if(!l.accumulate||!reportRecordBelongsToInfluencerV217(l,infId)||!date||date>asOfDate)return;
+    if(!reportBooleanV218(l.accumulate)||!reportRecordBelongsToInfluencerV217(l,infId)||!date||date>asOfDate)return;
 
     events.push({
       at:date+"T00:00:00.000",
@@ -28133,7 +28231,8 @@ function reportCoverageRange(infId,month=selectedMonth()){
       end:normalizeDateOnly(currentHistory.coverageEnd)||selected.end,
       month:selected.month,
       source:"history",
-      previousEnd:""
+      previousEnd:"",
+      historyRecord:currentHistory
     };
   }
 
@@ -28145,14 +28244,14 @@ function reportCoverageRange(infId,month=selectedMonth()){
 
   const unsentDates=(state.launches||[])
     .map(row=>({row,date:reportLaunchEffectiveDateV217(row),month:launchRecordMonthV215(row)}))
-    .filter(item=>item.row&&reportRecordBelongsToInfluencerV217(item.row,infId)&&item.row.status!=="Cancelado"&&!item.row.pdfSent&&item.date&&item.month&&item.month<=selected.month&&(previousEnd?item.date>previousEnd:true))
+    .filter(item=>item.row&&reportRecordBelongsToInfluencerV217(item.row,infId)&&item.row.status!=="Cancelado"&&!reportBooleanV218(item.row.pdfSent)&&item.date&&item.month&&item.month<=selected.month)
     .map(item=>item.date)
     .sort();
   if(unsentDates.length&&unsentDates[0]<start)start=`${unsentDates[0].slice(0,7)}-01`;
   if(!previousEnd&&unsentDates.length)start=`${unsentDates[0].slice(0,7)}-01`;
   if(start>selected.end)start=selected.start;
 
-  return {start,end:selected.end,month:selected.month,source:previousEnd?"after-last-sent":"selected",previousEnd};
+  return {start,end:selected.end,month:selected.month,source:previousEnd?"after-last-sent":"selected",previousEnd,historyRecord:null};
 }
 
 function reportAccumulationTimeline(infId,asOfDate){
@@ -28199,25 +28298,7 @@ function reportAccumulationTimeline(infId,asOfDate){
 }
 
 function reportGeneratedForRange(infId,start,end){
-  const startMonth=String(start||"").slice(0,7);
-  const endMonth=String(end||"").slice(0,7);
-  const rows=(state.launches||[]).filter(row=>{
-    const accountingMonth=launchRecordMonthV215(row);
-    return row&&reportRecordBelongsToInfluencerV217(row,infId)&&row.status!=="Cancelado"&&accountingMonth&&accountingMonth>=startMonth&&accountingMonth<=endMonth;
-  });
-  const origins=launchOriginSummaryV215(rows);
-  const accumulatedRows=rows.filter(row=>row.accumulate===true);
-  return {
-    rows,
-    accumulatedRows,
-    sold:rows.reduce((sum,row)=>sum+reportNumberV217(row.sold),0),
-    product:rows.reduce((sum,row)=>sum+reportNumberV217(row.productCommission),0),
-    cash:rows.reduce((sum,row)=>sum+reportNumberV217(row.cashCommission),0),
-    accumulatedProduct:accumulatedRows.reduce((sum,row)=>sum+reportNumberV217(row.productCommission),0),
-    accumulatedCash:accumulatedRows.reduce((sum,row)=>sum+reportNumberV217(row.cashCommission),0),
-    origins,
-    accumulatedOrigins:launchOriginSummaryV215(accumulatedRows)
-  };
+  return reportAggregateLaunchRowsV218(reportLaunchRowsForRangeV218(infId,start,end));
 }
 
 function reportRedemptionStatus(infId,start,end,closing){
@@ -28250,7 +28331,7 @@ function reportCommissionSnapshot(infId,month=selectedMonth()){
   const closing=reportAccumulationTimeline(infId,coverage.end);
   const coverageEvents=(closing.events||[]).filter(event=>event.date>=coverage.start&&event.date<=coverage.end);
   const selectedGenerated=reportGeneratedForRange(infId,range.start,range.end);
-  const coverageGenerated=reportGeneratedForRange(infId,coverage.start,coverage.end);
+  const coverageGenerated=reportGeneratedForCoverageV218(infId,coverage,range.month);
   const months=reportMonthSequence(coverage.start.slice(0,7),coverage.end.slice(0,7)).map(monthValue=>{
     const monthRange=reportMonthRange(monthValue);
     const generated=reportGeneratedForRange(infId,monthRange.start,monthRange.end);
@@ -28337,25 +28418,9 @@ function renderReport(){
   if(coverageNotice)coverageNotice.hidden=true;
   if($("reportCoverageText"))$("reportCoverageText").textContent="";
 
-  const accumulationSection=$("reportAccumulationSectionV217");
-  if(accumulationSection)accumulationSection.hidden=!snapshot.hasAccumulation;
-  if($("reportOpeningProduct"))$("reportOpeningProduct").textContent=money(snapshot.opening.product);
-  if($("reportOpeningCash"))$("reportOpeningCash").textContent=money(snapshot.opening.cash);
-  if($("reportAccumulatedProduct"))$("reportAccumulatedProduct").textContent=money(snapshot.accumulatedProduct);
-  if($("reportAccumulatedCash"))$("reportAccumulatedCash").textContent=money(snapshot.accumulatedCash);
-  if($("reportDeductedProduct"))$("reportDeductedProduct").textContent=money(snapshot.deductedProduct);
-  if($("reportDeductedCash"))$("reportDeductedCash").textContent=money(snapshot.deductedCash);
-  if($("reportClosingProduct"))$("reportClosingProduct").textContent=money(snapshot.closing.product);
-  if($("reportClosingCash"))$("reportClosingCash").textContent=money(snapshot.closing.cash);
-  if($("reportStatusBox")){
-    $("reportStatusBox").hidden=!snapshot.hasAccumulation;
-    $("reportStatusBox").dataset.type=snapshot.status.type||"neutral";
-    $("reportStatusBox").textContent=snapshot.hasAccumulation?(snapshot.status.text||""):"";
-  }
-
-  const accumulatedOriginWrap=$("reportAccumulatedOriginWrapV217");
   const accumulatedOrigins=snapshot.accumulatedOriginRows||[];
-  if(accumulatedOriginWrap)accumulatedOriginWrap.hidden=!snapshot.hasAccumulation||!accumulatedOrigins.length;
+  const accumulationSection=$("reportAccumulationSectionV217");
+  if(accumulationSection)accumulationSection.hidden=!accumulatedOrigins.length;
   if($("reportAccumulatedOriginRowsV217")){
     $("reportAccumulatedOriginRowsV217").innerHTML=accumulatedOrigins.length?accumulatedOrigins.map(row=>`<tr>
       <td><strong>${esc(row.origin||"Sem origem")}</strong></td>
@@ -28408,14 +28473,15 @@ function markReportSent(){
     openingCash:snapshot.opening.cash,
     closingProduct:snapshot.closing.product,
     closingCash:snapshot.closing.cash,
-    launchCount:(snapshot.coverageGenerated?.rows||[]).length,
+    launchCount:(snapshot.displayedGenerated?.rows||[]).length,
+    launchIds:(snapshot.displayedGenerated?.rows||[]).map(row=>String(row.id||"")).filter(Boolean),
     sourceBreakdown:settingsV210Clone(snapshot.sourceRows||[],[])
   });
 
   const changed=[];
+  const includedIds=new Set((snapshot.displayedGenerated?.rows||[]).map(row=>String(row.id||"")));
   (state.launches||[]).forEach(row=>{
-    const date=reportLaunchEffectiveDateV217(row);
-    if(!reportRecordBelongsToInfluencerV217(row,inf.id)||row.status==="Cancelado"||!date||date<snapshot.coverage.start||date>snapshot.coverage.end)return;
+    if(!includedIds.has(String(row.id||""))||row.status==="Cancelado")return;
     row.pdfSent=true;
     row.status="Enviado";
     row.updatedById=audit.id||"";
