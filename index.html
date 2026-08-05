@@ -14436,7 +14436,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V208</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V212</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16363,7 +16363,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
             <button type="button" class="secondary" onclick="removePdfLogo()">Remover logo do PDF</button>
             <button type="button" class="secondary" onclick="removePdfWatermark()">Remover marca d'água</button>
             <button type="button" class="secondary" onclick="exportBackup()">Exportar backup</button>
-            <button type="button" class="secondary" onclick="exportWisentDataBackupV211()">Backup blindado V211</button>
+            <button type="button" class="secondary" onclick="exportWisentDataBackupV212()">Backup blindado V212</button>
             <label style="display:inline-flex">
               <span class="secondary" style="padding:10px 14px;border-radius:12px;color:#1e40af;background:#eef2ff">Importar backup</span>
               <input type="file" accept="application/json" onchange="importBackup(event)" class="hidden">
@@ -16683,7 +16683,8 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V211";
+const APP_BUILD_VERSION="V212";
+const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
 let launchRecoveryPreCloudCandidatesV208=[];
@@ -16715,9 +16716,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=211",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=212",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=211");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=212");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -20780,7 +20781,7 @@ async function runSystemAuditAndShow(){
     .join("\n");
 
   const message=[
-    "AUDITORIA DO SISTEMA — V163",
+    `AUDITORIA DO SISTEMA — ${APP_BUILD_VERSION}`,
     "",
     `Status operacional: ${status}`,
     securityText,
@@ -20808,7 +20809,7 @@ async function runSystemAuditAndShow(){
   );
 
   updateCloudDebug(
-    `auditoria V163: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
+    `auditoria ${APP_BUILD_VERSION}: ${s.passes} aprovados, ${s.warnings} alertas, ${s.errors} erros, ${s.security} pendências de segurança`
   );
 
   return report;
@@ -20904,319 +20905,9 @@ function mergeInfluencerLaunchCollections(...collections){
   });
 }
 
-function readInfluencerLaunchSnapshot(){
-  try{
-    const raw=localStorage.getItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY);
-    const parsed=raw?JSON.parse(raw):[];
-    return Array.isArray(parsed)?parsed:[];
-  }catch(e){
-    return [];
-  }
-}
-
-function writeInfluencerLaunchSnapshot(rows=state.launches||[]){
-  try{
-    localStorage.setItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY,JSON.stringify(Array.isArray(rows)?rows:[]));
-  }catch(e){
-    console.warn("Não foi possível gravar o espelho local dos lançamentos de influencers:",e);
-  }
-}
-
-function readInfluencerLaunchPendingQueue(){
-  try{
-    const raw=localStorage.getItem(INFLUENCER_LAUNCH_PENDING_KEY);
-    const parsed=raw?JSON.parse(raw):[];
-    return Array.isArray(parsed)?parsed.filter(x=>x&&x.id&&x.record):[];
-  }catch(e){
-    return [];
-  }
-}
-
-function writeInfluencerLaunchPendingQueue(queue){
-  try{
-    localStorage.setItem(INFLUENCER_LAUNCH_PENDING_KEY,JSON.stringify(Array.isArray(queue)?queue:[]));
-  }catch(e){
-    console.warn("Não foi possível gravar a fila local dos lançamentos de influencers:",e);
-  }
-}
-
-function queueInfluencerLaunchCloudRecord(record){
-  if(!record||!record.id)return false;
-
-  const queue=readInfluencerLaunchPendingQueue();
-  const entry={
-    id:String(record.id),
-    record:cloneSafe(record,record),
-    queuedAt:new Date().toISOString()
-  };
-
-  const idx=queue.findIndex(x=>String(x.id)===entry.id);
-  if(idx>=0)queue[idx]=entry;
-  else queue.push(entry);
-
-  writeInfluencerLaunchPendingQueue(queue);
-  writeInfluencerLaunchSnapshot(state.launches||[]);
-  return true;
-}
-
-function influencerLaunchCloudRow(record){
-  return {
-    chave:INFLUENCER_LAUNCH_RECORD_PREFIX+String(record.id),
-    valor:JSON.stringify(record)
-  };
-}
-
-async function flushInfluencerLaunchPendingQueue(){
-  if(launchFlushBusy)return false;
-
-  let queue=readInfluencerLaunchPendingQueue();
-  if(!queue.length)return true;
-
-  launchFlushBusy=true;
-
-  try{
-    while(queue.length){
-      const batch=queue.slice(0,40);
-      const payload=batch.map(x=>influencerLaunchCloudRow(x.record));
-
-      const response=await fetchWithTimeout(
-        SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",
-        {
-          method:"POST",
-          headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
-          body:JSON.stringify(payload)
-        },
-        12000
-      );
-
-      if(!response.ok){
-        const text=await response.text();
-        console.error("Falha ao sincronizar lançamentos individuais de influencers:",text);
-        updateCloudStatus("Lançamento de influencer salvo neste aparelho. Sincronização pendente.",true);
-        updateCloudDebug("fila local de lançamentos preservada; detalhe: "+text.slice(0,160));
-        return false;
-      }
-
-      const sentMap=new Map(batch.map(x=>[String(x.id),String(x.queuedAt)]));
-      const latest=readInfluencerLaunchPendingQueue().filter(x=>{
-        const sentAt=sentMap.get(String(x.id));
-        return !sentAt||String(x.queuedAt)!==sentAt;
-      });
-
-      writeInfluencerLaunchPendingQueue(latest);
-      queue=latest;
-    }
-
-    updateCloudStatus("Lançamentos dos influencers sincronizados.");
-    updateCloudDebug("fila individual da aba Lançamentos sincronizada");
-    return true;
-  }catch(e){
-    console.error("Erro na fila de lançamentos de influencers:",e);
-    updateCloudStatus("Lançamento de influencer salvo neste aparelho. Tentaremos novamente.",true);
-    updateCloudDebug(e.name==="AbortError"?"tempo esgotado na sincronização dos lançamentos":"erro: "+(e.message||e));
-    return false;
-  }finally{
-    launchFlushBusy=false;
-  }
-}
-
-function applyInfluencerLaunchCloudRecords(records){
-  const current=Array.isArray(state.launches)?state.launches:[];
-  const pending=readInfluencerLaunchPendingQueue();
-
-  const tombstones=new Set();
-  const cloudItems=[];
-
-  (records||[]).forEach(record=>{
-    if(!record||!record.id)return;
-    if(record.deleted===true)tombstones.add(String(record.id));
-    else cloudItems.push(record);
-  });
-
-  pending.forEach(entry=>{
-    const record=entry.record;
-    if(record?.deleted===true)tombstones.add(String(record.id));
-  });
-
-  let merged=mergeInfluencerLaunchCollections(current,cloudItems);
-
-  if(tombstones.size){
-    merged=merged.filter(item=>!tombstones.has(String(item.id)));
-  }
-
-  const pendingItems=pending
-    .map(x=>x.record)
-    .filter(x=>x&&x.deleted!==true&&!tombstones.has(String(x.id)));
-
-  if(tombstones.size){
-    writeInfluencerLaunchPendingQueue(pending.filter(entry=>!tombstones.has(String(entry?.id||entry?.record?.id||""))));
-  }
-
-  merged=mergeInfluencerLaunchCollections(merged,pendingItems);
-
-  const before=JSON.stringify(current);
-  const after=JSON.stringify(merged);
-  const changed=before!==after;
-
-  if(changed){
-    state.launches=merged;
-    writeInfluencerLaunchSnapshot(merged);
-
-    try{
-      const data=JSON.stringify(state);
-      localStorage.setItem(KEY,data);
-      lastUndoSnapshot=data;
-    }catch(e){}
-
-    try{
-      render();
-    }catch(e){
-      console.warn("Renderização após sincronização de lançamentos ignorada:",e);
-    }
-  }
-
-  return changed;
-}
-
-async function fetchInfluencerLaunchCloudRecords(){
-  const url=SUPABASE_URL+
-    "/rest/v1/personalizacao?chave=like."+
-    encodeURIComponent(INFLUENCER_LAUNCH_RECORD_PREFIX+"*")+
-    "&select=chave,valor";
-
-  const response=await fetchWithTimeout(url,{
-    method:"GET",
-    headers:cloudHeaders()
-  },12000);
-
-  if(!response.ok){
-    const text=await response.text();
-    throw new Error("HTTP "+response.status+" ao ler lançamentos individuais: "+text.slice(0,160));
-  }
-
-  const rows=await response.json();
-  const records=[];
-
-  (Array.isArray(rows)?rows:[]).forEach(row=>{
-    try{
-      const parsed=typeof row.valor==="string"?JSON.parse(row.valor):row.valor;
-      if(parsed&&parsed.id)records.push(parsed);
-    }catch(e){
-      console.warn("Registro individual de lançamento inválido ignorado:",row?.chave);
-    }
-  });
-
-  return records;
-}
-
-async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
-  if(launchSyncBusy)return false;
-  launchSyncBusy=true;
-
-  try{
-    await flushInfluencerLaunchPendingQueue();
-
-    let records=await fetchInfluencerLaunchCloudRecords();
-    let changed=applyInfluencerLaunchCloudRecords(records);
-
-    const cloudIds=new Set(records.map(row=>String(row?.id||"")).filter(Boolean));
-    const tombstones=new Set(records.filter(row=>row?.deleted===true).map(row=>String(row.id)));
-    const missingInCloud=(state.launches||[]).filter(row=>
-      row?.id&&row.deleted!==true&&!cloudIds.has(String(row.id))&&!tombstones.has(String(row.id))
-    );
-
-    if(missingInCloud.length){
-      queueAllInfluencerLaunchRows(missingInCloud);
-      const flushed=await flushInfluencerLaunchPendingQueue();
-      if(flushed){
-        records=await fetchInfluencerLaunchCloudRecords();
-        changed=applyInfluencerLaunchCloudRecords(records)||changed;
-      }
-    }
-
-    if(showStatus){
-      updateCloudStatus(changed
-        ?"Lançamentos dos influencers atualizados."
-        :"Lançamentos dos influencers já estão atualizados.");
-      updateCloudDebug(records.length+" lançamentos individuais conferidos"+(missingInCloud.length?` • ${missingInCloud.length} registro(s) recuperado(s) e reenviado(s)`:""));
-    }
-
-    return true;
-  }catch(e){
-    console.warn("Sincronização de lançamentos indisponível:",e);
-    if(showStatus){
-      updateCloudStatus("Modo local ativo. Lançamentos serão sincronizados automaticamente.",true);
-      updateCloudDebug(String(e.message||e));
-    }
-    return false;
-  }finally{
-    launchSyncBusy=false;
-  }
-}
-
-function activeLocalInfluencerLaunchCandidates(){
-  const pendingItems=readInfluencerLaunchPendingQueue()
-    .map(x=>x.record)
-    .filter(x=>x&&x.deleted!==true);
-
-  return mergeInfluencerLaunchCollections(
-    Array.isArray(state.launches)?state.launches:[],
-    readInfluencerLaunchSnapshot(),
-    pendingItems
-  );
-}
-
-function queueAllInfluencerLaunchRows(rows){
-  (Array.isArray(rows)?rows:[]).forEach(item=>{
-    if(item&&item.id)queueInfluencerLaunchCloudRecord(item);
-  });
-}
-
-async function seedInfluencerLaunchRecordsOnce(){
-  const rows=activeLocalInfluencerLaunchCandidates();
-
-  if(rows.length){
-    state.launches=mergeInfluencerLaunchCollections(state.launches||[],rows);
-    writeInfluencerLaunchSnapshot(state.launches);
-  }
-
-  let seeded=false;
-  try{seeded=localStorage.getItem(INFLUENCER_LAUNCH_SEED_KEY)==="ok";}catch(e){}
-
-  if(!seeded&&rows.length){
-    queueAllInfluencerLaunchRows(rows);
-    try{localStorage.setItem(INFLUENCER_LAUNCH_SEED_KEY,"ok");}catch(e){}
-  }
-
-  await flushInfluencerLaunchPendingQueue();
-}
-
-function installInfluencerLaunchSyncWatchers(){
-  if(launchSyncWatchersInstalled)return;
-  launchSyncWatchersInstalled=true;
-
-  window.addEventListener("online",()=>{
-    scheduleCloudSave(50);
-    flushInfluencerLaunchPendingQueue()
-      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:true}));
-  });
-
-  window.addEventListener("focus",()=>{
-    syncInfluencerLaunchRecordsFromCloud({showStatus:false});
-  });
-
-  document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible"){
-      syncInfluencerLaunchRecordsFromCloud({showStatus:false});
-    }
-  });
-
-  clearInterval(launchPollTimer);
-  launchPollTimer=setInterval(()=>{
-    if(document.hidden)return;
-    syncInfluencerLaunchRecordsFromCloud({showStatus:false});
-  },30000);
-}
+/* V212: implementação legada V119/V208 de sincronização de lançamentos removida.
+   A única fonte ativa é a tabela relacional V209; os helpers de recuperação
+   abaixo foram preservados para localizar cópias antigas sem voltar a gravá-las. */
 
 function looksLikeInfluencerLaunch(obj){
   if(!obj||typeof obj!=="object"||Array.isArray(obj))return false;
@@ -21580,6 +21271,7 @@ function writeProductChoicePendingQueue(queue){
 }
 
 function queueProductChoiceCloudRecord(record){
+  if(CORE_RECORDS_AUTHORITATIVE_V212)return false;
   if(!record||!record.id)return false;
 
   const queue=readProductChoicePendingQueue();
@@ -21606,6 +21298,7 @@ function productChoiceCloudRow(record){
 }
 
 async function flushProductChoicePendingQueue(){
+  if(CORE_RECORDS_AUTHORITATIVE_V212)return true;
   if(productChoiceFlushBusy)return false;
 
   let queue=readProductChoicePendingQueue();
@@ -21747,6 +21440,7 @@ async function fetchProductChoiceCloudRecords(){
 }
 
 async function syncProductChoiceRecordsFromCloud({showStatus=false}={}){
+  if(CORE_RECORDS_AUTHORITATIVE_V212)return true;
   if(productChoiceSyncBusy)return false;
   productChoiceSyncBusy=true;
 
@@ -21795,6 +21489,7 @@ function queueAllProductChoiceRows(rows){
 }
 
 async function seedProductChoiceRecordsOnce(){
+  if(CORE_RECORDS_AUTHORITATIVE_V212)return true;
   const rows=activeLocalProductChoiceCandidates();
 
   if(rows.length){
@@ -21814,6 +21509,7 @@ async function seedProductChoiceRecordsOnce(){
 }
 
 function installProductChoiceSyncWatchers(){
+  if(CORE_RECORDS_AUTHORITATIVE_V212)return;
   if(productChoiceSyncWatchersInstalled)return;
   productChoiceSyncWatchersInstalled=true;
 
@@ -22433,7 +22129,7 @@ async function cloudSaveNow(){
         markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
         updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
         setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug("monitor V208: confirmação demorou mais de "+Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)+"s; nova tentativa agendada");
+        updateCloudDebug(`monitor ${APP_BUILD_VERSION}: confirmação demorou mais de ${Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)}s; nova tentativa agendada`);
         scheduleCloudSaveRetry();
         return false;
       }
@@ -22565,10 +22261,10 @@ async function startApp(){
       }else if(cloudOfficialSourceReachable){
         setSaveUiState("saved","fonte oficial Supabase carregada; nenhuma alteração pendente");
         reconcileOrphanedStrictMutations();
-        updateCloudDebug("V208: fonte oficial confirmada; nenhuma alteração local pendente");
+        updateCloudDebug(`${APP_BUILD_VERSION}: fonte oficial confirmada; nenhuma alteração local pendente`);
       }else{
         updateCloudStatus("Fonte oficial Supabase não confirmada. Não sobrescrevi a nuvem.",true);
-        updateCloudDebug("V203: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais");
+        updateCloudDebug(`${APP_BUILD_VERSION}: modo protegido ativo; a fonte oficial será consultada novamente sem sobrescrever dados locais`);
       }
     }catch(e){
       console.warn("Salvamento inicial ignorado:",e);
@@ -37983,12 +37679,24 @@ function coreDigestV211(value){
   catch(error){return "";}
 }
 function coreEqualV211(a,b){return coreDigestV211(a)===coreDigestV211(b);}
+function coreStableHashV212(value){
+  const text=String(value||"");
+  let h1=0x811c9dc5;
+  let h2=0x9e3779b9;
+  for(let i=0;i<text.length;i++){
+    const code=text.charCodeAt(i);
+    h1=Math.imul(h1^code,0x01000193)>>>0;
+    h2=Math.imul(h2^(code+i),0x85ebca6b)>>>0;
+  }
+  return h1.toString(16).padStart(8,"0")+h2.toString(16).padStart(8,"0");
+}
 function coreRecordIdV211(module,row,index=0){
   if(module==="pix")return "global";
   const value=row&&typeof row==="object"?row:{};
   const id=value.id||value.legacyId||value.legacy_id||value.username||value.email||"";
   if(id)return String(id);
-  return `${module}-${coreDigestV211(value).slice(0,24)||index}`;
+  const digest=coreDigestV211(value);
+  return `${module}-auto-${coreStableHashV212(digest||String(index))}`;
 }
 function coreRowNormalizeV211(row){
   if(!row||!row.module||!row.record_id)return null;
@@ -38034,6 +37742,62 @@ function coreStateMapV211(){
 }
 function coreSnapshotRowsV211(){
   return [...coreOfficialRowsV211.values()].map(coreCloneV211).filter(Boolean);
+}
+const CORE_STARTUP_RECOVERY_KEY_V212=KEY+"_core_startup_recovery_v212";
+function coreCollectLocalCandidatesV212(){
+  const map=coreStateMapV211();
+  try{
+    const products=[
+      ...(typeof readProductChoiceSnapshot==="function"?readProductChoiceSnapshot():[]),
+      ...(typeof readProductChoicePendingQueue==="function"?readProductChoicePendingQueue().map(x=>x?.record).filter(Boolean):[])
+    ];
+    products.forEach((payload,index)=>{
+      if(!payload||typeof payload!=="object"||payload.deleted===true)return;
+      const recordId=coreRecordIdV211("product_redemptions",payload,index);
+      const key=coreKeyV211("product_redemptions",recordId);
+      if(!map.has(key))map.set(key,{module:"product_redemptions",recordId,payload:coreCloneV211(payload,{}),sortOrder:index});
+    });
+  }catch(error){console.warn("Recuperação legada de produtos ignorada:",error);}
+  return map;
+}
+function corePreserveStartupRecoveryV212(entries){
+  if(!Array.isArray(entries)||!entries.length)return false;
+  const existing=coreReadLocalV211(CORE_STARTUP_RECOVERY_KEY_V212,[]);
+  const merged=[...(Array.isArray(existing)?existing:[]),...entries].slice(-500);
+  coreWriteLocalV211(CORE_STARTUP_RECOVERY_KEY_V212,merged);
+  coreDbPutV211("startupRecovery",merged);
+  return true;
+}
+function coreReconcileLocalWithOfficialV212(localMap,{queueMissing=true}={}){
+  const recovery=[];
+  const officialDigestByModule=new Map();
+  coreOfficialRowsV211.forEach(row=>{
+    if(row.deleted_at)return;
+    const module=String(row.module||"");
+    if(!officialDigestByModule.has(module))officialDigestByModule.set(module,new Set());
+    officialDigestByModule.get(module).add(coreDigestV211(row.payload||{}));
+  });
+  let queued=0;
+  localMap.forEach((local,key)=>{
+    const official=coreOfficialRowsV211.get(key);
+    if(official){
+      if(!coreEqualV211(local.payload,official.payload)){
+        recovery.push({
+          at:new Date().toISOString(),reason:official.deleted_at?"official_deleted":"same_id_different_payload",
+          module:local.module,recordId:local.recordId,local:coreCloneV211(local.payload,{}),official:coreCloneV211(official,null)
+        });
+      }
+      return;
+    }
+    const samePayload=officialDigestByModule.get(local.module)?.has(coreDigestV211(local.payload||{}));
+    if(samePayload)return;
+    if(queueMissing){
+      coreQueueV211({module:local.module,recordId:local.recordId,operation:"upsert",payload:local.payload,sortOrder:local.sortOrder});
+      queued+=1;
+    }
+  });
+  corePreserveStartupRecoveryV212(recovery);
+  return {queued,recovery:recovery.length};
 }
 
 function coreReadLocalV211(key,fallback){
@@ -38190,10 +37954,16 @@ async function coreFetchAllV211(){
     const row=coreRowNormalizeV211(raw);
     if(row)map.set(coreKeyV211(row.module,row.record_id),row);
   });
+  const previous=new Map(coreOfficialRowsV211);
+  if(previous.size&&map.size<previous.size){
+    previous.forEach((row,key)=>{if(!map.has(key))map.set(key,row);});
+    updateCloudStatus("Resposta incompleta do Supabase bloqueada. O snapshot oficial anterior foi preservado.",true);
+    updateCloudDebug(`Proteção ${APP_BUILD_VERSION}: resposta trouxe ${rows.length} linha(s), mas havia ${previous.size}; nenhuma linha conhecida foi removida.`);
+  }
   coreOfficialRowsV211=map;
   coreOfficialReadyV211=true;
   corePersistSnapshotV211();
-  return rows;
+  return [...map.values()];
 }
 async function coreFetchOneV211(module,recordId){
   const url=SUPABASE_URL+`/rest/v1/${CORE_TABLE_V211}?module=eq.${encodeURIComponent(module)}&record_id=eq.${encodeURIComponent(recordId)}&select=id,module,record_id,payload,sort_order,version,client_mutation_id,created_at,updated_at,deleted_at,created_by,updated_by,user_id,device_id&limit=1`;
@@ -38346,6 +38116,13 @@ async function coreSendEntryV211(entry){
     corePersistSnapshotV211();
     return true;
   }
+  if(result?.status==="mutation_reused"){
+    entry.mutationId=coreMutationIdV211();
+    entry.queuedAt=new Date().toISOString();
+    entry.lastError="mutation_id renovado automaticamente";
+    corePersistOutboxV211();
+    return false;
+  }
   if(result?.status==="conflict"){
     const official=coreRowNormalizeV211(result.record)||await coreFetchOneV211(entry.module,entry.recordId);
     if(official)coreOfficialRowsV211.set(coreKeyV211(official.module,official.record_id),official);
@@ -38389,14 +38166,14 @@ async function coreFlushOutboxV211(){
       }catch(error){
         entry.lastError=String(error.message||error);
         corePersistOutboxV211();
-        updateCloudStatus("Dados preservados na fila V211; nova tentativa será feita automaticamente.",true);
+        updateCloudStatus("Dados preservados na fila blindada; nova tentativa será feita automaticamente.",true);
         console.warn("Fila V211 pendente:",error);
         break;
       }
     }
     coreApplyRowsToStateV211({renderNow:true});
     if(!coreOutboxV211.length){
-      updateCloudDebug(`V211: ${coreOfficialRowsV211.size} registros principais confirmados; nenhuma alteração pendente.`);
+      updateCloudDebug(`${APP_BUILD_VERSION}: ${coreOfficialRowsV211.size} registros principais confirmados; nenhuma alteração pendente.`);
       coreBroadcastV211?.postMessage({type:"core-sync",at:Date.now()});
       return true;
     }
@@ -38408,12 +38185,15 @@ async function coreSyncFromCloudV211({showStatus=false}={}){
   if(coreSyncBusyV211||navigator.onLine===false)return false;
   coreSyncBusyV211=true;
   try{
+    const localBefore=coreCollectLocalCandidatesV212();
     await coreFetchAllV211();
+    const reconciliation=coreReconcileLocalWithOfficialV212(localBefore,{queueMissing:true});
     coreApplyRowsToStateV211({renderNow:true});
-    if(showStatus)updateCloudStatus("Dados principais sincronizados com a fonte oficial V211.");
+    if(reconciliation.queued)await coreFlushOutboxV211();
+    if(showStatus)updateCloudStatus(`Dados principais sincronizados com a fonte oficial ${APP_BUILD_VERSION}.`);
     return true;
   }catch(error){
-    if(showStatus)updateCloudStatus("Não foi possível consultar a tabela V211; os dados locais continuam preservados.",true);
+    if(showStatus)updateCloudStatus("Não foi possível consultar a tabela oficial; os dados locais continuam preservados.",true);
     console.warn("Sincronização V211 adiada:",error);
     return false;
   }finally{coreSyncBusyV211=false;}
@@ -38509,7 +38289,7 @@ function coreInstallWatchersV211(){
   window.addEventListener("offline",()=>{
     coreRealtimeConnectedV211=false;
     try{coreSocketV211?.close();}catch(error){}
-    updateCloudStatus("Offline • alterações principais preservadas na fila V211 deste aparelho",true);
+    updateCloudStatus("Offline • alterações principais preservadas na fila blindada deste aparelho",true);
   });
   const refresh=()=>{
     if(navigator.onLine===false)return;
@@ -38534,47 +38314,28 @@ async function coreStartupV211(){
   if(coreStartupPromiseV211)return coreStartupPromiseV211;
   coreStartupPromiseV211=(async()=>{
     await coreLoadDurableV211();
-    const localBeforeOfficial=coreStateMapV211();
+    const localBeforeOfficial=coreCollectLocalCandidatesV212();
     let fetched=false;
     try{
       await coreFetchAllV211();
       fetched=true;
     }catch(error){
-      console.warn("Tabela oficial V211 ainda não disponível:",error);
+      console.warn("Tabela oficial de dados principais ainda não disponível:",error);
       if(coreOfficialRowsV211.size){coreApplyRowsToStateV211({renderNow:true});}
-      updateCloudStatus("Execute o SQL V211 para concluir a blindagem geral. Nenhum dado local foi apagado.",true);
+      updateCloudStatus(`Execute o SQL ${APP_BUILD_VERSION} para concluir a blindagem geral. Nenhum dado local foi apagado.`,true);
     }
 
     coreReadyV211=true;
     if(fetched){
-      const modulesWithOfficial=new Set([...coreOfficialRowsV211.values()].map(row=>row.module));
-      const missingModules=[];
-      CORE_MODULES_V211.forEach(config=>{
-        const hasLocal=[...localBeforeOfficial.values()].some(row=>row.module===config.module);
-        if(hasLocal&&!modulesWithOfficial.has(config.module))missingModules.push(config.module);
-      });
+      const reconciliation=coreReconcileLocalWithOfficialV212(localBeforeOfficial,{queueMissing:true});
       coreApplyRowsToStateV211({renderNow:true});
-      if(cloudOfficialSourceReachable&&missingModules.length){
-        coreApplyingV211=true;
-        try{
-          localBeforeOfficial.forEach(record=>{
-            if(!missingModules.includes(record.module))return;
-            const config=CORE_MODULES_V211.find(item=>item.module===record.module);
-            if(config?.kind==="singleton")state[config.stateKey]=coreCloneV211(record.payload,{});
-            else{
-              state[config.stateKey]=state[config.stateKey]||[];
-              if(!state[config.stateKey].some(item=>coreRecordIdV211(record.module,item)===record.recordId)){
-                state[config.stateKey].push(coreCloneV211(record.payload,{}));
-              }
-            }
-          });
-        }finally{coreApplyingV211=false;}
-        coreQueueAllCurrentV211(missingModules);
-      }
       coreBaselineV211=coreStateMapV211();
       await coreFlushOutboxV211();
       await coreSyncFromCloudV211({showStatus:false});
-      updateCloudStatus("Dados principais protegidos e sincronizados pela fonte oficial V211.");
+      updateCloudStatus(reconciliation.recovery
+        ?`Dados oficiais sincronizados. ${reconciliation.recovery} divergência(s) local(is) foram preservadas no backup de recuperação.`
+        :`Dados principais protegidos e sincronizados pela fonte oficial ${APP_BUILD_VERSION}.`,
+        reconciliation.recovery>0);
     }else{
       coreBaselineV211=coreStateMapV211();
     }
@@ -38592,7 +38353,8 @@ window.exportWisentDataBackupV211=function(){
     official:coreSnapshotRowsV211(),
     visible:coreCloneV211(Object.fromEntries(CORE_MODULES_V211.map(c=>[c.stateKey,state?.[c.stateKey]??(c.kind==="array"?[]:{})])),{}),
     pending:coreCloneV211(coreOutboxV211,[]),
-    conflicts:coreReadLocalV211(CORE_CONFLICTS_KEY_V211,[])
+    conflicts:coreReadLocalV211(CORE_CONFLICTS_KEY_V211,[]),
+    startupRecovery:coreReadLocalV211(CORE_STARTUP_RECOVERY_KEY_V212,[])
   };
   const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
   const url=URL.createObjectURL(blob);
@@ -38603,6 +38365,11 @@ window.exportWisentDataBackupV211=function(){
   link.click();
   link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),30000);
+};
+
+
+window.exportWisentDataBackupV212=function(){
+  return window.exportWisentDataBackupV211();
 };
 
 const saveBeforeCoreV211=save;
@@ -38621,7 +38388,7 @@ startApp=async function(){
   try{await coreStartupV211();}
   catch(error){
     console.error("Blindagem geral V211 iniciada em modo de contingência:",error);
-    updateCloudStatus("Blindagem V211 em contingência; dados locais preservados.",true);
+    updateCloudStatus("Blindagem geral em contingência; dados locais preservados.",true);
   }
   return result;
 };
