@@ -14926,7 +14926,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   background:
     radial-gradient(circle at 92% 0%,rgba(198,170,98,.19),transparent 28%),
     radial-gradient(circle at 8% 100%,rgba(111,80,16,.065),transparent 34%),
-    linear-gradient(180deg,#fffdf8 0%,#ffffff 44%,#fffefb 100%);
+    linear-gradient(180deg,#ffffff 0%,#ffffff 44%,#fffefb 100%);
   box-shadow:0 24px 64px rgba(72,52,13,.12);
 }
 #reports #printArea::before{
@@ -14971,7 +14971,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 #reports .pdfBox{
   background:
-    linear-gradient(160deg,#ffffff 0%,#fdfaf3 66%,#f5ecd7 100%);
+    linear-gradient(160deg,#ffffff 0%,#ffffff 66%,#f5ecd7 100%);
   border-color:#dfd0aa;
   box-shadow:0 12px 28px rgba(111,80,16,.075);
 }
@@ -15009,7 +15009,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     border-color:#d8c8a3!important;
     background:
       radial-gradient(circle at 92% 0%,rgba(198,170,98,.13),transparent 25%),
-      linear-gradient(180deg,#fffdf8 0%,#ffffff 48%,#fffefb 100%)!important;
+      linear-gradient(180deg,#ffffff 0%,#ffffff 48%,#fffefb 100%)!important;
     -webkit-print-color-adjust:exact!important;
     print-color-adjust:exact!important;
   }
@@ -15114,7 +15114,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V221</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V222</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17392,7 +17392,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V221";
+const APP_BUILD_VERSION="V222";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17425,9 +17425,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=221",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=222",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=221");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=222");
       }
 
       reg.addEventListener("updatefound",()=>{
