@@ -14555,6 +14555,363 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V218 ===== */
 
+
+
+/* ===== V220 — RELATÓRIO PDF PROFISSIONAL, ABERTO E RESPONSIVO ===== */
+#reports .printPanel{
+  width:100%;
+  max-width:1240px;
+  margin:0 auto 24px;
+  padding:clamp(8px,1.5vw,18px);
+  background:transparent;
+  border:0;
+  box-shadow:none;
+}
+#reports #printArea{
+  isolation:isolate;
+  width:100%;
+  max-width:1080px;
+  min-height:560px;
+  margin:0 auto;
+  padding:clamp(26px,4vw,48px);
+  overflow:hidden;
+  border:1px solid #dbe3ec;
+  border-radius:28px;
+  background:
+    radial-gradient(circle at 92% 2%,rgba(37,99,235,.07),transparent 25%),
+    linear-gradient(180deg,#fbfdff 0%,#ffffff 42%,#ffffff 100%);
+  box-shadow:0 24px 64px rgba(15,23,42,.10);
+}
+#reports #printArea::before{
+  content:"";
+  position:absolute;
+  z-index:2;
+  inset:0 0 auto;
+  height:7px;
+  background:linear-gradient(90deg,#0f172a 0%,#1d4ed8 58%,#0ea5e9 100%);
+}
+#reports #printArea > *:not(.reportWatermark){position:relative;z-index:3}
+#reports #reportWatermark{
+  z-index:1;
+  max-width:520px;
+  max-height:62%;
+  object-fit:contain;
+}
+#reports .pdfCleanHeader{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:28px;
+  margin:0 0 30px;
+  padding:4px 0 24px;
+  border-bottom:1px solid #dfe6ee;
+}
+#reports .pdfCleanHeader h1{
+  margin:0;
+  color:#07152f;
+  font-size:clamp(32px,4vw,44px);
+  font-weight:950;
+  line-height:1.04;
+  letter-spacing:-.045em;
+}
+#reports .pdfCleanHeader p{
+  max-width:680px;
+  margin:9px 0 0;
+  color:#64748b;
+  font-size:clamp(12px,1.35vw,15px);
+  line-height:1.55;
+}
+#reports .printLogo{
+  display:block;
+  width:auto;
+  max-width:220px;
+  max-height:84px;
+  object-fit:contain;
+  padding:8px 10px;
+  background:rgba(255,255,255,.92);
+  border:1px solid #e2e8f0;
+  border-radius:16px;
+}
+#reports .pdfIdentity{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(190px,auto);
+  grid-template-areas:
+    "name period"
+    "coupon period";
+  align-items:center;
+  column-gap:26px;
+  row-gap:7px;
+  margin:0 0 24px;
+  padding:24px 26px;
+  background:rgba(255,255,255,.94);
+  border:1px solid #dbe3ec;
+  border-radius:22px;
+  box-shadow:0 12px 30px rgba(15,23,42,.055);
+}
+#reports #reportName{
+  grid-area:name;
+  color:#0b1e3b;
+  font-size:clamp(25px,3vw,34px)!important;
+  font-weight:950;
+  line-height:1.08;
+  letter-spacing:-.025em;
+}
+#reports #reportCoupon{
+  grid-area:coupon;
+  margin:0;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.4;
+}
+#reports #reportPeriod{
+  grid-area:period;
+  align-self:stretch;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  margin:0;
+  padding-left:26px;
+  border-left:1px solid #e2e8f0;
+  color:#334155;
+  font-size:13px;
+  font-weight:800;
+  line-height:1.45;
+  text-align:right;
+}
+#reports .pdfThreeCards{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  margin:0;
+}
+#reports .pdfBox{
+  position:relative;
+  min-width:0;
+  min-height:146px;
+  padding:24px 22px 21px;
+  overflow:hidden;
+  background:linear-gradient(180deg,#ffffff 0%,#f8fafc 100%);
+  border:1px solid #dbe3ec;
+  border-radius:20px;
+  box-shadow:0 12px 28px rgba(15,23,42,.06);
+}
+#reports .pdfBox::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto;
+  height:5px;
+  background:#0f172a;
+}
+#reports .pdfBox:nth-child(2)::before{background:#2563eb}
+#reports .pdfBox:nth-child(3)::before{background:#0f766e}
+#reports .pdfBox small{
+  display:block;
+  min-height:32px;
+  margin:0 0 18px;
+  color:#536176;
+  font-size:11px;
+  font-weight:900;
+  line-height:1.42;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+#reports .pdfBox strong{
+  display:block;
+  color:#07152f;
+  font-size:clamp(27px,3vw,36px);
+  font-weight:950;
+  line-height:1;
+  letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums;
+}
+#reports #reportFooter{
+  margin-top:26px;
+  padding-top:14px;
+  color:#64748b;
+  font-size:11.5px;
+  line-height:1.5;
+  border-top:1px solid #e2e8f0;
+}
+#reports #reportFooter:empty{display:none}
+
+@media(max-width:760px){
+  #reports .printPanel{
+    margin-left:0;
+    margin-right:0;
+    padding:4px;
+  }
+  #reports #printArea{
+    min-height:0;
+    padding:22px 18px 24px;
+    border-radius:20px;
+  }
+  #reports #printArea::before{height:5px}
+  #reports .pdfCleanHeader{
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:start;
+    gap:14px;
+    margin-bottom:20px;
+    padding-bottom:18px;
+  }
+  #reports .pdfCleanHeader h1{
+    font-size:clamp(26px,8vw,34px);
+    line-height:1.08;
+  }
+  #reports .pdfCleanHeader p{
+    margin-top:7px;
+    font-size:12px;
+    line-height:1.45;
+  }
+  #reports .printLogo{
+    max-width:112px;
+    max-height:64px;
+    padding:6px;
+    border-radius:12px;
+  }
+  #reports .pdfIdentity{
+    grid-template-columns:1fr;
+    grid-template-areas:"name" "coupon" "period";
+    gap:7px;
+    padding:20px;
+    border-radius:18px;
+  }
+  #reports #reportName{font-size:26px!important}
+  #reports #reportPeriod{
+    justify-content:flex-start;
+    margin-top:6px;
+    padding:12px 0 0;
+    border-left:0;
+    border-top:1px solid #e2e8f0;
+    text-align:left;
+  }
+  #reports .pdfThreeCards{
+    grid-template-columns:1fr;
+    gap:12px;
+  }
+  #reports .pdfBox{
+    min-height:0;
+    padding:20px 18px;
+    border-radius:18px;
+  }
+  #reports .pdfBox small{
+    min-height:0;
+    margin-bottom:11px;
+  }
+  #reports .pdfBox strong{font-size:30px}
+}
+
+@media(max-width:430px){
+  #reports #printArea{padding:20px 14px 22px;border-radius:16px}
+  #reports .pdfCleanHeader{grid-template-columns:1fr;gap:12px}
+  #reports .printLogo{max-width:126px;max-height:58px}
+  #reports .pdfIdentity{padding:17px}
+  #reports #reportName{font-size:23px!important}
+  #reports .pdfBox{padding:18px 16px}
+  #reports .pdfBox strong{font-size:27px}
+}
+
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body.print-report #reports .printPanel{
+    width:100%!important;
+    max-width:none!important;
+    margin:0!important;
+    padding:0!important;
+    border:0!important;
+    box-shadow:none!important;
+  }
+  body.print-report #reports #printArea{
+    width:100%!important;
+    max-width:none!important;
+    min-height:242mm!important;
+    margin:0!important;
+    padding:15mm 14mm 17mm!important;
+    overflow:hidden!important;
+    border:1px solid #dbe3ec!important;
+    border-radius:7mm!important;
+    background:#fff!important;
+    box-shadow:none!important;
+  }
+  body.print-report #reports #printArea::before{height:2.2mm!important}
+  body.print-report #reports .pdfCleanHeader{
+    grid-template-columns:minmax(0,1fr) auto!important;
+    gap:9mm!important;
+    margin-bottom:9mm!important;
+    padding:1mm 0 6mm!important;
+  }
+  body.print-report #reports .pdfCleanHeader h1{
+    font-size:28pt!important;
+    line-height:1.04!important;
+  }
+  body.print-report #reports .pdfCleanHeader p{
+    max-width:125mm!important;
+    margin-top:2.5mm!important;
+    font-size:9.5pt!important;
+    line-height:1.45!important;
+  }
+  body.print-report #reports .printLogo{
+    max-width:45mm!important;
+    max-height:20mm!important;
+    padding:2mm!important;
+    border-radius:3mm!important;
+  }
+  body.print-report #reports .pdfIdentity{
+    grid-template-columns:minmax(0,1fr) 52mm!important;
+    grid-template-areas:"name period" "coupon period"!important;
+    gap:2mm 7mm!important;
+    margin-bottom:7mm!important;
+    padding:7mm!important;
+    border-radius:5mm!important;
+    box-shadow:none!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  body.print-report #reports #reportName{
+    font-size:21pt!important;
+    line-height:1.05!important;
+  }
+  body.print-report #reports #reportCoupon,
+  body.print-report #reports #reportPeriod{
+    font-size:9pt!important;
+  }
+  body.print-report #reports #reportPeriod{
+    justify-content:flex-end!important;
+    padding:0 0 0 7mm!important;
+    border-top:0!important;
+    border-left:1px solid #e2e8f0!important;
+    text-align:right!important;
+  }
+  body.print-report #reports .pdfThreeCards{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4mm!important;
+  }
+  body.print-report #reports .pdfBox{
+    min-height:39mm!important;
+    padding:6.5mm 5.5mm 5.5mm!important;
+    border-radius:5mm!important;
+    box-shadow:none!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  body.print-report #reports .pdfBox::before{height:1.4mm!important}
+  body.print-report #reports .pdfBox small{
+    min-height:9mm!important;
+    margin-bottom:5mm!important;
+    font-size:7.8pt!important;
+    line-height:1.35!important;
+  }
+  body.print-report #reports .pdfBox strong{
+    font-size:20pt!important;
+    line-height:1!important;
+  }
+  body.print-report #reports #reportFooter{
+    margin-top:8mm!important;
+    padding-top:4mm!important;
+    font-size:8pt!important;
+  }
+}
+/* ===== FIM V220 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -14645,7 +15002,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V219</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V220</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14776,7 +15133,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
     <section id="wholesaleRetail" class="view">
       <div class="grid wholesaleSummaryGridV200">
-        <div class="card"><small>Total vendido no período</small><strong id="wholesaleDayTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Vendas no período</small><strong id="wholesaleDayTotal">R$ 0,00</strong></div>
         <div class="card"><small>Pedidos no período</small><strong id="wholesaleDayCount">0</strong></div>
         <div class="card"><small>Frete somado no período</small><strong id="wholesaleDayFreight">R$ 0,00</strong></div>
         <div class="card"><small>Descontos aplicados no período</small><strong id="wholesaleDayDiscount">R$ 0,00</strong></div>
@@ -15754,15 +16111,15 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
           <div class="pdfThreeCards">
             <div class="pdfBox">
-              <small>Total vendido no período</small>
+              <small>Vendas no período</small>
               <strong id="reportSold">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Comissão em produtos no período</small>
+              <small>Comissão em produtos</small>
               <strong id="reportProduct">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Comissão em dinheiro no período</small>
+              <small>Comissão em dinheiro</small>
               <strong id="reportCash">R$ 0,00</strong>
             </div>
           </div>
@@ -15771,7 +16128,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
             <span id="reportCoverageText"></span>
           </div>
 
-          <!-- V219: relatório destinado ao influencer mantém apenas o resumo principal.
+          <!-- V220: relatório destinado ao influencer mantém apenas o resumo principal, com layout profissional e responsivo.
                Os detalhamentos continuam disponíveis no histórico interno clicável. -->
 
           <p id="reportFooter" class="pdfFooterClean"></p>
@@ -16923,7 +17280,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V219";
+const APP_BUILD_VERSION="V220";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -16956,9 +17313,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=219",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=220",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=219");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=220");
       }
 
       reg.addEventListener("updatefound",()=>{
