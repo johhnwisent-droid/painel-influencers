@@ -16353,12 +16353,17 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
           <label class="full">Mensagem do PDF<textarea id="setPdfMessage"></textarea></label>
           <label class="full">Rodapé do PDF<input id="setPdfFooter"></label>
 
+          <div id="settingsCloudStatusV210" class="notice full" style="margin-bottom:0">
+            Personalização protegida: as alterações serão confirmadas em uma tabela própria do Supabase.
+          </div>
+
           <div class="actions full">
-            <button type="button" class="primary" onclick="saveSettings()">Salvar personalização</button>
+            <button type="button" id="saveSettingsBtnV210" class="primary" onclick="saveSettings()">Salvar personalização</button>
             <button type="button" class="secondary" onclick="removeSystemLogo()">Remover logo do sistema</button>
             <button type="button" class="secondary" onclick="removePdfLogo()">Remover logo do PDF</button>
             <button type="button" class="secondary" onclick="removePdfWatermark()">Remover marca d'água</button>
             <button type="button" class="secondary" onclick="exportBackup()">Exportar backup</button>
+            <button type="button" class="secondary" onclick="exportWisentDataBackupV211()">Backup blindado V211</button>
             <label style="display:inline-flex">
               <span class="secondary" style="padding:10px 14px;border-radius:12px;color:#1e40af;background:#eef2ff">Importar backup</span>
               <input type="file" accept="application/json" onchange="importBackup(event)" class="hidden">
@@ -16678,7 +16683,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V209";
+const APP_BUILD_VERSION="V211";
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
 let launchRecoveryPreCloudCandidatesV208=[];
@@ -16710,9 +16715,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=209",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=211",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=209");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=211");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -16797,6 +16802,461 @@ function installBlackScreenWatchdog(){
 }
 
 installBlackScreenWatchdog();
+
+
+/* ===== V210 PERSONALIZAÇÃO COM SALVAMENTO OFICIAL CONFIRMADO =====
+   A área Personalizar deixa de depender somente do painel_state.
+   Fonte oficial: public.wisent_system_settings (registro global).
+   Há snapshot e outbox duráveis para sobreviver a atualização do index.html,
+   cache, fechamento da página e perda temporária de conexão.
+*/
+const SYSTEM_SETTINGS_TABLE_V210="wisent_system_settings";
+const SYSTEM_SETTINGS_RPC_V210="wisent_save_system_settings";
+const SYSTEM_SETTINGS_ROW_ID_V210="global";
+const SYSTEM_SETTINGS_SNAPSHOT_KEY_V210=KEY+"_system_settings_snapshot_v1";
+const SYSTEM_SETTINGS_OUTBOX_KEY_V210=KEY+"_system_settings_outbox_v1";
+const SYSTEM_SETTINGS_DB_V210="wisent-system-settings";
+const SYSTEM_SETTINGS_STORE_V210="kv";
+let systemSettingsVersionV210=0;
+let systemSettingsMutationV210="";
+let systemSettingsSavePromiseV210=null;
+let systemSettingsSyncPromiseV210=null;
+let systemSettingsPollTimerV210=null;
+let systemSettingsSocketV210=null;
+let systemSettingsReconnectTimerV210=null;
+let systemSettingsHeartbeatTimerV210=null;
+let systemSettingsJoinRefV210=0;
+let systemSettingsBroadcastV210=null;
+let systemSettingsInstalledV210=false;
+
+function settingsV210Clone(value,fallback={}){
+  try{return JSON.parse(JSON.stringify(value));}
+  catch(error){return fallback;}
+}
+function settingsV210MutationId(){
+  try{return crypto.randomUUID();}
+  catch(error){return `settings-${Date.now()}-${Math.random().toString(16).slice(2)}`;}
+}
+function settingsV210UserName(){
+  return currentUser?.name||currentUser?.username||"Sistema";
+}
+function settingsV210SetStatus(text,type="info"){
+  const el=$("settingsCloudStatusV210");
+  if(!el)return;
+  el.textContent=String(text||"");
+  const map={
+    info:["#eef2ff","#c7d2fe","#1e3a8a"],
+    saving:["#fffbeb","#fde68a","#92400e"],
+    saved:["#ecfdf5","#bbf7d0","#166534"],
+    error:["#fef2f2","#fecaca","#991b1b"],
+    offline:["#fff7ed","#fed7aa","#9a3412"]
+  };
+  const colors=map[type]||map.info;
+  el.style.background=colors[0];
+  el.style.borderColor=colors[1];
+  el.style.color=colors[2];
+}
+function settingsV210OpenDb(){
+  return new Promise((resolve,reject)=>{
+    if(!window.indexedDB){resolve(null);return;}
+    const request=indexedDB.open(SYSTEM_SETTINGS_DB_V210,1);
+    request.onupgradeneeded=()=>{
+      const db=request.result;
+      if(!db.objectStoreNames.contains(SYSTEM_SETTINGS_STORE_V210))db.createObjectStore(SYSTEM_SETTINGS_STORE_V210,{keyPath:"key"});
+    };
+    request.onsuccess=()=>resolve(request.result);
+    request.onerror=()=>reject(request.error||new Error("IndexedDB indisponível"));
+  });
+}
+async function settingsV210DbPut(key,value){
+  try{
+    const db=await settingsV210OpenDb();
+    if(!db)return false;
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(SYSTEM_SETTINGS_STORE_V210,"readwrite");
+      tx.objectStore(SYSTEM_SETTINGS_STORE_V210).put({key,value,updatedAt:new Date().toISOString()});
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=()=>reject(tx.error||new Error("Falha no IndexedDB"));
+      tx.onabort=()=>reject(tx.error||new Error("IndexedDB abortado"));
+    });
+    db.close();
+    return true;
+  }catch(error){return false;}
+}
+async function settingsV210DbGet(key){
+  try{
+    const db=await settingsV210OpenDb();
+    if(!db)return null;
+    const row=await new Promise((resolve,reject)=>{
+      const tx=db.transaction(SYSTEM_SETTINGS_STORE_V210,"readonly");
+      const request=tx.objectStore(SYSTEM_SETTINGS_STORE_V210).get(key);
+      request.onsuccess=()=>resolve(request.result||null);
+      request.onerror=()=>reject(request.error||new Error("Falha ao ler IndexedDB"));
+    });
+    db.close();
+    return row?.value??null;
+  }catch(error){return null;}
+}
+async function settingsV210DbDelete(key){
+  try{
+    const db=await settingsV210OpenDb();
+    if(!db)return false;
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(SYSTEM_SETTINGS_STORE_V210,"readwrite");
+      tx.objectStore(SYSTEM_SETTINGS_STORE_V210).delete(key);
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=()=>reject(tx.error||new Error("Falha ao remover do IndexedDB"));
+    });
+    db.close();
+    return true;
+  }catch(error){return false;}
+}
+function settingsV210LocalRead(key){
+  try{
+    const raw=localStorage.getItem(key);
+    return raw?JSON.parse(raw):null;
+  }catch(error){return null;}
+}
+function settingsV210LocalWrite(key,value){
+  try{localStorage.setItem(key,JSON.stringify(value));return true;}
+  catch(error){return false;}
+}
+function settingsV210LocalDelete(key){
+  try{localStorage.removeItem(key);}catch(error){}
+}
+async function settingsV210ReadDurable(key){
+  return (await settingsV210DbGet(key))||settingsV210LocalRead(key);
+}
+async function settingsV210WriteDurable(key,value){
+  const dbOk=await settingsV210DbPut(key,value);
+  const localOk=settingsV210LocalWrite(key,value);
+  return dbOk||localOk;
+}
+async function settingsV210DeleteDurable(key){
+  await settingsV210DbDelete(key);
+  settingsV210LocalDelete(key);
+}
+function settingsV210ValidPayload(payload){
+  return !!payload&&typeof payload==="object"&&!Array.isArray(payload);
+}
+function settingsV210Apply(payload,{renderNow=true,persist=true}={}){
+  if(!settingsV210ValidPayload(payload))return false;
+  state.settings={...(state.settings||{}),...settingsV210Clone(payload,{})};
+  if(persist){
+    settingsV210WriteDurable(SYSTEM_SETTINGS_SNAPSHOT_KEY_V210,{payload:settingsV210Clone(state.settings,{}),version:systemSettingsVersionV210,mutationId:systemSettingsMutationV210,at:new Date().toISOString()});
+    try{localStorage.setItem(KEY,JSON.stringify(state));}catch(error){}
+  }
+  lastThemeSignature="";
+  if(typeof applyTheme==="function")applyTheme();
+  if(renderNow&&typeof render==="function")render({force:true});
+  return true;
+}
+function settingsV210CollectFromForm(){
+  state.settings=state.settings||{};
+  preserveMediaFromLegacy(state);
+  const s=state.settings;
+  s.systemName=$("setName")?.value||"Painel";
+  s.subtitle=$("setSub")?.value||"";
+  s.primaryColor=$("setPrimary")?.value||"#111827";
+  s.accentColor=$("setAccent")?.value||"#2563eb";
+  s.backgroundColor=$("setBg")?.value||"#f3f4f6";
+  s.cardColor=$("setCard")?.value||"#ffffff";
+  s.textColor=$("setText")?.value||"#111827";
+  s.mobileMenuBg=$("setMobileMenuBg")?.value||"#0b0f19";
+  s.mobileMenuText=$("setMobileMenuText")?.value||"#ffffff";
+  s.mobileMenuActiveBg=$("setMobileMenuActiveBg")?.value||"#ffffff";
+  s.mobileMenuActiveText=$("setMobileMenuActiveText")?.value||"#111827";
+  s.mobileBottomBg=$("setMobileBottomBg")?.value||"#0b0f19";
+  s.mobileBottomText=$("setMobileBottomText")?.value||"#ffffff";
+  s.mobileBottomActiveBg=$("setMobileBottomActiveBg")?.value||"#ffffff";
+  s.mobileBottomActiveText=$("setMobileBottomActiveText")?.value||"#111827";
+  s.origins=String($("setOrigins")?.value||"").split(",").map(x=>x.trim()).filter(Boolean);
+  s.statuses=String($("setStatuses")?.value||"").split(",").map(x=>x.trim()).filter(Boolean);
+  s.pdfTitle=$("setPdfTitle")?.value||"Relatório de comissão";
+  s.pdfMessage=$("setPdfMessage")?.value||"";
+  s.pdfFooter=$("setPdfFooter")?.value||"";
+  s.pdfWatermarkOpacity=Number($("setPdfWatermarkOpacity")?.value||0.12);
+  s.pdfWatermarkX=Number($("setPdfWatermarkX")?.value||50);
+  s.pdfWatermarkY=Number($("setPdfWatermarkY")?.value||72);
+  s.pdfWatermarkSize=Number($("setPdfWatermarkSize")?.value||45);
+  if(typeof tempSystemLogo!=="undefined"&&tempSystemLogo!==null){s.systemLogo=tempSystemLogo;tempSystemLogo=null;}
+  if(typeof tempPdfLogo!=="undefined"&&tempPdfLogo!==null){s.pdfLogo=tempPdfLogo;tempPdfLogo=null;}
+  if(typeof tempWatermarkLogo!=="undefined"&&tempWatermarkLogo!==null){s.pdfWatermarkLogo=tempWatermarkLogo;tempWatermarkLogo=null;}
+  return settingsV210Clone(s,{});
+}
+async function settingsV210FetchOfficial(){
+  const url=SUPABASE_URL+`/rest/v1/${SYSTEM_SETTINGS_TABLE_V210}?id=eq.${encodeURIComponent(SYSTEM_SETTINGS_ROW_ID_V210)}&select=id,payload,version,client_mutation_id,updated_at,updated_by`;
+  const response=await fetchWithTimeout(url,{method:"GET",headers:cloudHeaders({"Cache-Control":"no-cache"}),cache:"no-store"},10000);
+  const text=await response.text().catch(()=>"");
+  if(!response.ok){
+    const error=new Error(`Configurações oficiais indisponíveis (HTTP ${response.status}): ${text.slice(0,180)}`);
+    error.status=response.status;
+    throw error;
+  }
+  let rows=[];
+  try{rows=JSON.parse(text||"[]");}catch(error){rows=[];}
+  return Array.isArray(rows)?rows[0]||null:null;
+}
+async function settingsV210Confirm(mutationId){
+  const row=await settingsV210FetchOfficial();
+  if(!row||String(row.client_mutation_id||"")!==String(mutationId||""))return null;
+  return row;
+}
+async function settingsV210SaveOfficial(entry){
+  const response=await fetchWithTimeout(SUPABASE_URL+`/rest/v1/rpc/${SYSTEM_SETTINGS_RPC_V210}`,{
+    method:"POST",
+    headers:cloudHeaders({"Prefer":"return=representation"}),
+    body:JSON.stringify({
+      p_payload:entry.payload,
+      p_expected_version:Number(entry.expectedVersion||0),
+      p_client_mutation_id:entry.mutationId,
+      p_updated_by:entry.updatedBy||"Sistema",
+      p_client_updated_at:entry.at||new Date().toISOString()
+    })
+  },15000);
+  const text=await response.text().catch(()=>"");
+  if(!response.ok){
+    const error=new Error(`Supabase recusou a personalização (HTTP ${response.status}): ${text.slice(0,220)}`);
+    error.status=response.status;
+    throw error;
+  }
+  let row=null;
+  try{
+    const parsed=JSON.parse(text||"[]");
+    row=Array.isArray(parsed)?parsed[0]||null:parsed;
+  }catch(error){}
+  if(row&&row.applied===false)return row;
+  if(!row||String(row.client_mutation_id||"")!==String(entry.mutationId))row=await settingsV210Confirm(entry.mutationId);
+  if(!row)throw new Error("O Supabase recebeu a alteração, mas não confirmou a mutação da personalização.");
+  row.applied=true;
+  return row;
+}
+async function settingsV210FlushOutbox({showStatus=false}={}){
+  if(systemSettingsSavePromiseV210)return systemSettingsSavePromiseV210;
+  systemSettingsSavePromiseV210=(async()=>{
+    const entry=await settingsV210ReadDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
+    if(!entry?.mutationId||!settingsV210ValidPayload(entry.payload))return true;
+    if(navigator.onLine===false){
+      if(showStatus)settingsV210SetStatus("Sem conexão — personalização preservada e pendente para sincronizar.","offline");
+      return false;
+    }
+    if(showStatus)settingsV210SetStatus("Salvando personalização e aguardando confirmação do Supabase...","saving");
+    try{
+      const row=await settingsV210SaveOfficial(entry);
+      systemSettingsVersionV210=Number(row.version||0);
+      systemSettingsMutationV210=String(row.client_mutation_id||"");
+      settingsV210Apply(row.payload,{renderNow:true,persist:true});
+      await settingsV210DeleteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
+      settingsV210Broadcast({type:"settings-saved",version:systemSettingsVersionV210,mutationId:systemSettingsMutationV210});
+      const applied=row.applied!==false;
+      if(showStatus)settingsV210SetStatus(applied
+        ?`Personalização salva e confirmada na nuvem • versão ${systemSettingsVersionV210}.`
+        :`Uma personalização mais recente já estava no Supabase e foi preservada • versão ${systemSettingsVersionV210}.`,
+        applied?"saved":"info");
+      return applied?true:"conflict";
+    }catch(error){
+      console.warn("Personalização V210 pendente:",error);
+      if(showStatus){
+        const missing=error?.status===404||String(error.message||"").includes("PGRST");
+        settingsV210SetStatus(missing?"Execute o SQL V210 no Supabase para ativar o salvamento oficial da Personalização.":"Falha ao confirmar na nuvem. A alteração continua preservada neste aparelho e será reenviada.","error");
+      }
+      return false;
+    }finally{
+      systemSettingsSavePromiseV210=null;
+    }
+  })();
+  return systemSettingsSavePromiseV210;
+}
+async function settingsV210SyncFromCloud({showStatus=false}={}){
+  if(systemSettingsSyncPromiseV210)return systemSettingsSyncPromiseV210;
+  systemSettingsSyncPromiseV210=(async()=>{
+    const pending=await settingsV210ReadDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
+    if(pending?.mutationId){
+      settingsV210Apply(pending.payload,{renderNow:true,persist:true});
+      const flushed=await settingsV210FlushOutbox({showStatus});
+      if(!flushed)return false;
+    }
+    try{
+      const row=await settingsV210FetchOfficial();
+      if(row){
+        const version=Number(row.version||0);
+        if(version>=systemSettingsVersionV210){
+          systemSettingsVersionV210=version;
+          systemSettingsMutationV210=String(row.client_mutation_id||"");
+          settingsV210Apply(row.payload,{renderNow:true,persist:true});
+        }
+        if(showStatus)settingsV210SetStatus(`Personalização sincronizada com o Supabase • versão ${systemSettingsVersionV210}.`,"saved");
+        return true;
+      }
+      const payload=settingsV210Clone(state.settings||{},{});
+      const entry={payload,mutationId:settingsV210MutationId(),expectedVersion:0,updatedBy:settingsV210UserName(),at:new Date().toISOString()};
+      await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,entry);
+      return settingsV210FlushOutbox({showStatus});
+    }catch(error){
+      if(showStatus){
+        const missing=error?.status===404||String(error.message||"").includes("PGRST");
+        settingsV210SetStatus(missing?"Salvamento oficial ainda não ativado. Execute o SQL V210 no Supabase.":"Não foi possível consultar a personalização oficial. O snapshot local foi preservado.","error");
+      }
+      return false;
+    }finally{
+      systemSettingsSyncPromiseV210=null;
+    }
+  })();
+  return systemSettingsSyncPromiseV210;
+}
+function settingsV210Broadcast(message){
+  try{systemSettingsBroadcastV210?.postMessage({...message,at:Date.now()});}catch(error){}
+}
+function settingsV210ScheduleReconnect(){
+  clearTimeout(systemSettingsReconnectTimerV210);
+  if(navigator.onLine===false)return;
+  systemSettingsReconnectTimerV210=setTimeout(()=>settingsV210ConnectRealtime(),1800);
+}
+function settingsV210RealtimeMessage(event){
+  let message=null;
+  try{message=JSON.parse(event?.data||"");}catch(error){return;}
+  if(message.event==="phx_reply"&&message.payload?.status==="ok")return;
+  if(message.event==="phx_error"||message.event==="phx_close"){
+    try{systemSettingsSocketV210?.close();}catch(error){}
+    settingsV210ScheduleReconnect();
+    return;
+  }
+  if(message.event!=="postgres_changes")return;
+  settingsV210SyncFromCloud({showStatus:false});
+}
+function settingsV210ConnectRealtime(){
+  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(systemSettingsSocketV210&&[0,1].includes(systemSettingsSocketV210.readyState))return true;
+  try{
+    const base=String(SUPABASE_URL||"").replace(/^http/i,"ws").replace(/\/+$/g,"");
+    const socket=new WebSocket(`${base}/realtime/v1/websocket?apikey=${encodeURIComponent(SUPABASE_ANON_KEY)}&vsn=1.0.0`);
+    systemSettingsSocketV210=socket;
+    socket.addEventListener("open",()=>{
+      const ref=String(++systemSettingsJoinRefV210);
+      socket.send(JSON.stringify({
+        topic:"realtime:wisent-system-settings-v210",
+        event:"phx_join",
+        payload:{config:{broadcast:{ack:false,self:false},presence:{enabled:false},postgres_changes:[{event:"*",schema:"public",table:SYSTEM_SETTINGS_TABLE_V210}],private:false},access_token:SUPABASE_ANON_KEY},
+        ref,join_ref:ref
+      }));
+    });
+    socket.addEventListener("message",settingsV210RealtimeMessage);
+    socket.addEventListener("close",()=>{
+      if(systemSettingsSocketV210===socket)systemSettingsSocketV210=null;
+      settingsV210ScheduleReconnect();
+    });
+    socket.addEventListener("error",()=>{});
+    return true;
+  }catch(error){settingsV210ScheduleReconnect();return false;}
+}
+function settingsV210InstallWatchers(){
+  if(systemSettingsInstalledV210)return;
+  systemSettingsInstalledV210=true;
+  if(typeof BroadcastChannel!=="undefined"){
+    try{
+      systemSettingsBroadcastV210=new BroadcastChannel("wisent-system-settings-v210");
+      systemSettingsBroadcastV210.addEventListener("message",()=>settingsV210SyncFromCloud({showStatus:false}));
+    }catch(error){systemSettingsBroadcastV210=null;}
+  }
+  settingsV210ConnectRealtime();
+  window.addEventListener("online",()=>{
+    settingsV210ConnectRealtime();
+    settingsV210FlushOutbox({showStatus:true}).then(()=>settingsV210SyncFromCloud({showStatus:false}));
+  });
+  window.addEventListener("focus",()=>settingsV210SyncFromCloud({showStatus:false}));
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible")settingsV210SyncFromCloud({showStatus:false});
+  });
+  clearInterval(systemSettingsPollTimerV210);
+  systemSettingsPollTimerV210=setInterval(()=>{
+    if(document.hidden||navigator.onLine===false)return;
+    settingsV210SyncFromCloud({showStatus:false});
+  },20000);
+  clearInterval(systemSettingsHeartbeatTimerV210);
+  systemSettingsHeartbeatTimerV210=setInterval(()=>{
+    try{
+      if(systemSettingsSocketV210?.readyState===1){
+        systemSettingsSocketV210.send(JSON.stringify({topic:"phoenix",event:"heartbeat",payload:{},ref:`settings-heartbeat-${Date.now()}`}));
+      }
+    }catch(error){}
+  },25000);
+}
+async function settingsV210Bootstrap(){
+  const snapshot=await settingsV210ReadDurable(SYSTEM_SETTINGS_SNAPSHOT_KEY_V210);
+  const pending=await settingsV210ReadDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
+  if(snapshot?.payload)settingsV210Apply(snapshot.payload,{renderNow:true,persist:false});
+  if(pending?.payload){
+    settingsV210Apply(pending.payload,{renderNow:true,persist:false});
+    settingsV210SetStatus("Há uma personalização pendente preservada neste aparelho. Sincronizando...","saving");
+  }
+  await settingsV210SyncFromCloud({showStatus:true});
+  settingsV210InstallWatchers();
+}
+async function settingsV210Commit(payload,{successMessage="Personalização salva e confirmada na nuvem."}={}){
+  const entry={
+    payload:settingsV210Clone(payload,{}),
+    mutationId:settingsV210MutationId(),
+    expectedVersion:systemSettingsVersionV210,
+    updatedBy:settingsV210UserName(),
+    at:new Date().toISOString()
+  };
+  await settingsV210WriteDurable(SYSTEM_SETTINGS_SNAPSHOT_KEY_V210,{payload:entry.payload,version:systemSettingsVersionV210,mutationId:entry.mutationId,at:entry.at});
+  await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,entry);
+  settingsV210Apply(entry.payload,{renderNow:true,persist:true});
+  save();
+  const ok=await settingsV210FlushOutbox({showStatus:true});
+  if(ok===true){
+    alert(successMessage);
+    return true;
+  }
+  if(ok==="conflict"){
+    alert("Outra personalização mais recente já havia sido confirmada no Supabase. O sistema preservou a versão oficial mais nova para evitar sobrescrita indevida.");
+    return false;
+  }
+  alert(navigator.onLine===false?"Personalização preservada neste aparelho. Ela será enviada automaticamente quando a internet voltar.":"A personalização foi preservada, mas ainda não recebeu confirmação do Supabase. Verifique se o SQL V210 foi executado.");
+  return false;
+}
+window.saveSettings=async function(){
+  const button=$("saveSettingsBtnV210");
+  const original=button?.textContent||"Salvar personalização";
+  if(button){button.disabled=true;button.textContent="Salvando...";}
+  try{
+    const payload=settingsV210CollectFromForm();
+    return await settingsV210Commit(payload);
+  }finally{
+    if(button){button.disabled=false;button.textContent=original;}
+  }
+};
+window.removeSystemLogo=async function(){
+  state.settings=state.settings||{};
+  state.settings.systemLogo="";
+  if(typeof tempSystemLogo!=="undefined")tempSystemLogo=null;
+  await settingsV210Commit(state.settings,{successMessage:"Logo do sistema removida e alteração confirmada na nuvem."});
+};
+window.removePdfLogo=async function(){
+  state.settings=state.settings||{};
+  state.settings.pdfLogo="";
+  if(typeof tempPdfLogo!=="undefined")tempPdfLogo=null;
+  await settingsV210Commit(state.settings,{successMessage:"Logo do PDF removida e alteração confirmada na nuvem."});
+};
+window.removeLogo=window.removeSystemLogo;
+window.removePdfWatermark=async function(){
+  state.settings=state.settings||{};
+  state.settings.pdfWatermarkLogo="";
+  if(typeof tempWatermarkLogo!=="undefined")tempWatermarkLogo=null;
+  await settingsV210Commit(state.settings,{successMessage:"Marca d'água removida e alteração confirmada na nuvem."});
+};
+
+const startAppBeforeSettingsV210=startApp;
+startApp=async function(){
+  const result=await startAppBeforeSettingsV210();
+  try{await settingsV210Bootstrap();}
+  catch(error){
+    console.warn("Inicialização da personalização V210 em modo local:",error);
+    settingsV210SetStatus("Personalização carregada em modo local. Execute o SQL V210 para ativar a confirmação oficial.","error");
+  }
+  return result;
+};
 
 
 window.currentPage=window.currentPage||"dashboard";
@@ -37429,6 +37889,741 @@ window.exportInfluencerLaunchSafetyBackupV209=function(){
   link.click();
   link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),30000);
+};
+
+
+/* ===== V211 BLINDAGEM GERAL DOS DADOS PRINCIPAIS =====
+   Módulos cobertos por registro individual:
+   - influencers
+   - product_redemptions
+   - cash_payments
+   - paid_adjustments
+   - accumulation_history
+   - collaborators
+   - pix
+
+   A fonte oficial é public.wisent_core_records. O painel_state permanece
+   somente como backup secundário/compatibilidade, nunca como fonte final
+   quando a tabela oficial responde.
+*/
+const CORE_TABLE_V211="wisent_core_records";
+const CORE_HISTORY_TABLE_V211="wisent_core_records_history";
+const CORE_CONFLICT_TABLE_V211="wisent_core_record_conflicts";
+const CORE_UPSERT_RPC_V211="wisent_core_record_upsert";
+const CORE_DELETE_RPC_V211="wisent_core_record_soft_delete";
+const CORE_CONFLICT_RPC_V211="wisent_core_record_log_conflict";
+const CORE_SNAPSHOT_KEY_V211=KEY+"_core_records_snapshot_v211";
+const CORE_OUTBOX_KEY_V211=KEY+"_core_records_outbox_v211";
+const CORE_CONFLICTS_KEY_V211=KEY+"_core_records_conflicts_v211";
+const CORE_DB_V211="wisent-core-records-v211";
+const CORE_DB_STORE_V211="kv";
+const CORE_REALTIME_TOPIC_V211="realtime:wisent-core-records-v211";
+const CORE_PAGE_SIZE_V211=1000;
+const CORE_MODULES_V211=[
+  {module:"influencers",stateKey:"influencers",kind:"array"},
+  {module:"product_redemptions",stateKey:"redemptions",kind:"array"},
+  {module:"cash_payments",stateKey:"cashPayments",kind:"array"},
+  {module:"paid_adjustments",stateKey:"paidAdjustments",kind:"array"},
+  {module:"accumulation_history",stateKey:"accumulationHistory",kind:"array"},
+  {module:"collaborators",stateKey:"collaborators",kind:"array"},
+  {module:"pix",stateKey:"pix",kind:"singleton"}
+];
+
+let coreReadyV211=false;
+let coreOfficialReadyV211=false;
+let coreApplyingV211=false;
+let coreFlushBusyV211=false;
+let coreSyncBusyV211=false;
+let coreStartupPromiseV211=null;
+let coreOfficialRowsV211=new Map();
+let coreBaselineV211=new Map();
+let coreOutboxV211=[];
+let coreSocketV211=null;
+let coreReconnectTimerV211=null;
+let coreHeartbeatTimerV211=null;
+let corePollTimerV211=null;
+let coreHeartbeatRefV211=0;
+let coreJoinRefV211=0;
+let coreRealtimeConnectedV211=false;
+let coreRealtimeLastEventAtV211=0;
+let coreReconnectAttemptV211=0;
+let coreBroadcastV211=null;
+let coreCaptureTimerV211=null;
+
+function coreCloneV211(value,fallback=null){
+  try{return JSON.parse(JSON.stringify(value));}
+  catch(error){return fallback;}
+}
+function coreMutationIdV211(){
+  try{return crypto.randomUUID();}
+  catch(error){return `core-${Date.now()}-${Math.random().toString(16).slice(2)}`;}
+}
+function coreUserV211(){
+  const user=currentUser||getSessionUser?.()||{};
+  return {
+    name:String(user.name||user.username||"Sistema"),
+    id:String(user.id||user.username||""),
+    deviceId:String(getDeviceId?.()||"")
+  };
+}
+function coreKeyV211(module,recordId){
+  return `${String(module||"")}::${String(recordId||"")}`;
+}
+function coreCanonicalV211(value){
+  if(Array.isArray(value))return value.map(coreCanonicalV211);
+  if(value&&typeof value==="object"){
+    const out={};
+    Object.keys(value).sort().forEach(key=>{out[key]=coreCanonicalV211(value[key]);});
+    return out;
+  }
+  return value;
+}
+function coreDigestV211(value){
+  try{return JSON.stringify(coreCanonicalV211(value));}
+  catch(error){return "";}
+}
+function coreEqualV211(a,b){return coreDigestV211(a)===coreDigestV211(b);}
+function coreRecordIdV211(module,row,index=0){
+  if(module==="pix")return "global";
+  const value=row&&typeof row==="object"?row:{};
+  const id=value.id||value.legacyId||value.legacy_id||value.username||value.email||"";
+  if(id)return String(id);
+  return `${module}-${coreDigestV211(value).slice(0,24)||index}`;
+}
+function coreRowNormalizeV211(row){
+  if(!row||!row.module||!row.record_id)return null;
+  return {
+    id:row.id||"",
+    module:String(row.module),
+    record_id:String(row.record_id),
+    payload:coreCloneV211(row.payload,{}),
+    sort_order:Number(row.sort_order||0),
+    version:Number(row.version||0),
+    client_mutation_id:String(row.client_mutation_id||""),
+    created_at:row.created_at||"",
+    updated_at:row.updated_at||"",
+    deleted_at:row.deleted_at||null,
+    created_by:row.created_by||"",
+    updated_by:row.updated_by||"",
+    user_id:row.user_id||"",
+    device_id:row.device_id||""
+  };
+}
+function coreStateMapV211(){
+  const map=new Map();
+  CORE_MODULES_V211.forEach(config=>{
+    if(config.kind==="singleton"){
+      const payload=state?.[config.stateKey];
+      if(payload&&typeof payload==="object"&&Object.keys(payload).length){
+        map.set(coreKeyV211(config.module,"global"),{
+          module:config.module,recordId:"global",payload:coreCloneV211(payload,{}),sortOrder:0
+        });
+      }
+      return;
+    }
+    const rows=Array.isArray(state?.[config.stateKey])?state[config.stateKey]:[];
+    rows.forEach((payload,index)=>{
+      if(!payload||typeof payload!=="object")return;
+      const recordId=coreRecordIdV211(config.module,payload,index);
+      map.set(coreKeyV211(config.module,recordId),{
+        module:config.module,recordId,payload:coreCloneV211(payload,{}),sortOrder:index
+      });
+    });
+  });
+  return map;
+}
+function coreSnapshotRowsV211(){
+  return [...coreOfficialRowsV211.values()].map(coreCloneV211).filter(Boolean);
+}
+
+function coreReadLocalV211(key,fallback){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(key)||"");
+    return parsed??fallback;
+  }catch(error){return fallback;}
+}
+function coreWriteLocalV211(key,value){
+  try{localStorage.setItem(key,JSON.stringify(value));return true;}
+  catch(error){console.warn("Falha no armazenamento local V211:",error);return false;}
+}
+function coreOpenDbV211(){
+  return new Promise(resolve=>{
+    if(!window.indexedDB){resolve(null);return;}
+    try{
+      const request=indexedDB.open(CORE_DB_V211,1);
+      request.onupgradeneeded=()=>{
+        const db=request.result;
+        if(!db.objectStoreNames.contains(CORE_DB_STORE_V211))db.createObjectStore(CORE_DB_STORE_V211);
+      };
+      request.onsuccess=()=>resolve(request.result);
+      request.onerror=()=>resolve(null);
+    }catch(error){resolve(null);}
+  });
+}
+async function coreDbGetV211(key){
+  const db=await coreOpenDbV211();
+  if(!db)return null;
+  return await new Promise(resolve=>{
+    try{
+      const tx=db.transaction(CORE_DB_STORE_V211,"readonly");
+      const req=tx.objectStore(CORE_DB_STORE_V211).get(key);
+      req.onsuccess=()=>resolve(req.result??null);
+      req.onerror=()=>resolve(null);
+    }catch(error){resolve(null);}
+  });
+}
+async function coreDbPutV211(key,value){
+  const db=await coreOpenDbV211();
+  if(!db)return false;
+  return await new Promise(resolve=>{
+    try{
+      const tx=db.transaction(CORE_DB_STORE_V211,"readwrite");
+      tx.objectStore(CORE_DB_STORE_V211).put(coreCloneV211(value,null),key);
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=()=>resolve(false);
+    }catch(error){resolve(false);}
+  });
+}
+async function coreLoadDurableV211(){
+  const localSnapshot=coreReadLocalV211(CORE_SNAPSHOT_KEY_V211,[]);
+  const localOutbox=coreReadLocalV211(CORE_OUTBOX_KEY_V211,[]);
+  const dbSnapshot=await coreDbGetV211("snapshot");
+  const dbOutbox=await coreDbGetV211("outbox");
+  const rows=[...(Array.isArray(localSnapshot)?localSnapshot:[]),...(Array.isArray(dbSnapshot)?dbSnapshot:[])];
+  rows.forEach(raw=>{
+    const row=coreRowNormalizeV211(raw);
+    if(!row)return;
+    const key=coreKeyV211(row.module,row.record_id);
+    const existing=coreOfficialRowsV211.get(key);
+    if(!existing||Number(row.version||0)>Number(existing.version||0)||String(row.updated_at||"")>String(existing.updated_at||"")){
+      coreOfficialRowsV211.set(key,row);
+    }
+  });
+  const outboxMap=new Map();
+  [...(Array.isArray(localOutbox)?localOutbox:[]),...(Array.isArray(dbOutbox)?dbOutbox:[])].forEach(item=>{
+    if(!item?.module||!item?.recordId)return;
+    const key=coreKeyV211(item.module,item.recordId);
+    const existing=outboxMap.get(key);
+    if(!existing||String(item.queuedAt||"")>=String(existing.queuedAt||""))outboxMap.set(key,item);
+  });
+  coreOutboxV211=[...outboxMap.values()];
+}
+function corePersistOutboxV211(){
+  const safe=coreCloneV211(coreOutboxV211,[]);
+  coreWriteLocalV211(CORE_OUTBOX_KEY_V211,safe);
+  coreDbPutV211("outbox",safe);
+}
+function corePersistSnapshotV211(){
+  const rows=coreSnapshotRowsV211();
+  coreWriteLocalV211(CORE_SNAPSHOT_KEY_V211,rows);
+  coreDbPutV211("snapshot",rows);
+}
+function corePersistLocalStateOnlyV211(){
+  try{
+    repairStateStructure?.();
+    localStorage.setItem(KEY,JSON.stringify(state));
+    scheduleSnapshotWrites?.();
+  }catch(error){console.warn("Snapshot geral V211 não foi gravado:",error);}
+}
+
+function coreOverlayPendingV211(rowsMap){
+  const merged=new Map(rowsMap);
+  coreOutboxV211.forEach(item=>{
+    const key=coreKeyV211(item.module,item.recordId);
+    const base=merged.get(key)||{
+      module:item.module,record_id:item.recordId,version:Number(item.baseVersion||0),sort_order:Number(item.sortOrder||0)
+    };
+    if(item.operation==="delete"){
+      merged.set(key,{...base,deleted_at:item.queuedAt||new Date().toISOString()});
+    }else{
+      merged.set(key,{
+        ...base,
+        module:item.module,
+        record_id:item.recordId,
+        payload:coreCloneV211(item.payload,{}),
+        sort_order:Number(item.sortOrder||0),
+        deleted_at:null,
+        updated_at:item.queuedAt||new Date().toISOString()
+      });
+    }
+  });
+  return merged;
+}
+function coreApplyRowsToStateV211({renderNow=true}={}){
+  const effective=coreOverlayPendingV211(coreOfficialRowsV211);
+  coreApplyingV211=true;
+  try{
+    CORE_MODULES_V211.forEach(config=>{
+      const rows=[...effective.values()]
+        .filter(row=>row.module===config.module&&!row.deleted_at)
+        .sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0)||String(a.created_at||"").localeCompare(String(b.created_at||"")));
+      if(config.kind==="singleton"){
+        state[config.stateKey]=rows[0]?coreCloneV211(rows[0].payload,{}):{};
+      }else{
+        state[config.stateKey]=rows.map(row=>coreCloneV211(row.payload,{})).filter(Boolean);
+      }
+    });
+    normalize?.();
+    corePersistLocalStateOnlyV211();
+    coreBaselineV211=coreStateMapV211();
+    if(renderNow){populate?.();render?.();}
+  }finally{coreApplyingV211=false;}
+}
+
+async function coreFetchAllV211(){
+  const rows=[];
+  for(let offset=0;;offset+=CORE_PAGE_SIZE_V211){
+    const url=SUPABASE_URL+`/rest/v1/${CORE_TABLE_V211}?select=id,module,record_id,payload,sort_order,version,client_mutation_id,created_at,updated_at,deleted_at,created_by,updated_by,user_id,device_id&order=module.asc,sort_order.asc,updated_at.asc&limit=${CORE_PAGE_SIZE_V211}&offset=${offset}`;
+    const response=await fetchWithTimeout(url,{method:"GET",headers:cloudHeaders({"Cache-Control":"no-store"})},12000);
+    if(!response.ok){
+      const text=await response.text().catch(()=>"");
+      const error=new Error(`wisent_core_records HTTP ${response.status}: ${text.slice(0,180)}`);
+      error.status=response.status;
+      throw error;
+    }
+    const page=await response.json();
+    rows.push(...(Array.isArray(page)?page:[]));
+    if(!Array.isArray(page)||page.length<CORE_PAGE_SIZE_V211)break;
+  }
+  const map=new Map();
+  rows.forEach(raw=>{
+    const row=coreRowNormalizeV211(raw);
+    if(row)map.set(coreKeyV211(row.module,row.record_id),row);
+  });
+  coreOfficialRowsV211=map;
+  coreOfficialReadyV211=true;
+  corePersistSnapshotV211();
+  return rows;
+}
+async function coreFetchOneV211(module,recordId){
+  const url=SUPABASE_URL+`/rest/v1/${CORE_TABLE_V211}?module=eq.${encodeURIComponent(module)}&record_id=eq.${encodeURIComponent(recordId)}&select=id,module,record_id,payload,sort_order,version,client_mutation_id,created_at,updated_at,deleted_at,created_by,updated_by,user_id,device_id&limit=1`;
+  const response=await fetchWithTimeout(url,{method:"GET",headers:cloudHeaders({"Cache-Control":"no-store"})},9000);
+  if(!response.ok)throw new Error(`Falha ao confirmar registro V211: HTTP ${response.status}`);
+  const rows=await response.json();
+  return coreRowNormalizeV211(Array.isArray(rows)?rows[0]:null);
+}
+
+function coreQueueV211(item){
+  if(!item?.module||!item?.recordId)return false;
+  const key=coreKeyV211(item.module,item.recordId);
+  const existingIndex=coreOutboxV211.findIndex(x=>coreKeyV211(x.module,x.recordId)===key);
+  const official=coreOfficialRowsV211.get(key);
+  const previous=existingIndex>=0?coreOutboxV211[existingIndex]:null;
+  const entry={
+    module:item.module,
+    recordId:String(item.recordId),
+    operation:item.operation==="delete"?"delete":"upsert",
+    payload:item.operation==="delete"?null:coreCloneV211(item.payload,{}),
+    sortOrder:Number(item.sortOrder||0),
+    baseVersion:Number(previous?.baseVersion??official?.version??0),
+    basePayload:coreCloneV211(previous?.basePayload??official?.payload??null,null),
+    mutationId:coreMutationIdV211(),
+    queuedAt:new Date().toISOString(),
+    attempts:Number(previous?.attempts||0),
+    lastError:""
+  };
+  if(existingIndex>=0)coreOutboxV211.splice(existingIndex,1,entry);
+  else coreOutboxV211.push(entry);
+  corePersistOutboxV211();
+  coreApplyRowsToStateV211({renderNow:false});
+  return true;
+}
+function coreCaptureAndQueueV211(){
+  if(!coreReadyV211||coreApplyingV211)return false;
+  const current=coreStateMapV211();
+  const previous=coreBaselineV211;
+  current.forEach((record,key)=>{
+    const before=previous.get(key);
+    if(!before||!coreEqualV211(before.payload,record.payload)||Number(before.sortOrder||0)!==Number(record.sortOrder||0)){
+      coreQueueV211({
+        module:record.module,
+        recordId:record.recordId,
+        operation:"upsert",
+        payload:record.payload,
+        sortOrder:record.sortOrder
+      });
+    }
+  });
+  previous.forEach((record,key)=>{
+    if(!current.has(key)){
+      coreQueueV211({module:record.module,recordId:record.recordId,operation:"delete"});
+    }
+  });
+  coreBaselineV211=current;
+  clearTimeout(coreCaptureTimerV211);
+  coreCaptureTimerV211=setTimeout(()=>coreFlushOutboxV211(),80);
+  return true;
+}
+function coreQueueAllCurrentV211(modulesOnly=null){
+  const allowed=modulesOnly?new Set(modulesOnly):null;
+  const current=coreStateMapV211();
+  current.forEach(record=>{
+    if(allowed&&!allowed.has(record.module))return;
+    const key=coreKeyV211(record.module,record.recordId);
+    if(coreOfficialRowsV211.has(key))return;
+    coreQueueV211({
+      module:record.module,recordId:record.recordId,operation:"upsert",
+      payload:record.payload,sortOrder:record.sortOrder
+    });
+  });
+}
+
+function coreThreeWayMergeV211(base,local,official,path=""){
+  if(coreEqualV211(local,base))return {value:coreCloneV211(official,null),conflicts:[]};
+  if(coreEqualV211(official,base))return {value:coreCloneV211(local,null),conflicts:[]};
+  if(coreEqualV211(local,official))return {value:coreCloneV211(local,null),conflicts:[]};
+  const localObj=local&&typeof local==="object"&&!Array.isArray(local);
+  const baseObj=base&&typeof base==="object"&&!Array.isArray(base);
+  const officialObj=official&&typeof official==="object"&&!Array.isArray(official);
+  if(localObj&&baseObj&&officialObj){
+    const out={};
+    const conflicts=[];
+    const keys=new Set([...Object.keys(base),...Object.keys(local),...Object.keys(official)]);
+    keys.forEach(key=>{
+      const next=coreThreeWayMergeV211(base[key],local[key],official[key],path?`${path}.${key}`:key);
+      out[key]=next.value;
+      conflicts.push(...next.conflicts);
+    });
+    return {value:out,conflicts};
+  }
+  return {value:coreCloneV211(official,null),conflicts:[path||"$"]};
+}
+async function coreLogConflictV211(entry,official,conflicts){
+  const user=coreUserV211();
+  const response=await fetchWithTimeout(SUPABASE_URL+`/rest/v1/rpc/${CORE_CONFLICT_RPC_V211}`,{
+    method:"POST",
+    headers:cloudHeaders(),
+    body:JSON.stringify({
+      p_module:entry.module,
+      p_record_id:entry.recordId,
+      p_operation:entry.operation,
+      p_base_version:Number(entry.baseVersion||0),
+      p_official_version:Number(official?.version||0),
+      p_base_payload:entry.basePayload,
+      p_local_payload:entry.payload,
+      p_official_payload:official?.payload||null,
+      p_conflicting_fields:conflicts||[],
+      p_client_mutation_id:entry.mutationId,
+      p_user_name:user.name,
+      p_user_id:user.id,
+      p_device_id:user.deviceId
+    })
+  },10000);
+  if(!response.ok)throw new Error(`Falha ao preservar conflito V211: HTTP ${response.status}`);
+  const local=coreReadLocalV211(CORE_CONFLICTS_KEY_V211,[]);
+  local.push({...entry,official:coreCloneV211(official,null),conflicts,loggedAt:new Date().toISOString()});
+  coreWriteLocalV211(CORE_CONFLICTS_KEY_V211,local.slice(-200));
+  return true;
+}
+function coreRemoveOutboxEntryV211(entry){
+  coreOutboxV211=coreOutboxV211.filter(item=>item.mutationId!==entry.mutationId);
+  corePersistOutboxV211();
+}
+async function coreSendEntryV211(entry){
+  const user=coreUserV211();
+  const rpc=entry.operation==="delete"?CORE_DELETE_RPC_V211:CORE_UPSERT_RPC_V211;
+  const body=entry.operation==="delete"
+    ? {
+        p_module:entry.module,p_record_id:entry.recordId,p_base_version:Number(entry.baseVersion||0),
+        p_user_name:user.name,p_user_id:user.id,p_device_id:user.deviceId,p_client_mutation_id:entry.mutationId
+      }
+    : {
+        p_module:entry.module,p_record_id:entry.recordId,p_base_version:Number(entry.baseVersion||0),
+        p_payload:entry.payload||{},p_sort_order:Number(entry.sortOrder||0),
+        p_user_name:user.name,p_user_id:user.id,p_device_id:user.deviceId,p_client_mutation_id:entry.mutationId
+      };
+  const response=await fetchWithTimeout(SUPABASE_URL+`/rest/v1/rpc/${rpc}`,{
+    method:"POST",headers:cloudHeaders(),body:JSON.stringify(body)
+  },12000);
+  const text=await response.text().catch(()=>"");
+  if(!response.ok)throw new Error(`RPC V211 HTTP ${response.status}: ${text.slice(0,180)}`);
+  let result=null;
+  try{result=JSON.parse(text);}catch(error){result=null;}
+  if(result?.ok){
+    const row=coreRowNormalizeV211(result.record);
+    if(row)coreOfficialRowsV211.set(coreKeyV211(row.module,row.record_id),row);
+    coreRemoveOutboxEntryV211(entry);
+    corePersistSnapshotV211();
+    return true;
+  }
+  if(result?.status==="conflict"){
+    const official=coreRowNormalizeV211(result.record)||await coreFetchOneV211(entry.module,entry.recordId);
+    if(official)coreOfficialRowsV211.set(coreKeyV211(official.module,official.record_id),official);
+    if(entry.operation==="upsert"&&official){
+      const merged=coreThreeWayMergeV211(entry.basePayload||{},entry.payload||{},official.payload||{});
+      if(!merged.conflicts.length){
+        entry.baseVersion=Number(official.version||0);
+        entry.basePayload=coreCloneV211(official.payload,{});
+        entry.payload=coreCloneV211(merged.value,{});
+        entry.mutationId=coreMutationIdV211();
+        entry.attempts=Number(entry.attempts||0)+1;
+        entry.queuedAt=new Date().toISOString();
+        corePersistOutboxV211();
+        return false;
+      }
+      await coreLogConflictV211(entry,official,merged.conflicts);
+      coreRemoveOutboxEntryV211(entry);
+      updateCloudStatus("Conflito preservado sem perda. A versão oficial foi mantida e a alteração local ficou no histórico de conflitos.",true);
+      return false;
+    }
+    await coreLogConflictV211(entry,official,["$delete"]);
+    coreRemoveOutboxEntryV211(entry);
+    updateCloudStatus("Exclusão não aplicada porque outro usuário alterou o registro. Nenhum dado foi apagado.",true);
+    return false;
+  }
+  throw new Error(result?.message||"Supabase não confirmou a operação V211");
+}
+async function coreFlushOutboxV211(){
+  if(coreFlushBusyV211||navigator.onLine===false||!coreReadyV211)return false;
+  coreFlushBusyV211=true;
+  try{
+    let guard=0;
+    while(coreOutboxV211.length&&guard<500){
+      guard+=1;
+      const entry=coreOutboxV211[0];
+      try{
+        entry.attempts=Number(entry.attempts||0)+1;
+        entry.lastError="";
+        corePersistOutboxV211();
+        await coreSendEntryV211(entry);
+      }catch(error){
+        entry.lastError=String(error.message||error);
+        corePersistOutboxV211();
+        updateCloudStatus("Dados preservados na fila V211; nova tentativa será feita automaticamente.",true);
+        console.warn("Fila V211 pendente:",error);
+        break;
+      }
+    }
+    coreApplyRowsToStateV211({renderNow:true});
+    if(!coreOutboxV211.length){
+      updateCloudDebug(`V211: ${coreOfficialRowsV211.size} registros principais confirmados; nenhuma alteração pendente.`);
+      coreBroadcastV211?.postMessage({type:"core-sync",at:Date.now()});
+      return true;
+    }
+    return false;
+  }finally{coreFlushBusyV211=false;}
+}
+
+async function coreSyncFromCloudV211({showStatus=false}={}){
+  if(coreSyncBusyV211||navigator.onLine===false)return false;
+  coreSyncBusyV211=true;
+  try{
+    await coreFetchAllV211();
+    coreApplyRowsToStateV211({renderNow:true});
+    if(showStatus)updateCloudStatus("Dados principais sincronizados com a fonte oficial V211.");
+    return true;
+  }catch(error){
+    if(showStatus)updateCloudStatus("Não foi possível consultar a tabela V211; os dados locais continuam preservados.",true);
+    console.warn("Sincronização V211 adiada:",error);
+    return false;
+  }finally{coreSyncBusyV211=false;}
+}
+
+function coreRealtimeMessageV211(event){
+  let message=null;
+  try{message=JSON.parse(event?.data||event||"");}catch(error){return;}
+  if(message.event==="phx_reply"&&String(message.ref||"")===String(coreJoinRefV211)){
+    coreRealtimeConnectedV211=message.payload?.status==="ok";
+    if(coreRealtimeConnectedV211){
+      coreReconnectAttemptV211=0;
+      coreRealtimeLastEventAtV211=Date.now();
+      coreSyncFromCloudV211({showStatus:false});
+    }
+    return;
+  }
+  if(message.event==="phx_error"||message.event==="phx_close"){
+    coreRealtimeConnectedV211=false;
+    coreScheduleReconnectV211();
+    return;
+  }
+  if(message.event!=="postgres_changes")return;
+  const payload=message.payload?.data||message.payload||{};
+  const source=payload.record||payload.new||payload.old_record||payload.old||{};
+  const module=String(source.module||"");
+  const recordId=String(source.record_id||"");
+  if(!module||!recordId){coreSyncFromCloudV211({showStatus:false});return;}
+  coreFetchOneV211(module,recordId).then(row=>{
+    if(row)coreOfficialRowsV211.set(coreKeyV211(module,recordId),row);
+    coreRealtimeLastEventAtV211=Date.now();
+    corePersistSnapshotV211();
+    coreApplyRowsToStateV211({renderNow:true});
+  }).catch(()=>coreSyncFromCloudV211({showStatus:false}));
+}
+function coreScheduleReconnectV211(){
+  clearTimeout(coreReconnectTimerV211);
+  if(navigator.onLine===false)return;
+  const delay=Math.min(20000,900*Math.pow(1.8,Math.min(coreReconnectAttemptV211++,6)));
+  coreReconnectTimerV211=setTimeout(coreConnectRealtimeV211,delay);
+}
+function coreConnectRealtimeV211(){
+  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(coreSocketV211&&[0,1].includes(coreSocketV211.readyState))return true;
+  try{
+    const base=String(SUPABASE_URL||"").replace(/^http/i,"ws").replace(/\/+$/g,"");
+    const socket=new WebSocket(`${base}/realtime/v1/websocket?apikey=${encodeURIComponent(SUPABASE_ANON_KEY)}&vsn=1.0.0`);
+    coreSocketV211=socket;
+    socket.addEventListener("open",()=>{
+      const ref=String(++coreJoinRefV211);
+      socket.send(JSON.stringify({
+        topic:CORE_REALTIME_TOPIC_V211,
+        event:"phx_join",
+        payload:{config:{
+          broadcast:{ack:false,self:false},presence:{enabled:false},
+          postgres_changes:[{event:"*",schema:"public",table:CORE_TABLE_V211}],private:false
+        },access_token:SUPABASE_ANON_KEY},
+        ref,join_ref:ref
+      }));
+    });
+    socket.addEventListener("message",coreRealtimeMessageV211);
+    socket.addEventListener("error",()=>{coreRealtimeConnectedV211=false;});
+    socket.addEventListener("close",()=>{
+      if(coreSocketV211===socket)coreSocketV211=null;
+      coreRealtimeConnectedV211=false;
+      coreScheduleReconnectV211();
+    });
+    return true;
+  }catch(error){coreScheduleReconnectV211();return false;}
+}
+function coreInstallWatchersV211(){
+  if(typeof BroadcastChannel!=="undefined"){
+    try{
+      coreBroadcastV211=new BroadcastChannel("wisent-core-records-v211");
+      coreBroadcastV211.addEventListener("message",event=>{
+        if(event?.data?.type==="core-sync")coreSyncFromCloudV211({showStatus:false});
+      });
+    }catch(error){coreBroadcastV211=null;}
+  }
+  coreConnectRealtimeV211();
+  clearInterval(coreHeartbeatTimerV211);
+  coreHeartbeatTimerV211=setInterval(()=>{
+    try{
+      if(coreSocketV211?.readyState===1){
+        coreSocketV211.send(JSON.stringify({topic:"phoenix",event:"heartbeat",payload:{},ref:`core-heartbeat-${++coreHeartbeatRefV211}`}));
+      }
+    }catch(error){}
+  },25000);
+  window.addEventListener("online",()=>{
+    coreConnectRealtimeV211();
+    coreFlushOutboxV211().then(()=>coreSyncFromCloudV211({showStatus:true}));
+  });
+  window.addEventListener("offline",()=>{
+    coreRealtimeConnectedV211=false;
+    try{coreSocketV211?.close();}catch(error){}
+    updateCloudStatus("Offline • alterações principais preservadas na fila V211 deste aparelho",true);
+  });
+  const refresh=()=>{
+    if(navigator.onLine===false)return;
+    coreConnectRealtimeV211();
+    coreFlushOutboxV211().then(()=>coreSyncFromCloudV211({showStatus:false}));
+  };
+  window.addEventListener("focus",refresh);
+  window.addEventListener("pageshow",refresh);
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refresh();});
+  window.addEventListener("storage",event=>{
+    if([CORE_OUTBOX_KEY_V211,CORE_SNAPSHOT_KEY_V211].includes(event?.key))refresh();
+  });
+  clearInterval(corePollTimerV211);
+  corePollTimerV211=setInterval(()=>{
+    if(document.hidden||navigator.onLine===false)return;
+    const stale=!coreRealtimeConnectedV211||!coreRealtimeLastEventAtV211||Date.now()-coreRealtimeLastEventAtV211>45000;
+    if(stale)refresh();
+  },15000);
+}
+
+async function coreStartupV211(){
+  if(coreStartupPromiseV211)return coreStartupPromiseV211;
+  coreStartupPromiseV211=(async()=>{
+    await coreLoadDurableV211();
+    const localBeforeOfficial=coreStateMapV211();
+    let fetched=false;
+    try{
+      await coreFetchAllV211();
+      fetched=true;
+    }catch(error){
+      console.warn("Tabela oficial V211 ainda não disponível:",error);
+      if(coreOfficialRowsV211.size){coreApplyRowsToStateV211({renderNow:true});}
+      updateCloudStatus("Execute o SQL V211 para concluir a blindagem geral. Nenhum dado local foi apagado.",true);
+    }
+
+    coreReadyV211=true;
+    if(fetched){
+      const modulesWithOfficial=new Set([...coreOfficialRowsV211.values()].map(row=>row.module));
+      const missingModules=[];
+      CORE_MODULES_V211.forEach(config=>{
+        const hasLocal=[...localBeforeOfficial.values()].some(row=>row.module===config.module);
+        if(hasLocal&&!modulesWithOfficial.has(config.module))missingModules.push(config.module);
+      });
+      coreApplyRowsToStateV211({renderNow:true});
+      if(cloudOfficialSourceReachable&&missingModules.length){
+        coreApplyingV211=true;
+        try{
+          localBeforeOfficial.forEach(record=>{
+            if(!missingModules.includes(record.module))return;
+            const config=CORE_MODULES_V211.find(item=>item.module===record.module);
+            if(config?.kind==="singleton")state[config.stateKey]=coreCloneV211(record.payload,{});
+            else{
+              state[config.stateKey]=state[config.stateKey]||[];
+              if(!state[config.stateKey].some(item=>coreRecordIdV211(record.module,item)===record.recordId)){
+                state[config.stateKey].push(coreCloneV211(record.payload,{}));
+              }
+            }
+          });
+        }finally{coreApplyingV211=false;}
+        coreQueueAllCurrentV211(missingModules);
+      }
+      coreBaselineV211=coreStateMapV211();
+      await coreFlushOutboxV211();
+      await coreSyncFromCloudV211({showStatus:false});
+      updateCloudStatus("Dados principais protegidos e sincronizados pela fonte oficial V211.");
+    }else{
+      coreBaselineV211=coreStateMapV211();
+    }
+    coreInstallWatchersV211();
+    return true;
+  })();
+  return coreStartupPromiseV211;
+}
+
+window.exportWisentDataBackupV211=function(){
+  const payload={
+    generatedAt:new Date().toISOString(),
+    version:APP_BUILD_VERSION,
+    officialReady:coreOfficialReadyV211,
+    official:coreSnapshotRowsV211(),
+    visible:coreCloneV211(Object.fromEntries(CORE_MODULES_V211.map(c=>[c.stateKey,state?.[c.stateKey]??(c.kind==="array"?[]:{})])),{}),
+    pending:coreCloneV211(coreOutboxV211,[]),
+    conflicts:coreReadLocalV211(CORE_CONFLICTS_KEY_V211,[])
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download=`backup-wisent-dados-principais-${today?.()||new Date().toISOString().slice(0,10)}-${Date.now()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
+};
+
+const saveBeforeCoreV211=save;
+save=function(){
+  const result=saveBeforeCoreV211.apply(this,arguments);
+  if(coreReadyV211&&!coreApplyingV211){
+    clearTimeout(coreCaptureTimerV211);
+    coreCaptureTimerV211=setTimeout(coreCaptureAndQueueV211,0);
+  }
+  return result;
+};
+
+const startAppBeforeCoreV211=startApp;
+startApp=async function(){
+  const result=await startAppBeforeCoreV211.apply(this,arguments);
+  try{await coreStartupV211();}
+  catch(error){
+    console.error("Blindagem geral V211 iniciada em modo de contingência:",error);
+    updateCloudStatus("Blindagem V211 em contingência; dados locais preservados.",true);
+  }
+  return result;
 };
 
 
