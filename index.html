@@ -14440,30 +14440,95 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
 
 
-/* ===== V216 — RELATÓRIO PDF RESUMIDO + HISTÓRICO DIRETO ===== */
-.reportNameLinkV216{
+/* ===== V217 — RELATÓRIO PDF RESUMIDO + HISTÓRICO DIRETO ===== */
+.reportNameLinkV217{
   display:block;border:0;background:transparent;padding:0;margin:0;
   color:#0f172a;font:inherit;font-size:24px;font-weight:900;text-align:left;
   cursor:pointer
 }
-.reportNameLinkV216:hover{color:#1d4ed8;text-decoration:underline;text-underline-offset:3px}
-#reportAccumulationSectionV216[hidden],
+.reportNameLinkV217:hover{color:#1d4ed8;text-decoration:underline;text-underline-offset:3px}
+#reportAccumulationSectionV217[hidden],
 #reportCoverageNotice[hidden],
-#reportAccumulatedOriginWrapV216[hidden],
+#reportAccumulatedOriginWrapV217[hidden],
 #reportStatusBox[hidden]{display:none!important}
-.reportAccumulatedOriginWrapV216{margin-top:14px}
-.reportAccumulatedOriginWrapV216 h4{margin:0 0 8px;font-size:13px;color:#334155}
-.reportOriginSimpleV216{max-width:620px}
-.reportOriginSimpleV216 th:last-child,
-.reportOriginSimpleV216 td:last-child{text-align:right;font-variant-numeric:tabular-nums}
-.reportAccumulatedOriginTableV216 th:nth-child(n+2),
-.reportAccumulatedOriginTableV216 td:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
+.reportAccumulatedOriginWrapV217{margin-top:14px}
+.reportAccumulatedOriginWrapV217 h4{margin:0 0 8px;font-size:13px;color:#334155}
+.reportOriginSimpleV217{max-width:620px}
+.reportOriginSimpleV217 th:last-child,
+.reportOriginSimpleV217 td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.reportAccumulatedOriginTableV217 th:nth-child(n+2),
+.reportAccumulatedOriginTableV217 td:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
 @media print{
-  body.print-report .reportNameLinkV216{color:#111827!important;text-decoration:none!important;cursor:default}
+  body.print-report .reportNameLinkV217{color:#111827!important;text-decoration:none!important;cursor:default}
   body.print-report #reportCoverageNotice{display:none!important}
-  body.print-report #reportOriginSectionV216{break-inside:avoid;page-break-inside:avoid}
-  body.print-report #reportAccumulationSectionV216{break-inside:avoid;page-break-inside:avoid}
+  body.print-report #reportOriginSectionV217{break-inside:avoid;page-break-inside:avoid}
+  body.print-report #reportAccumulationSectionV217{break-inside:avoid;page-break-inside:avoid}
 }
+
+
+/* ===== V217 — RELATÓRIO RESPONSIVO EM PC, CELULAR E IMPRESSÃO ===== */
+#reports .printPanel{max-width:1120px;margin-left:auto;margin-right:auto;min-width:0}
+#reports .printArea{width:100%;min-width:0;overflow:visible;padding:clamp(14px,2.5vw,28px)}
+#reports .pdfCleanHeader,#reports .pdfIdentity,#reports .pdfThreeCards,#reports .reportSection{min-width:0}
+#reports .pdfCleanHeader>*{min-width:0}
+#reports .pdfCleanHeader h1,#reports .pdfCleanHeader p,#reports .pdfIdentity h2,#reports .pdfIdentity p{overflow-wrap:anywhere;word-break:normal}
+#reports .pdfThreeCards{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch}
+#reports .pdfBox{min-width:0;display:flex;flex-direction:column;justify-content:space-between}
+#reports .pdfBox small{line-height:1.35;overflow-wrap:anywhere}
+#reports .pdfBox strong{font-size:clamp(18px,2.1vw,25px);line-height:1.15;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+#reports .reportBalanceTable,#reports .reportOriginTable{width:100%!important;max-width:100%!important;min-width:0!important;table-layout:fixed;border-collapse:separate}
+#reports .reportBalanceTable th,#reports .reportBalanceTable td,#reports .reportOriginTable th,#reports .reportOriginTable td{white-space:normal!important;overflow-wrap:anywhere;word-break:normal;line-height:1.35}
+#reports .reportBalanceTable th:first-child,#reports .reportBalanceTable td:first-child{width:46%}
+#reports .reportBalanceTable th:nth-child(2),#reports .reportBalanceTable td:nth-child(2),#reports .reportBalanceTable th:nth-child(3),#reports .reportBalanceTable td:nth-child(3){width:27%;text-align:right;font-variant-numeric:tabular-nums}
+#reports .reportOriginSimpleV217 th:first-child,#reports .reportOriginSimpleV217 td:first-child{width:58%}
+#reports .reportOriginSimpleV217 th:last-child,#reports .reportOriginSimpleV217 td:last-child{width:42%;text-align:right;font-variant-numeric:tabular-nums}
+#reports .reportAccumulatedOriginTableV217 th:first-child,#reports .reportAccumulatedOriginTableV217 td:first-child{width:46%}
+#reports .reportAccumulatedOriginTableV217 th:nth-child(2),#reports .reportAccumulatedOriginTableV217 td:nth-child(2),#reports .reportAccumulatedOriginTableV217 th:nth-child(3),#reports .reportAccumulatedOriginTableV217 td:nth-child(3){width:27%;text-align:right;font-variant-numeric:tabular-nums}
+@media(max-width:900px){
+  #reports .panelHead{align-items:stretch;flex-direction:column}
+  #reports .filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  #reports .filters .dateMini,#reports .filters select,#reports .filters button{width:100%;min-width:0}
+}
+@media(max-width:680px){
+  #reports .printPanel{padding:10px;margin-left:-8px;margin-right:-8px;border-radius:14px}
+  #reports .printArea{padding:13px;border-radius:14px}
+  #reports .pdfCleanHeader{display:grid;grid-template-columns:1fr;gap:10px;padding-bottom:13px;margin-bottom:14px}
+  #reports .printLogo{max-width:min(210px,70vw);max-height:72px}
+  #reports .pdfIdentity{padding:13px;border-radius:14px;margin-bottom:13px}
+  #reports .reportNameLinkV217,#reports .pdfIdentity h2{font-size:20px!important;line-height:1.2}
+  #reports .pdfThreeCards{grid-template-columns:1fr;gap:9px;margin:13px 0}
+  #reports .pdfBox{padding:13px;border-radius:14px}
+  #reports .pdfBox strong{font-size:22px}
+  #reports .reportSection{margin-top:15px}
+  #reports .reportSection h3{font-size:15px;line-height:1.3}
+  #reports .reportBalanceTable th,#reports .reportBalanceTable td,#reports .reportOriginTable th,#reports .reportOriginTable td{padding:8px 6px!important;font-size:10.5px!important}
+  #reports .reportBalanceTable th:first-child,#reports .reportBalanceTable td:first-child{width:42%}
+  #reports .reportBalanceTable th:nth-child(2),#reports .reportBalanceTable td:nth-child(2),#reports .reportBalanceTable th:nth-child(3),#reports .reportBalanceTable td:nth-child(3){width:29%}
+  #reports .reportAccumulatedOriginTableV217 th:first-child,#reports .reportAccumulatedOriginTableV217 td:first-child{width:42%}
+  #reports .reportAccumulatedOriginTableV217 th:nth-child(2),#reports .reportAccumulatedOriginTableV217 td:nth-child(2),#reports .reportAccumulatedOriginTableV217 th:nth-child(3),#reports .reportAccumulatedOriginTableV217 td:nth-child(3){width:29%}
+  #reports .reportStatusBox{font-size:11px;padding:10px 11px}
+  #reports .filters{grid-template-columns:1fr}
+}
+@media print{
+  @page{size:A4 portrait;margin:10mm}
+  html,body{width:100%!important;min-width:0!important}
+  body.print-report #reports,body.print-report #reports .printPanel{width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+  body.print-report #reports .printArea{width:100%!important;max-width:none!important;min-width:0!important;padding:0!important;overflow:visible!important;border:0!important}
+  body.print-report #reports .pdfCleanHeader{gap:12px;padding-bottom:12px;margin-bottom:14px}
+  body.print-report #reports .pdfCleanHeader h1{font-size:22pt;line-height:1.1}
+  body.print-report #reports .pdfIdentity{padding:11px 13px;margin-bottom:12px;border-radius:10px}
+  body.print-report #reports .reportNameLinkV217{font-size:17pt!important;line-height:1.15}
+  body.print-report #reports .pdfThreeCards{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px;margin:11px 0}
+  body.print-report #reports .pdfBox{padding:10px;border-radius:10px;break-inside:avoid;page-break-inside:avoid}
+  body.print-report #reports .pdfBox small{font-size:7.5pt;line-height:1.25}
+  body.print-report #reports .pdfBox strong{font-size:14.5pt;line-height:1.1}
+  body.print-report #reports .reportSection{margin-top:13px;break-inside:avoid;page-break-inside:avoid}
+  body.print-report #reports .reportSection h3{font-size:11.5pt;margin-bottom:7px}
+  body.print-report #reports .reportBalanceTable th,body.print-report #reports .reportBalanceTable td,body.print-report #reports .reportOriginTable th,body.print-report #reports .reportOriginTable td{padding:5.5px 6px!important;font-size:8pt!important;line-height:1.25}
+  body.print-report #reports .reportStatusBox{margin-top:8px;padding:7px 9px;font-size:8pt;line-height:1.3}
+  body.print-report #reports .pdfFooterClean{margin-top:12px;padding-top:8px;font-size:8pt}
+}
+/* ===== FIM V217 RESPONSIVO ===== */
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -14554,7 +14619,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V216</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V217</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15656,7 +15721,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
           </div>
 
           <div class="pdfIdentity">
-            <button type="button" id="reportName" class="reportNameLinkV216" onclick="openSelectedReportInfluencerHistoryV216()" title="Abrir histórico de lançamentos">Selecione um influencer</button>
+            <button type="button" id="reportName" class="reportNameLinkV217" onclick="openSelectedReportInfluencerHistoryV217()" title="Abrir histórico de lançamentos">Selecione um influencer</button>
             <p id="reportCoupon" class="muted">Cupom: -</p>
             <p id="reportPeriod" class="muted">Mês: -</p>
           </div>
@@ -15680,7 +15745,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
             <span id="reportCoverageText"></span>
           </div>
 
-          <div id="reportAccumulationSectionV216" class="reportSection" hidden>
+          <div id="reportAccumulationSectionV217" class="reportSection" hidden>
             <h3>Demonstrativo do saldo acumulado</h3>
             <table class="reportBalanceTable">
               <thead><tr><th>Movimentação</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
@@ -15691,19 +15756,19 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
                 <tr class="reportFinalRow"><td>Saldo disponível ao final</td><td id="reportClosingProduct">R$ 0,00</td><td id="reportClosingCash">R$ 0,00</td></tr>
               </tbody>
             </table>
-            <div id="reportAccumulatedOriginWrapV216" class="reportAccumulatedOriginWrapV216" hidden>
+            <div id="reportAccumulatedOriginWrapV217" class="reportAccumulatedOriginWrapV217" hidden>
               <h4>Comissões acumuladas por origem</h4>
-              <table class="reportOriginTable reportAccumulatedOriginTableV216">
+              <table class="reportOriginTable reportAccumulatedOriginTableV217">
                 <thead><tr><th>Origem</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
-                <tbody id="reportAccumulatedOriginRowsV216"><tr><td colspan="3">Nenhuma comissão acumulada por origem.</td></tr></tbody>
+                <tbody id="reportAccumulatedOriginRowsV217"><tr><td colspan="3">Nenhuma comissão acumulada por origem.</td></tr></tbody>
               </table>
             </div>
             <div id="reportStatusBox" class="reportStatusBox" data-type="neutral"></div>
           </div>
 
-          <div id="reportOriginSectionV216" class="reportSection">
+          <div id="reportOriginSectionV217" class="reportSection">
             <h3>Vendas por origem</h3>
-            <table class="reportOriginTable reportOriginSimpleV216">
+            <table class="reportOriginTable reportOriginSimpleV217">
               <thead><tr><th>Origem</th><th>Total vendido</th></tr></thead>
               <tbody id="reportOriginRows"><tr><td colspan="2">Nenhuma origem com venda registrada.</td></tr></tbody>
             </table>
@@ -16858,7 +16923,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V216";
+const APP_BUILD_VERSION="V217";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -16891,9 +16956,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=216",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=217",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=216");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=217");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -21295,8 +21360,13 @@ function normalizeRecoveredInfluencerLaunch(obj,source="armazenamento desconheci
   item.id=String(item.id||uid());
   item.date=String(item.date||today()).slice(0,10);
   item.month=item.month||item.date.slice(0,7);
+  item.periodMode=item.periodMode==="month"?"month":"day";
+  item.accountingMonth=validMonthValue(item.accountingMonth)||(item.periodMode==="month"?validMonthValue(item.month):item.date.slice(0,7))||item.month;
   item.influencerId=String(item.influencerId||"");
+  item.influencerName=String(item.influencerName||"");
+  item.coupon=String(item.coupon||"");
   item.origin=String(item.origin||"Site");
+  item.originKey=reportOriginKeyV217(item.origin);
   item.sold=Math.max(0,finiteNumber(item.sold,0));
   item.productCommission=Math.max(0,finiteNumber(item.productCommission,0));
   item.cashCommission=Math.max(0,finiteNumber(item.cashCommission,0));
@@ -22954,7 +23024,7 @@ function resetInfluencerCache(){
 }
 function infById(id){return influencerMap().get(String(id));}
 function totalLaunch(l){return Number(l.productCommission||0)+Number(l.cashCommission||0);}
-function monthLaunches(){return state.launches.filter(l=>(l.month||(l.date||"").slice(0,7))===selectedMonth());}
+function monthLaunches(){return state.launches.filter(l=>launchRecordMonthV215(l)===selectedMonth());}
 function launchPeriodModeOf(row){return row?.periodMode==="month"?"month":"day";}
 function launchPeriodLabel(row){
   if(launchPeriodModeOf(row)==="month"){
@@ -23192,29 +23262,109 @@ function renderLaunchTotals(){
 
 /* ===== V215 — HISTÓRICO CONSOLIDADO DE LANÇAMENTOS ===== */
 function launchRecordMonthV215(row){
-  return validMonthValue(row?.month)||(normalizeDateOnly(row?.date)||"").slice(0,7);
+  const storedAccounting=validMonthValue(row?.accountingMonth);
+  if(storedAccounting)return storedAccounting;
+  const explicitMonth=validMonthValue(row?.month);
+  const dateMonth=(normalizeDateOnly(row?.date)||"").slice(0,7);
+  if(row?.periodMode==="month")return explicitMonth||dateMonth;
+  return dateMonth||explicitMonth;
 }
+
+/* ===== V217 — IDENTIDADE HISTÓRICA E ORIGENS BLINDADAS =====
+   Resolve registros antigos por ID, cupom ou nome normalizado sem alterar
+   nem fundir as linhas oficiais do Supabase. */
+function reportIdentityKeyV217(value){
+  return String(value??"")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,"");
+}
+function reportNumberV217(value){
+  if(typeof value==="number")return Number.isFinite(value)?value:0;
+  let raw=String(value??"").trim();
+  if(!raw)return 0;
+  raw=raw.replace(/\s+/g,"").replace(/R\$/gi,"");
+  if(raw.includes(",")&&raw.includes(".")){
+    if(raw.lastIndexOf(",")>raw.lastIndexOf("."))raw=raw.replace(/\./g,"").replace(",",".");
+    else raw=raw.replace(/,/g,"");
+  }else if(raw.includes(",")){
+    raw=raw.replace(/\./g,"").replace(",",".");
+  }
+  raw=raw.replace(/[^0-9+\-.]/g,"");
+  const parsed=Number(raw);
+  return Number.isFinite(parsed)?parsed:0;
+}
+function reportInfluencerIdentityV217(infId){
+  const selected=infById(infId)||{};
+  const id=String(infId??"");
+  const coupon=reportIdentityKeyV217(selected.coupon);
+  const name=reportIdentityKeyV217(selected.name);
+  const ids=new Set([id]);
+  (state.influencers||[]).forEach(item=>{
+    if(!item)return;
+    const itemCoupon=reportIdentityKeyV217(item.coupon);
+    const itemName=reportIdentityKeyV217(item.name);
+    if(coupon&&itemCoupon===coupon)ids.add(String(item.id??""));
+    else if(!coupon&&name&&itemName===name)ids.add(String(item.id??""));
+  });
+  return {id,coupon,name,ids};
+}
+function reportRecordBelongsToInfluencerV217(row,infId){
+  if(!row)return false;
+  const identity=reportInfluencerIdentityV217(infId);
+  const rowId=String(row.influencerId??"");
+  if(identity.ids.has(rowId))return true;
+  const linked=infById(rowId)||{};
+  const rowCoupon=reportIdentityKeyV217(row.coupon||row.influencerCoupon||linked.coupon);
+  const rowName=reportIdentityKeyV217(row.influencerName||linked.name);
+  const rowIdKey=reportIdentityKeyV217(rowId);
+  if(identity.coupon&&(rowCoupon===identity.coupon||rowIdKey===identity.coupon))return true;
+  if(identity.name&&(rowName===identity.name||rowIdKey===identity.name)){
+    return !identity.coupon||!rowCoupon||rowCoupon===identity.coupon;
+  }
+  return false;
+}
+function reportLaunchEffectiveDateV217(row){
+  const month=launchRecordMonthV215(row);
+  const date=normalizeDateOnly(row?.date);
+  if(row?.periodMode==="month")return month?`${month}-01`:(date||"");
+  if(date&&(!month||date.slice(0,7)===month))return date;
+  return month?`${month}-01`:(date||"");
+}
+function reportOriginKeyV217(value){
+  return reportIdentityKeyV217(value)||"semorigem";
+}
+function reportOriginLabelV217(value){
+  const raw=String(value||"").trim();
+  if(!raw)return "Sem origem";
+  const configured=(state.settings?.origins||[]).find(item=>reportOriginKeyV217(item)===reportOriginKeyV217(raw));
+  return String(configured||raw);
+}
+/* ===== FIM V217 ===== */
+
 function launchRowsForInfluencerMonthV215(infId,month=selectedMonth()){
   const targetMonth=validMonthValue(month)||selectedMonth();
   return (state.launches||[])
-    .filter(row=>row&&String(row.influencerId)===String(infId)&&launchRecordMonthV215(row)===targetMonth)
+    .filter(row=>row&&reportRecordBelongsToInfluencerV217(row,infId)&&launchRecordMonthV215(row)===targetMonth)
     .slice()
     .sort((a,b)=>{
-      const ad=normalizeDateOnly(a.date)||`${launchRecordMonthV215(a)}-01`;
-      const bd=normalizeDateOnly(b.date)||`${launchRecordMonthV215(b)}-01`;
+      const ad=reportLaunchEffectiveDateV217(a)||`${launchRecordMonthV215(a)}-01`;
+      const bd=reportLaunchEffectiveDateV217(b)||`${launchRecordMonthV215(b)}-01`;
       return ad.localeCompare(bd)||String(a.createdAt||a.updatedAt||a.id||"").localeCompare(String(b.createdAt||b.updatedAt||b.id||""));
     });
 }
 function launchOriginSummaryV215(rows=[]){
   const map=new Map();
   rows.forEach(row=>{
-    const origin=String(row?.origin||"Sem origem").trim()||"Sem origem";
-    const current=map.get(origin)||{origin,count:0,sold:0,product:0,cash:0};
+    const origin=reportOriginLabelV217(row?.origin);
+    const key=reportOriginKeyV217(origin);
+    const current=map.get(key)||{origin,count:0,sold:0,product:0,cash:0};
     current.count+=1;
-    current.sold+=Number(row?.sold||0);
-    current.product+=Number(row?.productCommission||0);
-    current.cash+=Number(row?.cashCommission||0);
-    map.set(origin,current);
+    current.sold+=reportNumberV217(row?.sold);
+    current.product+=reportNumberV217(row?.productCommission);
+    current.cash+=reportNumberV217(row?.cashCommission);
+    map.set(key,current);
   });
   return [...map.values()]
     .filter(row=>row.count>0&&(row.sold!==0||row.product!==0||row.cash!==0))
@@ -23223,7 +23373,7 @@ function launchOriginSummaryV215(rows=[]){
 function openInfluencerLaunchHistory(infId,month=selectedMonth()){
   const modal=$("launchInfluencerHistoryModal");
   if(!modal)return;
-  /* V216: o modal deixa a section oculta de Lançamentos e passa a abrir em qualquer página. */
+  /* V217: o modal deixa a section oculta de Lançamentos e passa a abrir em qualquer página. */
   if(modal.parentElement!==document.body)document.body.appendChild(modal);
   const inf=infById(infId)||{};
   const targetMonth=validMonthValue(month)||selectedMonth();
@@ -23269,7 +23419,7 @@ function closeInfluencerLaunchHistory(){
   modal.setAttribute("aria-hidden","true");
   document.body.style.overflow="";
 }
-function openSelectedReportInfluencerHistoryV216(){
+function openSelectedReportInfluencerHistoryV217(){
   const infId=$("reportInfluencer")?.value||"";
   if(!infId){alert("Selecione um influencer.");return false;}
   openInfluencerLaunchHistory(infId,selectedMonth());
@@ -24878,28 +25028,28 @@ function accumulationLedgerEventsForInfluencer(infId,asOfDate=today()){
   const events=[];
 
   (state.launches||[]).forEach(l=>{
-    const date=normalizeDateOnly(l.date);
-    if(!l.accumulate||l.influencerId!==infId||!date||date>asOfDate)return;
+    const date=reportLaunchEffectiveDateV217(l);
+    if(!l.accumulate||!reportRecordBelongsToInfluencerV217(l,infId)||!date||date>asOfDate)return;
 
     events.push({
       at:date+"T00:00:00.000",
       order:10,
       kind:"launch",
-      product:Number(l.productCommission||0),
-      cash:Number(l.cashCommission||0),
+      product:reportNumberV217(l.productCommission),
+      cash:reportNumberV217(l.cashCommission),
       source:l
     });
   });
 
   (state.redemptions||[]).forEach(r=>{
     const date=normalizeDateOnly(r.date);
-    if(r.influencerId!==infId||r.status==="Cancelado"||!date||date>asOfDate)return;
+    if(!reportRecordBelongsToInfluencerV217(r,infId)||r.status==="Cancelado"||!date||date>asOfDate)return;
 
     events.push({
       at:date+"T12:00:00.000",
       order:20,
       kind:"product_redemption",
-      productUsed:Number(r.used||0),
+      productUsed:reportNumberV217(r.used),
       cashToZero:isProductChoiceRedemption(r),
       source:r
     });
@@ -24907,13 +25057,13 @@ function accumulationLedgerEventsForInfluencer(infId,asOfDate=today()){
 
   (state.cashPayments||[]).forEach(p=>{
     const date=normalizeDateOnly(p.date);
-    if(p.influencerId!==infId||p.status==="Cancelado"||!date||date>asOfDate)return;
+    if(!reportRecordBelongsToInfluencerV217(p,infId)||p.status==="Cancelado"||!date||date>asOfDate)return;
 
     events.push({
       at:date+"T13:00:00.000",
       order:30,
       kind:p.productRedemptionId?"cash_zero_by_product":"cash_payment",
-      amount:Number(p.cash||p.amount||0),
+      amount:reportNumberV217(p.cash||p.amount),
       productToZero:!p.productRedemptionId,
       source:p
     });
@@ -24921,18 +25071,17 @@ function accumulationLedgerEventsForInfluencer(infId,asOfDate=today()){
 
   (state.accumulationHistory||[]).forEach(h=>{
     const date=normalizeDateOnly(h.createdAt||h.date);
-    if(h.influencerId!==infId||!date||date>asOfDate)return;
-
+    if(!reportRecordBelongsToInfluencerV217(h,infId)||!date||date>asOfDate)return;
     if(!accumulationHistoryTypesThatCloseBalance().has(h.type))return;
 
     events.push({
       at:h.createdAt||date+"T23:59:59.000",
       order:90,
       kind:"history_checkpoint",
-      productAfter:Math.max(0,Number(h.afterProduct||0)),
-      cashAfter:Math.max(0,Number(h.afterCash||0)),
-      productBefore:Math.max(0,Number(h.beforeProduct||0)),
-      cashBefore:Math.max(0,Number(h.beforeCash||0)),
+      productAfter:Math.max(0,reportNumberV217(h.afterProduct)),
+      cashAfter:Math.max(0,reportNumberV217(h.afterCash)),
+      productBefore:Math.max(0,reportNumberV217(h.beforeProduct)),
+      cashBefore:Math.max(0,reportNumberV217(h.beforeCash)),
       source:h
     });
   });
@@ -27951,17 +28100,18 @@ function reportDateAfter(date){
 
 function reportHistoryForInfluencer(infId){
   return (state.reportHistory||[])
-    .filter(row=>row&&row.influencerId===infId&&row.status!=="Cancelado")
+    .filter(row=>row&&reportRecordBelongsToInfluencerV217(row,infId)&&row.status!=="Cancelado")
     .slice()
     .sort((a,b)=>String(a.coverageEnd||a.sentAt||"").localeCompare(String(b.coverageEnd||b.sentAt||"")));
 }
 
 function reportLegacyLastSentEnd(infId,beforeDate){
+  const before=normalizeDateOnly(beforeDate)||"9999-12-31";
   const byMonth=new Map();
   (state.launches||[]).forEach(row=>{
-    const date=normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"");
-    if(!row||row.influencerId!==infId||row.status==="Cancelado"||!date||date>=beforeDate)return;
-    const month=date.slice(0,7);
+    const month=launchRecordMonthV215(row);
+    const date=reportLaunchEffectiveDateV217(row);
+    if(!row||!reportRecordBelongsToInfluencerV217(row,infId)||row.status==="Cancelado"||!month||!date||date>=before)return;
     if(!byMonth.has(month))byMonth.set(month,[]);
     byMonth.get(month).push(row);
   });
@@ -27994,8 +28144,8 @@ function reportCoverageRange(infId,month=selectedMonth()){
   let start=previousEnd?reportDateAfter(previousEnd):selected.start;
 
   const unsentDates=(state.launches||[])
-    .map(row=>({row,date:normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"")}))
-    .filter(item=>item.row&&item.row.influencerId===infId&&item.row.status!=="Cancelado"&&!item.row.pdfSent&&item.date&&item.date<=selected.end&&(previousEnd?item.date>previousEnd:true))
+    .map(row=>({row,date:reportLaunchEffectiveDateV217(row),month:launchRecordMonthV215(row)}))
+    .filter(item=>item.row&&reportRecordBelongsToInfluencerV217(item.row,infId)&&item.row.status!=="Cancelado"&&!item.row.pdfSent&&item.date&&item.month&&item.month<=selected.month&&(previousEnd?item.date>previousEnd:true))
     .map(item=>item.date)
     .sort();
   if(unsentDates.length&&unsentDates[0]<start)start=`${unsentDates[0].slice(0,7)}-01`;
@@ -28053,18 +28203,18 @@ function reportGeneratedForRange(infId,start,end){
   const endMonth=String(end||"").slice(0,7);
   const rows=(state.launches||[]).filter(row=>{
     const accountingMonth=launchRecordMonthV215(row);
-    return row&&String(row.influencerId)===String(infId)&&row.status!=="Cancelado"&&accountingMonth&&accountingMonth>=startMonth&&accountingMonth<=endMonth;
+    return row&&reportRecordBelongsToInfluencerV217(row,infId)&&row.status!=="Cancelado"&&accountingMonth&&accountingMonth>=startMonth&&accountingMonth<=endMonth;
   });
   const origins=launchOriginSummaryV215(rows);
   const accumulatedRows=rows.filter(row=>row.accumulate===true);
   return {
     rows,
     accumulatedRows,
-    sold:rows.reduce((sum,row)=>sum+Number(row.sold||0),0),
-    product:rows.reduce((sum,row)=>sum+Number(row.productCommission||0),0),
-    cash:rows.reduce((sum,row)=>sum+Number(row.cashCommission||0),0),
-    accumulatedProduct:accumulatedRows.reduce((sum,row)=>sum+Number(row.productCommission||0),0),
-    accumulatedCash:accumulatedRows.reduce((sum,row)=>sum+Number(row.cashCommission||0),0),
+    sold:rows.reduce((sum,row)=>sum+reportNumberV217(row.sold),0),
+    product:rows.reduce((sum,row)=>sum+reportNumberV217(row.productCommission),0),
+    cash:rows.reduce((sum,row)=>sum+reportNumberV217(row.cashCommission),0),
+    accumulatedProduct:accumulatedRows.reduce((sum,row)=>sum+reportNumberV217(row.productCommission),0),
+    accumulatedCash:accumulatedRows.reduce((sum,row)=>sum+reportNumberV217(row.cashCommission),0),
     origins,
     accumulatedOrigins:launchOriginSummaryV215(accumulatedRows)
   };
@@ -28074,17 +28224,17 @@ function reportRedemptionStatus(infId,start,end,closing){
   const candidates=[];
   (state.accumulationHistory||[]).forEach(row=>{
     const date=normalizeDateOnly(row.createdAt||row.date);
-    if(!row||row.influencerId!==infId||!date||date<start||date>end)return;
+    if(!row||!reportRecordBelongsToInfluencerV217(row,infId)||!date||date<start||date>end)return;
     if(row.type==="product_choice_paid"||row.type==="product_paid")candidates.push({at:row.createdAt||date,type:"product",text:"Resgate em produto registrado — o saldo em dinheiro foi zerado conforme a regra."});
     if(row.type==="cash_paid")candidates.push({at:row.createdAt||date,type:"cash",text:"Resgate em dinheiro registrado — o saldo em produto foi zerado conforme a regra."});
   });
   (state.redemptions||[]).forEach(row=>{
     const date=normalizeDateOnly(row.date);
-    if(row&&row.influencerId===infId&&date>=start&&date<=end&&isProductChoiceRedemption(row))candidates.push({at:`${date}T12:00:00`,type:"product",text:"Resgate em produto registrado — o saldo em dinheiro foi zerado conforme a regra."});
+    if(row&&reportRecordBelongsToInfluencerV217(row,infId)&&date>=start&&date<=end&&isProductChoiceRedemption(row))candidates.push({at:`${date}T12:00:00`,type:"product",text:"Resgate em produto registrado — o saldo em dinheiro foi zerado conforme a regra."});
   });
   (state.cashPayments||[]).forEach(row=>{
     const date=normalizeDateOnly(row.date);
-    if(row&&row.influencerId===infId&&row.status!=="Cancelado"&&!row.productRedemptionId&&date>=start&&date<=end)candidates.push({at:`${date}T13:00:00`,type:"cash",text:"Resgate em dinheiro registrado — o saldo em produto foi zerado conforme a regra."});
+    if(row&&reportRecordBelongsToInfluencerV217(row,infId)&&row.status!=="Cancelado"&&!row.productRedemptionId&&date>=start&&date<=end)candidates.push({at:`${date}T13:00:00`,type:"cash",text:"Resgate em dinheiro registrado — o saldo em produto foi zerado conforme a regra."});
   });
   const latest=candidates.sort((a,b)=>String(b.at).localeCompare(String(a.at)))[0];
   if(latest)return latest;
@@ -28187,7 +28337,7 @@ function renderReport(){
   if(coverageNotice)coverageNotice.hidden=true;
   if($("reportCoverageText"))$("reportCoverageText").textContent="";
 
-  const accumulationSection=$("reportAccumulationSectionV216");
+  const accumulationSection=$("reportAccumulationSectionV217");
   if(accumulationSection)accumulationSection.hidden=!snapshot.hasAccumulation;
   if($("reportOpeningProduct"))$("reportOpeningProduct").textContent=money(snapshot.opening.product);
   if($("reportOpeningCash"))$("reportOpeningCash").textContent=money(snapshot.opening.cash);
@@ -28203,11 +28353,11 @@ function renderReport(){
     $("reportStatusBox").textContent=snapshot.hasAccumulation?(snapshot.status.text||""):"";
   }
 
-  const accumulatedOriginWrap=$("reportAccumulatedOriginWrapV216");
+  const accumulatedOriginWrap=$("reportAccumulatedOriginWrapV217");
   const accumulatedOrigins=snapshot.accumulatedOriginRows||[];
   if(accumulatedOriginWrap)accumulatedOriginWrap.hidden=!snapshot.hasAccumulation||!accumulatedOrigins.length;
-  if($("reportAccumulatedOriginRowsV216")){
-    $("reportAccumulatedOriginRowsV216").innerHTML=accumulatedOrigins.length?accumulatedOrigins.map(row=>`<tr>
+  if($("reportAccumulatedOriginRowsV217")){
+    $("reportAccumulatedOriginRowsV217").innerHTML=accumulatedOrigins.length?accumulatedOrigins.map(row=>`<tr>
       <td><strong>${esc(row.origin||"Sem origem")}</strong></td>
       <td>${money(row.product)}</td>
       <td>${money(row.cash)}</td>
@@ -28264,8 +28414,8 @@ function markReportSent(){
 
   const changed=[];
   (state.launches||[]).forEach(row=>{
-    const date=normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"");
-    if(row.influencerId!==inf.id||row.status==="Cancelado"||!date||date<snapshot.coverage.start||date>snapshot.coverage.end)return;
+    const date=reportLaunchEffectiveDateV217(row);
+    if(!reportRecordBelongsToInfluencerV217(row,inf.id)||row.status==="Cancelado"||!date||date<snapshot.coverage.start||date>snapshot.coverage.end)return;
     row.pdfSent=true;
     row.status="Enviado";
     row.updatedById=audit.id||"";
@@ -36994,13 +37144,19 @@ $("launchForm").addEventListener("submit",e=>{
   const accumulate=$("launchAccumulate").checked;
   const audit=currentAuditInfo();
 
+  const selectedInfluencer=infById(infId)||{};
+  const launchOrigin=$("launchOrigin").value||"Site";
   const item={
     id,
     date,
     month,
+    accountingMonth:month,
     periodMode,
     influencerId:infId,
-    origin:$("launchOrigin").value||"Site",
+    influencerName:selectedInfluencer.name||old?.influencerName||"",
+    coupon:selectedInfluencer.coupon||old?.coupon||"",
+    origin:launchOrigin,
+    originKey:reportOriginKeyV217(launchOrigin),
     sold,
     productCommission:Math.max(0,finiteNumber($("launchProduct").value,0)),
     cashCommission:Math.max(0,finiteNumber($("launchCash").value,0)),
@@ -37438,8 +37594,12 @@ function launchV209NormalizeRecord(record){
     ?String(item.month)
     :item.date.slice(0,7);
   item.periodMode=item.periodMode==="month"?"month":"day";
+  item.accountingMonth=validMonthValue(item.accountingMonth)||(item.periodMode==="month"?item.month:item.date.slice(0,7));
   item.influencerId=String(item.influencerId||"");
+  item.influencerName=String(item.influencerName||"");
+  item.coupon=String(item.coupon||"");
   item.origin=String(item.origin||"Site");
+  item.originKey=reportOriginKeyV217(item.origin);
   item.sold=Math.max(0,finiteNumber(item.sold,0));
   item.productCommission=Math.max(0,finiteNumber(item.productCommission,0));
   item.cashCommission=Math.max(0,finiteNumber(item.cashCommission,0));
