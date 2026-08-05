@@ -14912,6 +14912,118 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V220 ===== */
 
+/* ===== V221 — IDENTIDADE DOURADA E TIPOGRAFIA WISENT ===== */
+#reports #printArea{
+  --wisent-ink:#1c1810;
+  --wisent-ink-soft:#3f3520;
+  --wisent-gold-deep:#6f5010;
+  --wisent-gold:#a98227;
+  --wisent-gold-mid:#c6aa62;
+  --wisent-gold-light:#eadcaf;
+  --wisent-cream:#fbf7ed;
+  font-family:"Bahnschrift","Avenir Next","Aptos","Segoe UI",Arial,sans-serif!important;
+  border-color:#ddd0b3;
+  background:
+    radial-gradient(circle at 92% 0%,rgba(198,170,98,.19),transparent 28%),
+    radial-gradient(circle at 8% 100%,rgba(111,80,16,.065),transparent 34%),
+    linear-gradient(180deg,#fffdf8 0%,#ffffff 44%,#fffefb 100%);
+  box-shadow:0 24px 64px rgba(72,52,13,.12);
+}
+#reports #printArea::before{
+  background:linear-gradient(90deg,
+    #1c1810 0%,
+    #5f430d 24%,
+    #a98227 52%,
+    #d5c17e 76%,
+    #765514 100%);
+}
+#reports .pdfCleanHeader{
+  border-bottom-color:#dfd3b8;
+}
+#reports .pdfCleanHeader h1,
+#reports #reportName{
+  font-family:"Bahnschrift SemiCondensed","Bahnschrift","Avenir Next","Aptos Display","Segoe UI",sans-serif!important;
+  color:var(--wisent-ink)!important;
+  font-stretch:condensed;
+}
+#reports .pdfCleanHeader h1{
+  letter-spacing:-.035em;
+}
+#reports .pdfCleanHeader p,
+#reports #reportCoupon,
+#reports #reportFooter{
+  color:#75694f;
+}
+#reports .printLogo{
+  background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(251,247,237,.96));
+  border-color:#dfd0aa;
+  box-shadow:0 8px 22px rgba(111,80,16,.08);
+}
+#reports .pdfIdentity{
+  background:
+    linear-gradient(110deg,rgba(251,247,237,.96) 0%,rgba(255,255,255,.98) 58%,rgba(246,238,216,.82) 100%);
+  border-color:#dfd0aa;
+  box-shadow:0 12px 30px rgba(111,80,16,.075);
+}
+#reports #reportPeriod{
+  border-left-color:#dfd0aa;
+  color:var(--wisent-ink-soft);
+}
+#reports .pdfBox{
+  background:
+    linear-gradient(160deg,#ffffff 0%,#fdfaf3 66%,#f5ecd7 100%);
+  border-color:#dfd0aa;
+  box-shadow:0 12px 28px rgba(111,80,16,.075);
+}
+#reports .pdfBox::before{
+  background:linear-gradient(90deg,#1c1810,#745312,#b08a31);
+}
+#reports .pdfBox:nth-child(2)::before{
+  background:linear-gradient(90deg,#745312,#b08a31,#d5c17e);
+}
+#reports .pdfBox:nth-child(3)::before{
+  background:linear-gradient(90deg,#5e430f,#98721f,#c6aa62);
+}
+#reports .pdfBox small{
+  color:#75623a;
+  font-family:"Bahnschrift","Avenir Next","Aptos","Segoe UI",sans-serif!important;
+  letter-spacing:.07em;
+}
+#reports .pdfBox strong{
+  color:var(--wisent-ink)!important;
+  font-family:"Bahnschrift SemiBold","Bahnschrift","Avenir Next","Aptos Display","Segoe UI",sans-serif!important;
+  letter-spacing:-.025em;
+}
+#reports #reportFooter{
+  border-top-color:#dfd3b8;
+}
+
+@media(max-width:760px){
+  #reports #reportPeriod{
+    border-top-color:#dfd0aa;
+  }
+}
+
+@media print{
+  body.print-report #reports #printArea{
+    border-color:#d8c8a3!important;
+    background:
+      radial-gradient(circle at 92% 0%,rgba(198,170,98,.13),transparent 25%),
+      linear-gradient(180deg,#fffdf8 0%,#ffffff 48%,#fffefb 100%)!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  body.print-report #reports #printArea::before,
+  body.print-report #reports .pdfBox::before{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  body.print-report #reports #reportPeriod{
+    border-left-color:#dfd0aa!important;
+  }
+}
+/* ===== FIM V221 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -15002,7 +15114,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V220</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V221</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16128,7 +16240,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
             <span id="reportCoverageText"></span>
           </div>
 
-          <!-- V220: relatório destinado ao influencer mantém apenas o resumo principal, com layout profissional e responsivo.
+          <!-- V221: relatório destinado ao influencer mantém apenas o resumo principal, com identidade visual dourada alinhada à logo e tipografia profissional.
                Os detalhamentos continuam disponíveis no histórico interno clicável. -->
 
           <p id="reportFooter" class="pdfFooterClean"></p>
@@ -17280,7 +17392,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V220";
+const APP_BUILD_VERSION="V221";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17313,9 +17425,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=220",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=221",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=220");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=221");
       }
 
       reg.addEventListener("updatefound",()=>{
