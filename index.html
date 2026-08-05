@@ -24,6 +24,40 @@
 .pdfBox small{display:block;color:#6b7280;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
 .pdfBox strong{font-size:24px}
 .pdfFooterClean{margin-top:22px;color:#6b7280;font-size:12px;border-top:1px solid #e5e7eb;padding-top:12px}
+
+.reportCoverageNotice{margin:16px 0;padding:14px 16px;border-radius:16px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e3a8a;font-size:13px;line-height:1.5}
+.reportCoverageNotice strong{display:block;margin-bottom:4px;color:#1e40af;font-size:14px}
+.reportSection{margin-top:20px;break-inside:avoid-page}
+.reportSection h3{margin:0 0 10px;font-size:17px;color:#111827}
+.reportBalanceTable,.reportMonthTable{width:100%;border-collapse:separate;border-spacing:0;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;background:#fff}
+.reportBalanceTable th,.reportBalanceTable td,.reportMonthTable th,.reportMonthTable td{padding:10px 11px;border-bottom:1px solid #e5e7eb;font-size:12px;white-space:normal;vertical-align:top}
+.reportBalanceTable tr:last-child td,.reportMonthTable tr:last-child td{border-bottom:0}
+.reportBalanceTable th,.reportMonthTable th{background:#f8fafc;color:#475569;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.reportBalanceTable td:first-child{font-weight:800;color:#334155}
+.reportBalanceTable .reportFinalRow td{background:#f8fafc;font-weight:900}
+.reportDualValue{display:grid;gap:3px;min-width:118px}
+.reportDualValue span{display:flex;justify-content:space-between;gap:8px}
+.reportDualValue b{font-size:11px}
+.reportProductValue{color:#1d4ed8}
+.reportCashValue{color:#047857}
+.reportStatusBox{margin-top:14px;border:1px solid #d1fae5;background:#ecfdf5;color:#065f46;border-radius:14px;padding:12px 14px;font-size:13px;line-height:1.45}
+.reportStatusBox[data-type="product"]{border-color:#bfdbfe;background:#eff6ff;color:#1e40af}
+.reportStatusBox[data-type="cash"]{border-color:#bbf7d0;background:#ecfdf5;color:#047857}
+.reportStatusBox[data-type="neutral"]{border-color:#e5e7eb;background:#f8fafc;color:#475569}
+.reportSmallNote{margin:10px 0 0;color:#64748b;font-size:11px;line-height:1.45}
+@media(max-width:760px){.reportMonthTable{min-width:760px}.reportSection .tableWrap{overflow:auto}.reportBalanceTable th,.reportBalanceTable td{font-size:11px}.pdfThreeCards{grid-template-columns:1fr}}
+@media print{
+  body.print-report .reportCoverageNotice,
+  body.print-report .reportSection,
+  body.print-report .reportStatusBox{break-inside:avoid-page}
+  body.print-report .reportMonthTable,
+  body.print-report .reportBalanceTable{font-size:10px}
+  body.print-report .reportMonthTable th,
+  body.print-report .reportMonthTable td,
+  body.print-report .reportBalanceTable th,
+  body.print-report .reportBalanceTable td{padding:7px 8px}
+  body.print-report .printArea{padding:18px 18px 120px!important}
+}
 @media print{
   body.print-report .side,
   body.print-report .top,
@@ -14346,6 +14380,64 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   .launchMonthDataNoticeActions button{width:100%;}
 }
 
+
+/* ===== V215 — CONSOLIDAÇÃO VISUAL SEM FUNDIR REGISTROS OFICIAIS ===== */
+.launchHistoryName{
+  appearance:none!important;
+  border:0!important;
+  padding:0!important;
+  margin:0!important;
+  background:transparent!important;
+  color:#1d4ed8!important;
+  font:inherit!important;
+  font-weight:900!important;
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+  cursor:pointer!important;
+  text-align:left!important;
+}
+.launchHistoryName:hover{color:#1e40af!important}
+.launchHistoryHint{display:block;margin-top:3px;color:#64748b;font-size:10px;font-weight:700}
+.launchHistoryModal{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;padding:18px}
+.launchHistoryModal[hidden]{display:none!important}
+.launchHistoryBackdrop{position:absolute;inset:0;background:rgba(15,23,42,.72);backdrop-filter:blur(4px)}
+.launchHistoryDialog{
+  position:relative;z-index:1;width:min(980px,96vw);max-height:90vh;overflow:auto;
+  background:#fff;border:1px solid #e2e8f0;border-radius:22px;padding:20px;
+  box-shadow:0 28px 80px rgba(15,23,42,.3)
+}
+.launchHistoryHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:14px}
+.launchHistoryHeader h3{margin:0;font-size:20px;color:#0f172a}
+.launchHistoryHeader p{margin:5px 0 0;color:#64748b;font-size:12px;line-height:1.45}
+.launchHistoryStats{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;margin:14px 0}
+.launchHistoryStat{border:1px solid #e2e8f0;border-radius:15px;padding:12px;background:#f8fafc}
+.launchHistoryStat small{display:block;color:#64748b;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.launchHistoryStat strong{font-size:18px;color:#0f172a}
+.launchHistoryOriginGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:9px;margin:12px 0 16px}
+.launchHistoryOriginCard{border:1px solid #dbeafe;background:#eff6ff;border-radius:14px;padding:11px;color:#1e3a8a}
+.launchHistoryOriginCard strong{display:block;margin-bottom:5px;font-size:13px}
+.launchHistoryOriginCard span{display:block;font-size:11px;line-height:1.4}
+.launchHistoryTable th,.launchHistoryTable td{font-size:12px;white-space:normal}
+.reportOriginTable{width:100%;border-collapse:separate;border-spacing:0;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;background:#fff}
+.reportOriginTable th,.reportOriginTable td{padding:9px 10px;border-bottom:1px solid #e5e7eb;font-size:11px;white-space:normal;vertical-align:top}
+.reportOriginTable tr:last-child td{border-bottom:0}
+.reportOriginTable th{background:#f8fafc;color:#475569;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+.reportOriginTable td:nth-child(n+3){text-align:right;font-variant-numeric:tabular-nums}
+.reportOriginNote{margin:8px 0 0;color:#64748b;font-size:10.5px;line-height:1.45}
+@media(max-width:760px){
+  .launchHistoryStats{grid-template-columns:repeat(2,1fr)}
+  .launchHistoryDialog{padding:14px}
+  .launchHistoryTable{min-width:760px}
+  .reportOriginTable{min-width:680px}
+}
+@media print{
+  .launchHistoryModal{display:none!important}
+  body.print-report .reportOriginTable{font-size:10px}
+  body.print-report .reportOriginTable th,
+  body.print-report .reportOriginTable td{padding:7px 8px}
+}
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -14436,7 +14528,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V213</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V215</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -14538,7 +14630,29 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
         </div>
       </div>
 
-      <div class="panel"><div class="panelHead"><h3>Resumo por influencer no mês</h3><span class="muted">Comissão em produtos e comissão em dinheiro ficam separadas.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
+      <div class="panel"><div class="panelHead"><h3>Resumo consolidado por influencer no mês</h3><span class="muted">Todos os lançamentos da mesma competência são somados. Clique no nome para conferir cada venda e origem.</span></div><div class="tableWrap"><table><thead><tr><th>Influencer</th><th>Cupom</th><th>Vendido no mês</th><th>Produto</th><th>Dinheiro</th><th>Lançamentos</th><th>Em acumular?</th></tr></thead><tbody id="launchTotalsRows"></tbody></table></div></div>
+
+      <div id="launchInfluencerHistoryModal" class="launchHistoryModal noPrint" hidden aria-hidden="true">
+        <div class="launchHistoryBackdrop" onclick="closeInfluencerLaunchHistory()"></div>
+        <div class="launchHistoryDialog" role="dialog" aria-modal="true" aria-labelledby="launchHistoryTitle">
+          <div class="launchHistoryHeader">
+            <div>
+              <h3 id="launchHistoryTitle">Histórico de lançamentos</h3>
+              <p id="launchHistoryMeta">Selecione um influencer para visualizar.</p>
+            </div>
+            <button type="button" class="secondary small" onclick="closeInfluencerLaunchHistory()">Fechar</button>
+          </div>
+          <div id="launchHistoryStats" class="launchHistoryStats"></div>
+          <div id="launchHistoryOrigins" class="launchHistoryOriginGrid"></div>
+          <div class="tableWrap">
+            <table class="launchHistoryTable">
+              <thead><tr><th>Data/competência</th><th>Origem</th><th>Vendido</th><th>Produto</th><th>Dinheiro</th><th>Acumular</th><th>Status</th><th>Observação</th></tr></thead>
+              <tbody id="launchHistoryRows"><tr><td colspan="8">Nenhum lançamento selecionado.</td></tr></tbody>
+            </table>
+          </div>
+          <p class="reportSmallNote">Os lançamentos permanecem separados no Supabase para preservar o histórico. A consolidação altera somente a visualização e os totais calculados.</p>
+        </div>
+      </div>
 
     </section>
 
@@ -15523,18 +15637,60 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
           <div class="pdfThreeCards">
             <div class="pdfBox">
-              <small>Total vendido no mês</small>
+              <small>Total vendido na competência</small>
               <strong id="reportSold">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Comissão disponível em produtos</small>
+              <small>Comissão em produtos gerada na competência</small>
               <strong id="reportProduct">R$ 0,00</strong>
             </div>
             <div class="pdfBox">
-              <small>Comissão disponível em dinheiro</small>
+              <small>Comissão em dinheiro gerada na competência</small>
               <strong id="reportCash">R$ 0,00</strong>
             </div>
           </div>
+
+          <div id="reportCoverageNotice" class="reportCoverageNotice">
+            <strong>Período demonstrado neste PDF</strong>
+            <span id="reportCoverageText">Selecione um influencer para calcular o período.</span>
+          </div>
+
+          <div class="reportSection">
+            <h3>Demonstrativo do saldo acumulado</h3>
+            <table class="reportBalanceTable">
+              <thead><tr><th>Movimentação</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
+              <tbody>
+                <tr><td>Saldo acumulado anterior</td><td id="reportOpeningProduct">R$ 0,00</td><td id="reportOpeningCash">R$ 0,00</td></tr>
+                <tr><td>Novas comissões marcadas para acumular</td><td id="reportAccumulatedProduct">R$ 0,00</td><td id="reportAccumulatedCash">R$ 0,00</td></tr>
+                <tr><td>Resgates e zeragens registrados</td><td id="reportDeductedProduct">R$ 0,00</td><td id="reportDeductedCash">R$ 0,00</td></tr>
+                <tr class="reportFinalRow"><td>Saldo acumulado disponível ao final</td><td id="reportClosingProduct">R$ 0,00</td><td id="reportClosingCash">R$ 0,00</td></tr>
+              </tbody>
+            </table>
+            <div id="reportStatusBox" class="reportStatusBox" data-type="neutral">Nenhuma movimentação calculada.</div>
+            <p class="reportSmallNote">Comissões de competências anteriores não são tratadas como comissão gerada no mês atual. Elas aparecem somente no saldo acumulado quando os lançamentos estavam marcados em “Acumular”. Resgate em produto zera o saldo em dinheiro; resgate em dinheiro zera o saldo em produto.</p>
+          </div>
+
+          <div class="reportSection">
+            <h3>Resumo por competência incluída</h3>
+            <div class="tableWrap">
+              <table class="reportMonthTable">
+                <thead><tr><th>Competência</th><th>Vendas</th><th>Comissão gerada</th><th>Marcado para acumular</th><th>Resgates/zeragens</th><th>Saldo acumulado ao final</th></tr></thead>
+                <tbody id="reportMonthRows"><tr><td colspan="6">Nenhum período calculado.</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="reportSection">
+            <h3>Vendas por origem no período demonstrado</h3>
+            <div class="tableWrap">
+              <table class="reportOriginTable">
+                <thead><tr><th>Competência</th><th>Origem</th><th>Lançamentos</th><th>Total vendido</th><th>Comissão em produtos</th><th>Comissão em dinheiro</th></tr></thead>
+                <tbody id="reportOriginRows"><tr><td colspan="6">Nenhuma origem com venda registrada.</td></tr></tbody>
+              </table>
+            </div>
+            <p class="reportOriginNote">São exibidas somente as origens que tiveram venda. Site, loja física, WhatsApp, Instagram e outras origens são somadas no total geral do influencer, sem apagar os lançamentos individuais.</p>
+          </div>
+
           <p id="reportFooter" class="pdfFooterClean"></p>
         </div>
       </div>
@@ -16684,7 +16840,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V213";
+const APP_BUILD_VERSION="V215";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -16717,9 +16873,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=213",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=215",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=213");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=215");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -17744,6 +17900,7 @@ function resetTestData(){
     productPayments:[],
     balances:[],
     accumulationHistory:[],
+    reportHistory:[],
     paidHistory:[],
     payments:[],
     notes:[]
@@ -20214,7 +20371,8 @@ function runLocalSystemAudit(){
     "redemptions",
     "wholesaleRetail",
     "cashPayments",
-    "accumulationHistory"
+    "accumulationHistory",
+    "reportHistory"
   ];
 
   const invalidArrays=requiredArrays.filter(key=>!Array.isArray(state[key]));
@@ -21958,6 +22116,7 @@ function ultraLightCloudStateForSave(reason="payload ainda pesado"){
     paidAdjustments:cloudMinimalArray(state.paidAdjustments||[],1200),
     cashPayments:cloudMinimalArray(state.cashPayments||[],1200),
     accumulationHistory:cloudMinimalArray(state.accumulationHistory||[],2000),
+    reportHistory:cloudMinimalArray(state.reportHistory||[],1200),
     _syncMeta:{
       ...ensurePlainObject(state._syncMeta,{}),
       compactCloudState:true,
@@ -22528,6 +22687,7 @@ function repairStateStructure(){
   state.cashPayments=ensureArray(state.cashPayments);
   state.paidAdjustments=ensureArray(state.paidAdjustments);
   state.accumulationHistory=ensureArray(state.accumulationHistory);
+  state.reportHistory=ensureArray(state.reportHistory);
 
   state.settings.origins=ensureArray(state.settings.origins);
   if(!state.settings.origins.length){
@@ -22567,6 +22727,7 @@ function normalize(){
   state.wholesaleRetail=ensureArray(state.wholesaleRetail);
   state.cashPayments=ensureArray(state.cashPayments);
   state.accumulationHistory=ensureArray(state.accumulationHistory);
+  state.reportHistory=ensureArray(state.reportHistory);
 
   state.launches.forEach(l=>{
     l.id=l.id||uid();
@@ -22700,6 +22861,17 @@ function normalize(){
     h.afterCash=Number(h.afterCash||0);
     h.createdByName=h.createdByName||"Não registrado";
     h.relatedId=h.relatedId||"";
+  });
+
+  state.reportHistory.forEach(row=>{
+    row.id=row.id||`report-${row.influencerId||"unknown"}-${row.reportMonth||currentMonth()}`;
+    row.influencerId=row.influencerId||"";
+    row.reportMonth=validMonthValue(row.reportMonth)||reportEventMonth(row.coverageEnd)||currentMonth();
+    row.coverageStart=normalizeDateOnly(row.coverageStart)||`${row.reportMonth}-01`;
+    row.coverageEnd=normalizeDateOnly(row.coverageEnd)||monthEndDate(row.reportMonth);
+    row.status=row.status||"Enviado";
+    row.sentAt=row.sentAt||row.updatedAt||new Date().toISOString();
+    row.sentByName=row.sentByName||row.updatedByName||"Não registrado";
   });
 
   state.cashPayments.forEach(p=>{
@@ -22884,7 +23056,7 @@ function renderDashboard(){
 
   $("rankingRows").innerHTML=ranking.length?ranking.map((r,idx)=>`<tr>
     <td><b>${idx+1}</b></td>
-    <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
+    <td><button type="button" class="launchHistoryName mobileKeyText mobileInfluencerName" onclick="openInfluencerLaunchHistory(decodeURIComponent('${encodeURIComponent(String(r.i.id||""))}'))" title="Abrir histórico detalhado do mês">${esc(r.i.name)}</button><span class="launchHistoryHint">${r.count} lançamento(s) somado(s)</span></td>
     <td><span class="mobileCouponText">${esc(r.i.coupon)}</span></td>
     <td><span class="mobileValueText">${money(r.sold)}</span></td>
     <td>
@@ -22955,7 +23127,7 @@ function renderLaunches(){
       <td>${launchPeriodLabel(l)}</td>
       <td>${esc(l.origin)}</td>
       <td><span class="mobileCouponText">${esc(i.coupon||"-")}</span></td>
-      <td><span class="mobileKeyText mobileInfluencerName">${esc(i.name||"-")}</span></td>
+      <td><button type="button" class="launchHistoryName mobileKeyText mobileInfluencerName" onclick="openInfluencerLaunchHistory(decodeURIComponent('${encodeURIComponent(String(i.id||l.influencerId||""))}'))" title="Ver como as vendas e comissões foram somadas">${esc(i.name||"-")}</button><span class="launchHistoryHint">ver histórico consolidado</span></td>
       <td><span class="mobileValueText">${money(l.sold)}</span></td>
       <td><span class="mobileValueText">${money(l.productCommission)}</span></td>
       <td><span class="mobileValueText">${money(l.cashCommission)}</span></td>
@@ -22989,7 +23161,7 @@ function renderLaunchTotals(){
   }).filter(r=>r.count).sort((a,b)=>b.sold-a.sold||b.product-a.product||b.cash-a.cash);
 
   $("launchTotalsRows").innerHTML=rows.length?rows.map(r=>`<tr>
-    <td><span class="mobileKeyText mobileInfluencerName">${esc(r.i.name)}</span></td>
+    <td><button type="button" class="launchHistoryName mobileKeyText mobileInfluencerName" onclick="openInfluencerLaunchHistory(decodeURIComponent('${encodeURIComponent(String(r.i.id||""))}'))" title="Abrir histórico detalhado do mês">${esc(r.i.name)}</button><span class="launchHistoryHint">${r.count} lançamento(s) somado(s)</span></td>
     <td><span class="mobileCouponText">${esc(r.i.coupon)}</span></td>
     <td><span class="mobileValueText">${money(r.sold)}</span></td>
     <td>${money(r.product)}</td>
@@ -22998,6 +23170,92 @@ function renderLaunchTotals(){
     <td>${r.acc?"Sim":"Não"}</td>
   </tr>`).join(""):`<tr><td colspan="7">Sem resumo para mostrar.</td></tr>`;
 }
+
+
+/* ===== V215 — HISTÓRICO CONSOLIDADO DE LANÇAMENTOS ===== */
+function launchRecordMonthV215(row){
+  return validMonthValue(row?.month)||(normalizeDateOnly(row?.date)||"").slice(0,7);
+}
+function launchRowsForInfluencerMonthV215(infId,month=selectedMonth()){
+  const targetMonth=validMonthValue(month)||selectedMonth();
+  return (state.launches||[])
+    .filter(row=>row&&String(row.influencerId)===String(infId)&&launchRecordMonthV215(row)===targetMonth)
+    .slice()
+    .sort((a,b)=>{
+      const ad=normalizeDateOnly(a.date)||`${launchRecordMonthV215(a)}-01`;
+      const bd=normalizeDateOnly(b.date)||`${launchRecordMonthV215(b)}-01`;
+      return ad.localeCompare(bd)||String(a.createdAt||a.updatedAt||a.id||"").localeCompare(String(b.createdAt||b.updatedAt||b.id||""));
+    });
+}
+function launchOriginSummaryV215(rows=[]){
+  const map=new Map();
+  rows.forEach(row=>{
+    const origin=String(row?.origin||"Sem origem").trim()||"Sem origem";
+    const current=map.get(origin)||{origin,count:0,sold:0,product:0,cash:0};
+    current.count+=1;
+    current.sold+=Number(row?.sold||0);
+    current.product+=Number(row?.productCommission||0);
+    current.cash+=Number(row?.cashCommission||0);
+    map.set(origin,current);
+  });
+  return [...map.values()]
+    .filter(row=>row.count>0&&(row.sold!==0||row.product!==0||row.cash!==0))
+    .sort((a,b)=>b.sold-a.sold||a.origin.localeCompare(b.origin,"pt-BR"));
+}
+function openInfluencerLaunchHistory(infId,month=selectedMonth()){
+  const modal=$("launchInfluencerHistoryModal");
+  if(!modal)return;
+  const inf=infById(infId)||{};
+  const targetMonth=validMonthValue(month)||selectedMonth();
+  const rows=launchRowsForInfluencerMonthV215(infId,targetMonth);
+  const activeRows=rows.filter(row=>row.status!=="Cancelado");
+  const cancelledCount=rows.length-activeRows.length;
+  const totals=stats(activeRows);
+  const origins=launchOriginSummaryV215(activeRows);
+
+  if($("launchHistoryTitle"))$("launchHistoryTitle").textContent=`Histórico de ${inf.name||"influencer"}`;
+  if($("launchHistoryMeta"))$("launchHistoryMeta").textContent=`Cupom: ${inf.coupon||"-"} • Competência: ${monthLabel(targetMonth)} • ${activeRows.length} lançamento(s) somado(s)${cancelledCount?` • ${cancelledCount} cancelado(s) preservado(s)`:""}`;
+  if($("launchHistoryStats"))$("launchHistoryStats").innerHTML=[
+    ["Total vendido",money(totals.sold)],
+    ["Comissão em produtos",money(totals.product)],
+    ["Comissão em dinheiro",money(totals.cash)],
+    ["Lançamentos",String(rows.length)]
+  ].map(([label,value])=>`<div class="launchHistoryStat"><small>${esc(label)}</small><strong>${esc(value)}</strong></div>`).join("");
+  if($("launchHistoryOrigins"))$("launchHistoryOrigins").innerHTML=origins.length?origins.map(row=>`<div class="launchHistoryOriginCard">
+    <strong>${esc(row.origin)}</strong>
+    <span>${row.count} lançamento(s)</span>
+    <span>Vendas: ${money(row.sold)}</span>
+    <span>Produto: ${money(row.product)} • Dinheiro: ${money(row.cash)}</span>
+  </div>`).join(""):`<div class="launchHistoryOriginCard"><strong>Sem vendas</strong><span>Nenhuma origem com valor registrado nesta competência.</span></div>`;
+  if($("launchHistoryRows"))$("launchHistoryRows").innerHTML=rows.length?rows.map(row=>`<tr>
+    <td>${esc(launchPeriodLabel(row))}</td>
+    <td>${esc(row.origin||"Sem origem")}</td>
+    <td>${money(row.sold)}</td>
+    <td>${money(row.productCommission)}</td>
+    <td>${money(row.cashCommission)}</td>
+    <td>${row.accumulate?"Sim":"Não"}</td>
+    <td>${row.status==="Cancelado"?"Cancelado — não somado":esc(row.status||"-")}</td>
+    <td>${esc(row.notes||"-")}</td>
+  </tr>`).join(""):`<tr><td colspan="8">Nenhum lançamento encontrado para este influencer em ${esc(monthLabel(targetMonth))}.</td></tr>`;
+
+  modal.hidden=false;
+  modal.setAttribute("aria-hidden","false");
+  document.body.style.overflow="hidden";
+}
+function closeInfluencerLaunchHistory(){
+  const modal=$("launchInfluencerHistoryModal");
+  if(!modal)return;
+  modal.hidden=true;
+  modal.setAttribute("aria-hidden","true");
+  document.body.style.overflow="";
+}
+if(!window.__WISENT_LAUNCH_HISTORY_MODAL_V215__){
+  window.__WISENT_LAUNCH_HISTORY_MODAL_V215__=true;
+  document.addEventListener("keydown",event=>{
+    if(event.key==="Escape"&&!$("launchInfluencerHistoryModal")?.hidden)closeInfluencerLaunchHistory();
+  });
+}
+/* ===== FIM V215 HISTÓRICO ===== */
 
 
 function paidAdjustmentKey(row){
@@ -27642,36 +27900,228 @@ function reportCommissionBalanceAt(infId,asOfDate){
   return {product,cash,events:processed};
 }
 
-function reportCommissionSnapshot(infId,month=selectedMonth()){
-  const range=reportMonthRange(month);
-  const openingDate=reportDateBefore(range.start);
-  const opening=openingDate?reportCommissionBalanceAt(infId,openingDate):{product:0,cash:0,events:[]};
-  const closing=reportCommissionBalanceAt(infId,range.end);
-  const monthEvents=(closing.events||[]).filter(event=>event.date>=range.start&&event.date<=range.end);
-  const earnedEvents=monthEvents.filter(event=>event.kind==="commission_earned");
+/* ===== V215 — RELATÓRIO CONSOLIDADO POR INFLUENCER, COMPETÊNCIA E ORIGEM ===== */
+function reportMonthSequence(startMonth,endMonth){
+  const start=validMonthValue(startMonth);
+  const end=validMonthValue(endMonth);
+  if(!start||!end||start>end)return [];
+  const rows=[];
+  let cursor=new Date(`${start}-01T12:00:00`);
+  const endDate=new Date(`${end}-01T12:00:00`);
+  while(cursor<=endDate&&rows.length<240){
+    rows.push(`${cursor.getFullYear()}-${String(cursor.getMonth()+1).padStart(2,"0")}`);
+    cursor.setMonth(cursor.getMonth()+1);
+  }
+  return rows;
+}
 
+function reportDateAfter(date){
+  const normalized=normalizeDateOnly(date);
+  if(!normalized)return "";
+  const value=new Date(`${normalized}T12:00:00`);
+  value.setDate(value.getDate()+1);
+  return `${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,"0")}-${String(value.getDate()).padStart(2,"0")}`;
+}
+
+function reportHistoryForInfluencer(infId){
+  return (state.reportHistory||[])
+    .filter(row=>row&&row.influencerId===infId&&row.status!=="Cancelado")
+    .slice()
+    .sort((a,b)=>String(a.coverageEnd||a.sentAt||"").localeCompare(String(b.coverageEnd||b.sentAt||"")));
+}
+
+function reportLegacyLastSentEnd(infId,beforeDate){
+  const byMonth=new Map();
+  (state.launches||[]).forEach(row=>{
+    const date=normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"");
+    if(!row||row.influencerId!==infId||row.status==="Cancelado"||!date||date>=beforeDate)return;
+    const month=date.slice(0,7);
+    if(!byMonth.has(month))byMonth.set(month,[]);
+    byMonth.get(month).push(row);
+  });
+  return [...byMonth.entries()]
+    .filter(([,rows])=>rows.length&&rows.every(row=>row.pdfSent===true))
+    .map(([month])=>monthEndDate(month))
+    .sort()
+    .pop()||"";
+}
+
+function reportCoverageRange(infId,month=selectedMonth()){
+  const selected=reportMonthRange(month);
+  const currentHistory=reportHistoryForInfluencer(infId)
+    .filter(row=>row.reportMonth===selected.month)
+    .sort((a,b)=>String(b.sentAt||"").localeCompare(String(a.sentAt||"")))[0];
+  if(currentHistory?.coverageStart&&currentHistory?.coverageEnd){
+    return {
+      start:normalizeDateOnly(currentHistory.coverageStart)||selected.start,
+      end:normalizeDateOnly(currentHistory.coverageEnd)||selected.end,
+      month:selected.month,
+      source:"history",
+      previousEnd:""
+    };
+  }
+
+  const previous=reportHistoryForInfluencer(infId)
+    .filter(row=>normalizeDateOnly(row.coverageEnd)&&normalizeDateOnly(row.coverageEnd)<selected.start)
+    .sort((a,b)=>String(b.coverageEnd||"").localeCompare(String(a.coverageEnd||"")))[0];
+  const previousEnd=normalizeDateOnly(previous?.coverageEnd)||reportLegacyLastSentEnd(infId,selected.start);
+  let start=previousEnd?reportDateAfter(previousEnd):selected.start;
+
+  const unsentDates=(state.launches||[])
+    .map(row=>({row,date:normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"")}))
+    .filter(item=>item.row&&item.row.influencerId===infId&&item.row.status!=="Cancelado"&&!item.row.pdfSent&&item.date&&item.date<=selected.end&&(previousEnd?item.date>previousEnd:true))
+    .map(item=>item.date)
+    .sort();
+  if(unsentDates.length&&unsentDates[0]<start)start=`${unsentDates[0].slice(0,7)}-01`;
+  if(!previousEnd&&unsentDates.length)start=`${unsentDates[0].slice(0,7)}-01`;
+  if(start>selected.end)start=selected.start;
+
+  return {start,end:selected.end,month:selected.month,source:previousEnd?"after-last-sent":"selected",previousEnd};
+}
+
+function reportAccumulationTimeline(infId,asOfDate){
+  const end=normalizeDateOnly(asOfDate)||today();
+  let product=0;
+  let cash=0;
+  const processed=[];
+  accumulationLedgerEventsForInfluencer(infId,end).forEach(event=>{
+    const beforeProduct=Math.max(0,Number(product||0));
+    const beforeCash=Math.max(0,Number(cash||0));
+    let earnedProduct=0;
+    let earnedCash=0;
+
+    if(event.kind==="launch"){
+      earnedProduct=Math.max(0,Number(event.product||0));
+      earnedCash=Math.max(0,Number(event.cash||0));
+      product+=earnedProduct;
+      cash+=earnedCash;
+    }else if(event.kind==="product_redemption"){
+      product=Math.max(0,product-Math.max(0,Number(event.productUsed||0)));
+      if(event.cashToZero)cash=0;
+    }else if(event.kind==="cash_zero_by_product"){
+      cash=Math.max(0,cash-Math.max(0,Number(event.amount||0)));
+    }else if(event.kind==="cash_payment"){
+      cash=Math.max(0,cash-Math.max(0,Number(event.amount||0)));
+      if(event.productToZero)product=0;
+    }else if(event.kind==="history_checkpoint"){
+      product=Math.max(0,Number(event.productAfter||0));
+      cash=Math.max(0,Number(event.cashAfter||0));
+    }
+
+    product=Math.max(0,Number(product||0));
+    cash=Math.max(0,Number(cash||0));
+    processed.push({
+      ...event,
+      date:normalizeDateOnly(event.at),
+      beforeProduct,beforeCash,afterProduct:product,afterCash:cash,
+      earnedProduct,earnedCash,
+      productDeducted:Math.max(0,beforeProduct+earnedProduct-product),
+      cashDeducted:Math.max(0,beforeCash+earnedCash-cash)
+    });
+  });
+  return {product,cash,events:processed};
+}
+
+function reportGeneratedForRange(infId,start,end){
+  const rows=(state.launches||[]).filter(row=>{
+    const date=normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"");
+    return row&&row.influencerId===infId&&row.status!=="Cancelado"&&date&&date>=start&&date<=end;
+  });
+  const origins=launchOriginSummaryV215(rows);
   return {
-    range,
-    opening,
-    closing,
-    sold:earnedEvents.reduce((sum,event)=>sum+Number(event.sold||0),0),
-    earnedProduct:earnedEvents.reduce((sum,event)=>sum+Number(event.product||0),0),
-    earnedCash:earnedEvents.reduce((sum,event)=>sum+Number(event.cash||0),0),
-    deductedProduct:monthEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0),
-    deductedCash:monthEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0),
-    monthEvents
+    rows,
+    sold:rows.reduce((sum,row)=>sum+Number(row.sold||0),0),
+    product:rows.reduce((sum,row)=>sum+Number(row.productCommission||0),0),
+    cash:rows.reduce((sum,row)=>sum+Number(row.cashCommission||0),0),
+    accumulatedProduct:rows.filter(row=>row.accumulate).reduce((sum,row)=>sum+Number(row.productCommission||0),0),
+    accumulatedCash:rows.filter(row=>row.accumulate).reduce((sum,row)=>sum+Number(row.cashCommission||0),0),
+    origins
   };
 }
-/* ===== FIM V208 — MOTOR INTERNO DE SALDO REAL ===== */
+
+function reportRedemptionStatus(infId,start,end,closing){
+  const candidates=[];
+  (state.accumulationHistory||[]).forEach(row=>{
+    const date=normalizeDateOnly(row.createdAt||row.date);
+    if(!row||row.influencerId!==infId||!date||date<start||date>end)return;
+    if(row.type==="product_choice_paid"||row.type==="product_paid")candidates.push({at:row.createdAt||date,type:"product",text:"Resgate em produto registrado — o saldo em dinheiro foi zerado conforme a regra."});
+    if(row.type==="cash_paid")candidates.push({at:row.createdAt||date,type:"cash",text:"Resgate em dinheiro registrado — o saldo em produto foi zerado conforme a regra."});
+  });
+  (state.redemptions||[]).forEach(row=>{
+    const date=normalizeDateOnly(row.date);
+    if(row&&row.influencerId===infId&&date>=start&&date<=end&&isProductChoiceRedemption(row))candidates.push({at:`${date}T12:00:00`,type:"product",text:"Resgate em produto registrado — o saldo em dinheiro foi zerado conforme a regra."});
+  });
+  (state.cashPayments||[]).forEach(row=>{
+    const date=normalizeDateOnly(row.date);
+    if(row&&row.influencerId===infId&&row.status!=="Cancelado"&&!row.productRedemptionId&&date>=start&&date<=end)candidates.push({at:`${date}T13:00:00`,type:"cash",text:"Resgate em dinheiro registrado — o saldo em produto foi zerado conforme a regra."});
+  });
+  const latest=candidates.sort((a,b)=>String(b.at).localeCompare(String(a.at)))[0];
+  if(latest)return latest;
+  if(Number(closing.product||0)>0||Number(closing.cash||0)>0)return {type:"neutral",text:"Status: acumulando saldo. O valor continuará disponível e será atualizado nos próximos relatórios."};
+  return {type:"neutral",text:"Status: sem saldo acumulado disponível ao final do período."};
+}
+
+function reportCommissionSnapshot(infId,month=selectedMonth()){
+  const range=reportMonthRange(month);
+  const coverage=reportCoverageRange(infId,range.month);
+  const coverageOpeningDate=reportDateBefore(coverage.start);
+  const opening=coverageOpeningDate?reportAccumulationTimeline(infId,coverageOpeningDate):{product:0,cash:0,events:[]};
+  const closing=reportAccumulationTimeline(infId,coverage.end);
+  const coverageEvents=(closing.events||[]).filter(event=>event.date>=coverage.start&&event.date<=coverage.end);
+  const selectedGenerated=reportGeneratedForRange(infId,range.start,range.end);
+  const coverageGenerated=reportGeneratedForRange(infId,coverage.start,coverage.end);
+  const months=reportMonthSequence(coverage.start.slice(0,7),coverage.end.slice(0,7)).map(monthValue=>{
+    const monthRange=reportMonthRange(monthValue);
+    const generated=reportGeneratedForRange(infId,monthRange.start,monthRange.end);
+    const monthEvents=(closing.events||[]).filter(event=>event.date>=monthRange.start&&event.date<=monthRange.end);
+    const monthClosing=reportAccumulationTimeline(infId,monthRange.end);
+    return {
+      month:monthValue,
+      range:monthRange,
+      generated,
+      deductedProduct:monthEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0),
+      deductedCash:monthEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0),
+      closing:{product:monthClosing.product,cash:monthClosing.cash}
+    };
+  });
+  const deductedProduct=coverageEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0);
+  const deductedCash=coverageEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0);
+  const sourceRows=months.flatMap(row=>(row.generated.origins||[]).map(origin=>({
+    month:row.month,
+    origin:origin.origin,
+    count:origin.count,
+    sold:origin.sold,
+    product:origin.product,
+    cash:origin.cash
+  }))).filter(row=>row.count>0&&(row.sold!==0||row.product!==0||row.cash!==0));
+  return {
+    range,coverage,opening,closing,
+    sold:selectedGenerated.sold,
+    earnedProduct:selectedGenerated.product,
+    earnedCash:selectedGenerated.cash,
+    coverageGenerated,
+    accumulatedProduct:coverageGenerated.accumulatedProduct,
+    accumulatedCash:coverageGenerated.accumulatedCash,
+    deductedProduct,deductedCash,
+    status:reportRedemptionStatus(infId,coverage.start,coverage.end,closing),
+    months,
+    sourceRows,
+    coverageEvents
+  };
+}
+
+function reportDualCell(product,cash){
+  return `<div class="reportDualValue"><span class="reportProductValue"><b>Produto</b>${money(product)}</span><span class="reportCashValue"><b>Dinheiro</b>${money(cash)}</span></div>`;
+}
 
 function renderReport(){
   const inf=infById($("reportInfluencer").value);
   const month=selectedMonth();
   const snapshot=inf?reportCommissionSnapshot(inf.id,month):{
-    range:reportMonthRange(month),
-    opening:{product:0,cash:0},
-    closing:{product:0,cash:0},
-    sold:0,earnedProduct:0,earnedCash:0,deductedProduct:0,deductedCash:0
+    range:reportMonthRange(month),coverage:reportMonthRange(month),
+    opening:{product:0,cash:0},closing:{product:0,cash:0},
+    sold:0,earnedProduct:0,earnedCash:0,accumulatedProduct:0,accumulatedCash:0,
+    deductedProduct:0,deductedCash:0,months:[],sourceRows:[],status:{type:"neutral",text:"Nenhuma movimentação calculada."}
   };
 
   $("reportTitle").textContent=state.settings.pdfTitle;
@@ -27680,16 +28130,55 @@ function renderReport(){
   const pdfLogo=state.settings.pdfLogo||"";
   $("reportLogo").style.display=pdfLogo?"block":"none";
   if(pdfLogo)$("reportLogo").src=pdfLogo;
-
   applyPdfWatermark("reportWatermark");
 
   const monthText=monthLabel(snapshot.range.month);
+  const coverageStartMonth=snapshot.coverage.start.slice(0,7);
+  const coverageEndMonth=snapshot.coverage.end.slice(0,7);
+  const multiMonth=coverageStartMonth!==coverageEndMonth;
   $("reportName").textContent=inf?inf.name:"Selecione um influencer";
   $("reportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
-  $("reportPeriod").textContent=`Competência: ${monthText} • saldo disponível até ${dateBR(snapshot.range.end)}`;
+  $("reportPeriod").textContent=`Competência principal: ${monthText} • posição atualizada até ${dateBR(snapshot.coverage.end)}`;
   $("reportSold").textContent=money(snapshot.sold);
-  $("reportProduct").textContent=money(snapshot.closing.product);
-  $("reportCash").textContent=money(snapshot.closing.cash);
+  $("reportProduct").textContent=money(snapshot.earnedProduct);
+  $("reportCash").textContent=money(snapshot.earnedCash);
+
+  const coverageText=multiMonth
+    ?`Este PDF consolida de ${monthLabel(coverageStartMonth)} até ${monthLabel(coverageEndMonth)} porque havia competência(s) ainda não marcada(s) como enviada(s). Todos os lançamentos do mesmo influencer em cada competência — inclusive Site, Loja física, WhatsApp e Instagram — são somados automaticamente. Os cards principais acima continuam mostrando somente ${monthText}.`
+    :`Este PDF demonstra ${monthText}. Todos os lançamentos do mesmo influencer nesta competência são somados automaticamente, preservando o detalhamento por origem. Saldos anteriores aparecem abaixo somente quando estavam marcados para acumular.`;
+  if($("reportCoverageText"))$("reportCoverageText").textContent=coverageText;
+  if($("reportOpeningProduct"))$("reportOpeningProduct").textContent=money(snapshot.opening.product);
+  if($("reportOpeningCash"))$("reportOpeningCash").textContent=money(snapshot.opening.cash);
+  if($("reportAccumulatedProduct"))$("reportAccumulatedProduct").textContent=money(snapshot.accumulatedProduct);
+  if($("reportAccumulatedCash"))$("reportAccumulatedCash").textContent=money(snapshot.accumulatedCash);
+  if($("reportDeductedProduct"))$("reportDeductedProduct").textContent=money(snapshot.deductedProduct);
+  if($("reportDeductedCash"))$("reportDeductedCash").textContent=money(snapshot.deductedCash);
+  if($("reportClosingProduct"))$("reportClosingProduct").textContent=money(snapshot.closing.product);
+  if($("reportClosingCash"))$("reportClosingCash").textContent=money(snapshot.closing.cash);
+  if($("reportStatusBox")){
+    $("reportStatusBox").dataset.type=snapshot.status.type||"neutral";
+    $("reportStatusBox").textContent=snapshot.status.text||"";
+  }
+  if($("reportMonthRows")){
+    $("reportMonthRows").innerHTML=snapshot.months.length?snapshot.months.map(row=>`<tr>
+      <td><strong>${esc(monthLabel(row.month))}</strong>${row.month===snapshot.range.month?'<br><span class="badge blue">Competência principal</span>':""}</td>
+      <td>${money(row.generated.sold)}</td>
+      <td>${reportDualCell(row.generated.product,row.generated.cash)}</td>
+      <td>${reportDualCell(row.generated.accumulatedProduct,row.generated.accumulatedCash)}</td>
+      <td>${reportDualCell(row.deductedProduct,row.deductedCash)}</td>
+      <td>${reportDualCell(row.closing.product,row.closing.cash)}</td>
+    </tr>`).join(""):`<tr><td colspan="6">Nenhum lançamento encontrado no período.</td></tr>`;
+  }
+  if($("reportOriginRows")){
+    $("reportOriginRows").innerHTML=(snapshot.sourceRows||[]).length?snapshot.sourceRows.map(row=>`<tr>
+      <td>${esc(monthLabel(row.month))}</td>
+      <td><strong>${esc(row.origin||"Sem origem")}</strong></td>
+      <td>${Number(row.count||0)}</td>
+      <td>${money(row.sold)}</td>
+      <td>${money(row.product)}</td>
+      <td>${money(row.cash)}</td>
+    </tr>`).join(""):`<tr><td colspan="6">Nenhuma origem com venda registrada no período demonstrado.</td></tr>`;
+  }
 }
 
 function printReport(){
@@ -27700,7 +28189,59 @@ function printReport(){
   window.print();
   setTimeout(()=>document.body.classList.remove("print-report"),500);
 }
-function markReportSent(){const inf=infById($("reportInfluencer").value);if(!inf){alert("Selecione um influencer.");return}monthLaunches().filter(l=>l.influencerId===inf.id).forEach(l=>{l.pdfSent=true;l.status="Enviado"});save();render();alert("Lançamentos marcados como enviados.");}
+
+function markReportSent(){
+  const inf=infById($("reportInfluencer").value);
+  if(!inf){alert("Selecione um influencer.");return}
+  const snapshot=reportCommissionSnapshot(inf.id,selectedMonth());
+  const audit=currentAuditInfo();
+  const historyId=`report-${inf.id}-${snapshot.range.month}`;
+  state.reportHistory=ensureArray(state.reportHistory).filter(row=>String(row.id)!==historyId);
+  state.reportHistory.push({
+    id:historyId,
+    influencerId:inf.id,
+    influencerName:inf.name||"",
+    coupon:inf.coupon||"",
+    reportMonth:snapshot.range.month,
+    coverageStart:snapshot.coverage.start,
+    coverageEnd:snapshot.coverage.end,
+    status:"Enviado",
+    sentAt:audit.at||new Date().toISOString(),
+    sentById:audit.id||"",
+    sentByName:audit.name||"Não registrado",
+    sentByUsername:audit.username||"",
+    sold:snapshot.sold,
+    earnedProduct:snapshot.earnedProduct,
+    earnedCash:snapshot.earnedCash,
+    openingProduct:snapshot.opening.product,
+    openingCash:snapshot.opening.cash,
+    closingProduct:snapshot.closing.product,
+    closingCash:snapshot.closing.cash,
+    launchCount:(snapshot.coverageGenerated?.rows||[]).length,
+    sourceBreakdown:settingsV210Clone(snapshot.sourceRows||[],[])
+  });
+
+  const changed=[];
+  (state.launches||[]).forEach(row=>{
+    const date=normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"");
+    if(row.influencerId!==inf.id||row.status==="Cancelado"||!date||date<snapshot.coverage.start||date>snapshot.coverage.end)return;
+    row.pdfSent=true;
+    row.status="Enviado";
+    row.updatedById=audit.id||"";
+    row.updatedByName=audit.name||"";
+    row.updatedByUsername=audit.username||"";
+    row.updatedAt=audit.at||new Date().toISOString();
+    queueInfluencerLaunchCloudRecord(row);
+    changed.push(row.id);
+  });
+
+  save();
+  render();
+  flushInfluencerLaunchPendingQueue().then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false})).catch(()=>{});
+  alert(`Relatório de ${monthLabel(snapshot.range.month)} marcado como enviado. Período consolidado: ${dateBR(snapshot.coverage.start)} a ${dateBR(snapshot.coverage.end)}. ${changed.length} lançamento(s) incluído(s).`);
+}
+/* ===== FIM V215 ===== */
+
 function renderSettings(){
   const s=state.settings;
   $("setName").value=s.systemName||"";
@@ -36314,15 +36855,23 @@ function exportReportCSV(){
     return;
   }
   const snapshot=reportCommissionSnapshot(inf.id,selectedMonth());
-  rowsCSV([
+  const rows=[
     ["Influencer",inf.name],
     ["Cupom",inf.coupon],
-    ["Competência",monthLabel(snapshot.range.month)],
-    ["Posição até",dateBR(snapshot.range.end)],
-    ["Total vendido no mês",snapshot.sold],
-    ["Comissão disponível em produtos",snapshot.closing.product],
-    ["Comissão disponível em dinheiro",snapshot.closing.cash]
-  ],`relatorio-${inf.coupon}-${snapshot.range.month}.csv`);
+    ["Competência principal",monthLabel(snapshot.range.month)],
+    ["Período demonstrado",`${dateBR(snapshot.coverage.start)} a ${dateBR(snapshot.coverage.end)}`],
+    ["Total vendido na competência",snapshot.sold],
+    ["Comissão em produtos gerada na competência",snapshot.earnedProduct],
+    ["Comissão em dinheiro gerada na competência",snapshot.earnedCash],
+    ["Saldo acumulado final em produtos",snapshot.closing.product],
+    ["Saldo acumulado final em dinheiro",snapshot.closing.cash],
+    [],
+    ["Competência","Origem","Lançamentos","Total vendido","Comissão em produtos","Comissão em dinheiro"],
+    ...(snapshot.sourceRows||[]).map(row=>[
+      monthLabel(row.month),row.origin,row.count,row.sold,row.product,row.cash
+    ])
+  ];
+  rowsCSV(rows,`relatorio-${inf.coupon}-${snapshot.range.month}.csv`);
 }
 
 function exportBackup(){
@@ -37743,6 +38292,7 @@ window.exportInfluencerLaunchSafetyBackupV209=function(){
    - cash_payments
    - paid_adjustments
    - accumulation_history
+   - report_history
    - collaborators
    - pix
 
@@ -37769,6 +38319,7 @@ const CORE_MODULES_V211=[
   {module:"cash_payments",stateKey:"cashPayments",kind:"array"},
   {module:"paid_adjustments",stateKey:"paidAdjustments",kind:"array"},
   {module:"accumulation_history",stateKey:"accumulationHistory",kind:"array"},
+  {module:"report_history",stateKey:"reportHistory",kind:"array"},
   {module:"collaborators",stateKey:"collaborators",kind:"array"},
   {module:"pix",stateKey:"pix",kind:"singleton"}
 ];
