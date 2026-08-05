@@ -14645,7 +14645,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V218</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V219</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15771,21 +15771,8 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
             <span id="reportCoverageText"></span>
           </div>
 
-          <div id="reportAccumulationSectionV217" class="reportSection" hidden>
-            <h3>Comissões acumuladas por origem</h3>
-            <table class="reportOriginTable reportAccumulatedOriginTableV217">
-              <thead><tr><th>Origem</th><th>Produtos</th><th>Dinheiro</th></tr></thead>
-              <tbody id="reportAccumulatedOriginRowsV217"><tr><td colspan="3">Nenhuma comissão acumulada por origem.</td></tr></tbody>
-            </table>
-          </div>
-
-          <div id="reportOriginSectionV217" class="reportSection">
-            <h3>Vendas por origem</h3>
-            <table class="reportOriginTable reportOriginSimpleV217">
-              <thead><tr><th>Origem</th><th>Total vendido</th></tr></thead>
-              <tbody id="reportOriginRows"><tr><td colspan="2">Nenhuma origem com venda registrada.</td></tr></tbody>
-            </table>
-          </div>
+          <!-- V219: relatório destinado ao influencer mantém apenas o resumo principal.
+               Os detalhamentos continuam disponíveis no histórico interno clicável. -->
 
           <p id="reportFooter" class="pdfFooterClean"></p>
         </div>
@@ -16936,7 +16923,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V218";
+const APP_BUILD_VERSION="V219";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -16969,9 +16956,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=218",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=219",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=218");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=219");
       }
 
       reg.addEventListener("updatefound",()=>{
