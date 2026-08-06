@@ -1,5 +1,5 @@
-const WISENT_VERSION="V226";
-const WISENT_CACHE="wisent-erp-static-v226";
+const WISENT_VERSION="V227";
+const WISENT_CACHE="wisent-erp-static-v227";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
@@ -153,3 +153,5 @@ self.addEventListener("fetch",event=>{
     }
   })());
 });
+
+// WISENT V227 - novo deploy
