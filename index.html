@@ -15069,6 +15069,62 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V224 ===== */
 
+
+
+/* ===== V225 — AVISO PROFISSIONAL DE ACÚMULO PROGRESSIVO ===== */
+#reports .reportAccumulationCarryNoticeV225{
+  display:block;
+  margin:0 0 18px;
+  padding:15px 18px;
+  border:1px solid #d7b85d;
+  border-left:5px solid #9b7616;
+  border-radius:16px;
+  background:#ffffff;
+  color:#3f3213;
+  box-shadow:0 10px 24px rgba(87,64,8,.07);
+  font-size:12.5px;
+  line-height:1.55;
+}
+#reports .reportAccumulationCarryNoticeV225 strong{
+  display:block;
+  margin:0 0 4px;
+  color:#251c08;
+  font-family:Bahnschrift,"Avenir Next",Aptos,"Segoe UI",Arial,sans-serif;
+  font-size:13.5px;
+  font-weight:900;
+  letter-spacing:.01em;
+}
+#reports .reportAccumulationCarryNoticeV225 .carryValuesV225{
+  display:block;
+  margin-top:5px;
+  color:#6b5314;
+  font-size:11.5px;
+  font-weight:800;
+}
+#reports .reportAccumulationCarryNoticeV225[hidden]{display:none!important}
+@media(max-width:650px){
+  #reports .reportAccumulationCarryNoticeV225{padding:13px 14px;border-radius:14px}
+}
+@media print{
+  body.print-report #reportCoverageNotice.reportAccumulationCarryNoticeV225[data-carry="true"]{
+    display:block!important;
+    margin:0 0 5mm!important;
+    padding:4mm 4.5mm!important;
+    border:0.35mm solid #d7b85d!important;
+    border-left:1.4mm solid #9b7616!important;
+    border-radius:4mm!important;
+    background:#ffffff!important;
+    color:#3f3213!important;
+    box-shadow:none!important;
+    font-size:8.5pt!important;
+    line-height:1.45!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+  }
+  body.print-report #reportCoverageNotice.reportAccumulationCarryNoticeV225[data-carry="false"]{display:none!important}
+}
+/* ===== FIM V225 ===== */
+
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -15159,7 +15215,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V224</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V225</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -16268,6 +16324,10 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
             <p id="reportPeriod" class="muted">Mês: -</p>
           </div>
 
+          <div id="reportCoverageNotice" class="reportCoverageNotice reportAccumulationCarryNoticeV225" hidden aria-live="polite">
+            <span id="reportCoverageText"></span>
+          </div>
+
           <div class="pdfThreeCards">
             <div class="pdfBox">
               <small>Vendas no período</small>
@@ -16281,10 +16341,6 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
               <small>Comissão em dinheiro</small>
               <strong id="reportCash">R$ 0,00</strong>
             </div>
-          </div>
-
-          <div id="reportCoverageNotice" class="reportCoverageNotice" hidden>
-            <span id="reportCoverageText"></span>
           </div>
 
           <!-- V221: relatório destinado ao influencer mantém apenas o resumo principal, com identidade visual dourada alinhada à logo e tipografia profissional.
@@ -17451,7 +17507,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V224";
+const APP_BUILD_VERSION="V225";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17484,9 +17540,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=224",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=225",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=224");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=225");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -26064,7 +26120,7 @@ function accumulationLedgerEventsForInfluencer(infId,asOfDate=today()){
 
   (state.launches||[]).forEach(l=>{
     const date=reportLaunchEffectiveDateV217(l);
-    if(!reportBooleanV218(l.accumulate)||!reportRecordBelongsToInfluencerV217(l,infId)||!date||date>asOfDate)return;
+    if(l.status==="Cancelado"||!reportBooleanV218(l.accumulate)||!reportRecordBelongsToInfluencerV217(l,infId)||!date||date>asOfDate)return;
 
     events.push({
       at:date+"T00:00:00.000",
@@ -29286,16 +29342,119 @@ function reportRedemptionStatus(infId,start,end,closing){
   return {type:"neutral",text:"Status: sem saldo acumulado disponível ao final do período."};
 }
 
+
+/* ===== V225 — CICLO DE ACÚMULO INDEPENDENTE DO STATUS "PDF ENVIADO" ===== */
+function reportDateMinV225(...values){
+  return values
+    .map(value=>normalizeDateOnly(value))
+    .filter(Boolean)
+    .sort()[0]||"";
+}
+
+function reportAccumulationCarryV225(infId,month=selectedMonth()){
+  const selected=reportMonthRange(month);
+  const beforeSelected=reportDateBefore(selected.start);
+  const empty={
+    active:false,start:selected.start,end:beforeSelected||selected.start,
+    opening:{product:0,cash:0,events:[]},priorRows:[],months:[],
+    product:0,cash:0
+  };
+  if(!beforeSelected)return empty;
+
+  const opening=reportAccumulationTimeline(infId,beforeSelected);
+  const product=Math.max(0,Number(opening.product||0));
+  const cash=Math.max(0,Number(opening.cash||0));
+  if(product<0.005&&cash<0.005)return {...empty,opening,product,cash};
+
+  const events=(opening.events||[])
+    .filter(event=>event&&event.date&&event.date<selected.start)
+    .slice();
+  let lastFullClose=-1;
+  events.forEach((event,index)=>{
+    const afterProduct=Math.max(0,Number(event.afterProduct||0));
+    const afterCash=Math.max(0,Number(event.afterCash||0));
+    if(event.kind!=="launch"&&afterProduct<0.005&&afterCash<0.005)lastFullClose=index;
+  });
+
+  const activeEvents=events.slice(lastFullClose+1);
+  const firstActiveLaunch=activeEvents.find(event=>event.kind==="launch");
+  let start=normalizeDateOnly(firstActiveLaunch?.date||activeEvents[0]?.date)||selected.start;
+
+  let priorRows=reportLaunchRowsForRangeV218(infId,start,beforeSelected)
+    .filter(row=>row&&row.status!=="Cancelado"&&reportBooleanV218(row.accumulate));
+
+  if(priorRows.length){
+    const firstMonth=priorRows
+      .map(row=>launchRecordMonthV215(row))
+      .filter(Boolean)
+      .sort()[0];
+    if(firstMonth)start=`${firstMonth}-01`;
+    priorRows=reportLaunchRowsForRangeV218(infId,start,beforeSelected)
+      .filter(row=>row&&row.status!=="Cancelado"&&reportBooleanV218(row.accumulate));
+  }
+
+  const months=[...new Set(priorRows.map(row=>launchRecordMonthV215(row)).filter(Boolean))].sort();
+  return {
+    active:true,
+    start,
+    end:beforeSelected,
+    opening,
+    priorRows,
+    months,
+    product,
+    cash
+  };
+}
+
+function reportUniqueLaunchRowsV225(rows=[]){
+  const byId=new Map();
+  (Array.isArray(rows)?rows:[]).filter(Boolean).forEach((row,index)=>{
+    const key=String(row.id||row.legacyId||`${launchRecordMonthV215(row)}|${reportLaunchEffectiveDateV217(row)}|${row.influencerId||""}|${index}`);
+    if(!byId.has(key))byId.set(key,row);
+  });
+  return [...byId.values()].sort((a,b)=>{
+    const am=launchRecordMonthV215(a)||"";
+    const bm=launchRecordMonthV215(b)||"";
+    if(am!==bm)return am.localeCompare(bm);
+    return String(reportLaunchEffectiveDateV217(a)||"").localeCompare(String(reportLaunchEffectiveDateV217(b)||""));
+  });
+}
+/* ===== FIM V225 ===== */
+
 function reportCommissionSnapshot(infId,month=selectedMonth()){
   const range=reportMonthRange(month);
-  const coverage=reportCoverageRange(infId,range.month);
+  const baseCoverage=reportCoverageRange(infId,range.month);
+  const carry=reportAccumulationCarryV225(infId,range.month);
+  const displayStart=reportDateMinV225(baseCoverage.start,carry.active?carry.start:"")||baseCoverage.start;
+  const coverage={
+    ...baseCoverage,
+    start:displayStart,
+    accumulationCarry:carry.active,
+    carryStart:carry.active?carry.start:""
+  };
+
   const coverageOpeningDate=reportDateBefore(coverage.start);
   const opening=coverageOpeningDate?reportAccumulationTimeline(infId,coverageOpeningDate):{product:0,cash:0,events:[]};
-  const closing=reportAccumulationTimeline(infId,coverage.end);
-  const coverageEvents=(closing.events||[]).filter(event=>event.date>=coverage.start&&event.date<=coverage.end);
+  const closing=reportAccumulationTimeline(infId,range.end);
+  const coverageEvents=(closing.events||[]).filter(event=>event.date>=coverage.start&&event.date<=range.end);
+
   const selectedGenerated=reportGeneratedForRange(infId,range.start,range.end);
-  const coverageGenerated=reportGeneratedForCoverageV218(infId,coverage,range.month);
-  const months=reportMonthSequence(coverage.start.slice(0,7),coverage.end.slice(0,7)).map(monthValue=>{
+  const coverageGenerated=reportGeneratedForCoverageV218(infId,baseCoverage,range.month);
+  const selectedRows=reportLaunchRowsForRangeV218(infId,range.start,range.end);
+
+  let displayedGenerated=baseCoverage.start.slice(0,7)!==baseCoverage.end.slice(0,7)
+    ?coverageGenerated
+    :selectedGenerated;
+
+  if(carry.active){
+    displayedGenerated=reportAggregateLaunchRowsV218(reportUniqueLaunchRowsV225([
+      ...(coverageGenerated.rows||[]),
+      ...(carry.priorRows||[]),
+      ...selectedRows
+    ]));
+  }
+
+  const months=reportMonthSequence(coverage.start.slice(0,7),range.end.slice(0,7)).map(monthValue=>{
     const monthRange=reportMonthRange(monthValue);
     const generated=reportGeneratedForRange(infId,monthRange.start,monthRange.end);
     const monthEvents=(closing.events||[]).filter(event=>event.date>=monthRange.start&&event.date<=monthRange.end);
@@ -29309,41 +29468,42 @@ function reportCommissionSnapshot(infId,month=selectedMonth()){
       closing:{product:monthClosing.product,cash:monthClosing.cash}
     };
   });
+
   const deductedProduct=coverageEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0);
   const deductedCash=coverageEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0);
-  const coverageStartMonth=coverage.start.slice(0,7);
-  const coverageEndMonth=coverage.end.slice(0,7);
-  const multiMonth=coverageStartMonth!==coverageEndMonth;
-  const displayedGenerated=multiMonth?coverageGenerated:selectedGenerated;
+  const multiMonth=coverage.start.slice(0,7)!==range.end.slice(0,7);
   const sourceRows=(displayedGenerated.origins||[])
     .filter(row=>Number(row.sold||0)>0)
     .map(row=>({origin:row.origin,count:row.count,sold:row.sold}));
   const accumulatedOriginRows=(displayedGenerated.accumulatedOrigins||[])
     .filter(row=>Number(row.product||0)!==0||Number(row.cash||0)!==0)
     .map(row=>({origin:row.origin,product:row.product,cash:row.cash}));
-  const hasAccumulation=Number(opening.product||0)>0||Number(opening.cash||0)>0||
+  const hasAccumulation=carry.active||Number(opening.product||0)>0||Number(opening.cash||0)>0||
     Number(coverageGenerated.accumulatedProduct||0)>0||Number(coverageGenerated.accumulatedCash||0)>0||
     accumulatedOriginRows.length>0;
+
+  /* Quando existe saldo vindo de competência anterior, o PDF passa a mostrar
+     o saldo consolidado e atualizado, já considerando resgates e zeragens.
+     Sem saldo anterior, mantém o valor gerado no período selecionado. */
+  const displayedProduct=carry.active?Math.max(0,Number(closing.product||0)):Number(displayedGenerated.product||0);
+  const displayedCash=carry.active?Math.max(0,Number(closing.cash||0)):Number(displayedGenerated.cash||0);
+
   return {
-    range,coverage,opening,closing,multiMonth,
-    sold:displayedGenerated.sold,
-    earnedProduct:displayedGenerated.product,
-    earnedCash:displayedGenerated.cash,
-    coverageGenerated,displayedGenerated,
+    range,coverage,baseCoverage,opening,closing,multiMonth,carry,
+    sold:Number(displayedGenerated.sold||0),
+    earnedProduct:displayedProduct,
+    earnedCash:displayedCash,
+    coverageGenerated,selectedGenerated,displayedGenerated,
     accumulatedProduct:coverageGenerated.accumulatedProduct,
     accumulatedCash:coverageGenerated.accumulatedCash,
     deductedProduct,deductedCash,
-    status:reportRedemptionStatus(infId,coverage.start,coverage.end,closing),
+    status:reportRedemptionStatus(infId,coverage.start,range.end,closing),
     months,
     sourceRows,
     accumulatedOriginRows,
     hasAccumulation,
     coverageEvents
   };
-}
-
-function reportDualCell(product,cash){
-  return `<div class="reportDualValue"><span class="reportProductValue"><b>Produto</b>${money(product)}</span><span class="reportCashValue"><b>Dinheiro</b>${money(cash)}</span></div>`;
 }
 
 function renderReport(){
@@ -29354,6 +29514,7 @@ function renderReport(){
     opening:{product:0,cash:0},closing:{product:0,cash:0},
     sold:0,earnedProduct:0,earnedCash:0,accumulatedProduct:0,accumulatedCash:0,
     deductedProduct:0,deductedCash:0,sourceRows:[],accumulatedOriginRows:[],hasAccumulation:false,
+    carry:{active:false,months:[],product:0,cash:0},
     status:{type:"neutral",text:""}
   };
 
@@ -29366,10 +29527,14 @@ function renderReport(){
   applyPdfWatermark("reportWatermark");
 
   const startMonth=snapshot.coverage.start.slice(0,7);
-  const endMonth=snapshot.coverage.end.slice(0,7);
-  const periodText=startMonth===endMonth
-    ?`Competência: ${monthLabel(endMonth)}`
-    :`Período consolidado: ${monthLabel(startMonth)} a ${monthLabel(endMonth)}`;
+  const endMonth=snapshot.range.end.slice(0,7);
+  const carryActive=Boolean(snapshot.carry?.active&&startMonth<snapshot.range.month);
+  const periodText=carryActive
+    ?`Período acumulado: ${monthLabel(startMonth)} a ${monthLabel(endMonth)}`
+    :(startMonth===endMonth
+      ?`Competência: ${monthLabel(endMonth)}`
+      :`Período consolidado: ${monthLabel(startMonth)} a ${monthLabel(endMonth)}`);
+
   $("reportName").textContent=inf?inf.name:"Selecione um influencer";
   $("reportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
   $("reportPeriod").textContent=periodText;
@@ -29378,8 +29543,27 @@ function renderReport(){
   $("reportCash").textContent=money(snapshot.earnedCash);
 
   const coverageNotice=$("reportCoverageNotice");
-  if(coverageNotice)coverageNotice.hidden=true;
-  if($("reportCoverageText"))$("reportCoverageText").textContent="";
+  const coverageText=$("reportCoverageText");
+  if(coverageNotice){
+    coverageNotice.hidden=!carryActive;
+    coverageNotice.dataset.carry=carryActive?"true":"false";
+  }
+  if(coverageText){
+    if(carryActive){
+      const priorMonths=(snapshot.carry.months||[]).filter(value=>value<snapshot.range.month);
+      const firstPrior=priorMonths[0]||startMonth;
+      const lastPrior=priorMonths[priorMonths.length-1]||startMonth;
+      const priorLabel=firstPrior===lastPrior
+        ?monthLabel(firstPrior)
+        :`${monthLabel(firstPrior)} a ${monthLabel(lastPrior)}`;
+      coverageText.innerHTML=`<strong>Saldo acumulado incorporado</strong>`+
+        `Por opção de acúmulo, as comissões disponíveis de ${esc(priorLabel)} foram mantidas e somadas às movimentações de ${esc(monthLabel(snapshot.range.month))}. `+
+        `Os valores abaixo representam o período consolidado e já consideram eventuais resgates ou zeragens registrados.`+
+        `<span class="carryValuesV225">Saldo trazido para a competência: Produtos ${money(snapshot.carry.product)} • Dinheiro ${money(snapshot.carry.cash)}</span>`;
+    }else{
+      coverageText.textContent="";
+    }
+  }
 
   const accumulatedOrigins=snapshot.accumulatedOriginRows||[];
   const accumulationSection=$("reportAccumulationSectionV217");
@@ -29400,6 +29584,7 @@ function renderReport(){
     </tr>`).join(""):`<tr><td colspan="2">Nenhuma origem com venda registrada no período.</td></tr>`;
   }
 }
+
 function printReport(){
   if(!$("reportInfluencer").value){alert("Selecione um influencer.");return}
   renderReport();
@@ -29415,6 +29600,10 @@ function markReportSent(){
   const snapshot=reportCommissionSnapshot(inf.id,selectedMonth());
   const audit=currentAuditInfo();
   const historyId=`report-${inf.id}-${snapshot.range.month}`;
+  const allDisplayedRows=reportUniqueLaunchRowsV225(snapshot.displayedGenerated?.rows||[]);
+  const selectedMonthRows=reportUniqueLaunchRowsV225(snapshot.selectedGenerated?.rows||[]);
+  const rowsToMark=Boolean(snapshot.carry?.active)?selectedMonthRows:allDisplayedRows;
+
   state.reportHistory=ensureArray(state.reportHistory).filter(row=>String(row.id)!==historyId);
   state.reportHistory.push({
     id:historyId,
@@ -29423,7 +29612,11 @@ function markReportSent(){
     coupon:inf.coupon||"",
     reportMonth:snapshot.range.month,
     coverageStart:snapshot.coverage.start,
-    coverageEnd:snapshot.coverage.end,
+    coverageEnd:snapshot.range.end,
+    accumulationCarry:Boolean(snapshot.carry?.active),
+    carryStart:snapshot.carry?.active?snapshot.carry.start:"",
+    carryProduct:Number(snapshot.carry?.product||0),
+    carryCash:Number(snapshot.carry?.cash||0),
     status:"Enviado",
     sentAt:audit.at||new Date().toISOString(),
     sentById:audit.id||"",
@@ -29436,15 +29629,16 @@ function markReportSent(){
     openingCash:snapshot.opening.cash,
     closingProduct:snapshot.closing.product,
     closingCash:snapshot.closing.cash,
-    launchCount:(snapshot.displayedGenerated?.rows||[]).length,
-    launchIds:(snapshot.displayedGenerated?.rows||[]).map(row=>String(row.id||"")).filter(Boolean),
+    launchCount:allDisplayedRows.length,
+    launchIds:allDisplayedRows.map(row=>String(row.id||"")).filter(Boolean),
+    newlySentLaunchIds:rowsToMark.map(row=>String(row.id||"")).filter(Boolean),
     sourceBreakdown:settingsV210Clone(snapshot.sourceRows||[],[])
   });
 
   const changed=[];
-  const includedIds=new Set((snapshot.displayedGenerated?.rows||[]).map(row=>String(row.id||"")));
+  const selectedIds=new Set(rowsToMark.map(row=>String(row.id||"")));
   (state.launches||[]).forEach(row=>{
-    if(!includedIds.has(String(row.id||""))||row.status==="Cancelado")return;
+    if(!selectedIds.has(String(row.id||""))||row.status==="Cancelado")return;
     row.pdfSent=true;
     row.status="Enviado";
     row.updatedById=audit.id||"";
@@ -29458,8 +29652,12 @@ function markReportSent(){
   save();
   render();
   flushInfluencerLaunchPendingQueue().then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false})).catch(()=>{});
-  alert(`Relatório de ${monthLabel(snapshot.range.month)} marcado como enviado. Período consolidado: ${dateBR(snapshot.coverage.start)} a ${dateBR(snapshot.coverage.end)}. ${changed.length} lançamento(s) incluído(s).`);
+  const period=snapshot.coverage.start.slice(0,7)===snapshot.range.month
+    ?monthLabel(snapshot.range.month)
+    :`${monthLabel(snapshot.coverage.start.slice(0,7))} a ${monthLabel(snapshot.range.month)}`;
+  alert(`Relatório de ${monthLabel(snapshot.range.month)} marcado como enviado. Período demonstrado: ${period}. ${changed.length} lançamento(s) da competência atual marcado(s).`);
 }
+
 /* ===== FIM V215 ===== */
 
 function renderSettings(){
@@ -38079,17 +38277,15 @@ function exportReportCSV(){
     ["Influencer",inf.name],
     ["Cupom",inf.coupon],
     ["Competência principal",monthLabel(snapshot.range.month)],
-    ["Período demonstrado",`${dateBR(snapshot.coverage.start)} a ${dateBR(snapshot.coverage.end)}`],
-    ["Total vendido na competência",snapshot.sold],
-    ["Comissão em produtos gerada na competência",snapshot.earnedProduct],
-    ["Comissão em dinheiro gerada na competência",snapshot.earnedCash],
+    ["Período demonstrado",`${dateBR(snapshot.coverage.start)} a ${dateBR(snapshot.range.end)}`],
+    ["Acúmulo de competência anterior",snapshot.carry?.active?"Sim":"Não"],
+    ["Saldo trazido em produtos",Number(snapshot.carry?.product||0)],
+    ["Saldo trazido em dinheiro",Number(snapshot.carry?.cash||0)],
+    ["Total vendido no período",snapshot.sold],
+    ["Comissão disponível em produtos",snapshot.earnedProduct],
+    ["Comissão disponível em dinheiro",snapshot.earnedCash],
     ["Saldo acumulado final em produtos",snapshot.closing.product],
-    ["Saldo acumulado final em dinheiro",snapshot.closing.cash],
-    [],
-    ["Competência","Origem","Lançamentos","Total vendido","Comissão em produtos","Comissão em dinheiro"],
-    ...(snapshot.sourceRows||[]).map(row=>[
-      monthLabel(row.month),row.origin,row.count,row.sold,row.product,row.cash
-    ])
+    ["Saldo acumulado final em dinheiro",snapshot.closing.cash]
   ];
   rowsCSV(rows,`relatorio-${inf.coupon}-${snapshot.range.month}.csv`);
 }
