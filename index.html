@@ -15248,7 +15248,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V228</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V229</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17554,7 +17554,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V228";
+const APP_BUILD_VERSION="V229";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17587,9 +17587,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=228",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=229",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=228");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=229");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -24430,6 +24430,17 @@ function reportBooleanV218(value){
   const normalized=reportIdentityKeyV217(value);
   return ["1","true","sim","yes","on","acumular","acumulando"].includes(normalized);
 }
+
+/* ===== V229 — FONTE CANÔNICA DOS CHECKBOXES ACUMULAR / PAGO ===== */
+function reportLaunchPaidFlagV229(row){
+  if(!row)return false;
+  const status=reportIdentityKeyV217(row.status);
+  return reportBooleanV218(row.paid)||status==="pago";
+}
+function reportLaunchAccumulatesV229(row){
+  return Boolean(row)&&reportBooleanV218(row.accumulate)&&!reportLaunchPaidFlagV229(row);
+}
+/* ===== FIM V229 CHECKBOXES ===== */
 function reportLaunchRowsForRangeV218(infId,start,end){
   const startMonth=String(start||"").slice(0,7);
   const endMonth=String(end||"").slice(0,7);
@@ -26167,7 +26178,7 @@ function accumulationLedgerEventsForInfluencer(infId,asOfDate=today()){
 
   (state.launches||[]).forEach(l=>{
     const date=reportLaunchEffectiveDateV217(l);
-    if(l.status==="Cancelado"||!reportBooleanV218(l.accumulate)||!reportRecordBelongsToInfluencerV217(l,infId)||!date||date>asOfDate)return;
+    if(l.status==="Cancelado"||!reportLaunchAccumulatesV229(l)||!reportRecordBelongsToInfluencerV217(l,infId)||!date||date>asOfDate)return;
 
     events.push({
       at:date+"T00:00:00.000",
@@ -29187,14 +29198,16 @@ function reportCommissionLedgerEvents(infId,asOfDate){
       product:Number(row.productCommission||0),cash:Number(row.cashCommission||0),sold:Number(row.sold||0),source:row
     });
 
-    if(!row.paid)return;
-    const paidMonth=/^\d{4}-\d{2}$/.test(String(row.paidMonth||""))
-      ? String(row.paidMonth)
-      : (reportEventMonth(row.paidAt)||date.slice(0,7));
+    if(!reportLaunchPaidFlagV229(row))return;
+    const actualPaidDate=normalizeDateOnly(row.paidAt);
+    const paidMonth=actualPaidDate
+      ? actualPaidDate.slice(0,7)
+      : (/^\d{4}-\d{2}$/.test(String(row.paidMonth||""))
+        ? String(row.paidMonth)
+        : date.slice(0,7));
     if(activeAdjustments.has(paidMonth))return;
 
-    let paidDate=normalizeDateOnly(row.paidAt);
-    if(!paidDate||paidDate.slice(0,7)!==paidMonth)paidDate=monthEndDate(paidMonth);
+    const paidDate=actualPaidDate||monthEndDate(paidMonth);
     if(!paidDate||paidDate>end)return;
 
     events.push({
@@ -29333,6 +29346,100 @@ function reportCommissionBalanceAt(infId,asOfDate){
 
   return {product,cash,events:processed};
 }
+
+/* ===== V229 — SALDO CONTÁBIL OFICIAL DO RELATÓRIO PDF =====
+   Regras:
+   - Acumular marcado e não pago: transporta saldo.
+   - Pago marcado: comissão fica quitada/zerada a partir da data do pagamento.
+   - Lançamento do período atual, mesmo sem Acumular: entra no relatório até ser pago.
+   - Cancelado: nunca entra.
+   - Resgates, pagamentos, ajustes e checkpoints continuam sendo respeitados.
+*/
+function reportApplyBalanceEventsV229(openingBalance,events=[]){
+  let product=Math.max(0,Number(openingBalance?.product||0));
+  let cash=Math.max(0,Number(openingBalance?.cash||0));
+  const processed=[];
+
+  (Array.isArray(events)?events:[]).forEach(event=>{
+    const beforeProduct=Math.max(0,Number(product||0));
+    const beforeCash=Math.max(0,Number(cash||0));
+
+    if(event.kind==="commission_earned"){
+      product+=Math.max(0,Number(event.product||0));
+      cash+=Math.max(0,Number(event.cash||0));
+    }else if(event.kind==="launch_settled"){
+      product=Math.max(0,product-Math.max(0,Number(event.product||0)));
+      cash=Math.max(0,cash-Math.max(0,Number(event.cash||0)));
+    }else if(event.kind==="product_used"){
+      product=Math.max(0,product-Math.max(0,Number(event.amount||0)));
+      if(event.closeCash)cash=0;
+    }else if(event.kind==="cash_used"){
+      cash=Math.max(0,cash-Math.max(0,Number(event.amount||0)));
+      if(event.closeProduct)product=0;
+    }else if(event.kind==="paid_adjustment"){
+      const amount=Math.max(0,Number(event.amount||0));
+      if(event.paymentType==="Produto"){
+        product=Math.max(0,product-amount);
+        cash=0;
+      }else{
+        cash=Math.max(0,cash-amount);
+        product=0;
+      }
+    }else if(event.kind==="history_checkpoint"){
+      const row=event.source||{};
+      const productDelta=Math.max(0,Number(row.beforeProduct||0)-Number(row.afterProduct||0));
+      const cashDelta=Math.max(0,Number(row.beforeCash||0)-Number(row.afterCash||0));
+      if(row.type==="product_choice_paid"||row.type==="product_paid"){
+        product=Math.max(0,product-productDelta);
+        cash=0;
+      }else if(row.type==="cash_paid"){
+        cash=Math.max(0,cash-cashDelta);
+        product=0;
+      }else if(row.type==="product_zero_only"){
+        product=0;
+      }else if(row.type==="cash_zero_only"){
+        cash=0;
+      }else if(row.type==="manual_zero"){
+        product=0;
+        cash=0;
+      }else{
+        product=Math.max(0,product-productDelta);
+        cash=Math.max(0,cash-cashDelta);
+      }
+    }
+
+    product=Math.max(0,Number(product||0));
+    cash=Math.max(0,Number(cash||0));
+    processed.push({
+      ...event,
+      beforeProduct,beforeCash,
+      afterProduct:product,afterCash:cash,
+      productDeducted:Math.max(0,beforeProduct-product),
+      cashDeducted:Math.max(0,beforeCash-cash)
+    });
+  });
+
+  return {product,cash,events:processed};
+}
+
+function reportPdfBalanceForRangeV229(infId,start,end){
+  const normalizedStart=normalizeDateOnly(start);
+  const normalizedEnd=normalizeDateOnly(end);
+  if(!normalizedStart||!normalizedEnd||normalizedStart>normalizedEnd){
+    return {opening:{product:0,cash:0,events:[]},product:0,cash:0,events:[]};
+  }
+
+  const openingDate=reportDateBefore(normalizedStart);
+  const opening=openingDate
+    ?reportAccumulationTimeline(infId,openingDate)
+    :{product:0,cash:0,events:[]};
+
+  const periodEvents=reportCommissionLedgerEvents(infId,normalizedEnd)
+    .filter(event=>event&&event.date&&event.date>=normalizedStart&&event.date<=normalizedEnd);
+  const applied=reportApplyBalanceEventsV229(opening,periodEvents);
+  return {opening,product:applied.product,cash:applied.cash,events:applied.events};
+}
+/* ===== FIM V229 SALDO PDF ===== */
 
 /* ===== V215 — RELATÓRIO CONSOLIDADO POR INFLUENCER, COMPETÊNCIA E ORIGEM ===== */
 function reportMonthSequence(startMonth,endMonth){
@@ -29522,8 +29629,19 @@ function reportAccumulationCarryV225(infId,month=selectedMonth()){
   const firstActiveLaunch=activeEvents.find(event=>event.kind==="launch");
   let start=normalizeDateOnly(firstActiveLaunch?.date||activeEvents[0]?.date)||selected.start;
 
-  let priorRows=reportLaunchRowsForRangeV218(infId,start,beforeSelected)
-    .filter(row=>row&&row.status!=="Cancelado"&&reportBooleanV218(row.accumulate));
+  /* V229: os lançamentos transportados vêm primeiro dos próprios eventos que
+     formaram o saldo de abertura. Isso evita divergência entre o saldo e a
+     lista de lançamentos exibida/transportada. Pago sempre prevalece. */
+  let priorRows=reportUniqueLaunchRowsV225(
+    activeEvents
+      .filter(event=>event.kind==="launch"&&event.source&&reportLaunchAccumulatesV229(event.source))
+      .map(event=>event.source)
+  );
+
+  if(!priorRows.length){
+    priorRows=reportLaunchRowsForRangeV218(infId,start,beforeSelected)
+      .filter(row=>row&&row.status!=="Cancelado"&&reportLaunchAccumulatesV229(row));
+  }
 
   if(priorRows.length){
     const firstMonth=priorRows
@@ -29531,8 +29649,6 @@ function reportAccumulationCarryV225(infId,month=selectedMonth()){
       .filter(Boolean)
       .sort()[0];
     if(firstMonth)start=`${firstMonth}-01`;
-    priorRows=reportLaunchRowsForRangeV218(infId,start,beforeSelected)
-      .filter(row=>row&&row.status!=="Cancelado"&&reportBooleanV218(row.accumulate));
   }
 
   const months=[...new Set(priorRows.map(row=>launchRecordMonthV215(row)).filter(Boolean))].sort();
@@ -29575,10 +29691,13 @@ function reportCommissionSnapshot(infId,month=selectedMonth()){
     carryStart:carry.active?carry.start:""
   };
 
-  const coverageOpeningDate=reportDateBefore(coverage.start);
-  const opening=coverageOpeningDate?reportAccumulationTimeline(infId,coverageOpeningDate):{product:0,cash:0,events:[]};
-  const closing=reportAccumulationTimeline(infId,range.end);
-  const coverageEvents=(closing.events||[]).filter(event=>event.date>=coverage.start&&event.date<=range.end);
+  /* V229: o saldo do PDF começa no saldo acumulado anterior à cobertura
+     efetivamente não enviada e processa, em ordem cronológica, os lançamentos,
+     o checkbox Pago, resgates, pagamentos e checkpoints até o fim do mês. */
+  const pdfBalance=reportPdfBalanceForRangeV229(infId,baseCoverage.start,range.end);
+  const opening=pdfBalance.opening||{product:0,cash:0,events:[]};
+  const closing={product:pdfBalance.product,cash:pdfBalance.cash,events:pdfBalance.events||[]};
+  const coverageEvents=pdfBalance.events||[];
 
   const selectedGenerated=reportGeneratedForRange(infId,range.start,range.end);
   const coverageGenerated=reportGeneratedForCoverageV218(infId,baseCoverage,range.month);
@@ -29599,15 +29718,15 @@ function reportCommissionSnapshot(infId,month=selectedMonth()){
   const months=reportMonthSequence(coverage.start.slice(0,7),range.end.slice(0,7)).map(monthValue=>{
     const monthRange=reportMonthRange(monthValue);
     const generated=reportGeneratedForRange(infId,monthRange.start,monthRange.end);
-    const monthEvents=(closing.events||[]).filter(event=>event.date>=monthRange.start&&event.date<=monthRange.end);
-    const monthClosing=reportAccumulationTimeline(infId,monthRange.end);
+    const monthBalance=reportPdfBalanceForRangeV229(infId,monthRange.start,monthRange.end);
+    const monthEvents=monthBalance.events||[];
     return {
       month:monthValue,
       range:monthRange,
       generated,
       deductedProduct:monthEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0),
       deductedCash:monthEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0),
-      closing:{product:monthClosing.product,cash:monthClosing.cash}
+      closing:{product:monthBalance.product,cash:monthBalance.cash}
     };
   });
 
@@ -29624,11 +29743,11 @@ function reportCommissionSnapshot(infId,month=selectedMonth()){
     Number(coverageGenerated.accumulatedProduct||0)>0||Number(coverageGenerated.accumulatedCash||0)>0||
     accumulatedOriginRows.length>0;
 
-  /* Quando existe saldo vindo de competência anterior, o PDF passa a mostrar
-     o saldo consolidado e atualizado, já considerando resgates e zeragens.
-     Sem saldo anterior, mantém o valor gerado no período selecionado. */
-  const displayedProduct=carry.active?Math.max(0,Number(closing.product||0)):Number(displayedGenerated.product||0);
-  const displayedCash=carry.active?Math.max(0,Number(closing.cash||0)):Number(displayedGenerated.cash||0);
+  /* V229: os cards de comissão representam o saldo efetivamente disponível
+     no fim da competência. Pago prevalece sobre Acumular; valores já quitados
+     não reaparecem, e saldos acumulados anteriores permanecem até uma quitação. */
+  const displayedProduct=Math.max(0,Number(closing.product||0));
+  const displayedCash=Math.max(0,Number(closing.cash||0));
 
   return {
     range,coverage,baseCoverage,opening,closing,multiMonth,carry,
