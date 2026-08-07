@@ -15173,6 +15173,164 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="shortcut icon" href="apple-touch-icon.png">
 
+
+<style id="paidMethodStylesV231">
+/* ===== V231 — QUITAÇÃO COM FORMA DE PAGAMENTO ===== */
+.paidControlV231{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:5px;
+  min-width:104px;
+}
+.paidControlV231 .checkboxWrap{margin:0}
+.paidMethodChipV231{
+  appearance:none;
+  border:1px solid #d1d5db!important;
+  background:#f8fafc!important;
+  color:#475569!important;
+  min-height:25px!important;
+  height:auto!important;
+  padding:4px 8px!important;
+  border-radius:999px!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  line-height:1.1!important;
+  box-shadow:none!important;
+  white-space:nowrap!important;
+  cursor:pointer!important;
+}
+.paidMethodChipV231.cash{
+  border-color:#bbf7d0!important;
+  background:#f0fdf4!important;
+  color:#166534!important;
+}
+.paidMethodChipV231.product{
+  border-color:#bfdbfe!important;
+  background:#eff6ff!important;
+  color:#1d4ed8!important;
+}
+.paidMethodChipV231.pending{
+  border-color:#fde68a!important;
+  background:#fffbeb!important;
+  color:#92400e!important;
+}
+.paidMethodModalV231[hidden]{display:none!important}
+.paidMethodModalV231{
+  position:fixed;
+  inset:0;
+  z-index:50000;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(15,23,42,.58);
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+}
+.paidMethodCardV231{
+  position:relative;
+  width:min(520px,calc(100vw - 30px));
+  border:1px solid #e5e7eb;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 28px 80px rgba(15,23,42,.28);
+  padding:24px;
+  color:#111827;
+}
+.paidMethodCloseV231{
+  position:absolute!important;
+  top:14px;
+  right:14px;
+  width:34px!important;
+  height:34px!important;
+  min-height:34px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  border:1px solid #e5e7eb!important;
+  background:#fff!important;
+  color:#64748b!important;
+  box-shadow:none!important;
+  font-size:18px!important;
+}
+.paidMethodEyebrowV231{
+  display:block;
+  margin:0 42px 7px 0;
+  color:#64748b;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+}
+.paidMethodCardV231 h3{
+  margin:0;
+  font-size:21px;
+  line-height:1.2;
+}
+.paidMethodContextV231{
+  margin:8px 0 18px;
+  color:#64748b;
+  font-size:13px;
+  line-height:1.45;
+}
+.paidMethodChoicesV231{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.paidMethodChoiceV231{
+  width:100%!important;
+  min-height:92px!important;
+  padding:15px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  gap:5px!important;
+  border:1px solid #e5e7eb!important;
+  border-radius:16px!important;
+  background:#fff!important;
+  box-shadow:none!important;
+  text-align:left!important;
+}
+.paidMethodChoiceV231:hover{
+  border-color:#94a3b8!important;
+  transform:translateY(-1px);
+}
+.paidMethodChoiceV231 strong{
+  font-size:15px;
+  color:#111827;
+}
+.paidMethodChoiceV231 span{
+  font-size:12px;
+  color:#64748b;
+  font-weight:800;
+}
+.paidMethodChoiceV231.cashChoice{
+  background:linear-gradient(180deg,#fff,#f0fdf4)!important;
+}
+.paidMethodChoiceV231.productChoice{
+  background:linear-gradient(180deg,#fff,#eff6ff)!important;
+}
+.paidMethodFootV231{
+  margin:16px 0 0;
+  padding-top:14px;
+  border-top:1px solid #eef2f7;
+  color:#64748b;
+  font-size:11px;
+  line-height:1.45;
+}
+.paidMethodCancelV231{
+  width:100%!important;
+  margin-top:14px!important;
+}
+@media(max-width:760px){
+  .paidControlV231{min-width:0;align-items:flex-start}
+  .paidMethodChoicesV231{grid-template-columns:1fr}
+  .paidMethodCardV231{padding:20px 16px;border-radius:18px}
+  .paidMethodChoiceV231{min-height:78px!important}
+}
+</style>
+
 </head>
 <body class="page-dashboard authLocked">
 
@@ -15248,7 +15406,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V230</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V231</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17554,7 +17712,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V230";
+const APP_BUILD_VERSION="V231";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17587,9 +17745,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=230",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=231",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=230");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=231");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -22427,7 +22585,9 @@ function normalizeRecoveredInfluencerLaunch(obj,source="armazenamento desconheci
   item.accumulate=!!item.accumulate;
   item.paid=item.accumulate?false:!!item.paid;
   item.paidAt=item.accumulate?"":(item.paidAt||"");
-  item.paidMonth=item.accumulate?"":(item.paidMonth||"");
+  item.paidMonth=item.accumulate?"":(validMonthValue(item.paidMonth)||validMonthValue(item.accountingMonth)||validMonthValue(item.month)||String(item.date||today()).slice(0,7));
+  item.paidMethod=item.accumulate?"":paidMethodNormalizeV231(item.paidMethod);
+  item.paidAccountingAt=item.accumulate?"":(normalizeDateOnly(item.paidAccountingAt)||(item.paid?monthEndDate(item.paidMonth):""));
   item.notes=String(item.notes||"");
   item.createdById=item.createdById||audit.id||"";
   item.createdByName=item.createdByName||audit.name||"Recuperado do aparelho";
@@ -23898,13 +24058,20 @@ function normalize(){
 
     if(l.paid){
       l.paidAt=l.paidAt||today();
-      l.paidMonth=l.paidMonth||(l.paidAt||l.date||today()).slice(0,7);
+      l.paidMonth=validMonthValue(l.paidMonth)||validMonthValue(l.accountingMonth)||validMonthValue(l.month)||(l.date||today()).slice(0,7);
+      l.paidMethod=paidMethodNormalizeV231(l.paidMethod);
+      l.paidAccountingAt=normalizeDateOnly(l.paidAccountingAt)||monthEndDate(l.paidMonth)||normalizeDateOnly(l.date)||today();
+    }else{
+      l.paidMethod="";
+      l.paidAccountingAt="";
     }
 
     if(l.accumulate){
       l.paid=false;
       l.paidAt="";
       l.paidMonth="";
+      l.paidMethod="";
+      l.paidAccountingAt="";
     }
   });
 
@@ -24276,10 +24443,13 @@ function renderLaunches(){
       <td><input class="checkbox" type="checkbox" ${l.pdfSent?"checked":""} onchange="togglePdfSent('${l.id}',this.checked)"></td>
       <td><input class="checkbox" type="checkbox" ${l.accumulate?"checked":""} onchange="toggleAccumulate('${l.id}',this.checked)"></td>
       <td>
-        <label class="checkboxWrap ${paidDisabled?"disabled":""}" title="${paidDisabled?"Bloqueado porque este lançamento está em Acumular.":""}">
-          <input class="checkbox" type="checkbox" ${l.paid?"checked":""} ${paidDisabled?"disabled":""} onchange="togglePaid('${l.id}',this.checked)">
-          PAGO
-        </label>
+        <div class="paidControlV231">
+          <label class="checkboxWrap ${paidDisabled?"disabled":""}" title="${paidDisabled?"Bloqueado porque este lançamento está em Acumular.":""}">
+            <input class="checkbox" type="checkbox" ${l.paid?"checked":""} ${paidDisabled?"disabled":""} onchange="togglePaid('${l.id}',this.checked,this)">
+            PAGO
+          </label>
+          ${l.paid?`<button type="button" class="paidMethodChipV231 ${paidMethodClassV231(l.paidMethod)}" onclick="openPaidMethodModalV231('${l.id}',null,'edit')" title="Clique para ${l.paidMethod?"alterar":"definir"} a forma de pagamento">${esc(paidMethodLabelV231(l.paidMethod)||"Definir forma")}</button>`:""}
+        </div>
       </td>
       <td><button class="small secondary" onclick="editLaunch('${l.id}')">Editar</button> <button class="small danger" onclick="deleteLaunch('${l.id}')">Excluir</button></td>
     </tr>`;
@@ -24706,16 +24876,22 @@ function productChoicePaidRecordsForMonth(month){
 
 function paidBaseRecordsForMonth(month){
   const launchRecords=state.launches
-    .filter(l=>l.paid&&!l.accumulate&&((l.paidMonth||l.month||(l.date||"").slice(0,7))===month))
-    .map(l=>({
-      id:l.id,
-      influencerId:l.influencerId,
-      cash:Number(l.cashCommission||0),
-      product:Number(l.productCommission||0),
-      date:l.paidAt||l.date,
-      source:l.origin||"Lançamento",
-      kind:"Lançamento"
-    }));
+    .filter(l=>l.paid&&!l.accumulate&&(paidAccountingMonthV231(l)===month))
+    .map(l=>{
+      const method=paidMethodNormalizeV231(l.paidMethod);
+      const cash=method==="product"?0:Number(l.cashCommission||0);
+      const product=method==="cash"?0:Number(l.productCommission||0);
+      return {
+        id:l.id,
+        influencerId:l.influencerId,
+        cash,
+        product,
+        date:l.paidAt||l.date,
+        source:l.origin||"Lançamento",
+        kind:method==="cash"?"Pago em dinheiro":method==="product"?"Pago em produto":"Lançamento • forma não definida",
+        paidMethod:method
+      };
+    });
 
   const accumulatedRecords=(state.cashPayments||[])
     .filter(p=>{
@@ -25542,56 +25718,141 @@ function togglePdfSent(id,val){
       .catch(()=>{});
   }
 }
+function paidMethodNormalizeV231(value){
+  const key=reportIdentityKeyV217(value);
+  if(["cash","dinheiro","pago em dinheiro","pix"].includes(key))return "cash";
+  if(["product","produto","pago em produto"].includes(key))return "product";
+  return "";
+}
+function paidMethodLabelV231(value){
+  const method=paidMethodNormalizeV231(value);
+  if(method==="cash")return "Dinheiro";
+  if(method==="product")return "Produto";
+  return "";
+}
+function paidMethodClassV231(value){
+  const method=paidMethodNormalizeV231(value);
+  if(method==="cash")return "cash";
+  if(method==="product")return "product";
+  return "pending";
+}
+function paidAccountingMonthV231(row){
+  if(!row)return selectedMonth();
+  /* A quitação pertence à competência do lançamento, mesmo quando o clique em
+     PAGO acontece dias depois. paidAt continua guardando a data real do clique. */
+  return validMonthValue(row.accountingMonth)||
+    launchRecordMonthV215(row)||
+    validMonthValue(row.month)||
+    validMonthValue(row.paidMonth)||
+    String(row.date||today()).slice(0,7);
+}
+function paidAccountingDateV231(row){
+  const explicit=normalizeDateOnly(row?.paidAccountingAt);
+  if(explicit)return explicit;
+  const month=paidAccountingMonthV231(row);
+  return monthEndDate(month)||normalizeDateOnly(row?.paidAt)||normalizeDateOnly(row?.date)||today();
+}
+function persistLaunchControlV231(l){
+  const audit=currentAuditInfo();
+  l.updatedById=audit.id||"";
+  l.updatedByName=audit.name||"";
+  l.updatedByUsername=audit.username||"";
+  l.updatedAt=audit.at||new Date().toISOString();
+  queueInfluencerLaunchCloudRecord(l);
+  save();
+  render();
+  flushInfluencerLaunchPendingQueue()
+    .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
+    .catch(()=>{});
+}
+
+let paidMethodPendingV231={id:"",mode:"new",checkbox:null};
+
+function openPaidMethodModalV231(id,checkbox=null,mode="new"){
+  const l=(state.launches||[]).find(x=>String(x.id)===String(id));
+  if(!l)return;
+  const inf=infById(l.influencerId)||{};
+  paidMethodPendingV231={id:String(id),mode:mode==="edit"?"edit":"new",checkbox:checkbox||null};
+
+  const context=$("paidMethodContextV231");
+  const cashValue=$("paidMethodCashValueV231");
+  const productValue=$("paidMethodProductValueV231");
+  const title=$("paidMethodTitleV231");
+  if(title)title.textContent=mode==="edit"&&l.paidMethod?"Alterar forma do pagamento":"Como este saldo foi pago?";
+  if(context)context.textContent=`${inf.name||"Influencer"} • ${monthLabel(paidAccountingMonthV231(l))} • vendas ${money(l.sold||0)}`;
+  if(cashValue)cashValue.textContent=`Comissão em dinheiro: ${money(l.cashCommission||0)}`;
+  if(productValue)productValue.textContent=`Comissão em produtos: ${money(l.productCommission||0)}`;
+
+  const modal=$("paidMethodModalV231");
+  if(modal){
+    modal.hidden=false;
+    setTimeout(()=>modal.querySelector(".paidMethodChoiceV231")?.focus(),30);
+  }
+}
+function closePaidMethodModalV231(){
+  const pending=paidMethodPendingV231;
+  const modal=$("paidMethodModalV231");
+  if(modal)modal.hidden=true;
+  if(pending?.checkbox){
+    const l=(state.launches||[]).find(x=>String(x.id)===String(pending.id));
+    pending.checkbox.checked=!!l?.paid;
+  }
+  paidMethodPendingV231={id:"",mode:"new",checkbox:null};
+}
+function commitPaidLaunchV231(id,method,mode="new"){
+  const l=(state.launches||[]).find(x=>String(x.id)===String(id));
+  if(!l)return;
+  const normalizedMethod=paidMethodNormalizeV231(method);
+  if(!normalizedMethod)return;
+
+  const accountingMonth=paidAccountingMonthV231(l);
+  l.paid=true;
+  l.accumulate=false;
+  l.paidMethod=normalizedMethod;
+  l.paidMonth=accountingMonth;
+  l.paidAccountingAt=monthEndDate(accountingMonth)||normalizeDateOnly(l.date)||today();
+  if(mode!=="edit"||!normalizeDateOnly(l.paidAt))l.paidAt=today();
+
+  persistLaunchControlV231(l);
+}
+function choosePaidMethodV231(method){
+  const pending={...paidMethodPendingV231};
+  if(!pending.id)return;
+  const modal=$("paidMethodModalV231");
+  if(modal)modal.hidden=true;
+  paidMethodPendingV231={id:"",mode:"new",checkbox:null};
+  commitPaidLaunchV231(pending.id,method,pending.mode);
+}
 function toggleAccumulate(id,val){
   const l=state.launches.find(x=>x.id===id);
   if(l){
-    const audit=currentAuditInfo();
     l.accumulate=!!val;
     if(l.accumulate){
       l.paid=false;
       l.paidAt="";
       l.paidMonth="";
+      l.paidMethod="";
+      l.paidAccountingAt="";
     }
-    l.updatedById=audit.id||"";
-    l.updatedByName=audit.name||"";
-    l.updatedByUsername=audit.username||"";
-    l.updatedAt=audit.at||new Date().toISOString();
-
-    queueInfluencerLaunchCloudRecord(l);
-    save();
-    render();
-
-    flushInfluencerLaunchPendingQueue()
-      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
-      .catch(()=>{});
+    persistLaunchControlV231(l);
   }
 }
-function togglePaid(id,val){
+function togglePaid(id,val,checkbox=null){
   const l=state.launches.find(x=>x.id===id);
-  if(l){
-    const audit=currentAuditInfo();
-    l.paid=!!val;
-    if(l.paid){
-      l.accumulate=false;
-      l.paidAt=today();
-      l.paidMonth=selectedMonth();
-    }else{
-      l.paidAt="";
-      l.paidMonth="";
-    }
-    l.updatedById=audit.id||"";
-    l.updatedByName=audit.name||"";
-    l.updatedByUsername=audit.username||"";
-    l.updatedAt=audit.at||new Date().toISOString();
+  if(!l)return;
 
-    queueInfluencerLaunchCloudRecord(l);
-    save();
-    render();
-
-    flushInfluencerLaunchPendingQueue()
-      .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
-      .catch(()=>{});
+  if(val){
+    if(checkbox)checkbox.checked=!!l.paid;
+    openPaidMethodModalV231(id,checkbox,"new");
+    return;
   }
+
+  l.paid=false;
+  l.paidAt="";
+  l.paidMonth="";
+  l.paidMethod="";
+  l.paidAccountingAt="";
+  persistLaunchControlV231(l);
 }
 
 function accTypeLabel(type){
@@ -26190,6 +26451,22 @@ function accumulationLedgerEventsForInfluencer(infId,asOfDate=today()){
     });
   });
 
+  /* V231: o checkbox PAGO encerra contabilmente todo o ciclo acumulado
+     daquela competência. A data real do clique continua em paidAt; para os
+     relatórios seguintes, o fechamento vale no fim da competência paga. */
+  (state.launches||[]).forEach(l=>{
+    if(!l||l.status==="Cancelado"||!reportLaunchPaidFlagV229(l)||!reportRecordBelongsToInfluencerV217(l,infId))return;
+    const accountingDate=paidAccountingDateV231(l);
+    if(!accountingDate||accountingDate>asOfDate)return;
+    events.push({
+      at:accountingDate+"T23:15:00.000",
+      order:80,
+      kind:"paid_close",
+      paymentMethod:paidMethodNormalizeV231(l.paidMethod),
+      source:l
+    });
+  });
+
   (state.redemptions||[]).forEach(r=>{
     const date=normalizeDateOnly(r.date);
     if(!reportRecordBelongsToInfluencerV217(r,infId)||r.status==="Cancelado"||!date||date>asOfDate)return;
@@ -26253,6 +26530,12 @@ function accumulationLedgerBalanceForInfluencer(infId,period=accumulationExportP
     if(event.kind==="launch"){
       product+=Number(event.product||0);
       cash+=Number(event.cash||0);
+      return;
+    }
+
+    if(event.kind==="paid_close"){
+      product=0;
+      cash=0;
       return;
     }
 
@@ -29190,8 +29473,8 @@ function reportCommissionLedgerEvents(infId,asOfDate){
   const historyKeys=new Set(historyRows.map(row=>`${normalizeDateOnly(row.createdAt||row.date)}|${row.type}`));
 
   (state.launches||[]).forEach(row=>{
-    const date=normalizeDateOnly(row.date)||(row.month?`${row.month}-01`:"");
-    if(!row||row.influencerId!==infId||row.status==="Cancelado"||!date||date>end)return;
+    const date=reportLaunchEffectiveDateV217(row);
+    if(!row||!reportRecordBelongsToInfluencerV217(row,infId)||row.status==="Cancelado"||!date||date>end)return;
 
     events.push({
       at:`${date}T09:00:00.000`,date,order:10,kind:"commission_earned",
@@ -29199,20 +29482,18 @@ function reportCommissionLedgerEvents(infId,asOfDate){
     });
 
     if(!reportLaunchPaidFlagV229(row))return;
-    const actualPaidDate=normalizeDateOnly(row.paidAt);
-    const paidMonth=actualPaidDate
-      ? actualPaidDate.slice(0,7)
-      : (/^\d{4}-\d{2}$/.test(String(row.paidMonth||""))
-        ? String(row.paidMonth)
-        : date.slice(0,7));
+    const paidMonth=paidAccountingMonthV231(row);
     if(activeAdjustments.has(paidMonth))return;
 
-    const paidDate=actualPaidDate||monthEndDate(paidMonth);
+    /* V231: paidAt guarda quando o usuário registrou a quitação.
+       paidAccountingAt/paidMonth definem quando o saldo deixa de migrar. */
+    const paidDate=paidAccountingDateV231(row);
     if(!paidDate||paidDate>end)return;
 
     events.push({
-      at:`${paidDate}T18:00:00.000`,date:paidDate,order:60,kind:"launch_settled",
-      product:Number(row.productCommission||0),cash:Number(row.cashCommission||0),source:row
+      at:`${paidDate}T23:20:00.000`,date:paidDate,order:60,kind:"launch_settled",
+      product:Number(row.productCommission||0),cash:Number(row.cashCommission||0),
+      paymentMethod:paidMethodNormalizeV231(row.paidMethod),source:row
     });
   });
 
@@ -29292,8 +29573,9 @@ function reportCommissionBalanceAt(infId,asOfDate){
       product+=Math.max(0,Number(event.product||0));
       cash+=Math.max(0,Number(event.cash||0));
     }else if(event.kind==="launch_settled"){
-      product=Math.max(0,product-Math.max(0,Number(event.product||0)));
-      cash=Math.max(0,cash-Math.max(0,Number(event.cash||0)));
+      /* PAGO é fechamento da competência: nada anterior pode migrar. */
+      product=0;
+      cash=0;
     }else if(event.kind==="product_used"){
       product=Math.max(0,product-Math.max(0,Number(event.amount||0)));
       if(event.closeCash)cash=0;
@@ -29368,8 +29650,9 @@ function reportApplyBalanceEventsV229(openingBalance,events=[]){
       product+=Math.max(0,Number(event.product||0));
       cash+=Math.max(0,Number(event.cash||0));
     }else if(event.kind==="launch_settled"){
-      product=Math.max(0,product-Math.max(0,Number(event.product||0)));
-      cash=Math.max(0,cash-Math.max(0,Number(event.cash||0)));
+      /* PAGO é fechamento da competência: nada anterior pode migrar. */
+      product=0;
+      cash=0;
     }else if(event.kind==="product_used"){
       product=Math.max(0,product-Math.max(0,Number(event.amount||0)));
       if(event.closeCash)cash=0;
@@ -29538,6 +29821,9 @@ function reportAccumulationTimeline(infId,asOfDate){
       earnedCash=Math.max(0,Number(event.cash||0));
       product+=earnedProduct;
       cash+=earnedCash;
+    }else if(event.kind==="paid_close"){
+      product=0;
+      cash=0;
     }else if(event.kind==="product_redemption"){
       product=Math.max(0,product-Math.max(0,Number(event.productUsed||0)));
       if(event.cashToZero)cash=0;
@@ -29592,7 +29878,7 @@ function reportRedemptionStatus(infId,start,end,closing){
 }
 
 
-/* ===== V230 — RELATÓRIO: PERÍODOS SÓ CONSOLIDAM COM ACUMULAR; PAGO NÃO MIGRA ===== */
+/* ===== V231 — RELATÓRIO: PAGO FECHA A COMPETÊNCIA E INTERROMPE TODO CARRY ===== */
 /* ===== V225 — CICLO DE ACÚMULO INDEPENDENTE DO STATUS "PDF ENVIADO" ===== */
 function reportDateMinV225(...values){
   return values
@@ -38425,7 +38711,7 @@ function exportLaunchesPDF(){
 }
 
 
-function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[launchPeriodLabel(l),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não"]})],"lancamentos.csv");}
+function exportLaunchesCSV(){rowsCSV([["Data","Origem","Cupom","Influencer","Vendido","Produto","Dinheiro","Status","PDF enviado","Acumular","Pago","Forma do pagamento"],...filteredLaunches().map(l=>{const i=infById(l.influencerId)||{};return[launchPeriodLabel(l),l.origin,i.coupon,i.name,l.sold,l.productCommission,l.cashCommission,l.status,l.pdfSent?"Sim":"Não",l.accumulate?"Sim":"Não",l.paid?"Sim":"Não",l.paid?paidMethodLabelV231(l.paidMethod)||"Não informada":""]})],"lancamentos.csv");}
 
 function exportAccumulationHistoryCSV(){
   const rows=accumulationPeriodHistory(accumulationExportPeriod());
@@ -38586,6 +38872,8 @@ $("launchForm").addEventListener("submit",e=>{
     paid:accumulate?false:!!(old&&old.paid),
     paidAt:accumulate?"":(old&&old.paidAt)||"",
     paidMonth:accumulate?"":(old&&old.paidMonth)||"",
+    paidMethod:accumulate?"":paidMethodNormalizeV231(old&&old.paidMethod),
+    paidAccountingAt:accumulate?"":(old&&old.paidAccountingAt)||"",
     notes:$("launchNotes").value||"",
     createdById:old?.createdById||audit.id,
     createdByName:old?.createdByName||audit.name,
@@ -39028,7 +39316,9 @@ function launchV209NormalizeRecord(record){
   item.accumulate=!!item.accumulate;
   item.paid=item.accumulate?false:!!item.paid;
   item.paidAt=item.accumulate?"":String(item.paidAt||"");
-  item.paidMonth=item.accumulate?"":String(item.paidMonth||"");
+  item.paidMonth=item.accumulate?"":String(validMonthValue(item.paidMonth)||validMonthValue(item.accountingMonth)||validMonthValue(item.month)||item.date.slice(0,7));
+  item.paidMethod=item.accumulate?"":paidMethodNormalizeV231(item.paidMethod);
+  item.paidAccountingAt=item.accumulate?"":String(normalizeDateOnly(item.paidAccountingAt)||(item.paid?monthEndDate(item.paidMonth):""));
   item.notes=String(item.notes||"");
   item.createdAt=item.createdAt||item.updatedAt||launchV209Now();
   item.updatedAt=item.updatedAt||item.createdAt;
@@ -40731,4 +41021,32 @@ startApp().then(()=>{
 });
 </script>
 <!-- WISENT V227: novo deploy do painel Atacado e Varejo com mês atual padrão -->
+
+<div id="paidMethodModalV231" class="paidMethodModalV231 noPrint" hidden
+     role="dialog" aria-modal="true" aria-labelledby="paidMethodTitleV231"
+     onclick="if(event.target===this)closePaidMethodModalV231()">
+  <div class="paidMethodCardV231">
+    <button type="button" class="paidMethodCloseV231" aria-label="Fechar" onclick="closePaidMethodModalV231()">×</button>
+    <span class="paidMethodEyebrowV231">Registrar quitação</span>
+    <h3 id="paidMethodTitleV231">Como este saldo foi pago?</h3>
+    <p id="paidMethodContextV231" class="paidMethodContextV231">Selecione a forma utilizada.</p>
+
+    <div class="paidMethodChoicesV231">
+      <button type="button" class="paidMethodChoiceV231 cashChoice" onclick="choosePaidMethodV231('cash')">
+        <strong>Pago em dinheiro</strong>
+        <span id="paidMethodCashValueV231">Comissão em dinheiro</span>
+      </button>
+      <button type="button" class="paidMethodChoiceV231 productChoice" onclick="choosePaidMethodV231('product')">
+        <strong>Pago em produto</strong>
+        <span id="paidMethodProductValueV231">Comissão em produtos</span>
+      </button>
+    </div>
+
+    <p class="paidMethodFootV231">
+      Ao confirmar, a competência fica encerrada para os relatórios seguintes. O histórico do mês pago continua preservado.
+    </p>
+    <button type="button" class="secondary paidMethodCancelV231" onclick="closePaidMethodModalV231()">Cancelar</button>
+  </div>
+</div>
+
 </body></html>
