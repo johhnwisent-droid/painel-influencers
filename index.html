@@ -15248,7 +15248,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V229</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V230</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17554,7 +17554,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V229";
+const APP_BUILD_VERSION="V230";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17587,9 +17587,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=229",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=230",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=229");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=230");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -24461,7 +24461,7 @@ function reportLaunchRowsForRangeV218(infId,start,end){
 }
 function reportAggregateLaunchRowsV218(rows=[]){
   const validRows=(Array.isArray(rows)?rows:[]).filter(Boolean);
-  const accumulatedRows=validRows.filter(row=>reportBooleanV218(row.accumulate));
+  const accumulatedRows=validRows.filter(row=>reportLaunchAccumulatesV229(row));
   return {
     rows:validRows,
     accumulatedRows,
@@ -29592,6 +29592,7 @@ function reportRedemptionStatus(infId,start,end,closing){
 }
 
 
+/* ===== V230 — RELATÓRIO: PERÍODOS SÓ CONSOLIDAM COM ACUMULAR; PAGO NÃO MIGRA ===== */
 /* ===== V225 — CICLO DE ACÚMULO INDEPENDENTE DO STATUS "PDF ENVIADO" ===== */
 function reportDateMinV225(...values){
   return values
@@ -29605,63 +29606,44 @@ function reportAccumulationCarryV225(infId,month=selectedMonth()){
   const beforeSelected=reportDateBefore(selected.start);
   const empty={
     active:false,start:selected.start,end:beforeSelected||selected.start,
-    opening:{product:0,cash:0,events:[]},priorRows:[],months:[],
-    product:0,cash:0
+    opening:{product:0,cash:0,events:[]},priorRows:[],months:[],product:0,cash:0
   };
   if(!beforeSelected)return empty;
+
+  const priorRows=reportUniqueLaunchRowsV225(
+    reportLaunchRowsForRangeV218(infId,"1900-01-01",beforeSelected)
+      .filter(row=>row&&row.status!=="Cancelado"&&reportLaunchAccumulatesV229(row))
+  );
+  if(!priorRows.length)return empty;
 
   const opening=reportAccumulationTimeline(infId,beforeSelected);
   const product=Math.max(0,Number(opening.product||0));
   const cash=Math.max(0,Number(opening.cash||0));
   if(product<0.005&&cash<0.005)return {...empty,opening,product,cash};
 
-  const events=(opening.events||[])
-    .filter(event=>event&&event.date&&event.date<selected.start)
-    .slice();
+  const events=(opening.events||[]).filter(event=>event&&event.date&&event.date<selected.start);
   let lastFullClose=-1;
   events.forEach((event,index)=>{
     const afterProduct=Math.max(0,Number(event.afterProduct||0));
     const afterCash=Math.max(0,Number(event.afterCash||0));
     if(event.kind!=="launch"&&afterProduct<0.005&&afterCash<0.005)lastFullClose=index;
   });
-
   const activeEvents=events.slice(lastFullClose+1);
-  const firstActiveLaunch=activeEvents.find(event=>event.kind==="launch");
-  let start=normalizeDateOnly(firstActiveLaunch?.date||activeEvents[0]?.date)||selected.start;
+  const activeIds=new Set(activeEvents
+    .filter(event=>event.kind==="launch"&&event.source&&reportLaunchAccumulatesV229(event.source))
+    .map(event=>String(event.source.id||event.source.legacyId||""))
+    .filter(Boolean));
 
-  /* V229: os lançamentos transportados vêm primeiro dos próprios eventos que
-     formaram o saldo de abertura. Isso evita divergência entre o saldo e a
-     lista de lançamentos exibida/transportada. Pago sempre prevalece. */
-  let priorRows=reportUniqueLaunchRowsV225(
-    activeEvents
-      .filter(event=>event.kind==="launch"&&event.source&&reportLaunchAccumulatesV229(event.source))
-      .map(event=>event.source)
-  );
+  let activeRows=priorRows.filter(row=>{
+    const id=String(row.id||row.legacyId||"");
+    return !activeIds.size||!id||activeIds.has(id);
+  });
+  activeRows=reportUniqueLaunchRowsV225(activeRows);
+  if(!activeRows.length)return {...empty,opening,product,cash};
 
-  if(!priorRows.length){
-    priorRows=reportLaunchRowsForRangeV218(infId,start,beforeSelected)
-      .filter(row=>row&&row.status!=="Cancelado"&&reportLaunchAccumulatesV229(row));
-  }
-
-  if(priorRows.length){
-    const firstMonth=priorRows
-      .map(row=>launchRecordMonthV215(row))
-      .filter(Boolean)
-      .sort()[0];
-    if(firstMonth)start=`${firstMonth}-01`;
-  }
-
-  const months=[...new Set(priorRows.map(row=>launchRecordMonthV215(row)).filter(Boolean))].sort();
-  return {
-    active:true,
-    start,
-    end:beforeSelected,
-    opening,
-    priorRows,
-    months,
-    product,
-    cash
-  };
+  const months=[...new Set(activeRows.map(row=>launchRecordMonthV215(row)).filter(Boolean))].sort();
+  const firstMonth=months[0]||selected.month;
+  return {active:true,start:`${firstMonth}-01`,end:beforeSelected,opening,priorRows:activeRows,months,product,cash};
 }
 
 function reportUniqueLaunchRowsV225(rows=[]){
@@ -29681,89 +29663,61 @@ function reportUniqueLaunchRowsV225(rows=[]){
 
 function reportCommissionSnapshot(infId,month=selectedMonth()){
   const range=reportMonthRange(month);
-  const baseCoverage=reportCoverageRange(infId,range.month);
   const carry=reportAccumulationCarryV225(infId,range.month);
-  const displayStart=reportDateMinV225(baseCoverage.start,carry.active?carry.start:"")||baseCoverage.start;
+  const baseCoverage=reportCoverageRange(infId,range.month);
   const coverage={
-    ...baseCoverage,
-    start:displayStart,
+    start:carry.active?carry.start:range.start,
+    end:range.end,
+    month:range.month,
+    source:carry.active?"accumulation":"selected",
+    previousEnd:"",
+    historyRecord:null,
     accumulationCarry:carry.active,
     carryStart:carry.active?carry.start:""
   };
 
-  /* V229: o saldo do PDF começa no saldo acumulado anterior à cobertura
-     efetivamente não enviada e processa, em ordem cronológica, os lançamentos,
-     o checkbox Pago, resgates, pagamentos e checkpoints até o fim do mês. */
-  const pdfBalance=reportPdfBalanceForRangeV229(infId,baseCoverage.start,range.end);
-  const opening=pdfBalance.opening||{product:0,cash:0,events:[]};
-  const closing={product:pdfBalance.product,cash:pdfBalance.cash,events:pdfBalance.events||[]};
-  const coverageEvents=pdfBalance.events||[];
+  const opening=carry.active
+    ?{product:Math.max(0,Number(carry.product||0)),cash:Math.max(0,Number(carry.cash||0)),events:carry.opening?.events||[]}
+    :{product:0,cash:0,events:[]};
+
+  const periodEvents=reportCommissionLedgerEvents(infId,range.end)
+    .filter(event=>event&&event.date&&event.date>=range.start&&event.date<=range.end);
+  const applied=reportApplyBalanceEventsV229(opening,periodEvents);
+  const closing={product:applied.product,cash:applied.cash,events:applied.events||[]};
+  const coverageEvents=applied.events||[];
 
   const selectedGenerated=reportGeneratedForRange(infId,range.start,range.end);
-  const coverageGenerated=reportGeneratedForCoverageV218(infId,baseCoverage,range.month);
-  const selectedRows=reportLaunchRowsForRangeV218(infId,range.start,range.end);
+  const selectedRows=reportUniqueLaunchRowsV225(selectedGenerated.rows||[]);
+  const displayedRows=carry.active
+    ?reportUniqueLaunchRowsV225([...(carry.priorRows||[]),...selectedRows])
+    :selectedRows;
+  const displayedGenerated=reportAggregateLaunchRowsV218(displayedRows);
+  const coverageGenerated=displayedGenerated;
 
-  let displayedGenerated=baseCoverage.start.slice(0,7)!==baseCoverage.end.slice(0,7)
-    ?coverageGenerated
-    :selectedGenerated;
-
-  if(carry.active){
-    displayedGenerated=reportAggregateLaunchRowsV218(reportUniqueLaunchRowsV225([
-      ...(coverageGenerated.rows||[]),
-      ...(carry.priorRows||[]),
-      ...selectedRows
-    ]));
-  }
-
-  const months=reportMonthSequence(coverage.start.slice(0,7),range.end.slice(0,7)).map(monthValue=>{
+  const months=reportMonthSequence(coverage.start.slice(0,7),range.month).map(monthValue=>{
     const monthRange=reportMonthRange(monthValue);
     const generated=reportGeneratedForRange(infId,monthRange.start,monthRange.end);
-    const monthBalance=reportPdfBalanceForRangeV229(infId,monthRange.start,monthRange.end);
-    const monthEvents=monthBalance.events||[];
-    return {
-      month:monthValue,
-      range:monthRange,
-      generated,
-      deductedProduct:monthEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0),
-      deductedCash:monthEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0),
-      closing:{product:monthBalance.product,cash:monthBalance.cash}
-    };
+    return {month:monthValue,range:monthRange,generated,deductedProduct:0,deductedCash:0,closing:{product:0,cash:0}};
   });
 
   const deductedProduct=coverageEvents.reduce((sum,event)=>sum+Number(event.productDeducted||0),0);
   const deductedCash=coverageEvents.reduce((sum,event)=>sum+Number(event.cashDeducted||0),0);
-  const multiMonth=coverage.start.slice(0,7)!==range.end.slice(0,7);
-  const sourceRows=(displayedGenerated.origins||[])
-    .filter(row=>Number(row.sold||0)>0)
-    .map(row=>({origin:row.origin,count:row.count,sold:row.sold}));
-  const accumulatedOriginRows=(displayedGenerated.accumulatedOrigins||[])
-    .filter(row=>Number(row.product||0)!==0||Number(row.cash||0)!==0)
-    .map(row=>({origin:row.origin,product:row.product,cash:row.cash}));
-  const hasAccumulation=carry.active||Number(opening.product||0)>0||Number(opening.cash||0)>0||
-    Number(coverageGenerated.accumulatedProduct||0)>0||Number(coverageGenerated.accumulatedCash||0)>0||
-    accumulatedOriginRows.length>0;
-
-  /* V229: os cards de comissão representam o saldo efetivamente disponível
-     no fim da competência. Pago prevalece sobre Acumular; valores já quitados
-     não reaparecem, e saldos acumulados anteriores permanecem até uma quitação. */
-  const displayedProduct=Math.max(0,Number(closing.product||0));
-  const displayedCash=Math.max(0,Number(closing.cash||0));
+  const multiMonth=Boolean(carry.active&&coverage.start.slice(0,7)!==range.month);
+  const sourceRows=(displayedGenerated.origins||[]).filter(row=>Number(row.sold||0)>0).map(row=>({origin:row.origin,count:row.count,sold:row.sold}));
+  const accumulatedOriginRows=(displayedGenerated.accumulatedOrigins||[]).filter(row=>Number(row.product||0)!==0||Number(row.cash||0)!==0).map(row=>({origin:row.origin,product:row.product,cash:row.cash}));
+  const hasAccumulation=Boolean(carry.active||displayedRows.some(row=>reportLaunchAccumulatesV229(row)));
 
   return {
     range,coverage,baseCoverage,opening,closing,multiMonth,carry,
     sold:Number(displayedGenerated.sold||0),
-    earnedProduct:displayedProduct,
-    earnedCash:displayedCash,
+    earnedProduct:Math.max(0,Number(closing.product||0)),
+    earnedCash:Math.max(0,Number(closing.cash||0)),
     coverageGenerated,selectedGenerated,displayedGenerated,
-    accumulatedProduct:coverageGenerated.accumulatedProduct,
-    accumulatedCash:coverageGenerated.accumulatedCash,
+    accumulatedProduct:Number(displayedGenerated.accumulatedProduct||0),
+    accumulatedCash:Number(displayedGenerated.accumulatedCash||0),
     deductedProduct,deductedCash,
-    status:reportRedemptionStatus(infId,coverage.start,range.end,closing),
-    months,
-    sourceRows,
-    accumulatedOriginRows,
-    hasAccumulation,
-    coverageEvents
+    status:reportRedemptionStatus(infId,range.start,range.end,closing),
+    months,sourceRows,accumulatedOriginRows,hasAccumulation,coverageEvents
   };
 }
 
@@ -29788,13 +29742,11 @@ function renderReport(){
   applyPdfWatermark("reportWatermark");
 
   const startMonth=snapshot.coverage.start.slice(0,7);
-  const endMonth=snapshot.range.end.slice(0,7);
-  const carryActive=Boolean(snapshot.carry?.active&&startMonth<snapshot.range.month);
+  const endMonth=snapshot.range.month;
+  const carryActive=Boolean(snapshot.carry?.active&&startMonth<endMonth);
   const periodText=carryActive
     ?`Período acumulado: ${monthLabel(startMonth)} a ${monthLabel(endMonth)}`
-    :(startMonth===endMonth
-      ?`Competência: ${monthLabel(endMonth)}`
-      :`Período consolidado: ${monthLabel(startMonth)} a ${monthLabel(endMonth)}`);
+    :`Competência: ${monthLabel(endMonth)}`;
 
   $("reportName").textContent=inf?inf.name:"Selecione um influencer";
   $("reportCoupon").textContent=`Cupom: ${inf?inf.coupon:"-"}`;
@@ -29805,26 +29757,8 @@ function renderReport(){
 
   const coverageNotice=$("reportCoverageNotice");
   const coverageText=$("reportCoverageText");
-  if(coverageNotice){
-    coverageNotice.hidden=!carryActive;
-    coverageNotice.dataset.carry=carryActive?"true":"false";
-  }
-  if(coverageText){
-    if(carryActive){
-      const priorMonths=(snapshot.carry.months||[]).filter(value=>value<snapshot.range.month);
-      const firstPrior=priorMonths[0]||startMonth;
-      const lastPrior=priorMonths[priorMonths.length-1]||startMonth;
-      const priorLabel=firstPrior===lastPrior
-        ?monthLabel(firstPrior)
-        :`${monthLabel(firstPrior)} a ${monthLabel(lastPrior)}`;
-      coverageText.innerHTML=`<strong>Saldo acumulado incorporado</strong>`+
-        `Por opção de acúmulo, as comissões disponíveis de ${esc(priorLabel)} foram mantidas e somadas às movimentações de ${esc(monthLabel(snapshot.range.month))}. `+
-        `Os valores abaixo representam o período consolidado e já consideram eventuais resgates ou zeragens registrados.`+
-        `<span class="carryValuesV225">Saldo trazido para a competência: Produtos ${money(snapshot.carry.product)} • Dinheiro ${money(snapshot.carry.cash)}</span>`;
-    }else{
-      coverageText.textContent="";
-    }
-  }
+  if(coverageNotice){coverageNotice.hidden=true;coverageNotice.dataset.carry="false";}
+  if(coverageText)coverageText.textContent="";
 
   const accumulatedOrigins=snapshot.accumulatedOriginRows||[];
   const accumulationSection=$("reportAccumulationSectionV217");
