@@ -15406,7 +15406,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V233</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V234</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15537,7 +15537,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 
     <section id="wholesaleRetail" class="view">
       <div class="grid wholesaleSummaryGridV200">
-        <div class="card"><small>Vendas no período</small><strong id="wholesaleDayTotal">R$ 0,00</strong></div>
+        <div class="card"><small>Faturamento</small><strong id="wholesaleDayTotal">R$ 0,00</strong></div>
         <div class="card"><small>Pedidos no período</small><strong id="wholesaleDayCount">0</strong></div>
         <div class="card"><small>Frete somado no período</small><strong id="wholesaleDayFreight">R$ 0,00</strong></div>
         <div class="card"><small>Descontos aplicados no período</small><strong id="wholesaleDayDiscount">R$ 0,00</strong></div>
@@ -17720,7 +17720,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V233";
+const APP_BUILD_VERSION="V234";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17753,9 +17753,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=233",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=234",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=233");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=234");
       }
 
       reg.addEventListener("updatefound",()=>{
