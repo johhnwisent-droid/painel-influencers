@@ -15406,7 +15406,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V231</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V232</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15713,6 +15713,14 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
                     <option value="10">10x</option>
                     <option value="11">11x</option>
                     <option value="12">12x</option>
+                    <option value="13">13x</option>
+                    <option value="14">14x</option>
+                    <option value="15">15x</option>
+                    <option value="16">16x</option>
+                    <option value="17">17x</option>
+                    <option value="18">18x</option>
+                    <option value="19">19x</option>
+                    <option value="20">20x</option>
                   </select>
                 </label>
 
@@ -17712,7 +17720,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V231";
+const APP_BUILD_VERSION="V232";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17745,9 +17753,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=231",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=232",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=231");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=232");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -20301,7 +20309,7 @@ const WHOLESALE_BUSINESS_FIELDS_V224=[
   "couponFirstPercent","couponSecondPercent","couponFirstDiscountValue",
   "couponSecondDiscountValue","pixDiscountPercent","pixDiscountValue","discountValue",
   "total","paymentMethod","installments","interestPayer","baseTotal","feePercent",
-  "feeValue","realReceived","feeRule","notes"
+  "feeValue","realReceived","feeRule","feeScheduleVersion","notes"
 ];
 
 function wholesaleJsonEqual(a,b){
@@ -21285,6 +21293,63 @@ function looksLikeWholesaleLaunch(obj){
   return hasClient&&hasProduct&&hasPrice&&hasWholesaleShape;
 }
 
+
+/* V232 — preserva snapshots financeiros históricos.
+   A troca de tabela de taxas não pode alterar lançamentos já gravados.
+*/
+function wholesaleOwnFiniteNumberV232(record,field){
+  return !!(
+    record&&
+    Object.prototype.hasOwnProperty.call(record,field)&&
+    record[field]!==null&&
+    record[field]!==""&&
+    Number.isFinite(Number(record[field]))
+  );
+}
+
+function wholesaleApplyFinancialSnapshotV232(target,calc,sourceRecord=target){
+  const numericFields=[
+    "freightAdded","freightSubtracted","subtotal","couponDiscountValue",
+    "cascadeDiscountValue","cascadeEffectivePercent","totalEffectiveDiscountPercent",
+    "couponEffectivePercent","couponFirstPercent","couponSecondPercent",
+    "couponFirstDiscountValue","couponSecondDiscountValue","pixDiscountPercent",
+    "pixDiscountValue","discountValue","baseTotal","total","feePercent","feeValue",
+    "realReceived"
+  ];
+
+  numericFields.forEach(field=>{
+    target[field]=wholesaleOwnFiniteNumberV232(sourceRecord,field)
+      ? Number(sourceRecord[field])
+      : Number(calc[field]||0);
+  });
+
+  target.couponDiscountMode=String(sourceRecord?.couponDiscountMode||calc.couponDiscountMode||"direct");
+  target.feeRule=String(sourceRecord?.feeRule||calc.feeRule||feeRuleLabel(
+    target.origin,target.paymentMethod,target.installments,target.interestPayer
+  ));
+  target.feeScheduleVersion=String(sourceRecord?.feeScheduleVersion||"");
+  return target;
+}
+
+function wholesalePricingSignatureV232(record){
+  if(!record)return "";
+  return JSON.stringify([
+    Number(record.productPrice||0),
+    Number(record.freightCost||0),
+    String(record.freightPayer||"cliente"),
+    Number(record.discountPercent||0),
+    Number(record.cascadeDiscountPercent||0),
+    String(record.origin||"Site"),
+    String(record.paymentMethod||"PIX"),
+    Number(record.paymentMethod==="Cartão de Crédito"?(record.installments||1):1),
+    String(record.paymentMethod==="Cartão de Crédito"?(record.interestPayer||"loja"):"loja")
+  ]);
+}
+
+function wholesaleHistoricalFinancialsUnchangedV232(existing,nextRecord){
+  return !!existing&&wholesalePricingSignatureV232(existing)===wholesalePricingSignatureV232(nextRecord);
+}
+
 function normalizeRecoveredWholesaleLaunch(obj,source="armazenamento desconhecido"){
   const item=cloneSafe(obj,{})||{};
 
@@ -21321,28 +21386,7 @@ function normalizeRecoveredWholesaleLaunch(obj,source="armazenamento desconhecid
     item.interestPayer
   );
 
-  item.freightAdded=calc.freightAdded;
-  item.freightSubtracted=calc.freightSubtracted;
-  item.subtotal=calc.subtotal;
-  item.couponDiscountValue=calc.couponDiscountValue;
-  item.cascadeDiscountValue=calc.cascadeDiscountValue;
-  item.cascadeEffectivePercent=calc.cascadeEffectivePercent;
-  item.totalEffectiveDiscountPercent=calc.totalEffectiveDiscountPercent;
-  item.couponEffectivePercent=calc.couponEffectivePercent;
-  item.couponDiscountMode=calc.couponDiscountMode;
-  item.couponFirstPercent=calc.couponFirstPercent;
-  item.couponSecondPercent=calc.couponSecondPercent;
-  item.couponFirstDiscountValue=calc.couponFirstDiscountValue;
-  item.couponSecondDiscountValue=calc.couponSecondDiscountValue;
-  item.pixDiscountPercent=calc.pixDiscountPercent;
-  item.pixDiscountValue=calc.pixDiscountValue;
-  item.discountValue=calc.discountValue;
-  item.baseTotal=calc.baseTotal;
-  item.total=calc.total;
-  item.feePercent=calc.feePercent;
-  item.feeValue=calc.feeValue;
-  item.realReceived=calc.realReceived;
-  item.feeRule=calc.feeRule;
+  wholesaleApplyFinancialSnapshotV232(item,calc,obj);
 
   return item;
 }
@@ -24094,7 +24138,7 @@ function normalize(){
     w.origin=w.origin||"Site";
     if(!["Site","Loja Física"].includes(w.origin))w.origin="Site";
     w.paymentMethod=w.paymentMethod||"PIX";
-    w.installments=Math.min(12,Math.max(1,Math.round(finiteNumber(w.installments,1))));
+    w.installments=Math.min(20,Math.max(1,Math.round(finiteNumber(w.installments,1))));
     w.interestPayer=w.interestPayer||"loja";
     if(!["loja","cliente"].includes(w.interestPayer))w.interestPayer="loja";
     if(w.paymentMethod!=="Cartão de Crédito"){
@@ -24102,26 +24146,7 @@ function normalize(){
       w.interestPayer="loja";
     }
     const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.freightPayer,w.discountPercent,w.cascadeDiscountPercent,w.origin,w.paymentMethod,w.installments,w.interestPayer);
-    w.subtotal=Number(calc.subtotal||0);
-    w.couponDiscountValue=Number(calc.couponDiscountValue||0);
-    w.cascadeDiscountValue=Number(calc.cascadeDiscountValue||0);
-    w.cascadeEffectivePercent=Number(calc.cascadeEffectivePercent||0);
-    w.totalEffectiveDiscountPercent=Number(calc.totalEffectiveDiscountPercent||0);
-    w.couponEffectivePercent=Number(calc.couponEffectivePercent||0);
-    w.couponDiscountMode=calc.couponDiscountMode||"direct";
-    w.couponFirstPercent=Number(calc.couponFirstPercent||0);
-    w.couponSecondPercent=Number(calc.couponSecondPercent||0);
-    w.couponFirstDiscountValue=Number(calc.couponFirstDiscountValue||0);
-    w.couponSecondDiscountValue=Number(calc.couponSecondDiscountValue||0);
-    w.pixDiscountPercent=Number(calc.pixDiscountPercent||0);
-    w.pixDiscountValue=Number(calc.pixDiscountValue||0);
-    w.discountValue=Number(calc.discountValue||0);
-    w.baseTotal=Number(calc.baseTotal||0);
-    w.total=Number(calc.total||0);
-    w.feePercent=Number(calc.feePercent||0);
-    w.feeValue=Number(calc.feeValue||0);
-    w.realReceived=Number(calc.realReceived||0);
-    w.feeRule=calc.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer);
+    wholesaleApplyFinancialSnapshotV232(w,calc,w);
     w.createdByName=w.createdByName||"Não registrado";
     w.createdByUsername=w.createdByUsername||"";
     w.createdById=w.createdById||"";
@@ -27304,25 +27329,38 @@ function renderInfluencers(){
 function editInf(id){const i=infById(id);if(!i)return;showPage("influencers");$("infId").value=i.id;$("infName").value=i.name;$("infCoupon").value=i.coupon;$("infProductRate").value=i.productRate;$("infCashRate").value=i.cashRate;$("infInstagram").value=i.instagram||"";$("infWhatsapp").value=i.whatsapp||"";}
 function deleteInf(id){if(confirm("Excluir influencer? Os lançamentos antigos continuarão no histórico.")){state.influencers=state.influencers.filter(i=>i.id!==id);save();render();}}
 
+/* ===== V232 — TABELA DE TAXAS "PAGAR" (08/2026) =====
+   Fonte operacional: tabela enviada pelo usuário em 08/08/2026.
+   Regra: usar exclusivamente a coluna "Pagar" para Débito e Cartão de Crédito.
+   Esta tabela vale para NOVOS cálculos/recalculos financeiros. Registros históricos
+   que já possuem snapshot financeiro permanecem com os valores gravados originalmente.
+*/
+const WHOLESALE_FEE_SCHEDULE_V232=Object.freeze({
+  version:"PAGAR_2026_08",
+  label:"Tabela Pagar",
+  debit:0.89,
+  credit:Object.freeze({
+    1:3.22, 2:4.31, 3:4.97, 4:5.67, 5:6.39,
+    6:7.06, 7:8.33, 8:9.06, 9:9.76, 10:10.52,
+    11:11.28, 12:12.01, 13:12.83, 14:13.62, 15:14.41,
+    16:15.13, 17:15.94, 18:16.72, 19:17.54, 20:18.35
+  })
+});
+
 function feePercentForWholesale(origin,paymentMethod,installments){
-  origin=origin||"Site";
   paymentMethod=paymentMethod||"PIX";
-  installments=Number(installments||1);
+  installments=Math.min(20,Math.max(1,Math.round(Number(installments||1))));
 
   if(paymentMethod==="Boleto")return 0;
-  if(paymentMethod==="Débito")return 1;
+  if(paymentMethod==="Débito")return WHOLESALE_FEE_SCHEDULE_V232.debit;
   if(paymentMethod==="PIX")return 0;
 
   if(paymentMethod==="Cartão de Crédito"){
-    // Loja Física usa a tabela "CREDITO"
-    const lojaFisicaCredito={1:2.75,2:4.89,3:5.69,4:6.49,5:7.29,6:8.09,7:10.19,8:11.09,9:11.39,10:12.29,11:12.59,12:13.39};
-
-    // Site usa a tabela "SITE CREDITO"
-    // Como não foi enviada taxa específica de SITE CREDITO 1x, 1x usa a taxa base de crédito 1x: 2,75%.
-    const siteCredito={1:2.75,2:6.89,3:7.69,4:8.49,5:9.29,6:10.09,7:12.19,8:13.09,9:13.39,10:14.29,11:14.59,12:15.39};
-
-    const rates=origin==="Site"?siteCredito:lojaFisicaCredito;
-    return Number(rates[installments]||rates[1]||0);
+    return Number(
+      WHOLESALE_FEE_SCHEDULE_V232.credit[installments]||
+      WHOLESALE_FEE_SCHEDULE_V232.credit[1]||
+      0
+    );
   }
 
   return 0;
@@ -27338,18 +27376,14 @@ function interestPayerLabel(interestPayer){
 }
 
 function feeRuleLabel(origin,paymentMethod,installments,interestPayer="loja"){
-  origin=origin||"Site";
   paymentMethod=paymentMethod||"PIX";
-  installments=Number(installments||1);
+  installments=Math.min(20,Math.max(1,Math.round(Number(installments||1))));
 
   if(paymentMethod==="Boleto")return "Boleto sem taxa cadastrada";
-  if(paymentMethod==="Débito")return "DÉBITO";
+  if(paymentMethod==="Débito")return "DÉBITO • TABELA PAGAR";
   if(paymentMethod==="PIX")return "PIX sem taxa";
   if(paymentMethod==="Cartão de Crédito"){
-    const baseRule=origin==="Site"
-      ? `SITE CRÉDITO X${installments}`
-      : (installments===1 ? "CRÉDITO 1X - Loja Física" : `CRÉDITO X${installments} - Loja Física`);
-    return `${baseRule} • ${interestPayerLabel(interestPayer)}`;
+    return `CARTÃO CRÉDITO X${installments} • TABELA PAGAR • ${interestPayerLabel(interestPayer)}`;
   }
   return paymentMethod;
 }
@@ -38981,6 +39015,7 @@ if($("wholesaleForm")){
       feeValue:c.feeValue,
       realReceived:c.realReceived,
       feeRule:c.feeRule,
+      feeScheduleVersion:existingWholesale?.feeScheduleVersion||WHOLESALE_FEE_SCHEDULE_V232.version,
       createdById:existingWholesale?.createdById||audit.id,
       createdByName:existingWholesale?.createdByName||audit.name,
       createdByUsername:existingWholesale?.createdByUsername||audit.username,
@@ -39001,28 +39036,38 @@ if($("wholesaleForm")){
     }
     const finalCalc=calcWholesaleRetailValues(item.productPrice,item.freightCost,item.freightPayer,item.discountPercent,item.cascadeDiscountPercent,item.origin,item.paymentMethod,item.installments,item.interestPayer);
     item.freightPayer=finalCalc.freightPayer;
-    item.freightAdded=finalCalc.freightAdded;
-    item.freightSubtracted=finalCalc.freightSubtracted;
-    item.couponDiscountValue=finalCalc.couponDiscountValue;
     item.cascadeDiscountPercent=finalCalc.cascadePct;
-    item.cascadeDiscountValue=finalCalc.cascadeDiscountValue;
-    item.cascadeEffectivePercent=finalCalc.cascadeEffectivePercent;
-    item.totalEffectiveDiscountPercent=finalCalc.totalEffectiveDiscountPercent;
-    item.couponEffectivePercent=finalCalc.couponEffectivePercent;
-    item.couponDiscountMode=finalCalc.couponDiscountMode;
-    item.couponFirstPercent=finalCalc.couponFirstPercent;
-    item.couponSecondPercent=finalCalc.couponSecondPercent;
-    item.couponFirstDiscountValue=finalCalc.couponFirstDiscountValue;
-    item.couponSecondDiscountValue=finalCalc.couponSecondDiscountValue;
-    item.pixDiscountPercent=finalCalc.pixDiscountPercent;
-    item.pixDiscountValue=finalCalc.pixDiscountValue;
-    item.discountValue=finalCalc.discountValue;
-    item.baseTotal=finalCalc.baseTotal;
-    item.total=finalCalc.total;
-    item.feePercent=finalCalc.feePercent;
-    item.feeValue=finalCalc.feeValue;
-    item.realReceived=finalCalc.realReceived;
-    item.feeRule=finalCalc.feeRule;
+
+    const preserveHistoricalFinancials=wholesaleHistoricalFinancialsUnchangedV232(existingWholesale,item);
+    if(preserveHistoricalFinancials){
+      /* Alterações não financeiras (nome, observação, status, data etc.) não
+         podem recalcular uma venda histórica com a tabela nova. */
+      wholesaleApplyFinancialSnapshotV232(item,finalCalc,existingWholesale);
+      item.feeScheduleVersion=String(existingWholesale?.feeScheduleVersion||"");
+    }else{
+      item.freightAdded=finalCalc.freightAdded;
+      item.freightSubtracted=finalCalc.freightSubtracted;
+      item.couponDiscountValue=finalCalc.couponDiscountValue;
+      item.cascadeDiscountValue=finalCalc.cascadeDiscountValue;
+      item.cascadeEffectivePercent=finalCalc.cascadeEffectivePercent;
+      item.totalEffectiveDiscountPercent=finalCalc.totalEffectiveDiscountPercent;
+      item.couponEffectivePercent=finalCalc.couponEffectivePercent;
+      item.couponDiscountMode=finalCalc.couponDiscountMode;
+      item.couponFirstPercent=finalCalc.couponFirstPercent;
+      item.couponSecondPercent=finalCalc.couponSecondPercent;
+      item.couponFirstDiscountValue=finalCalc.couponFirstDiscountValue;
+      item.couponSecondDiscountValue=finalCalc.couponSecondDiscountValue;
+      item.pixDiscountPercent=finalCalc.pixDiscountPercent;
+      item.pixDiscountValue=finalCalc.pixDiscountValue;
+      item.discountValue=finalCalc.discountValue;
+      item.baseTotal=finalCalc.baseTotal;
+      item.total=finalCalc.total;
+      item.feePercent=finalCalc.feePercent;
+      item.feeValue=finalCalc.feeValue;
+      item.realReceived=finalCalc.realReceived;
+      item.feeRule=finalCalc.feeRule;
+      item.feeScheduleVersion=WHOLESALE_FEE_SCHEDULE_V232.version;
+    }
 
     if(!item.clientName){
       alert("Informe o nome do cliente.");
