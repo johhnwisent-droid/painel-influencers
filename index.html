@@ -15406,7 +15406,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V232</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V233</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17720,7 +17720,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V232";
+const APP_BUILD_VERSION="V233";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17753,9 +17753,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=232",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=233",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=232");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=233");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -21350,6 +21350,109 @@ function wholesaleHistoricalFinancialsUnchangedV232(existing,nextRecord){
   return !!existing&&wholesalePricingSignatureV232(existing)===wholesalePricingSignatureV232(nextRecord);
 }
 
+
+/* ===== V233 — CORREÇÃO PONTUAL JORGE RIBEIRO / CRÉDITO 4X =====
+   Escopo deliberadamente estreito:
+   - cliente Jorge Ribeiro;
+   - Loja Física;
+   - Cartão de Crédito em 4x;
+   - juros pagos pela loja;
+   - snapshot antigo de 6,49% e aproximadamente R$ 32,32 de taxa.
+
+   Nenhum outro lançamento é recalculado. A alteração usa a mesma fila oficial,
+   versionamento otimista e confirmação do Atacado e Varejo já existentes.
+*/
+function wholesaleNormalizeNameV233(value){
+  return String(value||"")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .toLowerCase()
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+function wholesaleApproxV233(a,b,tolerance=0.02){
+  return Math.abs(Number(a||0)-Number(b||0))<=tolerance;
+}
+
+function wholesaleJorgeRibeiroTargetV233(row){
+  if(!row||row.deleted===true)return false;
+  return wholesaleNormalizeNameV233(row.clientName)==="jorge ribeiro"&&
+    String(row.origin||"")==="Loja Física"&&
+    String(row.paymentMethod||"")==="Cartão de Crédito"&&
+    Number(row.installments||0)===4&&
+    String(row.interestPayer||"loja")!=="cliente"&&
+    wholesaleApproxV233(row.feePercent,6.49,0.015)&&
+    wholesaleApproxV233(row.feeValue,32.32,0.03);
+}
+
+async function applyJorgeRibeiroRateCorrectionV233(){
+  const matches=(state.wholesaleRetail||[]).filter(wholesaleJorgeRibeiroTargetV233);
+  if(!matches.length)return {ok:true,status:"not_needed",updated:0};
+
+  /* A combinação acima foi escolhida para identificar somente o pedido informado.
+     Se houver mais de um registro idêntico, não fazemos alteração automática. */
+  if(matches.length!==1){
+    updateCloudDebug(`V233: correção Jorge Ribeiro não aplicada automaticamente; ${matches.length} registros coincidem com os critérios.`);
+    return {ok:false,status:"ambiguous",updated:0};
+  }
+
+  const original=matches[0];
+  const corrected=cloneSafe(original,original)||{};
+
+  let base=wholesaleOwnFiniteNumberV232(original,"baseTotal")?Number(original.baseTotal):0;
+  if(!(base>0)&&wholesaleOwnFiniteNumberV232(original,"total"))base=Number(original.total);
+  if(!(base>0)&&Number(original.feePercent||0)>0&&Number(original.feeValue||0)>0){
+    base=Number(original.feeValue)/(Number(original.feePercent)/100);
+  }
+  if(!(base>0)){
+    updateCloudDebug("V233: pedido Jorge Ribeiro localizado, mas a base financeira não pôde ser confirmada; nenhuma alteração foi feita.");
+    return {ok:false,status:"missing_base",updated:0};
+  }
+
+  const newPercent=Number(WHOLESALE_FEE_SCHEDULE_V232.credit[4]||5.67);
+  const newFee=base*(newPercent/100);
+  const audit=currentAuditInfo();
+
+  /* Somente os campos dependentes da taxa são alterados. */
+  corrected.feePercent=newPercent;
+  corrected.feeValue=newFee;
+  corrected.realReceived=Math.max(0,base-newFee);
+  corrected.feeRule=feeRuleLabel(corrected.origin,corrected.paymentMethod,4,"loja");
+  corrected.feeScheduleVersion=WHOLESALE_FEE_SCHEDULE_V232.version;
+  corrected.updatedAt=audit.at||new Date().toISOString();
+  corrected.updatedById=audit.id||"";
+  corrected.updatedByName=audit.name||"Sistema";
+  corrected.updatedByUsername=audit.username||"";
+
+  const idx=(state.wholesaleRetail||[]).findIndex(row=>String(row.id)===String(original.id));
+  if(idx<0)return {ok:false,status:"missing_record",updated:0};
+
+  state.wholesaleRetail[idx]=corrected;
+  writeWholesaleSnapshot(state.wholesaleRetail);
+  queueWholesaleCloudRecord(corrected,{baseRecord:original});
+  persistWholesaleLocalCache();
+  renderWholesaleRetail();
+  updateCloudStatus("Pendente • confirmando correção pontual do pedido de Jorge Ribeiro",true);
+
+  const flushed=await flushWholesalePendingQueue();
+  if(!flushed){
+    updateCloudDebug("V233: correção de Jorge Ribeiro preservada na fila; aguardando confirmação do Supabase.");
+    return {ok:false,status:"queued",updated:1};
+  }
+
+  const official=await fetchConfirmedWholesaleRecord(corrected.id,{minimumVersion:1,attempts:6});
+  if(official){
+    wholesaleApplySingleOfficialRecord(official,{renderNow:true});
+    updateCloudStatus("Salvo • pedido de Jorge Ribeiro atualizado para a taxa de 4x vigente");
+    updateCloudDebug(`V233: Jorge Ribeiro confirmado no Supabase • 4x • ${newPercent.toFixed(2).replace(".",",")}% • taxa ${money(newFee)} • valor real ${money(Math.max(0,base-newFee))}`);
+    return {ok:true,status:"confirmed",updated:1};
+  }
+
+  updateCloudDebug("V233: mutação enviada, mas a confirmação exata do pedido de Jorge Ribeiro ainda está pendente.");
+  return {ok:false,status:"awaiting_confirmation",updated:1};
+}
+
 function normalizeRecoveredWholesaleLaunch(obj,source="armazenamento desconhecido"){
   const item=cloneSafe(obj,{})||{};
 
@@ -23925,6 +24028,11 @@ async function startApp(){
       await hydrateWholesaleDurableStorage();
       await seedWholesaleRecordsOnce();
       await syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
+      try{
+        await applyJorgeRibeiroRateCorrectionV233();
+      }catch(error){
+        console.warn("V233: correção pontual de Jorge Ribeiro preservada sem interromper a inicialização:",error);
+      }
       installWholesaleSyncWatchers();
       installWholesaleDraftProtection();
 
