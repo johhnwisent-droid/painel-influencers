@@ -15331,6 +15331,83 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 </style>
 
+
+<style id="wisent-v235-status-mobile-fix">
+/* ===== V235 — STATUS ENTREGUE + AÇÕES MOBILE =====
+   Escopo restrito à tabela de Atacado e Varejo. */
+#wholesaleRetail .wholesaleStatusSelect{
+  transition:background-color .18s ease,border-color .18s ease,color .18s ease,box-shadow .18s ease;
+  box-shadow:0 1px 2px rgba(15,23,42,.05);
+}
+#wholesaleRetail .wholesaleStatusSelect.status-efetuado{
+  background:#e0f2fe!important;color:#075985!important;border-color:#7dd3fc!important;
+}
+#wholesaleRetail .wholesaleStatusSelect.status-producao{
+  background:#fef3c7!important;color:#92400e!important;border-color:#fbbf24!important;
+}
+#wholesaleRetail .wholesaleStatusSelect.status-pronto{
+  background:#dcfce7!important;color:#166534!important;border-color:#86efac!important;
+}
+#wholesaleRetail .wholesaleStatusSelect.status-enviado{
+  background:#ede9fe!important;color:#5b21b6!important;border-color:#c4b5fd!important;
+}
+#wholesaleRetail .wholesaleStatusSelect.status-entregue{
+  background:#ccfbf1!important;color:#115e59!important;border-color:#5eead4!important;
+}
+
+@media(max-width:760px){
+  /* Ações é a 16ª coluna. Regras antigas apontavam para a 15ª. */
+  #wholesaleRetail th:nth-child(16),
+  #wholesaleRetail td:nth-child(16),
+  #wholesaleRetail td[data-label="Ações"]{
+    width:136px!important;
+    min-width:136px!important;
+    max-width:136px!important;
+    padding:8px!important;
+    white-space:normal!important;
+    box-sizing:border-box!important;
+  }
+
+  #wholesaleRetail td[data-label="Ações"] button,
+  #wholesaleRetail td:nth-child(16) button{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:36px!important;
+    margin:0 0 6px 0!important;
+    padding:7px 9px!important;
+    border-radius:10px!important;
+    font-size:11px!important;
+    line-height:1.15!important;
+    white-space:nowrap!important;
+    box-sizing:border-box!important;
+  }
+
+  #wholesaleRetail td[data-label="Ações"] button:last-child,
+  #wholesaleRetail td:nth-child(16) button:last-child{
+    margin-bottom:0!important;
+  }
+
+  #wholesaleRetail td[data-label="Status"] .wholesaleStatusSelect{
+    width:100%!important;
+    min-width:112px!important;
+    min-height:34px!important;
+    font-size:10.5px!important;
+    padding:6px 8px!important;
+  }
+}
+
+@media(max-width:430px){
+  #wholesaleRetail th:nth-child(16),
+  #wholesaleRetail td:nth-child(16),
+  #wholesaleRetail td[data-label="Ações"]{
+    width:132px!important;
+    min-width:132px!important;
+    max-width:132px!important;
+  }
+}
+</style>
+
 </head>
 <body class="page-dashboard authLocked">
 
@@ -15406,7 +15483,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V234</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V235</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15628,7 +15705,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
                 </label>
               </div>
               <label class="fieldStatus">Status do pedido
-                <select id="wholesaleOrderStatus"><option>Efetuado</option><option>Produção</option><option>Pronto</option><option>Enviado</option></select>
+                <select id="wholesaleOrderStatus"><option>Efetuado</option><option>Produção</option><option>Pronto</option><option>Enviado</option><option>Entregue</option></select>
               </label>
             </div>
           </div>
@@ -15797,7 +15874,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
               </select>
             </label>
             <label>Status
-              <select id="wholesaleFilterStatus" onchange="renderWholesaleRetail()"><option value="">Todos</option><option>Efetuado</option><option>Produção</option><option>Pronto</option><option>Enviado</option></select>
+              <select id="wholesaleFilterStatus" onchange="renderWholesaleRetail()"><option value="">Todos</option><option>Efetuado</option><option>Produção</option><option>Pronto</option><option>Enviado</option><option>Entregue</option></select>
             </label>
 
             <div class="wholesaleListFilterActions">
@@ -17720,7 +17797,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V234";
+const APP_BUILD_VERSION="V235";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17753,9 +17830,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=234",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=235",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=234");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=235");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -29001,7 +29078,7 @@ function renderWholesaleRetail(){
     <td data-label="Data">${dateBR(w.date)}</td>
     <td data-label="Cliente"><span class="clientNamePill">${esc(w.clientName||"-")}</span><span class="createdByMini">Por: ${esc(w.createdByName||"Não registrado")}</span></td>
     <td data-label="Tipo"><span class="saleTypePill ${saleTypePillClass(w.saleType)}">${esc(w.saleType||"Varejo")}</span></td>
-    <td data-label="Status"><select class="wholesaleStatusSelect status-${String(w.orderStatus||"Efetuado").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()}" onclick="event.stopPropagation()" onchange="event.stopPropagation();updateWholesaleOrderStatus('${w.id}',this.value)">${["Efetuado","Produção","Pronto","Enviado"].map(status=>`<option ${status===(w.orderStatus||"Efetuado")?"selected":""}>${status}</option>`).join("")}</select></td>
+    <td data-label="Status"><select class="wholesaleStatusSelect status-${String(w.orderStatus||"Efetuado").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase()}" onclick="event.stopPropagation()" onchange="event.stopPropagation();updateWholesaleOrderStatus('${w.id}',this.value)">${["Efetuado","Produção","Pronto","Enviado","Entregue"].map(status=>`<option ${status===(w.orderStatus||"Efetuado")?"selected":""}>${status}</option>`).join("")}</select></td>
     <td data-label="Origem"><span class="originPill ${originPillClass(w.origin)}">${esc(w.origin||"Site")}</span></td>
     <td data-label="Produto"><span class="wholesaleProductList productCompactSafe" title="${esc(String(w.product||"-"))}">${esc(compactProductText(w.product||"-"))}</span></td>
     <td data-label="Preço produto"><span class="wholesaleMoneyPill product">${money(w.productPrice)}</span></td>
@@ -29194,7 +29271,7 @@ function editWholesaleRetail(id){
 }
 
 async function updateWholesaleOrderStatus(id,nextStatus){
-  const allowed=["Efetuado","Produção","Pronto","Enviado"];
+  const allowed=["Efetuado","Produção","Pronto","Enviado","Entregue"];
   const item=(state.wholesaleRetail||[]).find(row=>String(row.id)===String(id));
   if(!item||!allowed.includes(nextStatus))return;
   const previous=item.orderStatus||"Efetuado";
