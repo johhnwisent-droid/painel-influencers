@@ -15483,7 +15483,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V235</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V236</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17797,7 +17797,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V235";
+const APP_BUILD_VERSION="V236";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17830,9 +17830,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=235",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=236",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=235");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=236");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -18122,9 +18122,25 @@ async function settingsV210DeleteDurable(key){
 function settingsV210ValidPayload(payload){
   return !!payload&&typeof payload==="object"&&!Array.isArray(payload);
 }
+/* ===== V236 — COLABORADORES ISOLADOS DA PERSONALIZAÇÃO =====
+   Colaboradores pertencem ao módulo oficial `collaborators` da V211.
+   A tabela de Personalização pode conter uma cópia antiga de authUsers, mas ela
+   nunca mais pode sobrescrever a lista ativa carregada/salva pelo módulo oficial.
+*/
 function settingsV210Apply(payload,{renderNow=true,persist=true}={}){
   if(!settingsV210ValidPayload(payload))return false;
-  state.settings={...(state.settings||{}),...settingsV210Clone(payload,{})};
+
+  const currentAuthUsers=Array.isArray(state?.settings?.authUsers)
+    ?settingsV210Clone(state.settings.authUsers,[])
+    :[];
+  const incoming=settingsV210Clone(payload,{});
+
+  /* V236: authUsers não é mais propriedade da Personalização. */
+  if(Object.prototype.hasOwnProperty.call(incoming,"authUsers"))delete incoming.authUsers;
+
+  state.settings={...(state.settings||{}),...incoming};
+  if(currentAuthUsers.length)state.settings.authUsers=currentAuthUsers;
+
   if(persist){
     settingsV210WriteDurable(SYSTEM_SETTINGS_SNAPSHOT_KEY_V210,{payload:settingsV210Clone(state.settings,{}),version:systemSettingsVersionV210,mutationId:systemSettingsMutationV210,at:new Date().toISOString()});
     try{localStorage.setItem(KEY,JSON.stringify(state));}catch(error){}
@@ -40557,6 +40573,41 @@ function coreRowNormalizeV211(row){
     device_id:row.device_id||""
   };
 }
+/* ===== V236 — PONTE OFICIAL DO MÓDULO COLABORADORES =====
+   A interface histórica usa state.settings.authUsers, enquanto a blindagem V211
+   havia sido configurada para state.collaborators. Esta ponte mantém compatibilidade
+   com registros antigos e torna authUsers a origem local efetivamente monitorada.
+*/
+function coreCollaboratorRowsV236(){
+  const legacy=Array.isArray(state?.collaborators)?state.collaborators:[];
+  const authUsers=Array.isArray(state?.settings?.authUsers)?state.settings.authUsers:[];
+  const rows=[];
+
+  const add=(value,prefer=false)=>{
+    if(!value||typeof value!=="object")return;
+    const item=coreCloneV211(value,{});
+    const id=String(item.id||"").trim().toLowerCase();
+    const username=String(item.username||"").trim().toLowerCase();
+    const index=rows.findIndex(existing=>{
+      const existingId=String(existing?.id||"").trim().toLowerCase();
+      const existingUsername=String(existing?.username||"").trim().toLowerCase();
+      return (id&&existingId===id)||(username&&existingUsername===username);
+    });
+
+    if(index<0){
+      rows.push(item);
+      return;
+    }
+
+    /* authUsers é a fonte usada pelo login; por isso vence em caso de duplicidade. */
+    if(prefer)rows[index]={...rows[index],...item};
+  };
+
+  legacy.forEach(item=>add(item,false));
+  authUsers.forEach(item=>add(item,true));
+  return rows;
+}
+
 function coreStateMapV211(){
   const map=new Map();
   CORE_MODULES_V211.forEach(config=>{
@@ -40569,7 +40620,11 @@ function coreStateMapV211(){
       }
       return;
     }
-    const rows=Array.isArray(state?.[config.stateKey])?state[config.stateKey]:[];
+
+    const rows=config.module==="collaborators"
+      ?coreCollaboratorRowsV236()
+      :(Array.isArray(state?.[config.stateKey])?state[config.stateKey]:[]);
+
     rows.forEach((payload,index)=>{
       if(!payload||typeof payload!=="object")return;
       const recordId=coreRecordIdV211(config.module,payload,index);
@@ -40763,6 +40818,12 @@ function coreApplyRowsToStateV211({renderNow=true}={}){
         .sort((a,b)=>Number(a.sort_order||0)-Number(b.sort_order||0)||String(a.created_at||"").localeCompare(String(b.created_at||"")));
       if(config.kind==="singleton"){
         state[config.stateKey]=rows[0]?coreCloneV211(rows[0].payload,{}):{};
+      }else if(config.module==="collaborators"){
+        const collaborators=rows.map(row=>coreCloneV211(row.payload,{})).filter(Boolean);
+        state.settings=state.settings||{};
+        state.settings.authUsers=coreCloneV211(collaborators,[]);
+        /* Espelho compatível para qualquer rotina antiga que ainda leia state.collaborators. */
+        state.collaborators=coreCloneV211(collaborators,[]);
       }else{
         state[config.stateKey]=rows.map(row=>coreCloneV211(row.payload,{})).filter(Boolean);
       }
