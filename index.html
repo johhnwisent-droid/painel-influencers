@@ -15483,7 +15483,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V236</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V237</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17797,7 +17797,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V236";
+const APP_BUILD_VERSION="V237";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17830,9 +17830,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=236",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=237",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=236");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=237");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -18122,7 +18122,7 @@ async function settingsV210DeleteDurable(key){
 function settingsV210ValidPayload(payload){
   return !!payload&&typeof payload==="object"&&!Array.isArray(payload);
 }
-/* ===== V236 — COLABORADORES ISOLADOS DA PERSONALIZAÇÃO =====
+/* ===== V237 — COLABORADORES ISOLADOS DA PERSONALIZAÇÃO =====
    Colaboradores pertencem ao módulo oficial `collaborators` da V211.
    A tabela de Personalização pode conter uma cópia antiga de authUsers, mas ela
    nunca mais pode sobrescrever a lista ativa carregada/salva pelo módulo oficial.
@@ -18135,7 +18135,7 @@ function settingsV210Apply(payload,{renderNow=true,persist=true}={}){
     :[];
   const incoming=settingsV210Clone(payload,{});
 
-  /* V236: authUsers não é mais propriedade da Personalização. */
+  /* V237: authUsers não é propriedade da Personalização. */
   if(Object.prototype.hasOwnProperty.call(incoming,"authUsers"))delete incoming.authUsers;
 
   state.settings={...(state.settings||{}),...incoming};
@@ -18181,6 +18181,8 @@ function settingsV210CollectFromForm(){
   if(typeof tempSystemLogo!=="undefined"&&tempSystemLogo!==null){s.systemLogo=tempSystemLogo;tempSystemLogo=null;}
   if(typeof tempPdfLogo!=="undefined"&&tempPdfLogo!==null){s.pdfLogo=tempPdfLogo;tempPdfLogo=null;}
   if(typeof tempWatermarkLogo!=="undefined"&&tempWatermarkLogo!==null){s.pdfWatermarkLogo=tempWatermarkLogo;tempWatermarkLogo=null;}
+  /* V237: colaboradores são persistidos somente pelo módulo oficial collaborators. */
+  if(Object.prototype.hasOwnProperty.call(s,"authUsers"))delete s.authUsers;
   return settingsV210Clone(s,{});
 }
 async function settingsV210FetchOfficial(){
@@ -19265,7 +19267,85 @@ function editAuthUser(id){
   $("authActive").value=String(u.active!==false);
 }
 
-function saveAuthUser(){
+/* ===== V237 — CRUD ISOLADO E CONFIRMADO DE COLABORADORES =====
+   O cadastro não depende mais do save() global nem da captura posterior por timer.
+   A alteração entra imediatamente na outbox oficial `collaborators`, mantendo um
+   snapshot local exclusivo antes de qualquer tentativa de rede.
+*/
+const COLLAB_SNAPSHOT_KEY_V237=KEY+"_collaborators_snapshot_v237";
+const COLLAB_LAST_RESULT_KEY_V237=KEY+"_collaborators_last_result_v237";
+
+function collabCloneV237(value,fallback=[]){
+  try{return JSON.parse(JSON.stringify(value));}
+  catch(error){return fallback;}
+}
+function collabReadSnapshotV237(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(COLLAB_SNAPSHOT_KEY_V237)||"[]");
+    return Array.isArray(parsed)?parsed:[];
+  }catch(error){return [];}
+}
+function collabPersistSnapshotV237(rows){
+  const safe=collabCloneV237(Array.isArray(rows)?rows:[],[]);
+  try{localStorage.setItem(COLLAB_SNAPSHOT_KEY_V237,JSON.stringify(safe));}catch(error){}
+  try{
+    state.settings=state.settings||{};
+    state.settings.authUsers=collabCloneV237(safe,[]);
+    localStorage.setItem(KEY,JSON.stringify(state));
+  }catch(error){}
+  try{
+    if(typeof coreDbPutV211==="function")coreDbPutV211("collaborators-v237",safe);
+  }catch(error){}
+  return safe;
+}
+function collabSetResultV237(status,message,item=null){
+  const payload={status:String(status||""),message:String(message||""),at:new Date().toISOString(),id:String(item?.id||"")};
+  try{localStorage.setItem(COLLAB_LAST_RESULT_KEY_V237,JSON.stringify(payload));}catch(error){}
+  if(typeof updateCloudDebug==="function"){
+    updateCloudDebug(`Colaboradores ${APP_BUILD_VERSION}: ${payload.message}`);
+  }
+  return payload;
+}
+function collabQueueRecordV237(item,operation="upsert"){
+  if(!item?.id)return false;
+  if(typeof coreQueueV211!=="function")return false;
+  const users=Array.isArray(state?.settings?.authUsers)?state.settings.authUsers:[];
+  const index=Math.max(0,users.findIndex(user=>String(user?.id||"")===String(item.id)));
+  return coreQueueV211({
+    module:"collaborators",
+    recordId:String(item.id),
+    operation:operation==="delete"?"delete":"upsert",
+    payload:operation==="delete"?null:collabCloneV237(item,{}),
+    sortOrder:index
+  });
+}
+async function collabConfirmRecordV237(item,{deleted=false}={}){
+  if(navigator.onLine===false)return {confirmed:false,pending:true};
+  if(typeof coreFlushOutboxV211!=="function"||typeof coreFetchOneV211!=="function")return {confirmed:false,pending:true};
+  try{
+    if(typeof coreReadyV211!=="undefined"&&!coreReadyV211)return {confirmed:false,pending:true};
+    const flushed=await coreFlushOutboxV211();
+    if(!flushed)return {confirmed:false,pending:true};
+    const row=await coreFetchOneV211("collaborators",String(item.id));
+    if(deleted){
+      const ok=!row||!!row.deleted_at;
+      return {confirmed:ok,pending:!ok};
+    }
+    const payload=row?.payload||{};
+    const ok=!!row&&!row.deleted_at
+      &&String(row.record_id||"")===String(item.id)
+      &&String(payload.username||"").toLowerCase()===String(item.username||"").toLowerCase()
+      &&String(payload.name||"")===String(item.name||"")
+      &&String(payload.role||"Equipe")===String(item.role||"Equipe")
+      &&Boolean(payload.active!==false)===Boolean(item.active!==false);
+    return {confirmed:ok,pending:!ok};
+  }catch(error){
+    console.warn("Confirmação isolada de colaborador adiada:",error);
+    return {confirmed:false,pending:true,error};
+  }
+}
+
+async function saveAuthUser(){
   normalizeAuthUsers();
   const id=$("authUserId").value||uid();
   const name=($("authName").value||"").trim();
@@ -19279,15 +19359,19 @@ function saveAuthUser(){
     return;
   }
 
-  const duplicate=(state.settings.authUsers||[]).find(u=>u.id!==id && u.username.toLowerCase()===username.toLowerCase());
+  const duplicate=(state.settings.authUsers||[]).find(u=>
+    String(u?.id||"")!==String(id) &&
+    String(u?.username||"").trim().toLowerCase()===username.toLowerCase()
+  );
   if(duplicate){
     alert("Já existe um usuário com esse login.");
     return;
   }
 
-  const idx=state.settings.authUsers.findIndex(u=>u.id===id);
+  const idx=state.settings.authUsers.findIndex(u=>String(u?.id||"")===String(id));
   const existing=idx>=0?state.settings.authUsers[idx]:null;
   const audit=currentAuditInfo();
+  const now=new Date().toISOString();
   const item={
     id,
     name,
@@ -19295,47 +19379,87 @@ function saveAuthUser(){
     password,
     role,
     active,
-    createdAt:existing?.createdAt||new Date().toISOString(),
+    createdAt:existing?.createdAt||now,
     createdByName:existing?.createdByName||audit.name||"Sistema",
-    updatedAt:existing?new Date().toISOString():"",
+    updatedAt:existing?now:"",
     updatedByName:existing?(audit.name||"Sistema"):""
   };
 
+  /* 1) memória + snapshot exclusivo primeiro: nada de aguardar nuvem para aparecer. */
   if(idx>=0)state.settings.authUsers[idx]=item;
   else state.settings.authUsers.push(item);
+  collabPersistSnapshotV237(state.settings.authUsers);
 
-  if(currentUser&&currentUser.id===id){
+  if(currentUser&&String(currentUser.id)===String(id)){
     setSessionUser(item.active!==false?item:null);
   }
 
-  save();
+  /* 2) fila oficial no mesmo tick; não depende mais do save() global. */
+  const queued=collabQueueRecordV237(item,"upsert");
+
   resetAuthUserForm();
   renderAuthUsers();
   updateAuthVisuals();
-  alert("Usuário salvo.");
+
+  if(!queued){
+    collabSetResultV237("local","Cadastro preservado localmente; módulo oficial ainda inicializando.",item);
+    alert("Colaborador salvo neste aparelho e preservado para sincronização. A confirmação da nuvem ocorrerá assim que o módulo oficial estiver disponível.");
+    return;
+  }
+
+  collabSetResultV237("pending","Cadastro entrou na fila oficial; aguardando confirmação do Supabase.",item);
+  if(typeof updateCloudStatus==="function")updateCloudStatus("Salvando colaborador • aguardando confirmação real do Supabase");
+
+  const result=await collabConfirmRecordV237(item);
+  if(result.confirmed){
+    collabSetResultV237("saved","Colaborador salvo e confirmado na fonte oficial.",item);
+    if(typeof updateCloudStatus==="function")updateCloudStatus("Colaborador salvo e confirmado na nuvem.");
+    if(typeof coreSyncFromCloudV211==="function")await coreSyncFromCloudV211({showStatus:false});
+    renderAuthUsers();
+    alert("Colaborador salvo e confirmado.");
+  }else{
+    collabSetResultV237("pending","Cadastro preservado na fila oficial; confirmação será repetida automaticamente.",item);
+    if(typeof updateCloudStatus==="function")updateCloudStatus("Colaborador preservado • sincronização pendente",true);
+    alert("Colaborador salvo e preservado. A confirmação da nuvem ficou pendente e será repetida automaticamente.");
+  }
 }
 
-function deleteAuthUser(id){
+async function deleteAuthUser(id){
   normalizeAuthUsers();
   if((state.settings.authUsers||[]).length<=1){
     alert("Mantenha pelo menos um usuário ativo no sistema.");
     return;
   }
-  const u=state.settings.authUsers.find(x=>x.id===id);
+  const u=state.settings.authUsers.find(x=>String(x?.id||"")===String(id));
   if(!u)return;
   if(!confirm(`Excluir o usuário ${u.name}?`))return;
 
-  state.settings.authUsers=state.settings.authUsers.filter(x=>x.id!==id);
+  state.settings.authUsers=state.settings.authUsers.filter(x=>String(x?.id||"")!==String(id));
+  collabPersistSnapshotV237(state.settings.authUsers);
 
-  if(currentUser&&currentUser.id===id){
+  if(currentUser&&String(currentUser.id)===String(id)){
     setSessionUser(null);
     showLoginScreen("Seu usuário foi removido. Entre com outro login.");
   }
 
-  save();
+  const queued=collabQueueRecordV237(u,"delete");
   renderAuthUsers();
-}
 
+  if(!queued){
+    collabSetResultV237("local","Exclusão preservada localmente; módulo oficial ainda inicializando.",u);
+    return;
+  }
+
+  collabSetResultV237("pending","Exclusão entrou na fila oficial.",u);
+  const result=await collabConfirmRecordV237(u,{deleted:true});
+  if(result.confirmed){
+    collabSetResultV237("saved","Exclusão confirmada na fonte oficial.",u);
+    if(typeof coreSyncFromCloudV211==="function")await coreSyncFromCloudV211({showStatus:false});
+    renderAuthUsers();
+  }else{
+    collabSetResultV237("pending","Exclusão preservada na fila oficial; confirmação pendente.",u);
+  }
+}
 
 
 let snapshotWriteTimer=null;
@@ -40573,7 +40697,7 @@ function coreRowNormalizeV211(row){
     device_id:row.device_id||""
   };
 }
-/* ===== V236 — PONTE OFICIAL DO MÓDULO COLABORADORES =====
+/* ===== V237 — PONTE OFICIAL DO MÓDULO COLABORADORES =====
    A interface histórica usa state.settings.authUsers, enquanto a blindagem V211
    havia sido configurada para state.collaborators. Esta ponte mantém compatibilidade
    com registros antigos e torna authUsers a origem local efetivamente monitorada.
@@ -40641,6 +40765,18 @@ function coreSnapshotRowsV211(){
 const CORE_STARTUP_RECOVERY_KEY_V212=KEY+"_core_startup_recovery_v212";
 function coreCollectLocalCandidatesV212(){
   const map=coreStateMapV211();
+
+  /* V237: snapshot exclusivo dos colaboradores também participa da recuperação. */
+  try{
+    const collaborators=typeof collabReadSnapshotV237==="function"?collabReadSnapshotV237():[];
+    (Array.isArray(collaborators)?collaborators:[]).forEach((payload,index)=>{
+      if(!payload||typeof payload!=="object")return;
+      const recordId=coreRecordIdV211("collaborators",payload,index);
+      const key=coreKeyV211("collaborators",recordId);
+      if(!map.has(key))map.set(key,{module:"collaborators",recordId,payload:coreCloneV211(payload,{}),sortOrder:index});
+    });
+  }catch(error){console.warn("Recuperação V237 de colaboradores ignorada:",error);}
+
   try{
     const products=[
       ...(typeof readProductChoiceSnapshot==="function"?readProductChoiceSnapshot():[]),
@@ -40822,6 +40958,7 @@ function coreApplyRowsToStateV211({renderNow=true}={}){
         const collaborators=rows.map(row=>coreCloneV211(row.payload,{})).filter(Boolean);
         state.settings=state.settings||{};
         state.settings.authUsers=coreCloneV211(collaborators,[]);
+        if(typeof collabPersistSnapshotV237==="function")collabPersistSnapshotV237(state.settings.authUsers);
         /* Espelho compatível para qualquer rotina antiga que ainda leia state.collaborators. */
         state.collaborators=coreCloneV211(collaborators,[]);
       }else{
