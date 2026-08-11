@@ -15900,7 +15900,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V246</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V247</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -18319,7 +18319,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V246";
+const APP_BUILD_VERSION="V247";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18352,9 +18352,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=246",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=247",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=246");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=247");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -24912,6 +24912,7 @@ async function startApp(){
       installProductChoiceSyncWatchers();
 
   await ensureErpV2AvailableOnDevice();
+  if(erpV2Phase2Enabled())await erpReconcileOrderTombstonesV247({showStatus:false});
   erpWorkspaceCloudReady=true;
   await refreshErpWorkspaceFromCloud({force:true,reason:"startup"});
       installErpTestSyncWatchers();
@@ -31826,6 +31827,7 @@ const ERP_PRIVATE_LABEL_DIRTY_V242=KEY+"_private_label_dirty_v242";
 const ERP_PRIVATE_LABEL_CHECKPOINT_ID_V242="private_label_checkpoint_v242";
 const ERP_COMMISSION_SAFE_SNAPSHOT_V242=KEY+"_erp_commissions_safe_v242";
 const ERP_ORDER_TOMBSTONES_V244=KEY+"_private_label_order_tombstones_v244";
+const ERP_ORDER_TOMBSTONE_LEDGER_FIELD_V247="_orderTombstonesV247";
 let erpDurableWriteTimer=null;
 let erpTestFlushBusy=false;
 let erpTestSyncBusy=false;
@@ -32652,6 +32654,80 @@ function erpOrderTombstonesWriteV244(rows){
   }
 }
 
+/* ===== V247 — TOMBSTONES PORTÁTEIS E RECONCILIAÇÃO APÓS ATUALIZAÇÃO =====
+   A exclusão continua sendo criada somente por uma ação explícita do usuário ou
+   por deleted_at oficial. A ausência de um pedido em uma leitura nunca é tratada
+   como exclusão. O ledger acompanha o snapshot legado e os deleted_at recebidos
+   da V2 são persistidos localmente para sobreviver a recargas e novos builds.
+*/
+function erpOrderTombstoneNormalizeV247(row){
+  if(!row||typeof row!=="object")return null;
+  const v2Id=String(row.v2Id||row.v2_id||"");
+  const legacyId=String(row.legacyId||row.legacy_id||v2Id||"");
+  if(!legacyId)return null;
+  return {
+    ...row,
+    legacyId,
+    v2Id,
+    number:String(row.number||""),
+    deletedAt:String(row.deletedAt||row.deleted_at||new Date().toISOString()),
+    deletedBy:String(row.deletedBy||row.updated_by||"Sistema"),
+    build:String(row.build||APP_BUILD_VERSION),
+    confirmedAt:String(row.confirmedAt||row.confirmed_at||""),
+    confirmedBuild:String(row.confirmedBuild||"")
+  };
+}
+
+function erpOrderTombstoneMergeRowsV247(...groups){
+  const merged=[];
+  groups.flatMap(group=>Array.isArray(group)?group:[]).forEach(raw=>{
+    const row=erpOrderTombstoneNormalizeV247(raw);
+    if(!row)return;
+    const index=merged.findIndex(current=>
+      (row.legacyId&&current.legacyId&&String(row.legacyId)===String(current.legacyId))||
+      (row.v2Id&&current.v2Id&&String(row.v2Id)===String(current.v2Id))
+    );
+    if(index<0){merged.push(row);return;}
+    const current=merged[index];
+    const rowHasRealLegacy=row.legacyId&&row.legacyId!==row.v2Id;
+    const currentHasRealLegacy=current.legacyId&&current.legacyId!==current.v2Id;
+    merged[index]={
+      ...current,
+      ...row,
+      legacyId:String(rowHasRealLegacy?row.legacyId:(currentHasRealLegacy?current.legacyId:(row.legacyId||current.legacyId))),
+      v2Id:String(row.v2Id||current.v2Id||""),
+      deletedAt:String(current.deletedAt||row.deletedAt||new Date().toISOString()),
+      confirmedAt:String(row.confirmedAt||current.confirmedAt||""),
+      confirmedBuild:String(row.confirmedBuild||current.confirmedBuild||"")
+    };
+  });
+  return merged.slice(-1200);
+}
+
+function erpOrderTombstoneImportRowsV247(rows){
+  const current=erpOrderTombstonesReadV244();
+  const merged=erpOrderTombstoneMergeRowsV247(current,rows);
+  if(JSON.stringify(current)!==JSON.stringify(merged))erpOrderTombstonesWriteV244(merged);
+  return merged;
+}
+
+function erpRememberRemoteDeletedOrdersV247(rows){
+  const confirmed=(Array.isArray(rows)?rows:[])
+    .filter(row=>row&&row.deleted_at)
+    .map(row=>({
+      legacyId:String(row.legacy_id||row.id||""),
+      v2Id:String(row.id||""),
+      number:String(row.number||""),
+      deletedAt:String(row.deleted_at),
+      deletedBy:String(row.updated_by||"Supabase"),
+      build:APP_BUILD_VERSION,
+      confirmedAt:String(row.deleted_at),
+      confirmedBuild:APP_BUILD_VERSION,
+      source:"supabase_v2"
+    }));
+  return confirmed.length?erpOrderTombstoneImportRowsV247(confirmed):erpOrderTombstonesReadV244();
+}
+
 function erpOrderTombstoneAddV244(order){
   if(!order?.id)return null;
   const rows=erpOrderTombstonesReadV244();
@@ -32690,8 +32766,14 @@ function erpOrderTombstoneConfirmV244(legacyId,v2Id=""){
 
 function erpApplyOrderTombstonesV244(data){
   if(!data||typeof data!=="object")return data;
-  const rows=erpOrderTombstonesReadV244();
+  const portable=Array.isArray(data[ERP_ORDER_TOMBSTONE_LEDGER_FIELD_V247])
+    ?data[ERP_ORDER_TOMBSTONE_LEDGER_FIELD_V247]
+    :[];
+  const rows=portable.length
+    ?erpOrderTombstoneImportRowsV247(portable)
+    :erpOrderTombstonesReadV244();
   if(!rows.length)return data;
+  data[ERP_ORDER_TOMBSTONE_LEDGER_FIELD_V247]=erpOrderTombstoneMergeRowsV247(rows);
   const legacyIds=new Set(rows.map(row=>String(row.legacyId||"")).filter(Boolean));
   const v2Ids=new Set(rows.map(row=>String(row.v2Id||"")).filter(Boolean));
   data.orders=(Array.isArray(data.orders)?data.orders:[]).filter(order=>{
@@ -32714,9 +32796,18 @@ async function erpEnsureOrderDeletionV244(order){
   try{
     /* Aguarda a diff criada pelo writeErpTestData antes de verificar o remoto. */
     try{await erpV2DiffChain;}catch(error){}
+    const v2Id=String(order._v2Id||await erpV2Uuid("order",legacyId));
+    /* V247: uma exclusão explícita é a intenção mais recente. Inserts/updates
+       ainda pendentes deste mesmo pedido não podem ser enviados depois dela. */
+    let outbox=await erpV2OutboxList();
+    const superseded=outbox.filter(row=>
+      row?.entityType==="wisent_erp_v2_orders"&&
+      String(row?.entityId||"")===v2Id&&
+      row?.action!=="soft_delete"
+    );
+    for(const row of superseded)await erpV2OutboxRemove(row.operationId);
     await flushErpV2Outbox();
 
-    const v2Id=String(order._v2Id||await erpV2Uuid("order",legacyId));
     let remote=await erpV2FetchRecord("wisent_erp_v2_orders",v2Id);
     if(!remote||remote.deleted_at){
       erpOrderTombstoneConfirmV244(legacyId,v2Id);
@@ -32725,7 +32816,7 @@ async function erpEnsureOrderDeletionV244(order){
 
     /* Se a operação antiga conflitou por versão, reaponta somente o soft-delete
        deste pedido para a versão remota atual, sem alterar qualquer outro registro. */
-    const outbox=await erpV2OutboxList();
+    outbox=await erpV2OutboxList();
     const related=outbox.filter(row=>
       row?.entityType==="wisent_erp_v2_orders"&&
       String(row?.entityId||"")===v2Id&&
@@ -32764,6 +32855,54 @@ async function erpEnsureOrderDeletionV244(order){
     setErpSyncStatus("Pedido excluído neste aparelho • exclusão aguardando confirmação da nuvem",true);
     return false;
   }
+}
+
+let erpOrderTombstoneReconcilePromiseV247=null;
+async function erpReconcileOrderTombstonesV247(options={}){
+  if(erpOrderTombstoneReconcilePromiseV247)return erpOrderTombstoneReconcilePromiseV247;
+  if(!erpV2Phase2Enabled()||navigator.onLine===false)return false;
+  erpOrderTombstoneReconcilePromiseV247=(async()=>{
+    const rows=erpOrderTombstonesReadV244();
+    if(!rows.length)return true;
+    const targets=[];
+    for(const row of rows){
+      const legacyId=String(row.legacyId||"");
+      if(!legacyId)continue;
+      const v2Id=String(row.v2Id||await erpV2Uuid("order",legacyId));
+      targets.push({...row,legacyId,v2Id});
+    }
+    const remoteById=new Map();
+    for(let offset=0;offset<targets.length;offset+=80){
+      const ids=targets.slice(offset,offset+80).map(row=>row.v2Id).filter(Boolean);
+      if(!ids.length)continue;
+      const remoteRows=await erpV2FetchRowsWhere(
+        "wisent_erp_v2_orders",
+        `id=in.(${ids.map(encodeURIComponent).join(",")})`
+      );
+      remoteRows.forEach(row=>{if(row?.id)remoteById.set(String(row.id),row);});
+      erpRememberRemoteDeletedOrdersV247(remoteRows.filter(row=>row?.deleted_at));
+    }
+    let repaired=0;
+    let pending=0;
+    for(const row of targets){
+      const remote=remoteById.get(String(row.v2Id));
+      if(!remote||remote.deleted_at){
+        erpOrderTombstoneConfirmV244(row.legacyId,row.v2Id);
+        continue;
+      }
+      const ok=await erpEnsureOrderDeletionV244({id:row.legacyId,_v2Id:row.v2Id,number:row.number||remote.number||""});
+      if(ok)repaired+=1;else pending+=1;
+    }
+    erpLocalWriteOnly(readErpTestData());
+    if(repaired)setErpSyncStatus(`${repaired} exclusão(ões) antiga(s) do Private Label reconfirmada(s) no Supabase`);
+    else if(pending)setErpSyncStatus(`${pending} exclusão(ões) do Private Label permanecem protegidas e pendentes`,true);
+    else if(options.showStatus)setErpSyncStatus("Exclusões do Private Label confirmadas no Supabase");
+    return pending===0;
+  })().catch(error=>{
+    console.warn("V247: reconciliação de exclusões do Private Label adiada:",error);
+    return false;
+  }).finally(()=>{erpOrderTombstoneReconcilePromiseV247=null;});
+  return erpOrderTombstoneReconcilePromiseV247;
 }
 
 function erpLocalWriteOnly(data){
@@ -32947,6 +33086,11 @@ function mergeErpTestData(localData,remoteData){
     finance:erpMergeEntityCollections(local.finance,remote.finance,localTime,remoteTime),
     stock:erpMergeEntityCollections(local.stock,remote.stock,localTime,remoteTime),
     employees:erpMergeEntityCollections(local.employees,remote.employees,localTime,remoteTime),
+    [ERP_ORDER_TOMBSTONE_LEDGER_FIELD_V247]:erpOrderTombstoneMergeRowsV247(
+      erpOrderTombstonesReadV244(),
+      local[ERP_ORDER_TOMBSTONE_LEDGER_FIELD_V247],
+      remote[ERP_ORDER_TOMBSTONE_LEDGER_FIELD_V247]
+    ),
     restorePoint:base.restorePoint||local.restorePoint||remote.restorePoint
   };
 
@@ -34304,6 +34448,7 @@ async function syncErpV2FromCloud(options={}){
       erpV2FetchRowsWhere("wisent_erp_v2_orders","deleted_at=not.is.null")
     ]);
     const rowsByType={orders,products,clients,inventory,finance,employees,settings,stageEvents,standbyEvents,sewingEvents,deletedOrders};
+    erpRememberRemoteDeletedOrdersV247(deletedOrders);
     erpV2CacheRemoteVersions(rowsByType);
     const official=erpV2OfficialDataFromRows(rowsByType,localBefore);
 
@@ -35209,6 +35354,16 @@ function erpRealtimeReconcileOrderCard(orderId,previousStage=""){
 function erpRealtimeRemoveOrder(orderUuid,eventData={}){
   const data=readErpTestData();
   const index=(data.orders||[]).findIndex(order=>String(order._v2Id||"")===String(orderUuid)||String(order.id||"")===String(orderUuid));
+  const source=eventData.record?.id?eventData.record:(eventData.oldRecord||{});
+  const knownOrder=index>=0?data.orders[index]:null;
+  erpRememberRemoteDeletedOrdersV247([{
+    ...source,
+    id:source.id||orderUuid,
+    legacy_id:source.legacy_id||knownOrder?.id||source.id||orderUuid,
+    number:source.number||knownOrder?.number||"",
+    deleted_at:source.deleted_at||eventData.commitTimestamp||new Date().toISOString(),
+    updated_by:source.updated_by||"Supabase Realtime"
+  }]);
   if(index<0)return true;
   const [removed]=data.orders.splice(index,1);
   erpLocalWriteOnly(data);
@@ -35566,7 +35721,7 @@ function installErpTestSyncWatchers(){
   erpTestSyncWatchersInstalled=true;
 
   window.addEventListener("online",()=>{
-    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>erpRealtimeSyncDelta());
+    if(erpV2Phase2Enabled())erpReconcileOrderTombstonesV247({showStatus:true}).then(()=>erpRealtimeSyncDelta());
     else flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:true}));
   });
 
