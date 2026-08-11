@@ -15900,7 +15900,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V245</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V246</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -18319,7 +18319,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V245";
+const APP_BUILD_VERSION="V246";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18352,9 +18352,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=245",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=246",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=245");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=246");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -19105,8 +19105,9 @@ startApp=async function(){
 };
 
 
-/* ===== V245 — RESTAURAÇÃO SEGURA DA ÚLTIMA TELA =====
-   Persistência exclusivamente de navegação. Nenhum dado operacional é gravado aqui. */
+/* ===== V246 — RESTAURAÇÃO SEGURA DA ÚLTIMA TELA APÓS F5 =====
+   Persistência exclusivamente de navegação. Nenhum dado operacional é gravado aqui.
+   V246 impede que renders do boot sobrescrevam a última tela salva antes da restauração. */
 const NAVIGATION_STATE_KEY_V245=KEY+"_navigation_state";
 
 function readNavigationStateV245(){
@@ -19127,6 +19128,9 @@ function navigationPageExistsV245(page){
 }
 
 function rememberNavigationV245(page=currentPage,erpModule=null){
+  /* V246: durante o boot, renderizações internas não podem substituir a navegação
+     que foi salva no carregamento anterior. A escrita só é liberada após restoreNavigationV245(). */
+  if(typeof navigationBootingV246!=="undefined"&&navigationBootingV246)return false;
   try{
     let safePage=String(page||"dashboard");
     if(!navigationPageExistsV245(safePage))safePage="dashboard";
@@ -19138,7 +19142,8 @@ function rememberNavigationV245(page=currentPage,erpModule=null){
       wholesaleOrderId:safePage==="wholesaleOrder"?String(currentWholesaleOrderId||previous.wholesaleOrderId||""):"",
       savedAt:new Date().toISOString()
     }));
-  }catch(error){}
+    return true;
+  }catch(error){return false;}
 }
 
 function restoreNavigationV245(){
@@ -19170,13 +19175,28 @@ function restoreNavigationV245(){
     if(isErpSectorRestrictedUser())module=erpSectorCanAccessSupplies()&&saved.erpModule==="insumos"?"insumos":"pedidos";
     showErpModule(module);
   }
+
+  /* Somente agora a navegação pode voltar a ser gravada. */
+  navigationBootingV246=false;
+  rememberNavigationV245(currentPage,page==="erpTest"?document.querySelector("[data-erp-module].active")?.dataset?.erpModule:null);
   return page;
+}
+
+/* V246: captura a última tela ANTES de qualquer renderização do startApp. */
+const navigationBootStateV246=readNavigationStateV245();
+let navigationBootingV246=true;
+function navigationInitialPageV246(){
+  const savedPage=String(navigationBootStateV246.page||"dashboard");
+  return navigationPageExistsV245(savedPage)?savedPage:"dashboard";
 }
 
 window.addEventListener("pagehide",()=>rememberNavigationV245(currentPage));
 window.addEventListener("beforeunload",()=>rememberNavigationV245(currentPage));
+document.addEventListener("visibilitychange",()=>{
+  if(document.visibilityState==="hidden")rememberNavigationV245(currentPage);
+});
 
-window.currentPage=window.currentPage||"dashboard";
+window.currentPage=navigationInitialPageV246();
 var currentPage=window.currentPage;
 var currentWholesaleOrderId=null;
 var lastSavedWholesaleId=null;
@@ -42921,6 +42941,16 @@ window.currentPage=window.currentPage||"dashboard";
 currentPage=window.currentPage;
 setPageClass(currentPage);
 startApp().then(()=>{
+  /* V246: alguns wrappers de inicialização renderizam novamente depois do login.
+     Esta restauração final garante que o F5 termine exatamente na última tela válida. */
+  try{
+    const session=getSessionUser();
+    if(session){
+      restoreNavigationV245();
+    }
+  }catch(error){
+    console.warn("V246: restauração final de navegação adiada:",error);
+  }
   if(typeof window.__wisentMarkBootOk==="function")window.__wisentMarkBootOk(APP_BUILD_VERSION);
 }).catch(e=>{
   console.error("Erro no startApp recuperado:",e);
