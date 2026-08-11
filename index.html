@@ -7244,6 +7244,138 @@ body:not(.authLocked) .loginScreen{
 }
 
 
+
+/* ===== V240 DUAS FORMAS DE PAGAMENTO — ATACADO E VAREJO =====
+   Progressive disclosure: só aparece quando a opção é selecionada.
+*/
+.mixedPaymentBoxV240{
+  grid-column:1/-1!important;
+  border:1px solid #cbd5e1!important;
+  background:linear-gradient(145deg,#f8fafc 0%,#ffffff 62%,#f1f5f9 100%)!important;
+  border-radius:18px!important;
+  padding:14px!important;
+  box-shadow:0 8px 24px rgba(15,23,42,.06)!important;
+}
+.mixedPaymentBoxV240.isHidden{
+  display:none!important;
+}
+.mixedPaymentHeadV240{
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:12px!important;
+  margin-bottom:12px!important;
+}
+.mixedPaymentHeadV240 > div{
+  min-width:0!important;
+}
+.mixedPaymentHeadV240 strong{
+  display:block!important;
+  color:#0f172a!important;
+  font-size:14px!important;
+  font-weight:950!important;
+  margin-bottom:3px!important;
+}
+.mixedPaymentHeadV240 small{
+  display:block!important;
+  color:#64748b!important;
+  font-size:11px!important;
+  line-height:1.4!important;
+}
+.mixedPaymentHeadV240 > span{
+  flex:0 0 auto!important;
+  border:1px solid #c7d2fe!important;
+  background:#eef2ff!important;
+  color:#4338ca!important;
+  border-radius:999px!important;
+  padding:6px 9px!important;
+  font-size:10px!important;
+  font-weight:950!important;
+  white-space:nowrap!important;
+}
+.mixedPaymentGridV240{
+  display:grid!important;
+  grid-template-columns:minmax(150px,.95fr) 110px minmax(170px,1fr) minmax(135px,.8fr)!important;
+  gap:10px!important;
+  align-items:end!important;
+}
+.mixedPaymentGridV240 label{
+  min-width:0!important;
+}
+.mixedPaymentGridV240 input,
+.mixedPaymentGridV240 select{
+  min-height:44px!important;
+}
+.mixedPaymentAutoV240{
+  grid-column:1/3!important;
+  min-height:70px!important;
+  border:1px solid #bae6fd!important;
+  background:#f0f9ff!important;
+  border-radius:14px!important;
+  padding:11px 13px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+}
+.mixedPaymentAutoV240 small{
+  color:#0369a1!important;
+  font-weight:800!important;
+  font-size:10px!important;
+}
+.mixedPaymentAutoV240 strong{
+  color:#0c4a6e!important;
+  font-size:20px!important;
+  font-weight:1000!important;
+  margin-top:2px!important;
+}
+.mixedPaymentSummaryV240{
+  grid-column:3/-1!important;
+  min-height:70px!important;
+  border:1px solid #e2e8f0!important;
+  background:#ffffff!important;
+  border-radius:14px!important;
+  padding:11px 13px!important;
+  color:#475569!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+  display:flex!important;
+  align-items:center!important;
+}
+.paymentMethodPill.mixed{
+  background:#f5f3ff!important;
+  border-color:#ddd6fe!important;
+  color:#6d28d9!important;
+}
+@media(max-width:1180px){
+  .mixedPaymentGridV240{
+    grid-template-columns:1fr 1fr!important;
+  }
+  .mixedPaymentAutoV240,
+  .mixedPaymentSummaryV240{
+    grid-column:auto!important;
+  }
+}
+@media(max-width:820px){
+  .mixedPaymentBoxV240{
+    padding:12px!important;
+    border-radius:16px!important;
+  }
+  .mixedPaymentHeadV240{
+    flex-direction:column!important;
+  }
+  .mixedPaymentGridV240{
+    grid-template-columns:1fr!important;
+  }
+  .mixedPaymentAutoV240,
+  .mixedPaymentSummaryV240{
+    grid-column:auto!important;
+    min-height:64px!important;
+  }
+  .mixedPaymentHeadV240 > span{
+    align-self:flex-start!important;
+  }
+}
+
 /* ===== V100 SALVAR LANÇAMENTO + FILTROS ORGANIZADOS ===== */
 .wholesaleLaunchListPanel{
   overflow:hidden!important;
@@ -15483,7 +15615,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V239</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V240</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -15772,6 +15904,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
                     <option value="PIX">PIX</option>
                     <option value="Débito">Débito</option>
                     <option value="Cartão de Crédito">Cartão de Crédito</option>
+                    <option value="Duas formas de pagamento">Duas formas de pagamento</option>
                     <option value="Boleto">Boleto</option>
                   </select>
                 </label>
@@ -15807,6 +15940,70 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
                     <option value="cliente">Cliente paga os juros</option>
                   </select>
                 </label>
+              </div>
+
+              <div id="wholesaleMixedPaymentBoxV240" class="mixedPaymentBoxV240 isHidden" aria-live="polite">
+                <div class="mixedPaymentHeadV240">
+                  <div>
+                    <strong>Duas formas de pagamento</strong>
+                    <small>Informe quanto do pedido foi destinado ao cartão. O restante é calculado automaticamente.</small>
+                  </div>
+                  <span>Pagamento dividido</span>
+                </div>
+
+                <div class="mixedPaymentGridV240">
+                  <label>Valor destinado ao cartão
+                    <input type="number" id="wholesaleMixedCardAmount" step="0.01" min="0" placeholder="0,00">
+                  </label>
+
+                  <label>Parcelas do cartão
+                    <select id="wholesaleMixedCardInstallments">
+                      <option value="1">1x</option>
+                      <option value="2">2x</option>
+                      <option value="3">3x</option>
+                      <option value="4">4x</option>
+                      <option value="5">5x</option>
+                      <option value="6">6x</option>
+                      <option value="7">7x</option>
+                      <option value="8">8x</option>
+                      <option value="9">9x</option>
+                      <option value="10">10x</option>
+                      <option value="11">11x</option>
+                      <option value="12">12x</option>
+                      <option value="13">13x</option>
+                      <option value="14">14x</option>
+                      <option value="15">15x</option>
+                      <option value="16">16x</option>
+                      <option value="17">17x</option>
+                      <option value="18">18x</option>
+                      <option value="19">19x</option>
+                      <option value="20">20x</option>
+                    </select>
+                  </label>
+
+                  <label>Juros do cartão
+                    <select id="wholesaleMixedCardInterestPayer">
+                      <option value="loja">Nós pagamos os juros</option>
+                      <option value="cliente">Cliente paga os juros</option>
+                    </select>
+                  </label>
+
+                  <label>Restante pago em
+                    <select id="wholesaleMixedRemainderMethod">
+                      <option value="PIX">PIX</option>
+                      <option value="Débito">Débito</option>
+                    </select>
+                  </label>
+
+                  <div class="mixedPaymentAutoV240">
+                    <small>Restante calculado automaticamente</small>
+                    <strong id="wholesaleMixedRemainderPreview">R$ 0,00</strong>
+                  </div>
+
+                  <div class="mixedPaymentSummaryV240" id="wholesaleMixedPaymentSummaryV240">
+                    Informe o valor destinado ao cartão para calcular a divisão.
+                  </div>
+                </div>
               </div>
 
               <div class="resultCards">
@@ -17798,7 +17995,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V239";
+const APP_BUILD_VERSION="V240";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17831,9 +18028,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=239",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=240",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=239");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=240");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -21546,21 +21743,40 @@ function wholesaleApplyFinancialSnapshotV232(target,calc,sourceRecord=target){
     target.origin,target.paymentMethod,target.installments,target.interestPayer
   ));
   target.feeScheduleVersion=String(sourceRecord?.feeScheduleVersion||"");
+  if(isWholesaleMixedPaymentV240(target.paymentMethod)||sourceRecord?.mixedPayment===true||calc?.mixedPayment===true){
+    wholesaleApplyMixedFinancialSnapshotV240(target,
+      (isWholesaleMixedPaymentV240(sourceRecord?.paymentMethod)||sourceRecord?.mixedPayment===true||sourceRecord?.mixedPaymentVersion)?sourceRecord:calc
+    );
+  }
   return target;
 }
 
 function wholesalePricingSignatureV232(record){
   if(!record)return "";
-  return JSON.stringify([
+  const method=String(record.paymentMethod||"PIX");
+  const base=[
     Number(record.productPrice||0),
     Number(record.freightCost||0),
     String(record.freightPayer||"cliente"),
     Number(record.discountPercent||0),
     Number(record.cascadeDiscountPercent||0),
     String(record.origin||"Site"),
-    String(record.paymentMethod||"PIX"),
-    Number(record.paymentMethod==="Cartão de Crédito"?(record.installments||1):1),
-    String(record.paymentMethod==="Cartão de Crédito"?(record.interestPayer||"loja"):"loja")
+    method
+  ];
+  if(isWholesaleMixedPaymentV240(method)){
+    const mixed=wholesaleMixedConfigFromRecordV240(record);
+    return JSON.stringify([
+      ...base,
+      Number(mixed.cardAmount||0),
+      Number(mixed.cardInstallments||1),
+      String(mixed.cardInterestPayer||"loja"),
+      String(mixed.remainderMethod||"PIX")
+    ]);
+  }
+  return JSON.stringify([
+    ...base,
+    Number(method==="Cartão de Crédito"?(record.installments||1):1),
+    String(method==="Cartão de Crédito"?(record.interestPayer||"loja"):"loja")
   ]);
 }
 
@@ -21689,6 +21905,17 @@ function normalizeRecoveredWholesaleLaunch(obj,source="armazenamento desconhecid
   item.paymentMethod=item.paymentMethod||"PIX";
   item.installments=Number(item.installments||1);
   item.interestPayer=item.interestPayer==="cliente"?"cliente":"loja";
+  if(isWholesaleMixedPaymentV240(item.paymentMethod)){
+    const mixed=wholesaleMixedConfigFromRecordV240(item);
+    item.mixedPayment=true;
+    item.mixedPaymentVersion=String(item.mixedPaymentVersion||"V240");
+    item.mixedCardAmount=mixed.cardAmount;
+    item.mixedCardInstallments=mixed.cardInstallments;
+    item.mixedCardInterestPayer=mixed.cardInterestPayer;
+    item.mixedRemainderMethod=mixed.remainderMethod;
+    item.installments=mixed.cardInstallments;
+    item.interestPayer=mixed.cardInterestPayer;
+  }
   item.createdByName=item.createdByName||item.createdByUsername||"Recuperado do aparelho";
   item.createdAt=item.createdAt||item.updatedAt||new Date().toISOString();
   item.updatedAt=item.updatedAt||item.createdAt;
@@ -21704,7 +21931,8 @@ function normalizeRecoveredWholesaleLaunch(obj,source="armazenamento desconhecid
     item.origin,
     item.paymentMethod,
     item.installments,
-    item.interestPayer
+    item.interestPayer,
+    isWholesaleMixedPaymentV240(item.paymentMethod)?wholesaleMixedConfigFromRecordV240(item):{}
   );
 
   wholesaleApplyFinancialSnapshotV232(item,calc,obj);
@@ -24467,11 +24695,25 @@ function normalize(){
     w.installments=Math.min(20,Math.max(1,Math.round(finiteNumber(w.installments,1))));
     w.interestPayer=w.interestPayer||"loja";
     if(!["loja","cliente"].includes(w.interestPayer))w.interestPayer="loja";
-    if(w.paymentMethod!=="Cartão de Crédito"){
+    if(isWholesaleMixedPaymentV240(w.paymentMethod)){
+      const mixed=wholesaleMixedConfigFromRecordV240(w);
+      w.mixedPayment=true;
+      w.mixedPaymentVersion=String(w.mixedPaymentVersion||"V240");
+      w.mixedCardAmount=mixed.cardAmount;
+      w.mixedCardInstallments=mixed.cardInstallments;
+      w.mixedCardInterestPayer=mixed.cardInterestPayer;
+      w.mixedRemainderMethod=mixed.remainderMethod;
+      w.installments=mixed.cardInstallments;
+      w.interestPayer=mixed.cardInterestPayer;
+    }else if(w.paymentMethod!=="Cartão de Crédito"){
       w.installments=1;
       w.interestPayer="loja";
     }
-    const calc=calcWholesaleRetailValues(w.productPrice,w.freightCost,w.freightPayer,w.discountPercent,w.cascadeDiscountPercent,w.origin,w.paymentMethod,w.installments,w.interestPayer);
+    const calc=calcWholesaleRetailValues(
+      w.productPrice,w.freightCost,w.freightPayer,w.discountPercent,w.cascadeDiscountPercent,
+      w.origin,w.paymentMethod,w.installments,w.interestPayer,
+      isWholesaleMixedPaymentV240(w.paymentMethod)?wholesaleMixedConfigFromRecordV240(w):{}
+    );
     wholesaleApplyFinancialSnapshotV232(w,calc,w);
     w.createdByName=w.createdByName||"Não registrado";
     w.createdByUsername=w.createdByUsername||"";
@@ -27708,6 +27950,7 @@ function feeRuleLabel(origin,paymentMethod,installments,interestPayer="loja"){
   if(paymentMethod==="Boleto")return "Boleto sem taxa cadastrada";
   if(paymentMethod==="Débito")return "DÉBITO • TABELA PAGAR";
   if(paymentMethod==="PIX")return "PIX sem taxa";
+  if(isWholesaleMixedPaymentV240(paymentMethod))return "DUAS FORMAS • CRÉDITO + PIX/DÉBITO";
   if(paymentMethod==="Cartão de Crédito"){
     return `CARTÃO CRÉDITO X${installments} • TABELA PAGAR • ${interestPayerLabel(interestPayer)}`;
   }
@@ -27733,7 +27976,134 @@ function calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestP
 }
 
 
-function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="cliente",discountPercent,cascadeDiscountPercent=0,origin,paymentMethod,installments,interestPayer="loja"){
+
+/* ===== V240 — DUAS FORMAS DE PAGAMENTO / ATACADO E VAREJO =====
+   Escopo isolado: o cálculo misto só é ativado quando paymentMethod ===
+   "Duas formas de pagamento". Registros históricos de outras formas continuam
+   usando os snapshots financeiros já existentes.
+*/
+const WHOLESALE_MIXED_PAYMENT_METHOD_V240="Duas formas de pagamento";
+
+function isWholesaleMixedPaymentV240(method){
+  return String(method||"")===WHOLESALE_MIXED_PAYMENT_METHOD_V240;
+}
+
+function wholesaleMixedConfigFromRecordV240(record={}){
+  return {
+    cardAmount:Math.max(0,Number(record.mixedCardAmount||0)),
+    cardInstallments:Math.min(20,Math.max(1,Math.round(Number(record.mixedCardInstallments||record.installments||1)))),
+    cardInterestPayer:String(record.mixedCardInterestPayer||record.interestPayer||"loja")==="cliente"?"cliente":"loja",
+    remainderMethod:String(record.mixedRemainderMethod||"PIX")==="Débito"?"Débito":"PIX"
+  };
+}
+
+function wholesaleMixedConfigFromFormV240(){
+  return {
+    cardAmount:Math.max(0,Number($("wholesaleMixedCardAmount")?.value||0)),
+    cardInstallments:Math.min(20,Math.max(1,Math.round(Number($("wholesaleMixedCardInstallments")?.value||1)))),
+    cardInterestPayer:$("wholesaleMixedCardInterestPayer")?.value==="cliente"?"cliente":"loja",
+    remainderMethod:$("wholesaleMixedRemainderMethod")?.value==="Débito"?"Débito":"PIX"
+  };
+}
+
+function calcWholesaleMixedPaymentV240(baseTotal,origin,config={}){
+  const base=Math.max(0,Number(baseTotal||0));
+  const normalized=wholesaleMixedConfigFromRecordV240({
+    mixedCardAmount:config.cardAmount,
+    mixedCardInstallments:config.cardInstallments,
+    mixedCardInterestPayer:config.cardInterestPayer,
+    mixedRemainderMethod:config.remainderMethod
+  });
+
+  const cardAmount=Math.min(base,Math.max(0,Number(normalized.cardAmount||0)));
+  const cardInstallments=normalized.cardInstallments;
+  const cardInterestPayer=normalized.cardInterestPayer;
+  const remainderMethod=normalized.remainderMethod;
+  const remainderAmount=Math.max(0,base-cardAmount);
+
+  const cardFeePercent=feePercentForWholesale(origin,"Cartão de Crédito",cardInstallments);
+  const cardFeeValue=cardAmount*(cardFeePercent/100);
+  const cardCustomerAmount=cardInterestPayer==="cliente"
+    ?cardAmount+cardFeeValue
+    :cardAmount;
+  const cardNetReceived=cardInterestPayer==="cliente"
+    ?cardAmount
+    :Math.max(0,cardAmount-cardFeeValue);
+
+  const remainderFeePercent=feePercentForWholesale(origin,remainderMethod,1);
+  const remainderFeeValue=remainderAmount*(remainderFeePercent/100);
+  const remainderNetReceived=Math.max(0,remainderAmount-remainderFeeValue);
+
+  const total=cardCustomerAmount+remainderAmount;
+  const realReceived=cardNetReceived+remainderNetReceived;
+  const feeValue=cardFeeValue+remainderFeeValue;
+  const feePercent=base>0?(feeValue/base)*100:0;
+  const feeRule=[
+    `DUAS FORMAS`,
+    `CRÉDITO X${cardInstallments} ${Number(cardFeePercent||0).toFixed(2).replace(".",",")}%`,
+    interestPayerLabel(cardInterestPayer),
+    `${remainderMethod} ${Number(remainderFeePercent||0).toFixed(2).replace(".",",")}%`
+  ].join(" • ");
+
+  return {
+    mixedPayment:true,
+    mixedPaymentVersion:"V240",
+    mixedCardAmount:cardAmount,
+    mixedCardCustomerAmount:cardCustomerAmount,
+    mixedCardInstallments:cardInstallments,
+    mixedCardInterestPayer:cardInterestPayer,
+    mixedCardFeePercent:cardFeePercent,
+    mixedCardFeeValue:cardFeeValue,
+    mixedCardNetReceived:cardNetReceived,
+    mixedRemainderMethod:remainderMethod,
+    mixedRemainderAmount:remainderAmount,
+    mixedRemainderFeePercent:remainderFeePercent,
+    mixedRemainderFeeValue:remainderFeeValue,
+    mixedRemainderNetReceived:remainderNetReceived,
+    feePercent,
+    feeValue,
+    total,
+    realReceived,
+    feeRule,
+    interestPayer:cardInterestPayer,
+    installments:cardInstallments
+  };
+}
+
+function wholesaleApplyMixedFinancialSnapshotV240(target,source){
+  if(!target||!source)return target;
+  if(!(isWholesaleMixedPaymentV240(target.paymentMethod)||source.mixedPayment===true||source.mixedPaymentVersion))return target;
+
+  [
+    "mixedCardAmount","mixedCardCustomerAmount","mixedCardInstallments",
+    "mixedCardFeePercent","mixedCardFeeValue","mixedCardNetReceived",
+    "mixedRemainderAmount","mixedRemainderFeePercent","mixedRemainderFeeValue",
+    "mixedRemainderNetReceived"
+  ].forEach(field=>{
+    if(source[field]!==undefined&&source[field]!==null&&source[field]!==""&&Number.isFinite(Number(source[field]))){
+      target[field]=Number(source[field]);
+    }
+  });
+
+  target.mixedPayment=true;
+  target.mixedPaymentVersion=String(source.mixedPaymentVersion||"V240");
+  target.mixedCardInterestPayer=String(source.mixedCardInterestPayer||source.interestPayer||"loja")==="cliente"?"cliente":"loja";
+  target.mixedRemainderMethod=String(source.mixedRemainderMethod||"PIX")==="Débito"?"Débito":"PIX";
+  target.installments=Math.min(20,Math.max(1,Math.round(Number(target.mixedCardInstallments||target.installments||1))));
+  target.interestPayer=target.mixedCardInterestPayer;
+  return target;
+}
+
+function paymentLabelForWholesaleV240(record){
+  if(!record)return "PIX";
+  if(isWholesaleMixedPaymentV240(record.paymentMethod)){
+    const cfg=wholesaleMixedConfigFromRecordV240(record);
+    return `Crédito ${cfg.cardInstallments}x + ${cfg.remainderMethod}`;
+  }
+  return paymentLabel(record.paymentMethod,record.installments,record.interestPayer);
+}
+
+function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="cliente",discountPercent,cascadeDiscountPercent=0,origin,paymentMethod,installments,interestPayer="loja",mixedConfig={}){
   const price=Number(productPrice||0);
   const freight=Number(freightCost||0);
   freightPayer=freightPayer==="loja" ? "loja" : "cliente";
@@ -27783,7 +28153,9 @@ function calcWholesaleRetailValues(productPrice,freightCost,freightPayer="client
   const baseBeforeFreightCost=Math.max(0,subtotal-discountValue);
   const baseTotal=Math.max(0,baseBeforeFreightCost-freightSubtracted);
 
-  const fee=calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestPayer);
+  const fee=isWholesaleMixedPaymentV240(paymentMethod)
+    ?calcWholesaleMixedPaymentV240(baseTotal,origin,mixedConfig)
+    :calcWholesaleFees(baseTotal,origin,paymentMethod,installments,interestPayer);
   return {
     price,
     freight,
@@ -27824,11 +28196,28 @@ function calcWholesaleRetail(){
   const paymentMethod=$("wholesalePaymentMethod")?.value||"PIX";
   const installments=Number($("wholesaleInstallments")?.value||1);
   const interestPayer=$("wholesaleInterestPayer")?.value||"loja";
-  const c=calcWholesaleRetailValues(price,freight,freightPayer,pct,cascadePct,origin,paymentMethod,installments,interestPayer);
+  const mixedConfig=wholesaleMixedConfigFromFormV240();
+  const c=calcWholesaleRetailValues(price,freight,freightPayer,pct,cascadePct,origin,paymentMethod,installments,interestPayer,mixedConfig);
 
   if($("wholesaleTotal"))$("wholesaleTotal").value=money(c.total);
   if($("wholesaleTotalPreview"))$("wholesaleTotalPreview").textContent=money(c.total);
   if($("wholesaleRealReceivedPreview"))$("wholesaleRealReceivedPreview").textContent=money(c.realReceived);
+
+  if($("wholesaleMixedRemainderPreview")){
+    $("wholesaleMixedRemainderPreview").textContent=money(isWholesaleMixedPaymentV240(paymentMethod)?c.mixedRemainderAmount||0:0);
+  }
+  if($("wholesaleMixedPaymentSummaryV240")){
+    if(isWholesaleMixedPaymentV240(paymentMethod)){
+      const cardCharged=Number(c.mixedCardCustomerAmount||0);
+      const remainder=Number(c.mixedRemainderAmount||0);
+      const remainderMethod=c.mixedRemainderMethod||"PIX";
+      $("wholesaleMixedPaymentSummaryV240").innerHTML=
+        `<span><b>Cartão:</b> ${money(cardCharged)} em ${Number(c.mixedCardInstallments||1)}x • ${esc(interestPayerLabel(c.mixedCardInterestPayer||"loja"))}<br>`+
+        `<b>${esc(remainderMethod)}:</b> ${money(remainder)} • <b>Valor real recebido:</b> ${money(c.realReceived)}</span>`;
+    }else{
+      $("wholesaleMixedPaymentSummaryV240").textContent="Informe o valor destinado ao cartão para calcular a divisão.";
+    }
+  }
 
   const freightInfo=c.freight>0
     ? ` • Frete: ${c.freightPayer==="loja"?"-"+money(c.freightSubtracted)+" pago por nós":money(c.freight)+" pago pelo cliente, fora do total"}`
@@ -27839,7 +28228,9 @@ function calcWholesaleRetail(){
     : "";
 
   let feeText="";
-  if(paymentMethod==="PIX"){
+  if(isWholesaleMixedPaymentV240(paymentMethod)){
+    feeText=`<b>Duas formas:</b> cartão ${Number(c.mixedCardInstallments||1)}x • ${Number(c.mixedCardFeePercent||0).toFixed(2).replace(".",",")}% • ${money(c.mixedCardFeeValue||0)}${c.mixedCardInterestPayer==="cliente"?" cobrado do cliente":" descontado da nossa parte"} • ${esc(c.mixedRemainderMethod||"PIX")} ${Number(c.mixedRemainderFeePercent||0).toFixed(2).replace(".",",")}% • ${money(c.mixedRemainderFeeValue||0)} de taxa${freightInfo}${discountInfo}`;
+  }else if(paymentMethod==="PIX"){
     feeText=`<b>PIX:</b> sem taxa operacional e sem desconto automático${freightInfo}${discountInfo}`;
   }else if(paymentMethod==="Cartão de Crédito"&&interestPayer==="cliente"){
     feeText=`<b>Taxa aplicada:</b> ${esc(c.feeRule||"")} • ${Number(c.feePercent||0).toFixed(2).replace(".",",")}% • ${money(c.feeValue)} cobrado do cliente${freightInfo}${discountInfo}`;
@@ -27856,11 +28247,14 @@ function calcWholesaleRetail(){
 function toggleWholesaleInstallments(){
   const method=$("wholesalePaymentMethod")?.value||"PIX";
   const isCard=method==="Cartão de Crédito";
+  const isMixed=isWholesaleMixedPaymentV240(method);
   const wrap=$("wholesaleInstallmentsWrap");
   const payerWrap=$("wholesaleInterestPayerWrap");
+  const mixedBox=$("wholesaleMixedPaymentBoxV240");
 
   if(wrap)wrap.classList.toggle("isHidden",!isCard);
   if(payerWrap)payerWrap.classList.toggle("isHidden",!isCard);
+  if(mixedBox)mixedBox.classList.toggle("isHidden",!isMixed);
 
   if(!isCard&&$("wholesaleInstallments"))$("wholesaleInstallments").value="1";
   if(!isCard&&$("wholesaleInterestPayer"))$("wholesaleInterestPayer").value="loja";
@@ -27872,6 +28266,7 @@ function paymentLabel(method,installments,interestPayer="loja"){
   method=method||"PIX";
   installments=Number(installments||1);
   if(method==="Cartão de Crédito")return `Cartão de Crédito em ${installments}x • ${interestPayerLabel(interestPayer)}`;
+  if(isWholesaleMixedPaymentV240(method))return "Duas formas de pagamento";
   return method;
 }
 
@@ -27879,6 +28274,7 @@ function paymentPillClass(method){
   if(method==="PIX")return "pix";
   if(method==="Débito")return "pix";
   if(method==="Cartão de Crédito")return "card";
+  if(isWholesaleMixedPaymentV240(method))return "mixed";
   if(method==="Boleto")return "boleto";
   return "";
 }
@@ -27937,6 +28333,10 @@ function captureWholesaleFormDraft(){
     paymentMethod:$("wholesalePaymentMethod")?.value||"PIX",
     installments:finiteNumber($("wholesaleInstallments")?.value,1),
     interestPayer:$("wholesaleInterestPayer")?.value||"loja",
+    mixedCardAmount:finiteNumber($("wholesaleMixedCardAmount")?.value,0),
+    mixedCardInstallments:finiteNumber($("wholesaleMixedCardInstallments")?.value,1),
+    mixedCardInterestPayer:$("wholesaleMixedCardInterestPayer")?.value||"loja",
+    mixedRemainderMethod:$("wholesaleMixedRemainderMethod")?.value||"PIX",
     notes:$("wholesaleNotes")?.value||"",
     createdById:currentUser?.id||"",
     createdByName:currentUser?.name||"Rascunho local",
@@ -27957,6 +28357,7 @@ function wholesaleDraftHasContent(draft){
     String(draft.couponName||"").trim()||
     Number(draft.discountPercent||0)>0||
     Number(draft.cascadeDiscountPercent||0)>0||
+    Number(draft.mixedCardAmount||0)>0||
     String(draft.notes||"").trim()
   );
 }
@@ -28016,6 +28417,10 @@ function applyWholesaleDraftToForm(draft){
   if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value=draft.paymentMethod||"PIX";
   if($("wholesaleInstallments"))$("wholesaleInstallments").value=finiteNumber(draft.installments,1);
   if($("wholesaleInterestPayer"))$("wholesaleInterestPayer").value=draft.interestPayer||"loja";
+  if($("wholesaleMixedCardAmount"))$("wholesaleMixedCardAmount").value=finiteNumber(draft.mixedCardAmount,0)||"";
+  if($("wholesaleMixedCardInstallments"))$("wholesaleMixedCardInstallments").value=finiteNumber(draft.mixedCardInstallments,1);
+  if($("wholesaleMixedCardInterestPayer"))$("wholesaleMixedCardInterestPayer").value=draft.mixedCardInterestPayer||"loja";
+  if($("wholesaleMixedRemainderMethod"))$("wholesaleMixedRemainderMethod").value=draft.mixedRemainderMethod||"PIX";
   if($("wholesaleNotes"))$("wholesaleNotes").value=draft.notes||"";
 
   toggleWholesaleInstallments();
@@ -28107,6 +28512,10 @@ function resetWholesaleRetailForm(){
   if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value="PIX";
   if($("wholesaleInstallments"))$("wholesaleInstallments").value="1";
   if($("wholesaleInterestPayer"))$("wholesaleInterestPayer").value="loja";
+  if($("wholesaleMixedCardAmount"))$("wholesaleMixedCardAmount").value="";
+  if($("wholesaleMixedCardInstallments"))$("wholesaleMixedCardInstallments").value="1";
+  if($("wholesaleMixedCardInterestPayer"))$("wholesaleMixedCardInterestPayer").value="loja";
+  if($("wholesaleMixedRemainderMethod"))$("wholesaleMixedRemainderMethod").value="PIX";
   toggleWholesaleInstallments();
   calcWholesaleRetail();
 }
@@ -28587,7 +28996,7 @@ function renderWholesaleCollaboratorReceipt(){
       <td data-label="Produto"><span class="collabReceiptProductList">${esc(row.product||"-")}</span></td>
       <td data-label="Total"><strong>${money(row.total)}</strong></td>
       <td data-label="Valor real">${money(row.realReceived)}</td>
-      <td data-label="Pagamento">${esc(paymentLabel(row.paymentMethod,row.installments,row.interestPayer))}</td>
+      <td data-label="Pagamento">${esc(paymentLabelForWholesaleV240(row))}</td>
     </tr>`).join("");
   }
 
@@ -28778,7 +29187,7 @@ function renderWholesaleCollaboratorPDF(options={}){
       <td>${esc(w.product||"-")}</td>
       <td><strong>${money(w.total)}</strong></td>
       <td>${money(w.realReceived)}</td>
-      <td>${esc(paymentLabel(w.paymentMethod,w.installments,w.interestPayer))}</td>
+      <td>${esc(paymentLabelForWholesaleV240(w))}</td>
     </tr>`;
   }).join(""):`<tr><td colspan="8">Nenhuma venda encontrada com os filtros selecionados.</td></tr>`;
 }
@@ -29227,8 +29636,8 @@ function renderWholesaleRetail(){
     <td data-label="Cupom">${w.couponName?`<span class="wholesaleCouponPill" title="Cupom direto ${Number(w.discountPercent||0).toFixed(2).replace(".",",")}%${Number(w.cascadeDiscountPercent||0)>0?` + Cascata ${Number(w.cascadeDiscountPercent||0).toFixed(2).replace(".",",")}% sobre saldo`:""}">${esc(w.couponName)} <small>${Number(w.discountPercent||0)}%</small></span>${Number(w.cascadeDiscountPercent||0)>0?`<span class="createdByMini">cascata ${Number(w.cascadeDiscountPercent||0).toFixed(2).replace(".",",")}%</span>`:""}`:"<span class='wholesaleNoNote'>Sem cupom</span>"}</td>
     <td data-label="Desconto"><span class="wholesaleMoneyPill discount">-${money(w.discountValue)}</span>${Number(w.cascadeDiscountPercent||0)>0?`<span class="createdByMini">direto ${money(w.couponDiscountValue)} + cascata ${money(w.cascadeDiscountValue)}</span>`:""}</td>
     <td data-label="Total"><span class="wholesaleMoneyPill total">${money(w.total)}</span></td>
-    <td data-label="Pagamento"><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabel(w.paymentMethod,w.installments,w.interestPayer))}</span></td>
-    <td data-label="Taxa"><span class="feePill">${w.paymentMethod==="PIX"?"PIX sem taxa":`${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer))} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}`}</span></td>
+    <td data-label="Pagamento"><span class="paymentMethodPill ${paymentPillClass(w.paymentMethod)}">${esc(paymentLabelForWholesaleV240(w))}</span></td>
+    <td data-label="Taxa"><span class="feePill">${w.paymentMethod==="PIX"?"PIX sem taxa":isWholesaleMixedPaymentV240(w.paymentMethod)?`${esc(w.feeRule||"DUAS FORMAS")} • taxas ${money(w.feeValue||0)}`:`${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer))} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • -${money(w.feeValue)}`}</span></td>
     <td data-label="Valor real"><span class="receivedPill">${money(w.realReceived)}</span></td>
     <td data-label="Observação">${w.notes?`<div class="wholesaleNoteMini">${esc(w.notes)}</div>`:"<span class='wholesaleNoNote'>Sem observação</span>"}</td>
     <td data-label="Ações">
@@ -29346,13 +29755,15 @@ function renderWholesaleOrder(){
   if($("wholesaleReceiptSaleType"))$("wholesaleReceiptSaleType").textContent=w.saleType||"Varejo";
   if($("wholesaleReceiptOrigin"))$("wholesaleReceiptOrigin").textContent=w.origin||"Site";
   $("wholesaleReceiptCoupon").textContent=w.couponName?`${w.couponName} • ${Number(w.discountPercent||0)}% direto${Number(w.cascadeDiscountPercent||0)>0?` + ${Number(w.cascadeDiscountPercent||0)}% cascata`:""}`:"Sem cupom";
-  if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent=paymentLabel(w.paymentMethod,w.installments,w.interestPayer);
+  if($("wholesaleReceiptPayment"))$("wholesaleReceiptPayment").textContent=paymentLabelForWholesaleV240(w);
   $("wholesaleReceiptSubtotal").textContent=money(w.subtotal);
   $("wholesaleReceiptDiscountPercent").textContent=`${Number(w.discountPercent||0)}% direto${Number(w.totalEffectiveDiscountPercent||0)>0?` • efetivo ${Number(w.totalEffectiveDiscountPercent||w.discountPercent||0).toFixed(2).replace(".",",")}%`:""}`;
   if($("wholesaleReceiptCascadeDiscount"))$("wholesaleReceiptCascadeDiscount").textContent=Number(w.cascadeDiscountPercent||0)>0?`${Number(w.cascadeDiscountPercent||0)}% sobre saldo • ${money(w.cascadeDiscountValue||0)}`:"Sem cascata";
   if($("wholesaleReceiptFee"))$("wholesaleReceiptFee").textContent=w.paymentMethod==="PIX"
     ? `PIX sem taxa • ${money(0)}`
-    : `${w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer)} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • ${w.interestPayer==="cliente"?"+":"-"}${money(w.feeValue)}`;
+    : isWholesaleMixedPaymentV240(w.paymentMethod)
+      ? `${w.feeRule||"DUAS FORMAS"} • taxas operacionais ${money(w.feeValue||0)}`
+      : `${w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer)} • ${Number(w.feePercent||0).toFixed(2).replace(".",",")}% • ${w.interestPayer==="cliente"?"+":"-"}${money(w.feeValue)}`;
   if($("wholesaleReceiptFeeBase"))$("wholesaleReceiptFeeBase").textContent=money(w.baseTotal||Math.max(0,Number(w.subtotal||0)-Number(w.discountValue||0)));
   $("wholesaleReceiptNotes").textContent=(w.notes||"").trim()||"Nenhuma observação adicionada.";
   $("wholesaleReceiptTotal").textContent=money(w.total);
@@ -29405,6 +29816,10 @@ function editWholesaleRetail(id){
   if($("wholesalePaymentMethod"))$("wholesalePaymentMethod").value=w.paymentMethod||"PIX";
   if($("wholesaleInstallments"))$("wholesaleInstallments").value=Number(w.installments||1);
   if($("wholesaleInterestPayer"))$("wholesaleInterestPayer").value=w.interestPayer||"loja";
+  if($("wholesaleMixedCardAmount"))$("wholesaleMixedCardAmount").value=Number(w.mixedCardAmount||0)||"";
+  if($("wholesaleMixedCardInstallments"))$("wholesaleMixedCardInstallments").value=Number(w.mixedCardInstallments||w.installments||1);
+  if($("wholesaleMixedCardInterestPayer"))$("wholesaleMixedCardInterestPayer").value=w.mixedCardInterestPayer||w.interestPayer||"loja";
+  if($("wholesaleMixedRemainderMethod"))$("wholesaleMixedRemainderMethod").value=w.mixedRemainderMethod||"PIX";
   toggleWholesaleInstallments();
   $("wholesaleNotes").value=w.notes||"";
   calcWholesaleRetail();
@@ -29533,7 +29948,7 @@ function renderWholesaleRetailPDF(){
     <td><span class="pdfProduct">${esc(w.product||"-")}</span></td>
     <td><span class="pdfMoney">${money(w.total)}</span></td>
     <td><span class="pdfMoney">${money(w.realReceived)}</span></td>
-    <td>${esc(paymentLabel(w.paymentMethod,w.installments,w.interestPayer))}<br><small>${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer))}</small></td>
+    <td>${esc(paymentLabelForWholesaleV240(w))}<br><small>${esc(w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer))}</small></td>
     <td>${esc(w.createdByName||"Não registrado")}<br><small>${dateTimeBR(w.createdAt)}</small></td>
   </tr>`).join(""):`<tr><td colspan="8">Nenhum lançamento encontrado para o filtro selecionado.</td></tr>`;
 }
@@ -29563,7 +29978,7 @@ function exportWholesaleRetailPDF(){
 
 function exportWholesaleRetailCSV(){
   const rows=wholesaleRetailRows();
-  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Quem pagou o frete","Cupom usado","Desconto cupom %","Desconto Cascata %","Modo desconto","Desconto cupom valor","Desconto cascata valor","Desconto total valor","Total","Forma de pagamento","Parcelas","Juros do cartão","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação"],...rows.map(w=>[
+  rowsCSV([["Data","Tipo","Origem","Cliente","Responsável","Data/hora lançamento","Produto","Preço produto","Frete","Quem pagou o frete","Cupom usado","Desconto cupom %","Desconto Cascata %","Modo desconto","Desconto cupom valor","Desconto cascata valor","Desconto total valor","Total","Forma de pagamento","Parcelas","Juros do cartão","Regra da taxa","Taxa %","Taxa valor","Valor real recebido","Observação","Valor no cartão","Parcelas do cartão","Juros cartão dividido","Segunda forma","Valor segunda forma","Taxa segunda forma"],...rows.map(w=>[
     dateBR(w.date),
     w.saleType||"Varejo",
     w.origin||"Site",
@@ -29582,14 +29997,20 @@ function exportWholesaleRetailCSV(){
     w.cascadeDiscountValue||0,
     w.discountValue||0,
     w.total||0,
-    w.paymentMethod||"PIX",
-    w.paymentMethod==="Cartão de Crédito" ? Number(w.installments||1) : "",
-    w.paymentMethod==="Cartão de Crédito" ? interestPayerLabel(w.interestPayer||"loja") : "",
+    paymentLabelForWholesaleV240(w),
+    w.paymentMethod==="Cartão de Crédito" ? Number(w.installments||1) : (isWholesaleMixedPaymentV240(w.paymentMethod)?Number(w.mixedCardInstallments||1):""),
+    w.paymentMethod==="Cartão de Crédito" ? interestPayerLabel(w.interestPayer||"loja") : (isWholesaleMixedPaymentV240(w.paymentMethod)?interestPayerLabel(w.mixedCardInterestPayer||w.interestPayer||"loja"):""),
     w.feeRule||feeRuleLabel(w.origin,w.paymentMethod,w.installments,w.interestPayer),
     w.feePercent||0,
     w.feeValue||0,
     w.realReceived||0,
-    w.notes||""
+    w.notes||"",
+    isWholesaleMixedPaymentV240(w.paymentMethod)?Number(w.mixedCardAmount||0):"",
+    isWholesaleMixedPaymentV240(w.paymentMethod)?Number(w.mixedCardInstallments||1):"",
+    isWholesaleMixedPaymentV240(w.paymentMethod)?interestPayerLabel(w.mixedCardInterestPayer||"loja"):"",
+    isWholesaleMixedPaymentV240(w.paymentMethod)?String(w.mixedRemainderMethod||"PIX"):"",
+    isWholesaleMixedPaymentV240(w.paymentMethod)?Number(w.mixedRemainderAmount||0):"",
+    isWholesaleMixedPaymentV240(w.paymentMethod)?Number(w.mixedRemainderFeeValue||0):""
   ])],"atacado-e-varejo.csv");
 }
 
@@ -39513,12 +39934,12 @@ $("launchForm").addEventListener("submit",e=>{
 });
 $("infForm").addEventListener("submit",e=>{e.preventDefault();const id=$("infId").value||uid();const item={id,name:$("infName").value.trim(),coupon:$("infCoupon").value.trim(),productRate:Number($("infProductRate").value||0),cashRate:Number($("infCashRate").value||0),instagram:$("infInstagram").value,whatsapp:$("infWhatsapp").value,pix:(infById(id)||{}).pix||""};if(!item.name||!item.coupon){alert("Informe nome e cupom.");return}const idx=state.influencers.findIndex(i=>i.id===id);if(idx>=0)state.influencers[idx]=item;else state.influencers.push(item);save();resetInfForm();render();});
 
-["wholesaleProductPrice","wholesaleFreightCost","wholesaleDiscountPercent","wholesaleCascadeDiscountPercent"].forEach(id=>{
+["wholesaleProductPrice","wholesaleFreightCost","wholesaleDiscountPercent","wholesaleCascadeDiscountPercent","wholesaleMixedCardAmount"].forEach(id=>{
   const el=$(id);
   if(el)el.addEventListener("input",calcWholesaleRetail);
 });
 
-["wholesaleOrigin","wholesaleInstallments","wholesaleInterestPayer","wholesaleFreightPayer"].forEach(id=>{
+["wholesaleOrigin","wholesaleInstallments","wholesaleInterestPayer","wholesaleFreightPayer","wholesaleMixedCardInstallments","wholesaleMixedCardInterestPayer","wholesaleMixedRemainderMethod"].forEach(id=>{
   const el=$(id);
   if(el)el.addEventListener("change",calcWholesaleRetail);
 });
@@ -39577,8 +39998,26 @@ if($("wholesaleForm")){
       discountValue:c.discountValue,
       total:c.total,
       paymentMethod:$("wholesalePaymentMethod")?.value||"PIX",
-      installments:Number($("wholesaleInstallments")?.value||1),
-      interestPayer:$("wholesaleInterestPayer")?.value||"loja",
+      installments:isWholesaleMixedPaymentV240($("wholesalePaymentMethod")?.value)
+        ?Number(c.mixedCardInstallments||1)
+        :Number($("wholesaleInstallments")?.value||1),
+      interestPayer:isWholesaleMixedPaymentV240($("wholesalePaymentMethod")?.value)
+        ?String(c.mixedCardInterestPayer||"loja")
+        :($("wholesaleInterestPayer")?.value||"loja"),
+      mixedPayment:isWholesaleMixedPaymentV240($("wholesalePaymentMethod")?.value),
+      mixedPaymentVersion:isWholesaleMixedPaymentV240($("wholesalePaymentMethod")?.value)?"V240":"",
+      mixedCardAmount:Number(c.mixedCardAmount||0),
+      mixedCardCustomerAmount:Number(c.mixedCardCustomerAmount||0),
+      mixedCardInstallments:Number(c.mixedCardInstallments||1),
+      mixedCardInterestPayer:String(c.mixedCardInterestPayer||"loja"),
+      mixedCardFeePercent:Number(c.mixedCardFeePercent||0),
+      mixedCardFeeValue:Number(c.mixedCardFeeValue||0),
+      mixedCardNetReceived:Number(c.mixedCardNetReceived||0),
+      mixedRemainderMethod:String(c.mixedRemainderMethod||"PIX"),
+      mixedRemainderAmount:Number(c.mixedRemainderAmount||0),
+      mixedRemainderFeePercent:Number(c.mixedRemainderFeePercent||0),
+      mixedRemainderFeeValue:Number(c.mixedRemainderFeeValue||0),
+      mixedRemainderNetReceived:Number(c.mixedRemainderNetReceived||0),
       baseTotal:c.baseTotal,
       feePercent:c.feePercent,
       feeValue:c.feeValue,
@@ -39599,11 +40038,18 @@ if($("wholesaleForm")){
       _wholesaleUpdatedAt:existingWholesale?._wholesaleUpdatedAt||""
     };
 
-    if(item.paymentMethod!=="Cartão de Crédito"){
+    if(isWholesaleMixedPaymentV240(item.paymentMethod)){
+      item.installments=Math.min(20,Math.max(1,Number(item.mixedCardInstallments||1)));
+      item.interestPayer=item.mixedCardInterestPayer==="cliente"?"cliente":"loja";
+    }else if(item.paymentMethod!=="Cartão de Crédito"){
       item.installments=1;
       item.interestPayer="loja";
     }
-    const finalCalc=calcWholesaleRetailValues(item.productPrice,item.freightCost,item.freightPayer,item.discountPercent,item.cascadeDiscountPercent,item.origin,item.paymentMethod,item.installments,item.interestPayer);
+    const finalCalc=calcWholesaleRetailValues(
+      item.productPrice,item.freightCost,item.freightPayer,item.discountPercent,item.cascadeDiscountPercent,
+      item.origin,item.paymentMethod,item.installments,item.interestPayer,
+      isWholesaleMixedPaymentV240(item.paymentMethod)?wholesaleMixedConfigFromRecordV240(item):{}
+    );
     item.freightPayer=finalCalc.freightPayer;
     item.cascadeDiscountPercent=finalCalc.cascadePct;
 
@@ -39636,6 +40082,38 @@ if($("wholesaleForm")){
       item.realReceived=finalCalc.realReceived;
       item.feeRule=finalCalc.feeRule;
       item.feeScheduleVersion=WHOLESALE_FEE_SCHEDULE_V232.version;
+    }
+
+    if(isWholesaleMixedPaymentV240(item.paymentMethod)){
+      wholesaleApplyMixedFinancialSnapshotV240(item,preserveHistoricalFinancials?(existingWholesale||finalCalc):finalCalc);
+    }else{
+      item.mixedPayment=false;
+      item.mixedPaymentVersion="";
+      item.mixedCardAmount=0;
+      item.mixedCardCustomerAmount=0;
+      item.mixedCardInstallments=1;
+      item.mixedCardInterestPayer="loja";
+      item.mixedCardFeePercent=0;
+      item.mixedCardFeeValue=0;
+      item.mixedCardNetReceived=0;
+      item.mixedRemainderMethod="PIX";
+      item.mixedRemainderAmount=0;
+      item.mixedRemainderFeePercent=0;
+      item.mixedRemainderFeeValue=0;
+      item.mixedRemainderNetReceived=0;
+    }
+
+    if(isWholesaleMixedPaymentV240(item.paymentMethod)){
+      if(!(Number(item.mixedCardAmount||0)>0)){
+        alert("Informe o valor destinado ao cartão para usar duas formas de pagamento.");
+        $("wholesaleMixedCardAmount")?.focus();
+        return;
+      }
+      if(!(Number(item.mixedRemainderAmount||0)>0)){
+        alert("O valor destinado ao cartão precisa ser menor que o total do pedido para existir uma segunda forma de pagamento.");
+        $("wholesaleMixedCardAmount")?.focus();
+        return;
+      }
     }
 
     if(!item.clientName){
