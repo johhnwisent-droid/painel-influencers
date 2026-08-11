@@ -15631,6 +15631,161 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 </style>
 
+
+<style id="wisent-v243-private-dashboard-finance">
+/* ===== V243 — PRIVATE LABEL: FINANCEIRO INTEGRADO AO DASHBOARD =====
+   Alteração visual/navegação. IDs, dados e rotinas de persistência foram preservados.
+*/
+#erpDashboardFinance.erpDashboardFinanceV243{
+  --fin-bg:#0b1423;
+  --fin-surface:#101c2f;
+  --fin-surface-2:#13243b;
+  --fin-border:rgba(148,163,184,.16);
+  --fin-text:#f7f9fc;
+  --fin-muted:#91a3ba;
+  --fin-blue:#60a5fa;
+  --fin-green:#34d399;
+  --fin-red:#fb7185;
+  --fin-amber:#fbbf24;
+  --fin-violet:#a78bfa;
+  margin-top:22px!important;
+  padding:0!important;
+  color:var(--fin-text)!important;
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+}
+#erpDashboardFinance .erpFinanceHeroV243{
+  display:grid!important;
+  grid-template-columns:auto minmax(0,1fr) auto!important;
+  gap:15px!important;
+  align-items:center!important;
+  padding:19px 20px!important;
+  border:1px solid rgba(96,165,250,.20)!important;
+  border-radius:20px!important;
+  background:linear-gradient(135deg,rgba(37,99,235,.16),rgba(11,20,35,.98) 46%,rgba(124,58,237,.10))!important;
+  box-shadow:0 18px 45px rgba(2,8,23,.22)!important;
+}
+#erpDashboardFinance .erpFinanceHeroIconV243{
+  display:grid!important;place-items:center!important;width:48px!important;height:48px!important;
+  border:1px solid rgba(96,165,250,.34)!important;border-radius:15px!important;
+  background:rgba(37,99,235,.15)!important;color:#bfdbfe!important;font-size:15px!important;font-weight:950!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 8px 22px rgba(37,99,235,.12)!important;
+}
+#erpDashboardFinance .erpFinanceHeroCopyV243{min-width:0!important}
+#erpDashboardFinance .erpFinanceEyebrowV243{
+  display:block!important;margin-bottom:3px!important;color:#93c5fd!important;font-size:9.5px!important;font-weight:950!important;letter-spacing:.15em!important;
+}
+#erpDashboardFinance .erpFinanceHeroCopyV243 h3{
+  margin:0!important;color:#fff!important;font-size:clamp(20px,2.2vw,27px)!important;font-weight:820!important;letter-spacing:-.025em!important;line-height:1.15!important;
+}
+#erpDashboardFinance .erpFinanceHeroCopyV243 p{
+  max-width:720px!important;margin:6px 0 0!important;color:#9fb0c5!important;font-size:12.5px!important;font-weight:520!important;line-height:1.55!important;
+}
+#erpDashboardFinance .erpFinanceLiveV243{
+  display:inline-flex!important;align-items:center!important;gap:7px!important;width:max-content!important;padding:7px 10px!important;
+  border:1px solid rgba(52,211,153,.25)!important;border-radius:999px!important;background:rgba(16,185,129,.08)!important;
+  color:#a7f3d0!important;font-size:9.5px!important;font-weight:850!important;letter-spacing:.02em!important;white-space:nowrap!important;
+}
+#erpDashboardFinance .erpFinanceLiveV243 i{width:7px!important;height:7px!important;border-radius:50%!important;background:#34d399!important;box-shadow:0 0 0 4px rgba(52,211,153,.10)!important}
+#erpDashboardFinance .erpFinanceKpisV243{
+  display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:11px!important;margin:12px 0!important;
+}
+#erpDashboardFinance .erpFinanceKpiV243{
+  position:relative!important;display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;gap:11px!important;align-items:center!important;
+  min-height:104px!important;padding:15px!important;overflow:hidden!important;border:1px solid var(--fin-border)!important;border-radius:17px!important;
+  background:linear-gradient(145deg,var(--fin-surface-2),var(--fin-surface))!important;box-shadow:0 10px 24px rgba(2,8,23,.15)!important;
+}
+#erpDashboardFinance .erpFinanceKpiV243::after{content:"";position:absolute!important;right:-30px!important;bottom:-38px!important;width:105px!important;height:105px!important;border-radius:50%!important;background:color-mix(in srgb,var(--fin-accent) 10%,transparent)!important}
+#erpDashboardFinance .erpFinanceKpiV243.income{--fin-accent:var(--fin-green);border-color:rgba(52,211,153,.22)!important}
+#erpDashboardFinance .erpFinanceKpiV243.expense{--fin-accent:var(--fin-red);border-color:rgba(251,113,133,.22)!important}
+#erpDashboardFinance .erpFinanceKpiV243.result{--fin-accent:var(--fin-blue);border-color:rgba(96,165,250,.22)!important}
+#erpDashboardFinance .erpFinanceKpiV243.pending{--fin-accent:var(--fin-amber);border-color:rgba(251,191,36,.24)!important}
+#erpDashboardFinance .erpFinanceKpiIconV243{
+  position:relative!important;z-index:1!important;display:grid!important;place-items:center!important;width:38px!important;height:38px!important;
+  border:1px solid color-mix(in srgb,var(--fin-accent) 30%,transparent)!important;border-radius:12px!important;
+  background:color-mix(in srgb,var(--fin-accent) 10%,transparent)!important;color:var(--fin-accent)!important;font-size:18px!important;font-weight:900!important;
+}
+#erpDashboardFinance .erpFinanceKpiV243>div{position:relative!important;z-index:1!important;min-width:0!important}
+#erpDashboardFinance .erpFinanceKpiV243 small{display:block!important;color:#8fa2ba!important;font-size:9.5px!important;font-weight:900!important;letter-spacing:.085em!important;text-transform:uppercase!important}
+#erpDashboardFinance .erpFinanceKpiV243 strong{display:block!important;margin-top:5px!important;color:var(--fin-text)!important;font-size:clamp(18px,2vw,24px)!important;font-weight:850!important;letter-spacing:-.025em!important;line-height:1.15!important}
+#erpDashboardFinance .erpFinanceKpiV243.income strong{color:#a7f3d0!important}
+#erpDashboardFinance .erpFinanceKpiV243.expense strong{color:#fecdd3!important}
+#erpDashboardFinance .erpFinanceKpiV243.result strong{color:#bfdbfe!important}
+#erpDashboardFinance .erpFinanceKpiV243.pending strong{color:#fde68a!important}
+#erpDashboardFinance .erpFinanceKpiV243 em{display:block!important;margin-top:4px!important;color:#71859e!important;font-size:9.5px!important;font-style:normal!important;font-weight:650!important}
+#erpDashboardFinance .erpFinanceWorkspaceV243{display:grid!important;grid-template-columns:minmax(310px,.82fr) minmax(0,1.65fr)!important;gap:12px!important;align-items:start!important}
+#erpDashboardFinance .erpFinanceComposerV243,
+#erpDashboardFinance .erpFinanceLedgerV243{
+  min-width:0!important;padding:17px!important;border:1px solid var(--fin-border)!important;border-radius:19px!important;background:linear-gradient(145deg,#101d31,#0b1627)!important;box-shadow:0 13px 30px rgba(2,8,23,.15)!important;
+}
+#erpDashboardFinance .erpFinanceSectionHeadV243{display:grid!important;grid-template-columns:auto minmax(0,1fr)!important;gap:11px!important;align-items:start!important;margin-bottom:14px!important;padding-bottom:13px!important;border-bottom:1px solid rgba(148,163,184,.11)!important}
+#erpDashboardFinance .erpFinanceSectionIconV243{display:grid!important;place-items:center!important;width:35px!important;height:35px!important;border:1px solid rgba(96,165,250,.24)!important;border-radius:11px!important;background:rgba(59,130,246,.09)!important;color:#bfdbfe!important;font-size:18px!important;font-weight:800!important}
+#erpDashboardFinance .erpFinanceSectionIconV243.ledger{border-color:rgba(167,139,250,.24)!important;background:rgba(139,92,246,.09)!important;color:#ddd6fe!important}
+#erpDashboardFinance .erpFinanceSectionHeadV243 small{display:block!important;color:#7f93ad!important;font-size:9px!important;font-weight:900!important;letter-spacing:.12em!important}
+#erpDashboardFinance .erpFinanceSectionHeadV243 h4{margin:3px 0 0!important;color:#f8fafc!important;font-size:15.5px!important;font-weight:790!important;letter-spacing:-.012em!important}
+#erpDashboardFinance .erpFinanceSectionHeadV243 p{margin:4px 0 0!important;color:#8295ad!important;font-size:10.5px!important;line-height:1.45!important}
+#erpDashboardFinance .erpFinanceFormV243{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;padding:0!important;background:transparent!important;border:0!important}
+#erpDashboardFinance .erpFinanceFormV243 label{display:grid!important;gap:6px!important;min-width:0!important;color:#95a8bf!important;font-size:10px!important;font-weight:850!important;letter-spacing:.025em!important}
+#erpDashboardFinance .erpFinanceFormV243 label>span{padding-left:2px!important}
+#erpDashboardFinance .erpFinanceFormV243 input,
+#erpDashboardFinance .erpFinanceFormV243 select{width:100%!important;min-width:0!important;min-height:42px!important;padding:9px 11px!important;border:1px solid #293c58!important;border-radius:11px!important;background:#0b1729!important;color:#f4f7fb!important;font-size:12px!important;font-weight:650!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.02)!important}
+#erpDashboardFinance .erpFinanceFormV243 input:focus,
+#erpDashboardFinance .erpFinanceFormV243 select:focus{outline:none!important;border-color:rgba(96,165,250,.66)!important;box-shadow:0 0 0 3px rgba(59,130,246,.10)!important}
+#erpDashboardFinance .erpFinanceDescriptionFieldV243{grid-column:1/-1!important}
+#erpDashboardFinance .erpFinanceActionsV243{grid-column:1/-1!important;display:flex!important;gap:8px!important;margin-top:2px!important}
+#erpDashboardFinance .erpFinanceActionsV243 button{min-height:41px!important;border-radius:11px!important;font-size:10.5px!important;font-weight:850!important;letter-spacing:.015em!important}
+#erpDashboardFinance .erpFinanceActionsV243 button.primary{flex:1 1 auto!important;background:linear-gradient(135deg,#2563eb,#3b82f6)!important;border-color:#3b82f6!important;color:#fff!important;box-shadow:0 8px 18px rgba(37,99,235,.16)!important}
+#erpDashboardFinance .erpFinanceActionsV243 button.secondary{flex:0 0 auto!important;background:#152238!important;border-color:#2a3e5c!important;color:#c8d4e3!important}
+#erpDashboardFinance .erpFinanceTableWrapV243{overflow:auto!important;border:1px solid #243753!important;border-radius:14px!important;background:#0a1525!important;-webkit-overflow-scrolling:touch!important}
+#erpDashboardFinance .erpFinanceTableWrapV243 table{width:100%!important;min-width:690px!important;background:transparent!important}
+#erpDashboardFinance .erpFinanceTableWrapV243 th{padding:10px 11px!important;border-color:#273a56!important;background:#111f34!important;color:#879bb4!important;font-size:9px!important;font-weight:900!important;letter-spacing:.07em!important;text-transform:uppercase!important}
+#erpDashboardFinance .erpFinanceTableWrapV243 td{padding:11px!important;border-color:#1e3049!important;background:#0c1829!important;color:#dbe5f1!important;font-size:11px!important;vertical-align:middle!important}
+#erpDashboardFinance .erpFinanceTableWrapV243 tbody tr:nth-child(even) td{background:#0f1c2f!important}
+#erpDashboardFinance .erpFinanceTableWrapV243 tbody tr:hover td{background:#13243b!important}
+#erpDashboardFinance .erpFinanceDateV243{color:#9fb0c5!important;font-weight:720!important;white-space:nowrap!important}
+#erpDashboardFinance .erpFinanceTypeV243,
+#erpDashboardFinance .erpFinanceStatusV243{display:inline-flex!important;align-items:center!important;gap:5px!important;width:max-content!important;padding:5px 8px!important;border:1px solid transparent!important;border-radius:999px!important;font-size:9.5px!important;font-weight:850!important;white-space:nowrap!important}
+#erpDashboardFinance .erpFinanceTypeV243 i{font-size:11px!important;font-style:normal!important}
+#erpDashboardFinance .erpFinanceTypeV243.income{border-color:rgba(52,211,153,.24)!important;background:rgba(16,185,129,.09)!important;color:#a7f3d0!important}
+#erpDashboardFinance .erpFinanceTypeV243.expense{border-color:rgba(251,113,133,.24)!important;background:rgba(244,63,94,.08)!important;color:#fecdd3!important}
+#erpDashboardFinance .erpFinanceStatusV243.paid{border-color:rgba(52,211,153,.22)!important;background:rgba(16,185,129,.07)!important;color:#a7f3d0!important}
+#erpDashboardFinance .erpFinanceStatusV243.pending{border-color:rgba(251,191,36,.25)!important;background:rgba(245,158,11,.08)!important;color:#fde68a!important}
+#erpDashboardFinance .erpFinanceDescriptionV243{display:block!important;max-width:250px!important;color:#e7eef8!important;font-weight:650!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+#erpDashboardFinance .erpFinanceValueV243{font-size:11.5px!important;font-weight:850!important;white-space:nowrap!important}
+#erpDashboardFinance .erpFinanceValueV243.income{color:#a7f3d0!important}
+#erpDashboardFinance .erpFinanceValueV243.expense{color:#fecdd3!important}
+#erpDashboardFinance .erpFinanceRowActionsV243{display:flex!important;gap:6px!important;align-items:center!important}
+#erpDashboardFinance .erpFinanceRowActionsV243 button{min-height:30px!important;padding:5px 8px!important;border-radius:8px!important;font-size:9px!important;white-space:nowrap!important}
+#erpDashboardFinance .erpFinanceEmptyV243{display:grid!important;place-items:center!important;gap:5px!important;padding:25px 10px!important;text-align:center!important;color:#7f93ad!important}
+#erpDashboardFinance .erpFinanceEmptyV243>span{font-size:22px!important;color:#60738d!important}
+#erpDashboardFinance .erpFinanceEmptyV243 strong{color:#b7c5d5!important;font-size:11px!important}
+#erpDashboardFinance .erpFinanceEmptyV243 small{color:#71859e!important;font-size:9.5px!important}
+@media(max-width:1120px){
+  #erpDashboardFinance .erpFinanceKpisV243{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  #erpDashboardFinance .erpFinanceWorkspaceV243{grid-template-columns:1fr!important}
+}
+@media(max-width:760px){
+  #erpDashboardFinance.erpDashboardFinanceV243{margin-top:15px!important}
+  #erpDashboardFinance .erpFinanceHeroV243{grid-template-columns:auto minmax(0,1fr)!important;padding:15px!important;border-radius:16px!important}
+  #erpDashboardFinance .erpFinanceLiveV243{grid-column:1/-1!important;margin-left:49px!important}
+  #erpDashboardFinance .erpFinanceKpisV243{gap:8px!important}
+  #erpDashboardFinance .erpFinanceKpiV243{min-height:94px!important;padding:12px!important;border-radius:14px!important}
+  #erpDashboardFinance .erpFinanceComposerV243,#erpDashboardFinance .erpFinanceLedgerV243{padding:13px!important;border-radius:16px!important}
+  #erpDashboardFinance .erpFinanceFormV243{grid-template-columns:1fr 1fr!important}
+}
+@media(max-width:480px){
+  #erpDashboardFinance .erpFinanceKpisV243{grid-template-columns:1fr!important}
+  #erpDashboardFinance .erpFinanceKpiV243{grid-template-columns:38px minmax(0,1fr)!important;min-height:82px!important}
+  #erpDashboardFinance .erpFinanceFormV243{grid-template-columns:1fr!important}
+  #erpDashboardFinance .erpFinanceDescriptionFieldV243,#erpDashboardFinance .erpFinanceActionsV243{grid-column:1!important}
+  #erpDashboardFinance .erpFinanceActionsV243{flex-direction:column!important}
+  #erpDashboardFinance .erpFinanceActionsV243 button{width:100%!important}
+  #erpDashboardFinance .erpFinanceLiveV243{margin-left:0!important}
+}
+/* Usuários setoriais continuam sem acesso ao Dashboard e, portanto, ao Financeiro integrado. */
+body.erpSectorRestricted #erpDashboardFinance{display:none!important}
+/* ===== FIM V243 ===== */
+</style>
+
 </head>
 <body class="page-dashboard authLocked">
 
@@ -15706,7 +15861,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V242</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V243</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17055,7 +17210,6 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     <button type="button" data-erp-module="clientes" onclick="showErpModule('clientes')"><span class="erpTabIcon">◎</span>Clientes</button>
     <button type="button" data-erp-module="pedidos" onclick="showErpModule('pedidos')"><span class="erpTabIcon">▣</span>Pedidos</button>
     <button type="button" data-erp-module="estoque" onclick="showErpModule('estoque')"><span class="erpTabIcon">▤</span>Estoque</button>
-    <button type="button" data-erp-module="financeiro" onclick="showErpModule('financeiro')"><span class="erpTabIcon">R$</span>Financeiro</button>
     <button type="button" data-erp-module="relatorios" onclick="showErpModule('relatorios')"><span class="erpTabIcon">↗</span>Relatórios</button>
     <button type="button" data-erp-module="etiquetas" onclick="showErpModule('etiquetas')"><span class="erpTabIcon">QR</span>QR/Etiquetas</button>
       <button type="button" data-erp-module="mapa" data-erp-admin-map onclick="showErpModule('mapa')"><span class="erpTabIcon">⌘</span>Mapa técnico</button>
@@ -17077,6 +17231,68 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
       <div class="card erpMetricCard ok"><span class="erpMetricIcon">✓</span><small>Pedidos pagos</small><strong id="erpPedidosPagos">0</strong></div>
       <div class="card erpMetricCard"><span class="erpMetricIcon">⌁</span><small>Costura sem responsável</small><strong id="erpCosturaSemResponsavel">0</strong></div>
     </div>
+
+    <section id="erpDashboardFinance" class="erpDashboardFinanceV243" aria-labelledby="erpFinanceDashboardTitle">
+      <div class="erpFinanceHeroV243">
+        <div class="erpFinanceHeroIconV243" aria-hidden="true">R$</div>
+        <div class="erpFinanceHeroCopyV243">
+          <span class="erpFinanceEyebrowV243">CONTROLE FINANCEIRO</span>
+          <h3 id="erpFinanceDashboardTitle">Financeiro do Private Label</h3>
+          <p>Registre entradas e saídas, acompanhe pendências e consulte o histórico sem sair do Dashboard.</p>
+        </div>
+        <span class="erpFinanceLiveV243"><i></i> Atualização integrada</span>
+      </div>
+
+      <div class="erpFinanceKpisV243" aria-label="Resumo financeiro">
+        <article class="erpFinanceKpiV243 income">
+          <span class="erpFinanceKpiIconV243" aria-hidden="true">↗</span>
+          <div><small>Entradas</small><strong id="erpFinanceEntradas">R$ 0,00</strong><em>Receitas registradas</em></div>
+        </article>
+        <article class="erpFinanceKpiV243 expense">
+          <span class="erpFinanceKpiIconV243" aria-hidden="true">↘</span>
+          <div><small>Saídas</small><strong id="erpFinanceSaidas">R$ 0,00</strong><em>Despesas registradas</em></div>
+        </article>
+        <article class="erpFinanceKpiV243 result">
+          <span class="erpFinanceKpiIconV243" aria-hidden="true">◆</span>
+          <div><small>Saldo operacional</small><strong id="erpFinanceLucro">R$ 0,00</strong><em>Entradas menos saídas</em></div>
+        </article>
+        <article class="erpFinanceKpiV243 pending">
+          <span class="erpFinanceKpiIconV243" aria-hidden="true">◷</span>
+          <div><small>Pendências</small><strong id="erpFinancePendentes">R$ 0,00</strong><em>Valores aguardando baixa</em></div>
+        </article>
+      </div>
+
+      <div class="erpFinanceWorkspaceV243">
+        <div class="erpFinanceComposerV243">
+          <div class="erpFinanceSectionHeadV243">
+            <span class="erpFinanceSectionIconV243" aria-hidden="true">＋</span>
+            <div><small>NOVO REGISTRO</small><h4>Lançamento financeiro</h4><p>Inclua uma movimentação de forma rápida e organizada.</p></div>
+          </div>
+          <form id="erpFinanceForm" class="form erpFinanceFormV243">
+            <input type="hidden" id="erpFinanceId">
+            <label><span>Data</span><input id="erpFinanceDate" type="date"></label>
+            <label><span>Tipo</span><select id="erpFinanceType"><option value="Entrada">Entrada</option><option value="Saída">Saída</option></select></label>
+            <label class="erpFinanceDescriptionFieldV243"><span>Descrição</span><input id="erpFinanceDescription" placeholder="Ex.: Compra de malha"></label>
+            <label><span>Valor</span><input id="erpFinanceValue" type="number" step="0.01" min="0" placeholder="0,00"></label>
+            <label><span>Status</span><select id="erpFinanceStatus"><option>Pago</option><option>Pendente</option></select></label>
+            <div class="actions erpFinanceActionsV243"><button class="primary" type="submit"><span aria-hidden="true">✓</span> Salvar lançamento</button><button class="secondary" type="button" onclick="resetErpFinanceForm()">Cancelar</button></div>
+          </form>
+        </div>
+
+        <div class="erpFinanceLedgerV243">
+          <div class="erpFinanceSectionHeadV243">
+            <span class="erpFinanceSectionIconV243 ledger" aria-hidden="true">≡</span>
+            <div><small>HISTÓRICO</small><h4>Movimentações financeiras</h4><p>Registros preservados em ordem de data para conferência rápida.</p></div>
+          </div>
+          <div class="tableWrap erpFinanceTableWrapV243">
+            <table>
+              <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="erpFinanceEntryRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <div class="erpModule" data-erp-panel="clientes" hidden>
@@ -17229,38 +17445,6 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
         <table>
           <thead><tr><th>Item</th><th>Categoria</th><th>Atual</th><th>Mínimo</th><th>Status</th><th>Ações</th></tr></thead>
           <tbody id="erpStockRows"></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div class="erpModule" data-erp-panel="financeiro" hidden>
-    <div class="panel">
-      <div class="panelHead">
-        <div><h3>Financeiro</h3><span class="muted">Entradas, saídas, pendências e fluxo de caixa do Private Label.</span></div>
-      </div>
-      <form id="erpFinanceForm" class="form">
-        <input type="hidden" id="erpFinanceId">
-        <label>Data<input id="erpFinanceDate" type="date"></label>
-        <label>Tipo<select id="erpFinanceType"><option value="Entrada">Entrada</option><option value="Saída">Saída</option></select></label>
-        <label>Descrição<input id="erpFinanceDescription" placeholder="Ex.: Compra de malha"></label>
-        <label>Valor<input id="erpFinanceValue" type="number" step="0.01" min="0"></label>
-        <label>Status<select id="erpFinanceStatus"><option>Pago</option><option>Pendente</option></select></label>
-        <div class="actions two"><button class="primary" type="submit">Salvar financeiro</button><button class="secondary" type="button" onclick="resetErpFinanceForm()">Cancelar</button></div>
-      </form>
-    </div>
-
-    <div class="panel">
-      <div class="grid erpStatsGrid">
-        <div class="card"><small>Entradas</small><strong id="erpFinanceEntradas">R$ 0,00</strong></div>
-        <div class="card"><small>Saídas</small><strong id="erpFinanceSaidas">R$ 0,00</strong></div>
-        <div class="card"><small>Lucro</small><strong id="erpFinanceLucro">R$ 0,00</strong></div>
-        <div class="card"><small>Pendentes</small><strong id="erpFinancePendentes">R$ 0,00</strong></div>
-      </div>
-      <div class="tableWrap">
-        <table>
-          <thead><tr><th>Data</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Status</th><th>Ações</th></tr></thead>
-          <tbody id="erpFinanceEntryRows"></tbody>
         </table>
       </div>
     </div>
@@ -18086,7 +18270,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V242";
+const APP_BUILD_VERSION="V243";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18119,9 +18303,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=242",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=243",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=242");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=243");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -35233,7 +35417,8 @@ function exportErpTestData(){
 }
 
 function showErpModule(module){
-  const requested=module||"dashboard";
+  const rawRequested=module||"dashboard";
+  const requested=rawRequested==="financeiro"?"dashboard":rawRequested;
   const mapBlocked=requested==="mapa"&&!isErpTechnicalMapAdmin();
   const commissionBlocked=requested==="comissoes"&&!isWisentAdmin();
   const sectorTarget=erpSectorCanAccessSupplies()&&erpSectorIsViewingSupplies()&&requested==="insumos"?"insumos":"pedidos";
@@ -35256,6 +35441,9 @@ function showErpModule(module){
     setTimeout(()=>refreshErpWorkspaceFromCloud({reason:"supplies-module"}),0);
   }
   if(target==="comissoes")renderErpCommissions();
+  if(rawRequested==="financeiro"){
+    requestAnimationFrame(()=>document.getElementById("erpDashboardFinance")?.scrollIntoView({behavior:"smooth",block:"start"}));
+  }
 }
 
 
@@ -38401,10 +38589,10 @@ function renderErpFinance(data){
   if($("erpFinanceLucro"))$("erpFinanceLucro").textContent=money(entradas-saidas);
   if($("erpFinancePendentes"))$("erpFinancePendentes").textContent=money(pendentes);
   if($("erpFinanceEntryRows")){
-    $("erpFinanceEntryRows").innerHTML=data.finance.length?data.finance.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(f=>`<tr>
-      <td>${dateBR(f.date)}</td><td><span class="erpStatusBadge ${f.type==="Entrada"?"ok":"danger"}">${esc(f.type)}</span></td><td>${esc(f.description)}</td><td>${money(f.value)}</td><td>${esc(f.status)}</td>
-      <td><button class="small secondary" onclick="editErpFinance('${f.id}')">Editar</button> <button class="small danger" onclick="deleteErpFinance('${f.id}')">Excluir</button></td>
-    </tr>`).join(""):`<tr><td colspan="6">Nenhum lançamento financeiro.</td></tr>`;
+    $("erpFinanceEntryRows").innerHTML=data.finance.length?data.finance.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))).map(f=>`<tr class="erpFinanceRowV243 ${f.type==="Entrada"?"isIncome":"isExpense"}">
+      <td><span class="erpFinanceDateV243">${dateBR(f.date)}</span></td><td><span class="erpFinanceTypeV243 ${f.type==="Entrada"?"income":"expense"}"><i>${f.type==="Entrada"?"↗":"↘"}</i>${esc(f.type)}</span></td><td><span class="erpFinanceDescriptionV243">${esc(f.description)}</span></td><td><strong class="erpFinanceValueV243 ${f.type==="Entrada"?"income":"expense"}">${money(f.value)}</strong></td><td><span class="erpFinanceStatusV243 ${f.status==="Pago"?"paid":"pending"}">${f.status==="Pago"?"✓":"◷"} ${esc(f.status)}</span></td>
+      <td><div class="erpFinanceRowActionsV243"><button class="small secondary" onclick="editErpFinance('${f.id}')">Editar</button><button class="small danger" onclick="deleteErpFinance('${f.id}')">Excluir</button></div></td>
+    </tr>`).join(""):`<tr><td colspan="6"><div class="erpFinanceEmptyV243"><span>◇</span><strong>Nenhum lançamento financeiro</strong><small>Os registros adicionados aparecerão aqui.</small></div></td></tr>`;
   }
 }
 
