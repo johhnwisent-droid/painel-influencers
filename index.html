@@ -15615,7 +15615,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V240</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V241</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17396,8 +17396,8 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
       <p id="erpCommissionPeriodLabel" class="erpCommissionPeriodLabel">Calculando o mês completo.</p>
       <div class="grid erpStatsGrid">
         <div class="card"><small>Total vendido</small><strong id="erpCommissionSold">R$ 0,00</strong></div>
-        <div class="card"><small>Atacado</small><strong id="erpCommissionWholesale">R$ 0,00</strong></div>
-        <div class="card"><small>Varejo</small><strong id="erpCommissionRetail">R$ 0,00</strong></div>
+        <div class="card" hidden style="display:none!important"><small>Atacado</small><strong id="erpCommissionWholesale">R$ 0,00</strong></div>
+        <div class="card" hidden style="display:none!important"><small>Varejo</small><strong id="erpCommissionRetail">R$ 0,00</strong></div>
         <div class="card"><small>Private Label</small><strong id="erpCommissionPrivate">R$ 0,00</strong></div>
         <div class="card"><small>Comissão total</small><strong id="erpCommissionTotal">R$ 0,00</strong></div>
         <div class="card"><small>Pendentes</small><strong id="erpCommissionPending">R$ 0,00</strong></div>
@@ -17995,7 +17995,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V240";
+const APP_BUILD_VERSION="V241";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18028,9 +18028,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=240",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=241",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=240");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=241");
       }
 
       reg.addEventListener("updatefound",()=>{
