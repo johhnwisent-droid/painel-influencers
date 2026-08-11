@@ -15483,7 +15483,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V238</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V239</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17798,7 +17798,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V238";
+const APP_BUILD_VERSION="V239";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -17831,9 +17831,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=238",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=239",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=238");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=239");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -35818,6 +35818,11 @@ function erpAutoResizeTextarea(field){
 */
 const ERP_PRIVATE_SELLER_ASSIGNMENTS_V238=KEY+"_private_label_seller_assignments_v238";
 
+/* V239 — regra comercial isolada do Private Label.
+   Toda venda Private Label com colaborador explicitamente atribuído gera 2% de comissão.
+   Esta constante NÃO participa dos cálculos de Atacado ou Varejo. */
+const ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239=2;
+
 function erpPrivateSellerAssignmentsReadV238(){
   try{
     const parsed=JSON.parse(localStorage.getItem(ERP_PRIVATE_SELLER_ASSIGNMENTS_V238)||"{}");
@@ -35944,16 +35949,11 @@ async function syncErpPrivateLabelCommissionForOrderV238(order,{silent=false}={}
 
   erpPrivateSellerRememberV238(order.id,seller,{confirmed:false});
   const saleDate=String(order.createdAt||today()).slice(0,10)||today();
-  const rules=data.commissionRules||[];
-  const rule=erpCommissionRuleFor(rules,seller.id,"Private Label",saleDate)
-    ||erpCommissionRuleFor(rules,seller.name,"Private Label",saleDate);
   const existing=(data.commissions||[]).find(row=>
     row&&row.source_origin==="Private Label"&&String(row.source_id)===String(order.id)
   );
   const sellerChanged=!!existing&&String(existing.seller_id||"")!==String(seller.id);
-  const percentage=rule
-    ?Math.max(0,Number(rule.percentage||0))
-    :(sellerChanged?0:Math.max(0,Number(existing?.percentage||0)));
+  const percentage=ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239;
   const eligible=Math.max(0,Number(order.value||0));
   const row={
     id:existing?.id||await erpV2Uuid("commission",`Private Label-${String(order.id)}`),
@@ -35987,7 +35987,7 @@ async function syncErpPrivateLabelCommissionForOrderV238(order,{silent=false}={}
     erpPrivateSellerRememberV238(order.id,seller,{confirmed:true});
     erpV174AuditCloud("private_label_seller",String(order.id),existing?"updated":"assigned",existing||null,{sellerId:seller.id,sellerName:seller.name,percentage}).catch(()=>{});
     if(currentPage==="commissionsPage")renderErpCommissions();
-    return {ok:true,hasRule:!!rule,row:confirmed};
+    return {ok:true,fixedPercentage:ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239,row:confirmed};
   }catch(error){
     console.warn("Vendedor/comissão Private Label aguardando sincronização:",error);
     if(!silent)console.info("A atribuição local foi preservada para nova tentativa.");
@@ -38915,13 +38915,14 @@ async function recalculateErpCommissions(options={}){
   const recalculatedKeys=new Set();
   const recalculatedPrivateSources=new Set();
   for(const sale of sales){
-    const rule=erpCommissionRuleFor(rules,sale.sellerId,sale.origin,sale.date)||erpCommissionRuleFor(rules,sale.sellerName,sale.origin,sale.date);
+    const isPrivateLabel=sale.origin==="Private Label";
+    const rule=isPrivateLabel?null:(erpCommissionRuleFor(rules,sale.sellerId,sale.origin,sale.date)||erpCommissionRuleFor(rules,sale.sellerName,sale.origin,sale.date));
     const commissionKey=`${sale.origin}|${sale.sourceId}|${sale.sellerId}`;
-    const old=sale.origin==="Private Label"?(existingPrivateBySource.get(String(sale.sourceId))||existing.get(commissionKey)):existing.get(commissionKey);
-    if(!rule&&sale.origin!=="Private Label")continue;
-    if(!rule&&sale.origin==="Private Label"&&!sale.explicitSeller&&!old)continue;
-    const sellerChanged=!!old&&sale.origin==="Private Label"&&String(old.seller_id||"")!==String(sale.sellerId);
-    const percentage=rule?Number(rule.percentage||0):(sellerChanged?0:Number(old?.percentage||0));
+    const old=isPrivateLabel?(existingPrivateBySource.get(String(sale.sourceId))||existing.get(commissionKey)):existing.get(commissionKey);
+    if(!isPrivateLabel&&!rule)continue;
+    if(isPrivateLabel&&!sale.explicitSeller&&!old)continue;
+    const sellerChanged=!!old&&isPrivateLabel&&String(old.seller_id||"")!==String(sale.sellerId);
+    const percentage=isPrivateLabel?ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239:Number(rule.percentage||0);
     recalculatedKeys.add(commissionKey);
     if(sale.origin==="Private Label")recalculatedPrivateSources.add(String(sale.sourceId));
     rows.push({
@@ -38947,7 +38948,7 @@ async function recalculateErpCommissions(options={}){
   });
   data.commissions=[...preserved,...rows];
   erpLocalWriteOnly(data);
-  appendErpAudit("commissions_recalculated",{sales:sales.length,commissions:rows.length});
+  appendErpAudit("commissions_recalculated",{sales:sales.length,commissions:rows.length,privateLabelPercentage:ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239});
   erpV174AuditCloud("commission_batch",today().slice(0,7),"recalculated",{previousCount:existing.size},{sales:sales.length,commissions:rows.length}).catch(()=>{});
   renderErpCommissions();
   if(!options.silent)showUndoToast(`${rows.length} comissão(ões) recalculada(s) a partir de vendas reais.`);
