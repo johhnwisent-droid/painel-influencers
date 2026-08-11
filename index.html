@@ -15900,7 +15900,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V244</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V245</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -18319,7 +18319,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V244";
+const APP_BUILD_VERSION="V245";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18352,9 +18352,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=244",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=245",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=244");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=245");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -19105,6 +19105,77 @@ startApp=async function(){
 };
 
 
+/* ===== V245 — RESTAURAÇÃO SEGURA DA ÚLTIMA TELA =====
+   Persistência exclusivamente de navegação. Nenhum dado operacional é gravado aqui. */
+const NAVIGATION_STATE_KEY_V245=KEY+"_navigation_state";
+
+function readNavigationStateV245(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(NAVIGATION_STATE_KEY_V245)||"{}");
+    return parsed&&typeof parsed==="object"&&!Array.isArray(parsed)?parsed:{};
+  }catch(error){
+    return {};
+  }
+}
+
+function navigationPageExistsV245(page){
+  const id=String(page||"").trim();
+  if(!id)return false;
+  if(["suppliesPage","commissionsPage"].includes(id))return true;
+  const view=document.getElementById(id);
+  return !!(view&&view.classList.contains("view"));
+}
+
+function rememberNavigationV245(page=currentPage,erpModule=null){
+  try{
+    let safePage=String(page||"dashboard");
+    if(!navigationPageExistsV245(safePage))safePage="dashboard";
+    const previous=readNavigationStateV245();
+    const activeErpModule=String(erpModule||document.querySelector("[data-erp-module].active")?.dataset?.erpModule||previous.erpModule||"dashboard");
+    localStorage.setItem(NAVIGATION_STATE_KEY_V245,JSON.stringify({
+      page:safePage,
+      erpModule:activeErpModule,
+      wholesaleOrderId:safePage==="wholesaleOrder"?String(currentWholesaleOrderId||previous.wholesaleOrderId||""):"",
+      savedAt:new Date().toISOString()
+    }));
+  }catch(error){}
+}
+
+function restoreNavigationV245(){
+  const saved=readNavigationStateV245();
+  let page=String(saved.page||"dashboard");
+  if(!navigationPageExistsV245(page))page="dashboard";
+  if(page==="wholesaleOrder"){
+    const orderId=String(saved.wholesaleOrderId||"");
+    const exists=(state.wholesaleRetail||[]).some(row=>String(row?.id||"")===orderId&&!row?.deletedAt);
+    if(orderId&&exists)currentWholesaleOrderId=orderId;
+    else page="wholesaleRetail";
+  }
+
+  /* As regras de permissão continuam soberanas. */
+  if(isErpSupplyOnlyUser())page="suppliesPage";
+  else if(isErpSectorRestrictedUser()&&!(["erpTest","suppliesPage"].includes(page)))page="erpTest";
+  if(page==="commissionsPage"&&!isWisentAdmin())page="dashboard";
+  if(page==="erpTest"&&erpTestDisabled())page="dashboard";
+
+  showPage(page);
+
+  if(page==="erpTest"){
+    let module=String(saved.erpModule||"dashboard");
+    if(module==="financeiro")module="dashboard";
+    const validModules=new Set([...document.querySelectorAll("[data-erp-module]")].map(el=>String(el.dataset.erpModule||"")));
+    if(!validModules.has(module))module="dashboard";
+    if(module==="comissoes"&&!isWisentAdmin())module="dashboard";
+    if(module==="mapa"&&!isErpTechnicalMapAdmin())module="dashboard";
+    if(isErpSectorRestrictedUser())module=erpSectorCanAccessSupplies()&&saved.erpModule==="insumos"?"insumos":"pedidos";
+    showErpModule(module);
+  }
+  return page;
+}
+
+window.addEventListener("pagehide",()=>rememberNavigationV245(currentPage));
+window.addEventListener("beforeunload",()=>rememberNavigationV245(currentPage));
+
 window.currentPage=window.currentPage||"dashboard";
 var currentPage=window.currentPage;
 var currentWholesaleOrderId=null;
@@ -19649,9 +19720,13 @@ function initAuthUi(){
     hideLoginScreen();
 
     if(isErpScopedRestrictedUser()){
-      setTimeout(()=>{showPage(isErpSupplyOnlyUser()?"suppliesPage":"erpTest");},80);
+      setTimeout(()=>{restoreNavigationV245();},80);
     }else{
-      setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
+      setTimeout(()=>{
+        restoreNavigationV245();
+        restoreWholesaleFormDraft({notify:true});
+        restoreLaunchFormDraft({notify:true});
+      },80);
     }
   }else{
     setSessionUser(null);
@@ -19677,9 +19752,10 @@ function handleLoginSubmit(e){
   hideLoginScreen();
 
   if(isErpScopedRestrictedUser()){
-    showPage(isErpSupplyOnlyUser()?"suppliesPage":"erpTest");
+    restoreNavigationV245();
     showUndoToast(isErpSupplyOnlyUser()?"Login liberado somente para Demanda de Insumos.":`Login de ${erpRestrictedRoleLabel()} liberado somente para o Kanban de produção.`);
   }else{
+    restoreNavigationV245();
     setTimeout(()=>{restoreWholesaleFormDraft({notify:true});restoreLaunchFormDraft({notify:true});},120);
     showUndoToast("Login salvo neste aparelho.");
   }
@@ -31596,6 +31672,7 @@ function showPage(id){
   currentPage=resolvedPage;
   window.currentPage=currentPage;
   setPageClass(currentPage);
+  rememberNavigationV245(currentPage);
 
   if(currentPage==="erpTest"&&isErpSectorRestrictedUser()&&$("erpKanbanStageFilter")){
     const roleKey=erpUserRoleNormalized();
@@ -35623,6 +35700,8 @@ function showErpModule(module){
   const commissionBlocked=requested==="comissoes"&&!isWisentAdmin();
   const sectorTarget=erpSectorCanAccessSupplies()&&erpSectorIsViewingSupplies()&&requested==="insumos"?"insumos":"pedidos";
   const target=isErpSupplyOnlyUser()?"insumos":(isErpSectorRestrictedUser()?sectorTarget:((mapBlocked||commissionBlocked)?"dashboard":requested));
+
+  rememberNavigationV245(currentPage,target);
 
   if(mapBlocked)showUndoToast("Área disponível somente para a conta principal de administrador.");
   if(commissionBlocked)showUndoToast("Gestão de Comissões disponível somente para Admin.");
