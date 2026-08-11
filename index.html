@@ -12960,6 +12960,97 @@ body[data-page="commissionsPage"] .profileMenuDropdown button:hover{
   line-height:1.15!important;
 }
 
+
+/* ===== V242 — GESTÃO DE COMISSÕES: LEITURA VISUAL PROFISSIONAL =====
+   Escopo visual restrito à Gestão de Comissões.
+*/
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .erpCommissionMetricV242{
+  isolation:isolate!important;
+  border-width:1px!important;
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .erpCommissionMetricV242::before{
+  content:"";
+  position:absolute;
+  z-index:0;
+  inset:0 auto 0 0;
+  width:4px;
+  border-radius:15px 0 0 15px;
+  background:var(--commission-accent,#60a5fa);
+  box-shadow:0 0 24px color-mix(in srgb,var(--commission-accent,#60a5fa) 34%,transparent);
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .erpCommissionMetricV242::after{
+  z-index:0;
+  background:color-mix(in srgb,var(--commission-accent,#60a5fa) 12%,transparent)!important;
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .erpCommissionMetricV242 small,
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .erpCommissionMetricV242 strong{
+  position:relative;
+  z-index:1;
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricSoldV242{
+  --commission-accent:#60a5fa;
+  border-color:rgba(96,165,250,.28)!important;
+  background:linear-gradient(145deg,rgba(30,64,175,.20),#111d31 64%)!important;
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricPrivateV242{
+  --commission-accent:#a78bfa;
+  border-color:rgba(167,139,250,.30)!important;
+  background:linear-gradient(145deg,rgba(109,40,217,.18),#111d31 64%)!important;
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricTotalV242{
+  --commission-accent:#22d3ee;
+  border-color:rgba(34,211,238,.28)!important;
+  background:linear-gradient(145deg,rgba(8,145,178,.17),#111d31 64%)!important;
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricPendingV242{
+  --commission-accent:#f59e0b;
+  border-color:rgba(245,158,11,.30)!important;
+  background:linear-gradient(145deg,rgba(180,83,9,.18),#111d31 64%)!important;
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricPaidV242{
+  --commission-accent:#34d399;
+  border-color:rgba(52,211,153,.30)!important;
+  background:linear-gradient(145deg,rgba(5,150,105,.17),#111d31 64%)!important;
+}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricSoldV242 strong{color:#bfdbfe!important}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricPrivateV242 strong{color:#ddd6fe!important}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricTotalV242 strong{color:#a5f3fc!important}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricPendingV242 strong{color:#fde68a!important}
+.erpModule[data-erp-panel="comissoes"] .erpStatsGrid .metricPaidV242 strong{color:#a7f3d0!important}
+.erpCommissionStatus.status-pendente{
+  border-color:rgba(96,165,250,.30)!important;
+  background:rgba(59,130,246,.11)!important;
+  color:#bfdbfe!important;
+}
+.erpCommissionOriginV242{
+  display:inline-flex!important;
+  align-items:center!important;
+  width:max-content!important;
+  max-width:100%!important;
+  padding:5px 9px!important;
+  border:1px solid rgba(167,139,250,.28)!important;
+  border-radius:999px!important;
+  background:rgba(139,92,246,.10)!important;
+  color:#ddd6fe!important;
+  font-size:10px!important;
+  font-weight:900!important;
+  letter-spacing:.025em!important;
+  white-space:nowrap!important;
+}
+.erpCommissionOriginV242.origin-atacado{
+  border-color:rgba(96,165,250,.28)!important;background:rgba(59,130,246,.10)!important;color:#bfdbfe!important;
+}
+.erpCommissionOriginV242.origin-varejo{
+  border-color:rgba(34,211,238,.26)!important;background:rgba(6,182,212,.09)!important;color:#a5f3fc!important;
+}
+.erpCommissionLedger td:nth-child(4){color:#bfdbfe!important;font-weight:780!important}
+.erpCommissionLedger td:nth-child(5){color:#ddd6fe!important;font-weight:850!important}
+.erpCommissionLedger td:nth-child(6) strong{color:#a7f3d0!important}
+@media(min-width:1280px){
+  .erpModule[data-erp-panel="comissoes"] .erpStatsGrid{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+}
+/* ===== FIM V242 CORES COMISSÕES ===== */
+
 .erpCommissionLedger .tableWrap{
   border:1px solid #2b3e5b!important;
   border-radius:16px!important;
@@ -15615,7 +15706,7 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V241</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V242</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17395,13 +17486,13 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
       </div>
       <p id="erpCommissionPeriodLabel" class="erpCommissionPeriodLabel">Calculando o mês completo.</p>
       <div class="grid erpStatsGrid">
-        <div class="card"><small>Total vendido</small><strong id="erpCommissionSold">R$ 0,00</strong></div>
+        <div class="card erpCommissionMetricV242 metricSoldV242"><small>Total vendido</small><strong id="erpCommissionSold">R$ 0,00</strong></div>
         <div class="card" hidden style="display:none!important"><small>Atacado</small><strong id="erpCommissionWholesale">R$ 0,00</strong></div>
         <div class="card" hidden style="display:none!important"><small>Varejo</small><strong id="erpCommissionRetail">R$ 0,00</strong></div>
-        <div class="card"><small>Private Label</small><strong id="erpCommissionPrivate">R$ 0,00</strong></div>
-        <div class="card"><small>Comissão total</small><strong id="erpCommissionTotal">R$ 0,00</strong></div>
-        <div class="card"><small>Pendentes</small><strong id="erpCommissionPending">R$ 0,00</strong></div>
-        <div class="card"><small>Pagas</small><strong id="erpCommissionPaid">R$ 0,00</strong></div>
+        <div class="card erpCommissionMetricV242 metricPrivateV242"><small>Private Label</small><strong id="erpCommissionPrivate">R$ 0,00</strong></div>
+        <div class="card erpCommissionMetricV242 metricTotalV242"><small>Comissão total</small><strong id="erpCommissionTotal">R$ 0,00</strong></div>
+        <div class="card erpCommissionMetricV242 metricPendingV242"><small>Pendentes</small><strong id="erpCommissionPending">R$ 0,00</strong></div>
+        <div class="card erpCommissionMetricV242 metricPaidV242"><small>Pagas</small><strong id="erpCommissionPaid">R$ 0,00</strong></div>
       </div>
     </div>
     <div class="panel erpCommissionLedger">
@@ -17995,7 +18086,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V241";
+const APP_BUILD_VERSION="V242";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18028,9 +18119,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=241",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=242",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=241");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=242");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -31401,6 +31492,9 @@ const ERP_INTENTIONAL_EMPTY_KEY=KEY+"_private_label_intentional_empty";
 const ERP_DURABLE_DB_NAME="wisent_private_label_durable_v1";
 const ERP_DURABLE_STORE="snapshots";
 const ERP_DURABLE_RECORD_ID="private_label";
+const ERP_PRIVATE_LABEL_DIRTY_V242=KEY+"_private_label_dirty_v242";
+const ERP_PRIVATE_LABEL_CHECKPOINT_ID_V242="private_label_checkpoint_v242";
+const ERP_COMMISSION_SAFE_SNAPSHOT_V242=KEY+"_erp_commissions_safe_v242";
 let erpDurableWriteTimer=null;
 let erpTestFlushBusy=false;
 let erpTestSyncBusy=false;
@@ -32034,6 +32128,137 @@ async function hydrateErpDurableSnapshotIfNeeded(){
   erpLocalWriteOnly(durable);
   setErpSyncStatus("Private Label recuperado do snapshot seguro deste aparelho");
   return true;
+}
+
+
+/* ===== V242 — BLINDAGEM ISOLADA: PRIVATE LABEL + GESTÃO DE COMISSÕES =====
+   1) Um marcador síncrono impede que uma atualização/refresh trate uma alteração local
+      recém-salva como se ela já estivesse confirmada na nuvem.
+   2) Um checkpoint adicional no mesmo IndexedDB do Private Label preserva a última
+      versão local antes de sincronizações potencialmente destrutivas.
+   3) A lista de comissões possui snapshot próprio e nunca é substituída por [] quando
+      a leitura do Supabase falha ou retorna um vazio suspeito.
+*/
+function erpPrivateLabelDirtyReadV242(){
+  try{
+    const raw=localStorage.getItem(ERP_PRIVATE_LABEL_DIRTY_V242);
+    const parsed=raw?JSON.parse(raw):null;
+    return parsed&&typeof parsed==="object"?parsed:null;
+  }catch(error){return null;}
+}
+
+function erpPrivateLabelMarkDirtyV242(previousData,nextData,reason="alteração"){
+  const previous=normalizeErpTestData(previousData||defaultErpTestState());
+  const next=normalizeErpTestData(nextData||defaultErpTestState());
+  const existing=erpPrivateLabelDirtyReadV242()||{};
+  const deletedIds={...(existing.deletedIds&&typeof existing.deletedIds==="object"?existing.deletedIds:{})};
+  ["orders","clients","finance","stock","employees"].forEach(key=>{
+    const nextIds=new Set((next[key]||[]).map(item=>String(item?.id||"")).filter(Boolean));
+    deletedIds[key]=[
+      ...new Set([
+        ...(Array.isArray(deletedIds[key])?deletedIds[key]:[]),
+        ...(previous[key]||[]).map(item=>String(item?.id||"")).filter(id=>id&&!nextIds.has(id))
+      ])
+    ];
+  });
+  const marker={
+    at:new Date().toISOString(),
+    updatedAt:String(next.updatedAt||""),
+    build:APP_BUILD_VERSION,
+    reason:String(reason||"alteração"),
+    orderCount:(next.orders||[]).length,
+    deletedIds
+  };
+  try{
+    localStorage.setItem(ERP_PRIVATE_LABEL_DIRTY_V242,JSON.stringify(marker));
+    return marker;
+  }catch(error){
+    console.warn("Marcador de alteração pendente do Private Label não pôde ser gravado:",error);
+    return marker;
+  }
+}
+
+function erpPrivateLabelClearDirtyV242(expectedUpdatedAt=""){
+  try{
+    const current=erpPrivateLabelDirtyReadV242();
+    if(!current)return true;
+    if(expectedUpdatedAt&&String(current.updatedAt||"")!==String(expectedUpdatedAt))return false;
+    localStorage.removeItem(ERP_PRIVATE_LABEL_DIRTY_V242);
+    return true;
+  }catch(error){return false;}
+}
+
+async function erpPrivateLabelCheckpointV242(data,reason="checkpoint"){
+  const normalized=normalizeErpTestData(data);
+  if(!erpHasPrivateLabelRecords(normalized))return false;
+  try{
+    const db=await erpDurableOpen();
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(ERP_DURABLE_STORE,"readwrite");
+      tx.objectStore(ERP_DURABLE_STORE).put({
+        id:ERP_PRIVATE_LABEL_CHECKPOINT_ID_V242,
+        data:normalized,
+        orderCount:normalized.orders.length,
+        savedAt:new Date().toISOString(),
+        version:APP_BUILD_VERSION,
+        reason:String(reason||"checkpoint")
+      });
+      tx.oncomplete=()=>resolve(true);
+      tx.onerror=()=>reject(tx.error||new Error("Falha ao gravar checkpoint V242"));
+    });
+    db.close();
+    return true;
+  }catch(error){
+    console.warn("Checkpoint adicional do Private Label adiado:",error);
+    return false;
+  }
+}
+
+function erpCommissionSafeSnapshotReadV242(){
+  try{
+    const raw=localStorage.getItem(ERP_COMMISSION_SAFE_SNAPSHOT_V242);
+    const parsed=raw?JSON.parse(raw):null;
+    return Array.isArray(parsed?.rows)?parsed.rows:[];
+  }catch(error){return [];}
+}
+
+function erpCommissionSafeSnapshotWriteV242(rows,reason="confirmed"){
+  const safe=(Array.isArray(rows)?rows:[]).map(row=>cloneSafe(row,row)).filter(Boolean);
+  if(!safe.length)return false;
+  try{
+    localStorage.setItem(ERP_COMMISSION_SAFE_SNAPSHOT_V242,JSON.stringify({
+      savedAt:new Date().toISOString(),
+      build:APP_BUILD_VERSION,
+      reason:String(reason||"confirmed"),
+      rows:safe
+    }));
+    return true;
+  }catch(error){
+    console.warn("Snapshot seguro de comissões não pôde ser atualizado:",error);
+    return false;
+  }
+}
+
+async function erpV242FetchCommissionsProtected(localRows=[]){
+  const local=Array.isArray(localRows)?localRows:[];
+  try{
+    const rows=await erpV2FetchAll("wisent_erp_commissions");
+    if(rows.length){
+      erpCommissionSafeSnapshotWriteV242(rows,"supabase_read");
+      return {ok:true,useRemote:true,rows,reason:"confirmed"};
+    }
+    if(local.length){
+      /* Um vazio remoto isolado não apaga um histórico local já conhecido. */
+      erpCommissionSafeSnapshotWriteV242(local,"remote_empty_blocked");
+      return {ok:true,useRemote:false,rows:local,reason:"remote_empty_protected"};
+    }
+    return {ok:true,useRemote:true,rows:[],reason:"confirmed_empty"};
+  }catch(error){
+    const snapshot=erpCommissionSafeSnapshotReadV242();
+    const fallback=local.length?local:snapshot;
+    console.warn("Leitura de comissões falhou; lista anterior preservada:",error);
+    return {ok:false,useRemote:false,rows:fallback,reason:"read_failed",error};
+  }
 }
 
 function readErpTestSnapshot(){
@@ -33600,13 +33825,38 @@ async function syncErpV2FromCloud(options={}){
     const rowsByType={orders,products,clients,inventory,finance,employees,settings,stageEvents,standbyEvents,sewingEvents,deletedOrders};
     erpV2CacheRemoteVersions(rowsByType);
     const official=erpV2OfficialDataFromRows(rowsByType,localBefore);
-    const [colors,sizes,payments,supplies,rules,commissions,financialSummaries]=await Promise.all([
+
+    /* V242: se houve refresh/upgrade antes da fila V2 ser materializada, a cópia local
+       marcada como pendente é reconstituída sobre a cópia oficial, sem apagar pedidos
+       remotos que chegaram de outros usuários. */
+    const dirtyV242=erpPrivateLabelDirtyReadV242();
+    if(dirtyV242&&!options._v242DirtyRecovered){
+      await erpPrivateLabelCheckpointV242(localBefore,"antes-recuperacao-alteracao-pendente");
+      let recoveryTarget=mergeErpTestData(official,localBefore);
+      const deletedCollectionsV242=dirtyV242.deletedIds&&typeof dirtyV242.deletedIds==="object"
+        ?dirtyV242.deletedIds
+        :{orders:Array.isArray(dirtyV242.deletedOrderIds)?dirtyV242.deletedOrderIds:[]};
+      ["orders","clients","finance","stock","employees"].forEach(key=>{
+        const ids=new Set((deletedCollectionsV242[key]||[]).map(String));
+        if(ids.size)recoveryTarget[key]=(recoveryTarget[key]||[]).filter(item=>!ids.has(String(item?.id||"")));
+      });
+      await queueErpV2Diff(official,recoveryTarget);
+      const recoveredV242=await flushErpV2Outbox();
+      if(!recoveredV242){
+        setErpSyncStatus("Private Label protegido • alteração local aguardando confirmação da nuvem",true);
+        return false;
+      }
+      erpPrivateLabelClearDirtyV242(String(dirtyV242.updatedAt||""));
+      return syncErpV2FromCloud({...options,_v242DirtyRecovered:true});
+    }
+
+    const [colors,sizes,payments,supplies,rules,commissionReadV242,financialSummaries]=await Promise.all([
       erpV193FetchRequiredDomain("wisent_erp_v2_product_colors"),
       erpV193FetchRequiredDomain("wisent_erp_v2_product_size_quantities"),
       erpV193FetchRequiredDomain("wisent_erp_v2_payments"),
       erpV193FetchRequiredDomain("wisent_erp_supply_requests"),
       erpV174FetchOptional("wisent_erp_commission_rules"),
-      erpV174FetchOptional("wisent_erp_commissions"),
+      erpV242FetchCommissionsProtected(localBefore.commissions||[]),
       erpV174FetchView("wisent_erp_v2_order_financial_summary")
     ]);
     let legacy=null;
@@ -33624,7 +33874,25 @@ async function syncErpV2FromCloud(options={}){
       );
     }
 
-    protectedData=erpApplyV174DomainRows(protectedData,{colors,sizes,payments,supplies,rules,commissions,financialSummaries});
+    await erpPrivateLabelCheckpointV242(localBefore,"antes-sincronizacao-oficial");
+    protectedData=erpApplyV174DomainRows(protectedData,{
+      colors,sizes,payments,supplies,rules,
+      commissions:commissionReadV242.useRemote?commissionReadV242.rows:undefined,
+      financialSummaries
+    });
+    if(!commissionReadV242.useRemote){
+      const fallbackCommissions=(commissionReadV242.rows||[]).length
+        ?commissionReadV242.rows
+        :(localBefore.commissions||[]);
+      protectedData.commissions=Array.isArray(fallbackCommissions)
+        ?fallbackCommissions.map(row=>cloneSafe(row,row))
+        :[];
+      if(commissionReadV242.reason==="remote_empty_protected"){
+        console.info("V242: vazio remoto de comissões ignorado para preservar o histórico conhecido.");
+      }
+    }else if((commissionReadV242.rows||[]).length){
+      erpCommissionSafeSnapshotWriteV242(commissionReadV242.rows,"sync_applied");
+    }
     const hadConfirmedOrders=erpHasPrivateLabelRecords(localBefore)||erpHasPrivateLabelRecords(legacy);
     if(hadConfirmedOrders&&!erpHasPrivateLabelRecords(protectedData)){
       throw new Error("Sincronização vazia bloqueada para proteger os pedidos confirmados");
@@ -34052,6 +34320,7 @@ async function flushErpTestPendingQueue(){
     markSharedSaveConfirmed("erp",latestSharedSaveToken||"");
     setErpSyncStatus("ERP confirmado na nuvem • funcionários podem ver");
     updateCloudDebug("Private Label confirmado no Supabase; demandas disponíveis para colaboradores");
+    erpPrivateLabelClearDirtyV242(String(latest.data?.updatedAt||merged.updatedAt||""));
     return true;
   }catch(e){
     console.error("Falha ao sincronizar Private Label:",e);
@@ -34859,6 +35128,11 @@ function writeErpTestData(data,options={}){
     return false;
   }
 
+  if(options.queueCloud!==false){
+    erpPrivateLabelMarkDirtyV242(previous,normalized,options.auditAction||"alteração Private Label");
+    erpPrivateLabelCheckpointV242(normalized,"alteração-local-salva").catch(()=>{});
+  }
+
   if(options.auditAction){
     appendErpAudit(options.auditAction,options.auditDetail||{orders:(normalized.orders||[]).length});
   }else if(options.auditAction!==false){
@@ -34868,7 +35142,10 @@ function writeErpTestData(data,options={}){
   if(options.queueCloud!==false){
     if(erpV2Phase2Enabled()){
       erpV2DetachLegacyQueues();
-      queueErpV2Diff(previous,normalized);
+      queueErpV2Diff(previous,normalized).then(async()=>{
+        const flushedV242=await flushErpV2Outbox();
+        if(flushedV242)erpPrivateLabelClearDirtyV242(String(normalized.updatedAt||""));
+      }).catch(error=>console.warn("V242: alteração Private Label preservada para nova tentativa:",error));
       setErpSyncStatus("ERP V2 salvo localmente • preparando operações individuais");
       return true;
     }
@@ -36405,6 +36682,7 @@ async function syncErpPrivateLabelCommissionForOrderV238(order,{silent=false}={}
     );
     latest.commissions.push({...confirmed,percentage:Number(confirmed.percentage||0),commission_value:Number(confirmed.commission_value||0),eligible_value:Number(confirmed.eligible_value||0),_sellerLinkPendingV238:false});
     erpLocalWriteOnly(latest);
+    erpCommissionSafeSnapshotWriteV242(latest.commissions||[],"private_label_commission_confirmed");
     erpPrivateSellerRememberV238(order.id,seller,{confirmed:true});
     erpV174AuditCloud("private_label_seller",String(order.id),existing?"updated":"assigned",existing||null,{sellerId:seller.id,sellerName:seller.name,percentage}).catch(()=>{});
     if(currentPage==="commissionsPage")renderErpCommissions();
@@ -39369,6 +39647,7 @@ async function recalculateErpCommissions(options={}){
   });
   data.commissions=[...preserved,...rows];
   erpLocalWriteOnly(data);
+  erpCommissionSafeSnapshotWriteV242(data.commissions||[],"recalculated");
   appendErpAudit("commissions_recalculated",{sales:sales.length,commissions:rows.length,privateLabelPercentage:ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239});
   erpV174AuditCloud("commission_batch",today().slice(0,7),"recalculated",{previousCount:existing.size},{sales:sales.length,commissions:rows.length}).catch(()=>{});
   renderErpCommissions();
@@ -39427,7 +39706,7 @@ function renderErpCommissions(){
       ?`Período personalizado: ${rangeStart?dateBR(rangeStart):"início"} até ${rangeEnd?dateBR(rangeEnd):"hoje"}.`
       :`Mês completo: ${monthLabel(competence)}.`;
   }
-  $("erpCommissionRows").innerHTML=rows.length?rows.map(row=>`<tr class="status-${erpStandaloneClassToken(row.status)}"><td>${esc(row.source_id)}</td><td>${esc(row.seller_name)}</td><td>${esc(row.source_origin)}</td><td>${money(row.eligible_value)}</td><td>${Number(row.percentage).toFixed(2)}%</td><td><strong>${money(row.commission_value)}</strong></td><td><span class="erpCommissionStatus status-${erpStandaloneClassToken(row.status)}">${esc(row.status)}</span></td><td><select aria-label="Alterar status da comissão" onchange="updateErpCommissionStatus('${row.id}',this.value)">${["Pendente","Aprovada","Paga","Cancelada","Estornada"].map(value=>`<option ${value===row.status?"selected":""}>${value}</option>`).join("")}</select></td></tr>`).join(""):`<tr><td colspan="8">Nenhuma comissão no período.</td></tr>`;
+  $("erpCommissionRows").innerHTML=rows.length?rows.map(row=>`<tr class="status-${erpStandaloneClassToken(row.status)}"><td>${esc(row.source_id)}</td><td>${esc(row.seller_name)}</td><td><span class="erpCommissionOriginV242 origin-${erpStandaloneClassToken(row.source_origin)}">${esc(row.source_origin)}</span></td><td>${money(row.eligible_value)}</td><td>${Number(row.percentage).toFixed(2)}%</td><td><strong>${money(row.commission_value)}</strong></td><td><span class="erpCommissionStatus status-${erpStandaloneClassToken(row.status)}">${esc(row.status)}</span></td><td><select aria-label="Alterar status da comissão" onchange="updateErpCommissionStatus('${row.id}',this.value)">${["Pendente","Aprovada","Paga","Cancelada","Estornada"].map(value=>`<option ${value===row.status?"selected":""}>${value}</option>`).join("")}</select></td></tr>`).join(""):`<tr><td colspan="8">Nenhuma comissão no período.</td></tr>`;
 }
 
 function clearErpCommissionCustomRange(){
@@ -39479,6 +39758,7 @@ async function updateErpCommissionStatus(id,status){
     return;
   }
   row.status=status;row.paid_at=status==="Paga"?now:null;erpLocalWriteOnly(data);
+  erpCommissionSafeSnapshotWriteV242(data.commissions||[],"status_changed");
   appendErpAudit("commission_status_changed",{id,previous,status});
   erpV174AuditCloud("commission",String(id),status==="Estornada"?"reversed":"status_changed",{status:previous},{status,paidAt:row.paid_at}).catch(()=>{});
   renderErpCommissions();
