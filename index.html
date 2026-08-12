@@ -15440,6 +15440,109 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
 }
 /* ===== FIM V225 ===== */
 
+/* ===== V254 — PERSONALIZAÇÃO CENTRAL EXPANDIDA ===== */
+:root{
+  --soft:#eef2ff;
+  --table-head:#f9fafb;
+  --table-zebra:#ffffff;
+  --success:#16a34a;
+  --warning:#d97706;
+  --danger:#dc2626;
+  --ui-card-radius:18px;
+  --ui-control-radius:12px;
+  --ui-shadow:0 8px 24px rgba(15,23,42,.06);
+  --ui-font-scale:1;
+  --ui-font-family:Inter,Arial,sans-serif;
+  --sidebar-width:280px;
+  --logo-fit:cover;
+  --pl-bg:#030303;
+  --pl-surface:#080808;
+  --pl-accent:#d4af37;
+  --pl-text:#ffffff;
+  --pl-muted:#94a3b8;
+  --pl-border:#ffffff;
+  --pl-border-opacity:8%;
+  --pdf-accent:#2563eb;
+  --pdf-text:#111827;
+  --pdf-logo-width:270px;
+}
+body{font-family:var(--ui-font-family)}
+.side{width:var(--sidebar-width)}
+.card,.panel{border-radius:var(--ui-card-radius);box-shadow:var(--ui-shadow)}
+button,input,select,textarea{border-radius:var(--ui-control-radius)}
+.logo img,.loginLogo img{object-fit:var(--logo-fit)}
+th{background:var(--table-head)}
+tbody tr:nth-child(even) td{background:var(--table-zebra)}
+#reports .printLogo,.erpReportPdf .printLogo{max-width:var(--pdf-logo-width)}
+.printArea{color:var(--pdf-text)}
+.pdfFooterClean{border-color:var(--pdf-accent)}
+.pdfCompanyMetaV254{display:none;margin:6px 0 0!important;color:var(--pdf-text)!important;font-size:10px!important;font-weight:700;line-height:1.4}
+#reports #printArea::before{background:linear-gradient(90deg,var(--pdf-text),var(--pdf-accent),color-mix(in srgb,var(--pdf-accent) 62%,#fff))}
+#reports .pdfCleanHeader h1,#reports #reportName,#reports .pdfBox strong{color:var(--pdf-text)}
+#reports .pdfBox:nth-child(2)::before{background:var(--pdf-accent)}
+.erpReportPdf .erpPdfBadge{background:var(--pdf-text)!important;color:var(--pdf-accent)!important;border-color:color-mix(in srgb,var(--pdf-accent) 38%,#d1d5db)!important}
+.erpReportPdf .erpPdfSectionTitle{color:var(--pdf-text)!important}
+.erpReportPdf .erpPdfTable th{background:color-mix(in srgb,var(--pdf-accent) 8%,#fff)!important;color:var(--pdf-text)!important}
+@media print{body.print-report #reports .printLogo,body.print-erp-report .erpReportPdf .printLogo{max-width:min(var(--pdf-logo-width),100%)!important}}
+body[data-ui-density="compact"] .main{padding:18px}
+body[data-ui-density="compact"] .card,body[data-ui-density="compact"] .panel{padding:13px}
+body[data-ui-density="compact"] th,body[data-ui-density="compact"] td{padding:9px}
+body[data-ui-density="spacious"] .main{padding:32px}
+body[data-ui-density="spacious"] .card,body[data-ui-density="spacious"] .panel{padding:22px}
+body[data-ui-density="spacious"] th,body[data-ui-density="spacious"] td{padding:15px}
+body[data-reduce-motion="true"] *,body[data-reduce-motion="true"] *::before,body[data-reduce-motion="true"] *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.001ms!important}
+
+body[data-page="erpTest"]:not(.print-erp-report),body[data-page="erpTest"]:not(.print-erp-report) .main{background:var(--pl-bg)!important}
+body[data-page="erpTest"]:not(.print-erp-report) .top,body:not(.print-erp-report) .erpTestView .panel,body:not(.print-erp-report) .erpTestView .card,body:not(.print-erp-report) .erpTestView .erpSubPanel{background:linear-gradient(180deg,color-mix(in srgb,var(--pl-text) 4.5%,transparent),color-mix(in srgb,var(--pl-text) 1.8%,transparent)),var(--pl-surface)!important;border-color:color-mix(in srgb,var(--pl-border) var(--pl-border-opacity),transparent)!important}
+body[data-page="erpTest"]:not(.print-erp-report) .top h2,body:not(.print-erp-report) .erpTestView h2,body:not(.print-erp-report) .erpTestView h3,body:not(.print-erp-report) .erpTestView h4,body:not(.print-erp-report) .erpTestView strong{color:var(--pl-text)!important}
+body:not(.print-erp-report) .erpTestView p,body:not(.print-erp-report) .erpTestView small,body:not(.print-erp-report) .erpTestView .muted{color:var(--pl-muted)}
+body:not(.print-erp-report) .erpHero{background:radial-gradient(circle at 90% 10%,color-mix(in srgb,var(--pl-accent) 24%,transparent),transparent 26%),linear-gradient(135deg,color-mix(in srgb,var(--pl-surface) 88%,#fff 12%),var(--pl-bg))!important;border-color:color-mix(in srgb,var(--pl-accent) 34%,transparent)!important}
+body:not(.print-erp-report) .erpLabBadge,body:not(.print-erp-report) .erpModuleTabs button.active,body:not(.print-erp-report) .erpDashboardLiveV244{border-color:color-mix(in srgb,var(--pl-accent) 44%,transparent)!important;color:var(--pl-accent)!important}
+body:not(.print-erp-report) .erpModuleTabs{background:color-mix(in srgb,var(--pl-bg) 88%,transparent)!important;border-color:color-mix(in srgb,var(--pl-accent) 20%,transparent)!important}
+
+.settingsWorkspaceV254{padding:22px!important;background:linear-gradient(145deg,color-mix(in srgb,var(--accent) 6%,var(--card)),var(--card))!important}
+.settingsHeroV254{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:-4px -4px 18px;padding:22px;border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));border-radius:calc(var(--ui-card-radius) + 4px);background:linear-gradient(135deg,var(--primary),color-mix(in srgb,var(--primary) 78%,var(--accent)));color:#fff;box-shadow:var(--ui-shadow)}
+.settingsHeroV254 span{font-size:9px;font-weight:1000;letter-spacing:.14em;opacity:.76}
+.settingsHeroV254 h3{margin:5px 0 6px;font-size:25px}
+.settingsHeroV254 p{max-width:700px;margin:0;color:rgba(255,255,255,.76);line-height:1.5}
+.settingsHeroBadgesV254{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.settingsHeroBadgesV254 b{padding:7px 10px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(255,255,255,.08);font-size:10px;white-space:nowrap}
+.settingsSafetyV254{margin-bottom:14px!important}
+.settingsGridV254{grid-template-columns:1fr!important;gap:12px!important}
+.settingsSectionV254{overflow:hidden;border:1px solid var(--line);border-radius:var(--ui-card-radius);background:var(--card);box-shadow:0 5px 18px rgba(15,23,42,.035)}
+.settingsSectionV254>summary{display:flex;align-items:center;gap:12px;min-height:66px;padding:12px 15px;cursor:pointer;list-style:none;background:linear-gradient(180deg,color-mix(in srgb,var(--soft) 58%,var(--card)),var(--card));user-select:none}
+.settingsSectionV254>summary::-webkit-details-marker{display:none}
+.settingsSectionV254>summary::after{content:"＋";margin-left:auto;color:var(--muted);font-size:20px;font-weight:500}
+.settingsSectionV254[open]>summary::after{content:"−"}
+.settingsSectionV254>summary>span:nth-child(2){display:grid;gap:3px}
+.settingsSectionV254>summary b{color:var(--text);font-size:14px}
+.settingsSectionV254>summary small{color:var(--muted);font-size:11px;font-weight:600}
+.settingsSectionIconV254{display:grid!important;place-items:center;width:36px;height:36px;flex:0 0 36px;border-radius:11px;background:color-mix(in srgb,var(--accent) 13%,var(--card));color:var(--accent)!important;font-size:10px!important;font-weight:1000!important;letter-spacing:0!important;opacity:1!important}
+.settingsFieldsV254{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:16px;border-top:1px solid var(--line)}
+.settingsFieldsV254>.full{grid-column:1/-1}
+.settingsFieldsV254 label{align-content:start;min-width:0}
+.settingsFieldsV254 input[type="color"]{height:44px;padding:4px;cursor:pointer}
+.settingsFieldsV254 textarea{min-height:72px}
+.settingsAppearanceGridV254{grid-template-columns:repeat(3,minmax(0,1fr))}
+.settingsCheckV254{display:flex!important;align-items:center;align-self:end;min-height:43px;padding:9px 11px;border:1px solid var(--line);border-radius:var(--ui-control-radius);background:var(--soft);color:var(--text)!important}
+.settingsCheckV254 input{width:19px;flex:0 0 19px;margin:0 9px 0 0;padding:0}
+.settingsPreviewCardV254{display:grid;align-content:center;min-height:84px;padding:12px;border:1px solid var(--line);border-radius:var(--ui-control-radius);background:var(--soft)}
+.settingsPreviewCardV254>small{margin-bottom:7px;color:var(--muted);font-weight:800}
+.settingsPreviewCardV254 #systemLogoPreview,.settingsPreviewCardV254 #pdfLogoPreview{display:flex;align-items:center;min-height:48px}
+.settingsPreviewCardV254 img{max-height:52px;max-width:var(--pdf-logo-width);border-radius:8px;object-fit:var(--logo-fit)}
+.settingsThemePreviewV254{display:grid;align-content:center;gap:4px;min-height:135px;padding:15px;border:1px solid var(--line);border-radius:var(--ui-card-radius);background:var(--card);color:var(--text);box-shadow:var(--ui-shadow)}
+.settingsThemePreviewV254>span{color:var(--accent);font-size:9px;font-weight:1000;text-transform:uppercase}
+.settingsThemePreviewV254>small{color:var(--muted)}
+.settingsThemePreviewV254>button{width:max-content;margin-top:6px;background:var(--accent);color:#fff}
+.settingsInlineActionsV254{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.settingsInlineActionsV254 small{color:var(--muted)}
+.settingsSaveBarV254{position:sticky;bottom:12px;z-index:12;display:flex;align-items:center;gap:10px;padding:13px 15px;border:1px solid color-mix(in srgb,var(--accent) 28%,var(--line));border-radius:var(--ui-card-radius);background:color-mix(in srgb,var(--card) 94%,transparent);box-shadow:0 16px 40px rgba(15,23,42,.16);backdrop-filter:blur(14px)}
+.settingsSaveBarV254>div{display:grid;gap:2px;margin-right:auto}.settingsSaveBarV254>div b{color:var(--text);font-size:12px}.settingsSaveBarV254>div small{color:var(--muted);font-size:10px}
+.settingsMaintenanceV254{border-style:dashed}
+.settingsImportV254{display:inline-flex!important}.settingsImportV254>span{display:inline-flex;padding:10px 14px;border-radius:var(--ui-control-radius);color:#1e40af;background:var(--soft);font-weight:800;cursor:pointer}
+@media(max-width:960px){.settingsAppearanceGridV254{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.settingsWorkspaceV254{padding:13px!important}.settingsHeroV254{display:grid;padding:17px}.settingsHeroBadgesV254{justify-content:flex-start}.settingsFieldsV254,.settingsAppearanceGridV254{grid-template-columns:1fr}.settingsFieldsV254>.full{grid-column:1}.settingsSaveBarV254{display:grid;grid-template-columns:1fr 1fr;bottom:7px}.settingsSaveBarV254>div{grid-column:1/-1}.settingsSaveBarV254 button{width:100%;min-width:0;padding-inline:7px}.settingsSectionV254>summary{padding:10px 12px}.settingsSectionV254>summary small{line-height:1.3}}
+/* ===== FIM V254 ===== */
 </style>
 
 <meta name="theme-color" content="#000000">
@@ -15899,8 +16002,8 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     <div class="loginBrand">
       <div class="loginLogo" id="loginLogo">W</div>
       <div>
-        <h1>Login interno</h1>
-        <p>Painel de Influencers</p>
+        <h1 id="loginHeadingV254">Login interno</h1>
+        <p id="loginSubtitleV254">Painel de Influencers</p>
       </div>
     </div>
 
@@ -15911,9 +16014,9 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
       <label>Senha
         <input id="loginPassword" type="password" autocomplete="current-password" placeholder="Digite a senha" required>
       </label>
-      <button class="primary" type="submit">Entrar no painel</button>
+      <button id="loginSubmitV254" class="primary" type="submit">Entrar no painel</button>
       <p id="loginMsg" class="loginMsg">Carregando dados do painel...</p>
-      <p class="loginHint">Login interno simples para rastrear quem fez cada lançamento.</p>
+      <p id="loginHintV254" class="loginHint">Login interno simples para rastrear quem fez cada lançamento.</p>
     </form>
   </div>
 </div>
@@ -15951,7 +16054,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
       <button data-page="pix">Chaves PIX</button>
       <button data-page="reports">Relatório PDF</button>
       <button data-page="collaborators">Colaboradores</button>
-      <button data-page="erpTest" data-erp-test-nav>Private Label</button>
+      <button data-page="erpTest" data-erp-test-nav><span data-private-label-nav-v254>Private Label</span></button>
       <button data-page="suppliesPage">Insumos para Comprar</button>
       <button type="button" class="erpSectorLogout" data-sector-logout onclick="logoutUser()">Sair</button>
       <button data-page="commissionsPage" data-admin-commission>Gestão de Comissões</button>
@@ -15959,7 +16062,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V253</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V254</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17145,6 +17248,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
             <div>
               <h1 id="reportTitle">Relatório de comissão</h1>
               <p id="reportMsg" class="muted"></p>
+              <p id="reportCompanyMetaV254" class="pdfCompanyMetaV254"></p>
             </div>
             <img id="reportLogo" class="printLogo" style="display:none">
           </div>
@@ -17264,8 +17368,8 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
   <div class="erpHero">
     <div>
       <span class="erpLabBadge">Gestão operacional</span>
-      <h2>Private Label</h2>
-      <p>Área de gestão de clientes, pedidos, produção, estoque, financeiro, relatórios e etiquetas.</p>
+      <h2 id="privateLabelTitleV254">Private Label</h2>
+      <p id="privateLabelSubtitleV254">Área de gestão de clientes, pedidos, produção, estoque, financeiro, relatórios e etiquetas.</p>
       <div id="erpSyncStatus" class="erpSyncStatus">ERP: salvamento local ativo • sincronização iniciando</div>
     </div>
     <div class="erpHeroActions">
@@ -17328,8 +17432,8 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
       <div class="erpDashboardIntroIconV244" aria-hidden="true">◇</div>
       <div>
         <span>VISÃO OPERACIONAL</span>
-        <h3>Dashboard Private Label</h3>
-        <p>Indicadores essenciais de pedidos, produção, equipe e financeiro em uma leitura única.</p>
+        <h3 id="privateLabelDashboardTitleV254">Dashboard Private Label</h3>
+        <p id="privateLabelDashboardSubtitleV254">Indicadores essenciais de pedidos, produção, equipe e financeiro em uma leitura única.</p>
       </div>
       <span class="erpDashboardLiveV244"><i></i> Operação em tempo real</span>
     </div>
@@ -17339,7 +17443,6 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
       <div class="card erpMetricCard erpMetricV244 tone-red"><span class="erpMetricIconV244">!</span><div><small>Pedidos atrasados</small><strong id="erpPedidosAtrasados">0</strong><em>Atenção imediata</em></div></div>
       <div class="card erpMetricCard erpMetricV244 tone-violet"><span class="erpMetricIconV244">◆</span><div><small>Produção hoje</small><strong id="erpProducaoHoje">0</strong><em>Movimentações no dia</em></div></div>
       <div class="card erpMetricCard erpMetricV244 tone-green"><span class="erpMetricIconV244">✓</span><div><small>Peças produzidas</small><strong id="erpPecasProduzidas">0</strong><em>Produção concluída</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-cyan"><span class="erpMetricIconV244">●</span><div><small>Funcionários online</small><strong id="erpFuncionariosOnline">0</strong><em>Equipe disponível</em></div></div>
       <div class="card erpMetricCard erpMetricV244 tone-orange"><span class="erpMetricIconV244">↓</span><div><small>Estoque baixo</small><strong id="erpEstoqueBaixo">0</strong><em>Itens abaixo do mínimo</em></div></div>
       <div class="card erpMetricCard erpMetricV244 tone-rose"><span class="erpMetricIconV244">⚡</span><div><small>Pedidos urgentes</small><strong id="erpPedidosUrgentes">0</strong><em>Prioridade elevada</em></div></div>
       <div class="card erpMetricCard erpMetricV244 tone-amber"><span class="erpMetricIconV244">R$</span><div><small>Financeiro pendente</small><strong id="erpFinanceiroPendente">R$ 0,00</strong><em>Saldo ainda a receber</em></div></div>
@@ -17356,7 +17459,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
         <div class="erpFinanceHeroCopyV243">
           <span class="erpFinanceEyebrowV243">CONTROLE FINANCEIRO</span>
           <h3 id="erpFinanceDashboardTitle">Financeiro do Private Label</h3>
-          <p>Registre entradas e saídas, acompanhe pendências e consulte o histórico sem sair do Dashboard.</p>
+          <p id="privateLabelFinanceSubtitleV254">Registre entradas e saídas, acompanhe pendências e consulte o histórico sem sair do Dashboard.</p>
         </div>
         <span class="erpFinanceLiveV243"><i></i> Atualização integrada</span>
       </div>
@@ -17701,6 +17804,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
             <img id="erpReportPdfLogo" class="printLogo" alt="Logo" style="display:none">
             <h1>Relatório de Produção - Private Label</h1>
             <p id="erpReportPdfSubtitle">Período do relatório</p>
+            <p id="erpReportCompanyMetaV254" class="pdfCompanyMetaV254"></p>
           </div>
           <div class="erpPdfBadge">PRIVATE LABEL</div>
         </div>
@@ -17959,110 +18063,151 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
 </section>
 
 <section id="settings" class="view">
-      <div class="panel">
-        <div class="panelHead">
-          <h3>Personalizar sistema</h3>
-          <span class="muted">Altere nomes, cores, logos, origens, status e texto do PDF.</span>
+      <div class="panel settingsWorkspaceV254">
+        <div class="settingsHeroV254">
+          <div><span>PERSONALIZAÇÃO CENTRAL</span><h3>Personalizar sistema</h3><p>Controle identidade, aparência, Private Label, mobile e documentos sem alterar dados operacionais.</p></div>
+          <div class="settingsHeroBadgesV254"><b>6 áreas</b><b>Salvamento confirmado</b><b>Sincronizado</b></div>
         </div>
 
-        <div class="settingsGrid">
+        <div class="notice settingsSafetyV254">
+          <b>Alteração segura:</b> opções novas reproduzem o visual atual até você modificá-las e clicar em Salvar. Pedidos, clientes, vendas, colaboradores, comissões e históricos não fazem parte deste formulário.
+        </div>
 
-          <div class="notice full">
-            <b>App instalável:</b> no iPhone, abra no Safari e use Compartilhar > Adicionar à Tela de Início.
-            No Android, abra no Chrome e use Instalar app ou Adicionar à tela inicial.
-          </div>
-
-
-          
-
-
-
-          <label>Nome do sistema<input id="setName"></label>
-          <label>Subtítulo<input id="setSub"></label>
-
-          <label>Cor principal<input type="color" id="setPrimary"></label>
-          <label>Cor de destaque<input type="color" id="setAccent"></label>
-          <label>Fundo<input type="color" id="setBg"></label>
-          <label>Cards<input type="color" id="setCard"></label>
-          <label>Texto<input type="color" id="setText"></label>
-
-
-          <div class="mobileSettingsBox full">
-            <div class="notice full" style="margin-bottom:12px">Recuperação automática de imagens antigas ativa: se logo/foto do painel ou imagens do PDF estiverem salvas em versões anteriores neste navegador, o sistema tenta reaproveitar automaticamente.</div>
-          <div class="mobileSettingsTitle">
-              <h4>Personalização do mobile</h4>
-              <p>Essas cores aparecem somente no celular: menu sanduíche, gaveta lateral e menu inferior.</p>
+        <div class="settingsGrid settingsGridV254">
+          <details class="settingsSectionV254 full" open>
+            <summary><span class="settingsSectionIconV254">ID</span><span><b>Identidade e acesso</b><small>Marca, título do navegador e tela de login</small></span></summary>
+            <div class="settingsFieldsV254">
+              <label>Nome do sistema<input id="setName"></label>
+              <label>Subtítulo da barra lateral<input id="setSub"></label>
+              <label>Título da aba do navegador<input id="setBrowserTitle" maxlength="80"></label>
+              <label>Iniciais sem logo<input id="setBrandInitials" maxlength="4" placeholder="Ex.: JS"></label>
+              <label>Iniciais na tela de login<input id="setLoginInitials" maxlength="4" placeholder="Ex.: W"></label>
+              <label>Título da tela de login<input id="setLoginTitle" maxlength="70"></label>
+              <label>Subtítulo da tela de login<input id="setLoginSubtitle" maxlength="100"></label>
+              <label>Texto do botão de login<input id="setLoginButtonText" maxlength="50"></label>
+              <label>Ajuda exibida no login<input id="setLoginHint" maxlength="180"></label>
+              <label>Encaixe da logo<select id="setLogoFit"><option value="cover">Preencher</option><option value="contain">Conter sem corte</option></select></label>
+              <label>Logo do sistema<input type="file" id="setSystemLogo" accept="image/*" onchange="previewSystemLogo(event)"></label>
+              <div class="settingsPreviewCardV254"><small>Logo atual do sistema</small><div id="systemLogoPreview"></div></div>
+              <div class="settingsInlineActionsV254"><button type="button" class="secondary" onclick="removeSystemLogo()">Remover logo do sistema</button></div>
             </div>
-            <div class="mobileColorGrid">
+          </details>
+
+          <details class="settingsSectionV254 full" open>
+            <summary><span class="settingsSectionIconV254">UI</span><span><b>Aparência geral</b><small>Cores, tipografia, espaçamento, bordas e sombras</small></span></summary>
+            <div class="settingsFieldsV254 settingsAppearanceGridV254">
+              <label>Cor principal<input type="color" id="setPrimary"></label>
+              <label>Cor de destaque<input type="color" id="setAccent"></label>
+              <label>Fundo geral<input type="color" id="setBg"></label>
+              <label>Cards e painéis<input type="color" id="setCard"></label>
+              <label>Texto principal<input type="color" id="setText"></label>
+              <label>Linhas e divisórias<input type="color" id="setLine"></label>
+              <label>Texto secundário<input type="color" id="setMuted"></label>
+              <label>Fundo suave<input type="color" id="setSoft"></label>
+              <label>Cabeçalho das tabelas<input type="color" id="setTableHeader"></label>
+              <label>Linha alternada das tabelas<input type="color" id="setTableZebra"></label>
+              <label>Cor de sucesso<input type="color" id="setSuccess"></label>
+              <label>Cor de atenção<input type="color" id="setWarning"></label>
+              <label>Cor de erro/perigo<input type="color" id="setDanger"></label>
+              <label>Fonte do sistema<select id="setFontFamily"><option value="system">Padrão do aparelho</option><option value="inter">Inter / moderna</option><option value="arial">Arial / neutra</option><option value="serif">Serifada / editorial</option><option value="mono">Monoespaçada / técnica</option></select></label>
+              <label>Escala da fonte (%)<input type="number" id="setFontScale" min="90" max="115" step="1"></label>
+              <label>Largura da barra lateral (px)<input type="number" id="setSidebarWidth" min="230" max="360" step="5"></label>
+              <label>Arredondamento de cards (px)<input type="number" id="setCardRadius" min="6" max="30" step="1"></label>
+              <label>Arredondamento de controles (px)<input type="number" id="setControlRadius" min="4" max="24" step="1"></label>
+              <label>Intensidade das sombras<select id="setShadowStrength"><option value="0">Sem sombra</option><option value="3">Discreta</option><option value="6">Padrão</option><option value="12">Marcante</option><option value="20">Intensa</option></select></label>
+              <label>Densidade da interface<select id="setUiDensity"><option value="compact">Compacta</option><option value="comfortable">Confortável</option><option value="spacious">Espaçosa</option></select></label>
+              <label class="settingsCheckV254"><input type="checkbox" id="setReduceMotion"><span>Reduzir animações e transições</span></label>
+              <div id="settingsThemePreviewV254" class="settingsThemePreviewV254"><span>Prévia</span><b>Card do sistema</b><small>Texto secundário e botão de destaque</small><button type="button">Ação</button></div>
+              <div class="settingsInlineActionsV254 full"><button type="button" class="secondary" onclick="resetAppearanceFormV254()">Restaurar aparência padrão no formulário</button><small>Nada será salvo até clicar em Salvar personalização.</small></div>
+            </div>
+          </details>
+
+          <details class="settingsSectionV254 full" open>
+            <summary><span class="settingsSectionIconV254">PL</span><span><b>Private Label</b><small>Nomes e identidade visual exclusiva da área operacional</small></span></summary>
+            <div class="settingsFieldsV254">
+              <label>Nome no menu<input id="setPrivateLabelNavLabel" maxlength="40"></label>
+              <label>Título principal<input id="setPrivateLabelTitle" maxlength="70"></label>
+              <label class="full">Descrição principal<textarea id="setPrivateLabelSubtitle"></textarea></label>
+              <label>Título do dashboard<input id="setPrivateLabelDashboardTitle" maxlength="80"></label>
+              <label class="full">Descrição do dashboard<textarea id="setPrivateLabelDashboardSubtitle"></textarea></label>
+              <label>Título do financeiro<input id="setPrivateLabelFinanceTitle" maxlength="80"></label>
+              <label class="full">Descrição do financeiro<textarea id="setPrivateLabelFinanceSubtitle"></textarea></label>
+              <label>Fundo do Private Label<input type="color" id="setPrivateLabelBackground"></label>
+              <label>Superfícies e cards<input type="color" id="setPrivateLabelSurface"></label>
+              <label>Cor de destaque<input type="color" id="setPrivateLabelAccent"></label>
+              <label>Texto principal<input type="color" id="setPrivateLabelText"></label>
+              <label>Texto secundário<input type="color" id="setPrivateLabelMuted"></label>
+              <label>Cor das bordas<input type="color" id="setPrivateLabelBorderColor"></label>
+              <label>Intensidade das bordas (%)<input type="number" id="setPrivateLabelBorderOpacity" min="8" max="60" step="1"></label>
+            </div>
+          </details>
+
+          <details class="settingsSectionV254 full">
+            <summary><span class="settingsSectionIconV254">M</span><span><b>Mobile</b><small>Menu sanduíche, gaveta lateral e navegação inferior</small></span></summary>
+            <div class="settingsFieldsV254">
               <label>Fundo do menu mobile<input type="color" id="setMobileMenuBg"></label>
               <label>Texto do menu mobile<input type="color" id="setMobileMenuText"></label>
-              <label>Fundo item ativo<input type="color" id="setMobileMenuActiveBg"></label>
-              <label>Texto item ativo<input type="color" id="setMobileMenuActiveText"></label>
-              <label>Fundo menu inferior<input type="color" id="setMobileBottomBg"></label>
-              <label>Texto menu inferior<input type="color" id="setMobileBottomText"></label>
+              <label>Fundo do item ativo<input type="color" id="setMobileMenuActiveBg"></label>
+              <label>Texto do item ativo<input type="color" id="setMobileMenuActiveText"></label>
+              <label>Fundo do menu inferior<input type="color" id="setMobileBottomBg"></label>
+              <label>Texto do menu inferior<input type="color" id="setMobileBottomText"></label>
               <label>Fundo ativo inferior<input type="color" id="setMobileBottomActiveBg"></label>
               <label>Texto ativo inferior<input type="color" id="setMobileBottomActiveText"></label>
             </div>
-          </div>
+          </details>
 
-          <label>Logo do sistema<input type="file" id="setSystemLogo" accept="image/*" onchange="previewSystemLogo(event)"></label>
-          <div class="card">
-            <small>Logo atual do sistema</small>
-            <div id="systemLogoPreview" style="height:70px;display:flex;align-items:center"></div>
-          </div>
+          <details class="settingsSectionV254 full">
+            <summary><span class="settingsSectionIconV254">PDF</span><span><b>PDFs e documentos</b><small>Logo, textos institucionais, cores e marca d'água</small></span></summary>
+            <div class="settingsFieldsV254">
+              <label>Logo superior do PDF<input type="file" id="setPdfLogo" accept="image/*" onchange="previewPdfLogo(event)"></label>
+              <div class="settingsPreviewCardV254"><small>Logo atual do PDF</small><div id="pdfLogoPreview"></div></div>
+              <label>Cor de destaque do PDF<input type="color" id="setPdfAccentColor"></label>
+              <label>Cor principal do texto<input type="color" id="setPdfTextColor"></label>
+              <label>Largura máxima da logo (px)<input type="number" id="setPdfLogoWidth" min="90" max="420" step="5"></label>
+              <label>Nome da empresa nos documentos<input id="setPdfCompanyName" maxlength="100"></label>
+              <label>Documento/CNPJ<input id="setPdfCompanyDocument" maxlength="60"></label>
+              <label>Contato institucional<input id="setPdfContactLine" maxlength="140"></label>
+              <label class="settingsCheckV254"><input type="checkbox" id="setPdfShowGeneratedAt"><span>Mostrar data e hora de geração</span></label>
+              <label class="full">Título do PDF<input id="setPdfTitle"></label>
+              <label class="full">Mensagem do PDF<textarea id="setPdfMessage"></textarea></label>
+              <label class="full">Rodapé do PDF<input id="setPdfFooter"></label>
+              <label>Marca d'água do PDF<input type="file" id="setPdfWatermarkLogo" accept="image/*" onchange="previewWatermarkLogo(event)"></label>
+              <label>Posição rápida da marca d'água<select id="setPdfWatermarkPreset" onchange="setWatermarkPreset(this.value)"><option value="">Personalizada</option><option value="top-left">Superior esquerda</option><option value="top-center">Superior centro</option><option value="top-right">Superior direita</option><option value="middle-left">Meio esquerda</option><option value="center">Centro</option><option value="middle-right">Meio direita</option><option value="bottom-left">Inferior esquerda</option><option value="bottom-center">Inferior centro</option><option value="bottom-right">Inferior direita</option></select></label>
+              <label>Horizontal da marca d'água (%)<input type="number" id="setPdfWatermarkX" min="0" max="100" step="1"></label>
+              <label>Vertical da marca d'água (%)<input type="number" id="setPdfWatermarkY" min="0" max="100" step="1"></label>
+              <label>Tamanho da marca d'água (%)<input type="number" id="setPdfWatermarkSize" min="10" max="100" step="1"></label>
+              <label>Opacidade da marca d'água<input type="range" id="setPdfWatermarkOpacity" min="0.03" max="0.35" step="0.01"></label>
+              <div class="settingsInlineActionsV254 full"><button type="button" class="secondary" onclick="removePdfLogo()">Remover logo do PDF</button><button type="button" class="secondary" onclick="removePdfWatermark()">Remover marca d'água</button></div>
+            </div>
+          </details>
 
-          <label>Logo superior do PDF<input type="file" id="setPdfLogo" accept="image/*" onchange="previewPdfLogo(event)"></label>
-          <div class="card">
-            <small>Logo atual do PDF</small>
-            <div id="pdfLogoPreview" style="height:70px;display:flex;align-items:center"></div>
-          </div>
+          <details class="settingsSectionV254 full">
+            <summary><span class="settingsSectionIconV254">≡</span><span><b>Listas operacionais</b><small>Opções usadas nos lançamentos — não altera registros antigos</small></span></summary>
+            <div class="settingsFieldsV254">
+              <label class="full">Origens de venda, separadas por vírgula<input id="setOrigins"></label>
+              <label class="full">Status de lançamento, separados por vírgula<input id="setStatuses"></label>
+              <div class="notice full">Alterar estas listas muda somente as opções disponíveis para novos lançamentos. Registros históricos mantêm seus textos originais.</div>
+            </div>
+          </details>
 
-          <label>Marca d'água do PDF<input type="file" id="setPdfWatermarkLogo" accept="image/*" onchange="previewWatermarkLogo(event)"></label>
-          <label>Posição rápida da marca d'água
-            <select id="setPdfWatermarkPreset" onchange="setWatermarkPreset(this.value)">
-              <option value="">Personalizada</option>
-              <option value="top-left">Superior esquerda</option>
-              <option value="top-center">Superior centro</option>
-              <option value="top-right">Superior direita</option>
-              <option value="middle-left">Meio esquerda</option>
-              <option value="center">Centro</option>
-              <option value="middle-right">Meio direita</option>
-              <option value="bottom-left">Inferior esquerda</option>
-              <option value="bottom-center">Inferior centro</option>
-              <option value="bottom-right">Inferior direita</option>
-            </select>
-          </label>
+          <div class="notice full">Recuperação automática de imagens antigas ativa: logos e imagens de PDF salvas neste navegador continuam sendo reaproveitadas.</div>
+          <div id="settingsCloudStatusV210" class="notice full">Personalização protegida: as alterações serão confirmadas em uma tabela própria do Supabase.</div>
 
-          <label>Horizontal da marca d'água (%)<input type="number" id="setPdfWatermarkX" min="0" max="100" step="1"></label>
-          <label>Vertical da marca d'água (%)<input type="number" id="setPdfWatermarkY" min="0" max="100" step="1"></label>
-          <label>Tamanho da marca d'água (%)<input type="number" id="setPdfWatermarkSize" min="10" max="100" step="1"></label>
-          <label>Opacidade da marca d'água<input type="range" id="setPdfWatermarkOpacity" min="0.03" max="0.35" step="0.01"></label>
-
-          <label class="full">Origens de venda, separadas por vírgula<input id="setOrigins"></label>
-          <label class="full">Status de lançamento, separados por vírgula<input id="setStatuses"></label>
-
-          <label class="full">Título do PDF<input id="setPdfTitle"></label>
-          <label class="full">Mensagem do PDF<textarea id="setPdfMessage"></textarea></label>
-          <label class="full">Rodapé do PDF<input id="setPdfFooter"></label>
-
-          <div id="settingsCloudStatusV210" class="notice full" style="margin-bottom:0">
-            Personalização protegida: as alterações serão confirmadas em uma tabela própria do Supabase.
-          </div>
-
-          <div class="actions full">
+          <div class="settingsSaveBarV254 full">
+            <div><b>Salvar somente a personalização</b><small>Nenhum pedido, cliente, venda, comissão ou colaborador será regravado.</small></div>
             <button type="button" id="saveSettingsBtnV210" class="primary" onclick="saveSettings()">Salvar personalização</button>
-            <button type="button" class="secondary" onclick="settingsV213RunDiagnostic()">Testar conexão da Personalização</button>
-            <button type="button" class="secondary" onclick="removeSystemLogo()">Remover logo do sistema</button>
-            <button type="button" class="secondary" onclick="removePdfLogo()">Remover logo do PDF</button>
-            <button type="button" class="secondary" onclick="removePdfWatermark()">Remover marca d'água</button>
-            <button type="button" class="secondary" onclick="exportBackup()">Exportar backup</button>
-            <button type="button" class="secondary" onclick="exportWisentDataBackupV212()">Backup blindado V213</button>
-            <label style="display:inline-flex">
-              <span class="secondary" style="padding:10px 14px;border-radius:12px;color:#1e40af;background:#eef2ff">Importar backup</span>
-              <input type="file" accept="application/json" onchange="importBackup(event)" class="hidden">
-            </label>
-            <button type="button" class="danger" onclick="clearAll()">Resetar tudo</button>
+            <button type="button" class="secondary" onclick="settingsV213RunDiagnostic()">Testar conexão</button>
           </div>
+
+          <details class="settingsSectionV254 settingsMaintenanceV254 full">
+            <summary><span class="settingsSectionIconV254">↥</span><span><b>Backup e manutenção</b><small>Ferramentas já existentes do sistema</small></span></summary>
+            <div class="settingsInlineActionsV254">
+              <button type="button" class="secondary" onclick="exportBackup()">Exportar backup</button>
+              <button type="button" class="secondary" onclick="exportWisentDataBackupV212()">Backup blindado V213</button>
+              <label class="settingsImportV254"><span class="secondary">Importar backup</span><input type="file" accept="application/json" onchange="importBackup(event)" class="hidden"></label>
+              <button type="button" class="danger" onclick="clearAll()">Resetar tudo</button>
+            </div>
+          </details>
         </div>
       </div>
     </section>
@@ -18153,6 +18298,55 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
 <script src="./pdf-lib.min.js"></script>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827", "authUsers": [{"id": "admin", "name": "Administrador", "username": "admin", "password": "1234", "role": "Admin", "active": true}]}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": [], "wholesaleRetail": []};
+/* V254: defaults puramente visuais. Ao abrir uma base anterior, estes valores
+   apenas completam chaves ausentes e reproduzem exatamente a aparência atual. */
+Object.assign(INITIAL_STATE.settings,{
+  browserTitle:"Painel de Influencers",
+  brandInitials:"JS",
+  loginInitials:"W",
+  loginTitle:"Login interno",
+  loginSubtitle:"Painel de Influencers",
+  loginButtonText:"Entrar no painel",
+  loginHint:"Login interno simples para rastrear quem fez cada lançamento.",
+  lineColor:"#e5e7eb",
+  mutedColor:"#6b7280",
+  softColor:"#eef2ff",
+  tableHeaderColor:"#f9fafb",
+  tableZebraColor:"#ffffff",
+  successColor:"#16a34a",
+  warningColor:"#d97706",
+  dangerColor:"#dc2626",
+  fontFamily:"inter",
+  fontScale:100,
+  sidebarWidth:280,
+  cardRadius:18,
+  controlRadius:12,
+  shadowStrength:6,
+  uiDensity:"comfortable",
+  reduceMotion:false,
+  logoFit:"cover",
+  privateLabelNavLabel:"Private Label",
+  privateLabelTitle:"Private Label",
+  privateLabelSubtitle:"Área de gestão de clientes, pedidos, produção, estoque, financeiro, relatórios e etiquetas.",
+  privateLabelDashboardTitle:"Dashboard Private Label",
+  privateLabelDashboardSubtitle:"Indicadores essenciais de pedidos, produção, equipe e financeiro em uma leitura única.",
+  privateLabelFinanceTitle:"Financeiro do Private Label",
+  privateLabelFinanceSubtitle:"Registre entradas e saídas, acompanhe pendências e consulte o histórico sem sair do Dashboard.",
+  privateLabelBackground:"#030303",
+  privateLabelSurface:"#080808",
+  privateLabelAccent:"#d4af37",
+  privateLabelText:"#ffffff",
+  privateLabelMuted:"#94a3b8",
+  privateLabelBorderColor:"#ffffff",
+  privateLabelBorderOpacity:8,
+  pdfAccentColor:"#2563eb",
+  pdfTextColor:"#111827",
+  pdfLogoWidth:270,
+  pdfCompanyName:"",
+  pdfCompanyDocument:"",
+  pdfContactLine:"",
+  pdfShowGeneratedAt:true
+});
 const KEY = "painel_influencers_backup_estavel_v60";
 const SUPABASE_URL = "https://dtwztsvkwwhmekklppvl.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR0d3p0c3Zrd3dobWVra2xwcHZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDA2OTUsImV4cCI6MjA5NzExNjY5NX0.qx0flTLVmsYuqFo3SYF4BsfYWAwv9BqVl12EgyJicrQ";
@@ -18391,7 +18585,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V253";
+const APP_BUILD_VERSION="V254";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18425,9 +18619,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=253",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=254",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=253");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=254");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -18717,6 +18911,19 @@ async function settingsV210DeleteDurable(key){
 function settingsV210ValidPayload(payload){
   return !!payload&&typeof payload==="object"&&!Array.isArray(payload);
 }
+function settingsV254SettingsOnlyPayload(payload){
+  const clean=settingsV210Clone(payload,{});
+  /* Colaboradores têm persistência oficial própria e nunca pertencem à Personalização. */
+  if(Object.prototype.hasOwnProperty.call(clean,"authUsers"))delete clean.authUsers;
+  return clean;
+}
+function settingsV254BoundNumber(id,fallback,min,max){
+  const value=Number($(id)?.value);
+  return Math.min(max,Math.max(min,Number.isFinite(value)?value:fallback));
+}
+function settingsV254Text(id,fallback="",max=240){
+  return String($(id)?.value??fallback).trim().slice(0,max);
+}
 /* ===== V237 — COLABORADORES ISOLADOS DA PERSONALIZAÇÃO =====
    Colaboradores pertencem ao módulo oficial `collaborators` da V211.
    A tabela de Personalização pode conter uma cópia antiga de authUsers, mas ela
@@ -18728,7 +18935,7 @@ function settingsV210Apply(payload,{renderNow=true,persist=true}={}){
   const currentAuthUsers=Array.isArray(state?.settings?.authUsers)
     ?settingsV210Clone(state.settings.authUsers,[])
     :[];
-  const incoming=settingsV210Clone(payload,{});
+  const incoming=settingsV254SettingsOnlyPayload(payload);
 
   /* V237: authUsers não é propriedade da Personalização. */
   if(Object.prototype.hasOwnProperty.call(incoming,"authUsers"))delete incoming.authUsers;
@@ -18756,6 +18963,44 @@ function settingsV210CollectFromForm(){
   s.backgroundColor=$("setBg")?.value||"#f3f4f6";
   s.cardColor=$("setCard")?.value||"#ffffff";
   s.textColor=$("setText")?.value||"#111827";
+  s.browserTitle=settingsV254Text("setBrowserTitle","Painel de Influencers",80);
+  s.brandInitials=settingsV254Text("setBrandInitials","JS",4).toUpperCase()||"JS";
+  s.loginInitials=settingsV254Text("setLoginInitials","W",4).toUpperCase()||"W";
+  s.loginTitle=settingsV254Text("setLoginTitle","Login interno",70);
+  s.loginSubtitle=settingsV254Text("setLoginSubtitle","Painel de Influencers",100);
+  s.loginButtonText=settingsV254Text("setLoginButtonText","Entrar no painel",50);
+  s.loginHint=settingsV254Text("setLoginHint","Login interno simples para rastrear quem fez cada lançamento.",180);
+  s.lineColor=$("setLine")?.value||"#e5e7eb";
+  s.mutedColor=$("setMuted")?.value||"#6b7280";
+  s.softColor=$("setSoft")?.value||"#eef2ff";
+  s.tableHeaderColor=$("setTableHeader")?.value||"#f9fafb";
+  s.tableZebraColor=$("setTableZebra")?.value||"#ffffff";
+  s.successColor=$("setSuccess")?.value||"#16a34a";
+  s.warningColor=$("setWarning")?.value||"#d97706";
+  s.dangerColor=$("setDanger")?.value||"#dc2626";
+  s.fontFamily=["system","inter","arial","serif","mono"].includes($("setFontFamily")?.value)?$("setFontFamily").value:"inter";
+  s.fontScale=settingsV254BoundNumber("setFontScale",100,90,115);
+  s.sidebarWidth=settingsV254BoundNumber("setSidebarWidth",280,230,360);
+  s.cardRadius=settingsV254BoundNumber("setCardRadius",18,6,30);
+  s.controlRadius=settingsV254BoundNumber("setControlRadius",12,4,24);
+  s.shadowStrength=settingsV254BoundNumber("setShadowStrength",6,0,20);
+  s.uiDensity=["compact","comfortable","spacious"].includes($("setUiDensity")?.value)?$("setUiDensity").value:"comfortable";
+  s.reduceMotion=!!$("setReduceMotion")?.checked;
+  s.logoFit=$("setLogoFit")?.value==="contain"?"contain":"cover";
+  s.privateLabelNavLabel=settingsV254Text("setPrivateLabelNavLabel","Private Label",40);
+  s.privateLabelTitle=settingsV254Text("setPrivateLabelTitle","Private Label",70);
+  s.privateLabelSubtitle=settingsV254Text("setPrivateLabelSubtitle","Área de gestão de clientes, pedidos, produção, estoque, financeiro, relatórios e etiquetas.",260);
+  s.privateLabelDashboardTitle=settingsV254Text("setPrivateLabelDashboardTitle","Dashboard Private Label",80);
+  s.privateLabelDashboardSubtitle=settingsV254Text("setPrivateLabelDashboardSubtitle","Indicadores essenciais de pedidos, produção, equipe e financeiro em uma leitura única.",260);
+  s.privateLabelFinanceTitle=settingsV254Text("setPrivateLabelFinanceTitle","Financeiro do Private Label",80);
+  s.privateLabelFinanceSubtitle=settingsV254Text("setPrivateLabelFinanceSubtitle","Registre entradas e saídas, acompanhe pendências e consulte o histórico sem sair do Dashboard.",260);
+  s.privateLabelBackground=$("setPrivateLabelBackground")?.value||"#030303";
+  s.privateLabelSurface=$("setPrivateLabelSurface")?.value||"#080808";
+  s.privateLabelAccent=$("setPrivateLabelAccent")?.value||"#d4af37";
+  s.privateLabelText=$("setPrivateLabelText")?.value||"#ffffff";
+  s.privateLabelMuted=$("setPrivateLabelMuted")?.value||"#94a3b8";
+  s.privateLabelBorderColor=$("setPrivateLabelBorderColor")?.value||"#ffffff";
+  s.privateLabelBorderOpacity=settingsV254BoundNumber("setPrivateLabelBorderOpacity",8,8,60);
   s.mobileMenuBg=$("setMobileMenuBg")?.value||"#0b0f19";
   s.mobileMenuText=$("setMobileMenuText")?.value||"#ffffff";
   s.mobileMenuActiveBg=$("setMobileMenuActiveBg")?.value||"#ffffff";
@@ -18769,6 +19014,13 @@ function settingsV210CollectFromForm(){
   s.pdfTitle=$("setPdfTitle")?.value||"Relatório de comissão";
   s.pdfMessage=$("setPdfMessage")?.value||"";
   s.pdfFooter=$("setPdfFooter")?.value||"";
+  s.pdfAccentColor=$("setPdfAccentColor")?.value||"#2563eb";
+  s.pdfTextColor=$("setPdfTextColor")?.value||"#111827";
+  s.pdfLogoWidth=settingsV254BoundNumber("setPdfLogoWidth",270,90,420);
+  s.pdfCompanyName=settingsV254Text("setPdfCompanyName","",100);
+  s.pdfCompanyDocument=settingsV254Text("setPdfCompanyDocument","",60);
+  s.pdfContactLine=settingsV254Text("setPdfContactLine","",140);
+  s.pdfShowGeneratedAt=$("setPdfShowGeneratedAt")?.checked!==false;
   s.pdfWatermarkOpacity=Number($("setPdfWatermarkOpacity")?.value||0.12);
   s.pdfWatermarkX=Number($("setPdfWatermarkX")?.value||50);
   s.pdfWatermarkY=Number($("setPdfWatermarkY")?.value||72);
@@ -18949,7 +19201,7 @@ async function settingsV210SyncFromCloud({showStatus=false}={}){
         if(showStatus)settingsV210SetStatus(`Personalização sincronizada com o Supabase • versão ${systemSettingsVersionV210}.`,"saved");
         return true;
       }
-      const payload=settingsV210Clone(state.settings||{},{});
+      const payload=settingsV254SettingsOnlyPayload(state.settings||{});
       const entry={payload,basePayload:{},mutationId:settingsV210MutationId(),expectedVersion:0,updatedBy:settingsV210UserName(),at:new Date().toISOString()};
       await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,entry);
       return settingsV210FlushOutbox({showStatus});
@@ -19053,8 +19305,8 @@ async function settingsV210Bootstrap(){
   settingsV210InstallWatchers();
 }
 async function settingsV210Commit(payload,{successMessage="Personalização salva e confirmada na nuvem."}={}){
-  let localPayload=settingsV210Clone(payload,{});
-  const editingBase=settingsV210Clone(systemSettingsOfficialPayloadV213&&Object.keys(systemSettingsOfficialPayloadV213).length
+  let localPayload=settingsV254SettingsOnlyPayload(payload);
+  const editingBase=settingsV254SettingsOnlyPayload(systemSettingsOfficialPayloadV213&&Object.keys(systemSettingsOfficialPayloadV213).length
     ?systemSettingsOfficialPayloadV213
     :(state.settings||{}),{});
   let expectedVersion=systemSettingsVersionV210;
@@ -19063,7 +19315,7 @@ async function settingsV210Commit(payload,{successMessage="Personalização salv
     try{
       const latest=await settingsV210FetchOfficial();
       if(latest){
-        const merge=settingsV213ThreeWayMerge(editingBase,localPayload,latest.payload||{});
+        const merge=settingsV213ThreeWayMerge(editingBase,localPayload,settingsV254SettingsOnlyPayload(latest.payload||{}));
         if(merge.conflicts.length){
           const blocked={payload:localPayload,basePayload:editingBase,mutationId:settingsV210MutationId(),expectedVersion,updatedBy:settingsV210UserName(),at:new Date().toISOString(),blockedByConflict:true,conflictFields:merge.conflicts};
           await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,blocked);
@@ -19073,7 +19325,7 @@ async function settingsV210Commit(payload,{successMessage="Personalização salv
           alert(`Outra conta alterou os mesmos campos: ${merge.conflicts.join(", ")}. A versão oficial foi mantida e sua tentativa ficou preservada para auditoria.`);
           return false;
         }
-        localPayload=merge.merged;
+        localPayload=settingsV254SettingsOnlyPayload(merge.merged);
         expectedVersion=Number(latest.version||0);
       }
     }catch(error){
@@ -19093,7 +19345,7 @@ async function settingsV210Commit(payload,{successMessage="Personalização salv
   await settingsV210WriteDurable(SYSTEM_SETTINGS_SNAPSHOT_KEY_V210,{payload:entry.payload,version:expectedVersion,mutationId:entry.mutationId,at:entry.at});
   await settingsV210WriteDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210,entry);
   settingsV210Apply(entry.payload,{renderNow:true,persist:true});
-  save();
+  /* V254: a tabela própria de Personalização é a única gravação remota deste fluxo. */
   const ok=await settingsV210FlushOutbox({showStatus:true});
   if(ok===true){
     alert(successMessage);
@@ -19113,7 +19365,7 @@ window.settingsV213RunDiagnostic=async function(){
   settingsV210SetStatus("Testando tabela, leitura e função de salvamento...","saving");
   try{
     const row=await settingsV210FetchOfficial();
-    const payload=settingsV210Clone(row?.payload||state.settings||{},{});
+    const payload=settingsV254SettingsOnlyPayload(row?.payload||state.settings||{});
     const version=Number(row?.version||0);
     const probe={payload,basePayload:payload,mutationId:settingsV210MutationId(),expectedVersion:version,updatedBy:`Diagnóstico • ${settingsV210UserName()}`,at:new Date().toISOString()};
     const result=await settingsV210SaveOfficial(probe);
@@ -19814,9 +20066,10 @@ document.addEventListener("keydown",e=>{
 
 function updateAuthVisuals(){
   const logo=state.settings.systemLogo||state.settings.logo||"";
+  const initials=String(state.settings.loginInitials||"W").slice(0,4).toUpperCase()||"W";
   const loginLogo=$("loginLogo");
   if(loginLogo){
-    loginLogo.innerHTML=logo?`<img src="${logo}">`:"W";
+    loginLogo.innerHTML=logo?`<img src="${logo}">`:esc(initials);
   }
 
   const logged=$("loggedUserName");
@@ -22743,7 +22996,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V150",
+    version:"V254",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -23354,6 +23607,31 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","ERP_ARTWORK_FRONT_BACK_V253","Private Label preserva a frente legada e oferece verso, ampliação, impressão e PDF das artes e do pedido.");
   }else{
     auditAdd(report,"error","ERP_ARTWORK_FRONT_BACK_V253","Não foi possível confirmar o fluxo completo de frente/verso e saídas do pedido.");
+  }
+
+  const settingsV254RequiredIds=[
+    "setBrowserTitle","setBrandInitials","setLoginInitials","setLoginTitle","setLoginSubtitle","setLoginButtonText","setLoginHint",
+    "setLine","setMuted","setSoft","setTableHeader","setTableZebra","setSuccess","setWarning","setDanger",
+    "setFontFamily","setFontScale","setSidebarWidth","setCardRadius","setControlRadius","setShadowStrength","setUiDensity","setReduceMotion",
+    "setPrivateLabelNavLabel","setPrivateLabelTitle","setPrivateLabelSubtitle","setPrivateLabelDashboardTitle","setPrivateLabelDashboardSubtitle",
+    "setPrivateLabelFinanceTitle","setPrivateLabelFinanceSubtitle","setPrivateLabelBackground","setPrivateLabelSurface","setPrivateLabelAccent",
+    "setPrivateLabelText","setPrivateLabelMuted","setPrivateLabelBorderColor","setPrivateLabelBorderOpacity","setPdfAccentColor","setPdfTextColor","setPdfLogoWidth",
+    "setPdfCompanyName","setPdfCompanyDocument","setPdfContactLine","setPdfShowGeneratedAt"
+  ];
+  if(
+    !$("erpFuncionariosOnline")&&
+    settingsV254RequiredIds.every(id=>!!$(id))&&
+    String(settingsV210CollectFromForm).includes("privateLabelDashboardTitle")&&
+    String(settingsV210CollectFromForm).includes("pdfCompanyDocument")&&
+    String(settingsV254SettingsOnlyPayload).includes("delete clean.authUsers")&&
+    !String(settingsV210Commit).includes("save();")&&
+    String(applyTheme).includes("--pl-accent")&&
+    String(applyTheme).includes("--pdf-accent")&&
+    String(resetAppearanceFormV254).includes("Os dados operacionais não foram alterados")
+  ){
+    auditAdd(report,"pass","PERSONALIZAR_EXPANDIDO_V254","Personalizar oferece identidade, aparência, Private Label, mobile, PDF e listas, preservando usuários e dados operacionais; o card Funcionários online foi retirado apenas da interface.");
+  }else{
+    auditAdd(report,"error","PERSONALIZAR_EXPANDIDO_V254","Não foi possível confirmar toda a implementação isolada da Personalização V254.");
   }
 
   if(
@@ -25452,6 +25730,47 @@ function applyTheme(){
     s.backgroundColor,
     s.cardColor,
     s.textColor,
+    s.lineColor,
+    s.mutedColor,
+    s.softColor,
+    s.tableHeaderColor,
+    s.tableZebraColor,
+    s.successColor,
+    s.warningColor,
+    s.dangerColor,
+    s.fontFamily,
+    s.fontScale,
+    s.sidebarWidth,
+    s.cardRadius,
+    s.controlRadius,
+    s.shadowStrength,
+    s.uiDensity,
+    s.reduceMotion,
+    s.logoFit,
+    s.browserTitle,
+    s.brandInitials,
+    s.loginInitials,
+    s.loginTitle,
+    s.loginSubtitle,
+    s.loginButtonText,
+    s.loginHint,
+    s.privateLabelNavLabel,
+    s.privateLabelTitle,
+    s.privateLabelSubtitle,
+    s.privateLabelDashboardTitle,
+    s.privateLabelDashboardSubtitle,
+    s.privateLabelFinanceTitle,
+    s.privateLabelFinanceSubtitle,
+    s.privateLabelBackground,
+    s.privateLabelSurface,
+    s.privateLabelAccent,
+    s.privateLabelText,
+    s.privateLabelMuted,
+    s.privateLabelBorderColor,
+    s.privateLabelBorderOpacity,
+    s.pdfAccentColor,
+    s.pdfTextColor,
+    s.pdfLogoWidth,
     s.mobileMenuBg,
     s.mobileMenuText,
     s.mobileMenuActiveBg,
@@ -25473,6 +25792,38 @@ function applyTheme(){
   document.documentElement.style.setProperty("--bg",s.backgroundColor);
   document.documentElement.style.setProperty("--card",s.cardColor);
   document.documentElement.style.setProperty("--text",s.textColor);
+  document.documentElement.style.setProperty("--line",s.lineColor||"#e5e7eb");
+  document.documentElement.style.setProperty("--muted",s.mutedColor||"#6b7280");
+  document.documentElement.style.setProperty("--soft",s.softColor||"#eef2ff");
+  document.documentElement.style.setProperty("--table-head",s.tableHeaderColor||"#f9fafb");
+  document.documentElement.style.setProperty("--table-zebra",s.tableZebraColor||"#ffffff");
+  document.documentElement.style.setProperty("--success",s.successColor||"#16a34a");
+  document.documentElement.style.setProperty("--warning",s.warningColor||"#d97706");
+  document.documentElement.style.setProperty("--warn",s.warningColor||"#d97706");
+  document.documentElement.style.setProperty("--danger",s.dangerColor||"#dc2626");
+  const fontMap={system:'system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',inter:'Inter,system-ui,-apple-system,"Segoe UI",sans-serif',arial:'Arial,Helvetica,sans-serif',serif:'Georgia,"Times New Roman",serif',mono:'ui-monospace,SFMono-Regular,Consolas,monospace'};
+  const fontScale=Math.min(115,Math.max(90,Number(s.fontScale||100)))/100;
+  const shadow=Math.min(20,Math.max(0,Number(s.shadowStrength||0)));
+  document.documentElement.style.setProperty("--ui-font-family",fontMap[s.fontFamily]||fontMap.system);
+  document.documentElement.style.setProperty("--ui-font-scale",String(fontScale));
+  document.documentElement.style.setProperty("--sidebar-width",`${Math.min(360,Math.max(230,Number(s.sidebarWidth||280)))}px`);
+  document.documentElement.style.setProperty("--ui-card-radius",`${Math.min(30,Math.max(6,Number(s.cardRadius||18)))}px`);
+  document.documentElement.style.setProperty("--ui-control-radius",`${Math.min(24,Math.max(4,Number(s.controlRadius||12)))}px`);
+  document.documentElement.style.setProperty("--ui-shadow",shadow?`0 ${Math.max(4,shadow)}px ${Math.max(14,shadow*4)}px rgba(15,23,42,${Math.min(.24,.035+shadow/120)})`:"none");
+  document.documentElement.style.setProperty("--logo-fit",s.logoFit==="contain"?"contain":"cover");
+  document.documentElement.style.setProperty("--pl-bg",s.privateLabelBackground||"#030303");
+  document.documentElement.style.setProperty("--pl-surface",s.privateLabelSurface||"#080808");
+  document.documentElement.style.setProperty("--pl-accent",s.privateLabelAccent||"#d4af37");
+  document.documentElement.style.setProperty("--pl-text",s.privateLabelText||"#ffffff");
+  document.documentElement.style.setProperty("--pl-muted",s.privateLabelMuted||"#94a3b8");
+  document.documentElement.style.setProperty("--pl-border",s.privateLabelBorderColor||"#ffffff");
+  document.documentElement.style.setProperty("--pl-border-opacity",`${Math.min(60,Math.max(8,Number(s.privateLabelBorderOpacity||8)))}%`);
+  document.documentElement.style.setProperty("--pdf-accent",s.pdfAccentColor||"#2563eb");
+  document.documentElement.style.setProperty("--pdf-text",s.pdfTextColor||"#111827");
+  document.documentElement.style.setProperty("--pdf-logo-width",`${Math.min(420,Math.max(90,Number(s.pdfLogoWidth||270)))}px`);
+  document.body.dataset.uiDensity=["compact","spacious"].includes(s.uiDensity)?s.uiDensity:"comfortable";
+  document.body.dataset.reduceMotion=s.reduceMotion?"true":"false";
+  document.body.style.fontSize=`${fontScale}em`;
 
   document.documentElement.style.setProperty("--mobile-menu-bg",s.mobileMenuBg||"#0b0f19");
   document.documentElement.style.setProperty("--mobile-menu-text",s.mobileMenuText||"#ffffff");
@@ -25486,7 +25837,22 @@ function applyTheme(){
   $("sideTitle").textContent=s.systemName;
   $("sideSub").textContent=s.subtitle;
   const sysLogo=s.systemLogo||"";
-  $("sideLogo").innerHTML=sysLogo?`<img src="${sysLogo}">`:"JS";
+  const initials=String(s.brandInitials||"JS").slice(0,4).toUpperCase();
+  const loginInitials=String(s.loginInitials||"W").slice(0,4).toUpperCase();
+  $("sideLogo").innerHTML=sysLogo?`<img src="${sysLogo}">`:esc(initials);
+  if($("loginLogo"))$("loginLogo").innerHTML=sysLogo?`<img src="${sysLogo}">`:esc(loginInitials||"W");
+  if($("loginHeadingV254"))$("loginHeadingV254").textContent=s.loginTitle||"Login interno";
+  if($("loginSubtitleV254"))$("loginSubtitleV254").textContent=s.loginSubtitle||"Painel de Influencers";
+  if($("loginSubmitV254"))$("loginSubmitV254").textContent=s.loginButtonText||"Entrar no painel";
+  if($("loginHintV254"))$("loginHintV254").textContent=s.loginHint||"Login interno simples para rastrear quem fez cada lançamento.";
+  document.querySelectorAll("[data-private-label-nav-v254]").forEach(el=>{el.textContent=s.privateLabelNavLabel||"Private Label";});
+  if($("privateLabelTitleV254"))$("privateLabelTitleV254").textContent=s.privateLabelTitle||"Private Label";
+  if($("privateLabelSubtitleV254"))$("privateLabelSubtitleV254").textContent=s.privateLabelSubtitle||"Área de gestão de clientes, pedidos, produção, estoque, financeiro, relatórios e etiquetas.";
+  if($("privateLabelDashboardTitleV254"))$("privateLabelDashboardTitleV254").textContent=s.privateLabelDashboardTitle||"Dashboard Private Label";
+  if($("privateLabelDashboardSubtitleV254"))$("privateLabelDashboardSubtitleV254").textContent=s.privateLabelDashboardSubtitle||"Indicadores essenciais de pedidos, produção, equipe e financeiro em uma leitura única.";
+  if($("erpFinanceDashboardTitle"))$("erpFinanceDashboardTitle").textContent=s.privateLabelFinanceTitle||"Financeiro do Private Label";
+  if($("privateLabelFinanceSubtitleV254"))$("privateLabelFinanceSubtitleV254").textContent=s.privateLabelFinanceSubtitle||"Registre entradas e saídas, acompanhe pendências e consulte o histórico sem sair do Dashboard.";
+  if(s.browserTitle)document.title=s.browserTitle;
 }
 function fillSelect(id,options,blank){const el=$(id);if(!el)return;const old=el.value;el.innerHTML=(blank?`<option value="">${blank}</option>`:"")+options.map(o=>`<option value="${esc(o.value)}">${esc(o.label)}</option>`).join("");if([...el.options].some(o=>o.value===old))el.value=old;}
 function populate(){const infl=state.influencers.map(i=>({value:i.id,label:`${i.name} (${i.coupon})`}));fillSelect("launchInfluencer",infl);fillSelect("productInfluencer",infl);fillSelect("reportInfluencer",infl,"Selecione influencer");fillSelect("accReportInfluencer",infl,"Selecione influencer");fillSelect("filterInfluencer",infl,"Todos os influencers");fillSelect("launchOrigin",state.settings.origins.map(o=>({value:o,label:o})));fillSelect("filterOrigin",state.settings.origins.map(o=>({value:o,label:o})),"Todas as origens");fillSelect("launchStatus",state.settings.statuses.map(s=>({value:s,label:s})));}
@@ -31347,6 +31713,20 @@ function reportCommissionSnapshot(infId,month=selectedMonth()){
   };
 }
 
+function settingsV254PdfMetaText(){
+  const s=state.settings||{};
+  const parts=[s.pdfCompanyName,s.pdfCompanyDocument,s.pdfContactLine].map(value=>String(value||"").trim()).filter(Boolean);
+  if(s.pdfShowGeneratedAt!==false)parts.push(`Gerado em ${new Date().toLocaleString("pt-BR")}`);
+  return parts.join(" • ");
+}
+function settingsV254RenderPdfMeta(id){
+  const el=$(id);
+  if(!el)return;
+  const text=settingsV254PdfMetaText();
+  el.textContent=text;
+  el.style.display=text?"block":"none";
+}
+
 function renderReport(){
   const inf=infById($("reportInfluencer").value);
   const month=selectedMonth();
@@ -31362,6 +31742,7 @@ function renderReport(){
   $("reportTitle").textContent=state.settings.pdfTitle;
   $("reportMsg").textContent=state.settings.pdfMessage;
   $("reportFooter").textContent=state.settings.pdfFooter;
+  settingsV254RenderPdfMeta("reportCompanyMetaV254");
   const pdfLogo=state.settings.pdfLogo||"";
   $("reportLogo").style.display=pdfLogo?"block":"none";
   if(pdfLogo)$("reportLogo").src=pdfLogo;
@@ -31490,6 +31871,44 @@ function renderSettings(){
   $("setBg").value=s.backgroundColor||"#f3f4f6";
   $("setCard").value=s.cardColor||"#ffffff";
   $("setText").value=s.textColor||"#111827";
+  $("setBrowserTitle").value=s.browserTitle||"Painel de Influencers";
+  $("setBrandInitials").value=s.brandInitials||"JS";
+  $("setLoginInitials").value=s.loginInitials||"W";
+  $("setLoginTitle").value=s.loginTitle||"Login interno";
+  $("setLoginSubtitle").value=s.loginSubtitle||"Painel de Influencers";
+  $("setLoginButtonText").value=s.loginButtonText||"Entrar no painel";
+  $("setLoginHint").value=s.loginHint||"Login interno simples para rastrear quem fez cada lançamento.";
+  $("setLine").value=s.lineColor||"#e5e7eb";
+  $("setMuted").value=s.mutedColor||"#6b7280";
+  $("setSoft").value=s.softColor||"#eef2ff";
+  $("setTableHeader").value=s.tableHeaderColor||"#f9fafb";
+  $("setTableZebra").value=s.tableZebraColor||"#ffffff";
+  $("setSuccess").value=s.successColor||"#16a34a";
+  $("setWarning").value=s.warningColor||"#d97706";
+  $("setDanger").value=s.dangerColor||"#dc2626";
+  $("setFontFamily").value=s.fontFamily||"inter";
+  $("setFontScale").value=String(s.fontScale??100);
+  $("setSidebarWidth").value=String(s.sidebarWidth??280);
+  $("setCardRadius").value=String(s.cardRadius??18);
+  $("setControlRadius").value=String(s.controlRadius??12);
+  $("setShadowStrength").value=String(s.shadowStrength??6);
+  $("setUiDensity").value=s.uiDensity||"comfortable";
+  $("setReduceMotion").checked=!!s.reduceMotion;
+  $("setLogoFit").value=s.logoFit==="contain"?"contain":"cover";
+  $("setPrivateLabelNavLabel").value=s.privateLabelNavLabel||"Private Label";
+  $("setPrivateLabelTitle").value=s.privateLabelTitle||"Private Label";
+  $("setPrivateLabelSubtitle").value=s.privateLabelSubtitle||"Área de gestão de clientes, pedidos, produção, estoque, financeiro, relatórios e etiquetas.";
+  $("setPrivateLabelDashboardTitle").value=s.privateLabelDashboardTitle||"Dashboard Private Label";
+  $("setPrivateLabelDashboardSubtitle").value=s.privateLabelDashboardSubtitle||"Indicadores essenciais de pedidos, produção, equipe e financeiro em uma leitura única.";
+  $("setPrivateLabelFinanceTitle").value=s.privateLabelFinanceTitle||"Financeiro do Private Label";
+  $("setPrivateLabelFinanceSubtitle").value=s.privateLabelFinanceSubtitle||"Registre entradas e saídas, acompanhe pendências e consulte o histórico sem sair do Dashboard.";
+  $("setPrivateLabelBackground").value=s.privateLabelBackground||"#030303";
+  $("setPrivateLabelSurface").value=s.privateLabelSurface||"#080808";
+  $("setPrivateLabelAccent").value=s.privateLabelAccent||"#d4af37";
+  $("setPrivateLabelText").value=s.privateLabelText||"#ffffff";
+  $("setPrivateLabelMuted").value=s.privateLabelMuted||"#94a3b8";
+  $("setPrivateLabelBorderColor").value=s.privateLabelBorderColor||"#ffffff";
+  $("setPrivateLabelBorderOpacity").value=String(s.privateLabelBorderOpacity??8);
 
   $("setMobileMenuBg").value=s.mobileMenuBg||"#0b0f19";
   $("setMobileMenuText").value=s.mobileMenuText||"#ffffff";
@@ -31507,6 +31926,13 @@ function renderSettings(){
   $("setPdfTitle").value=s.pdfTitle||"";
   $("setPdfMessage").value=s.pdfMessage||"";
   $("setPdfFooter").value=s.pdfFooter||"";
+  $("setPdfAccentColor").value=s.pdfAccentColor||"#2563eb";
+  $("setPdfTextColor").value=s.pdfTextColor||"#111827";
+  $("setPdfLogoWidth").value=String(s.pdfLogoWidth??270);
+  $("setPdfCompanyName").value=s.pdfCompanyName||"";
+  $("setPdfCompanyDocument").value=s.pdfCompanyDocument||"";
+  $("setPdfContactLine").value=s.pdfContactLine||"";
+  $("setPdfShowGeneratedAt").checked=s.pdfShowGeneratedAt!==false;
 
   $("setPdfWatermarkOpacity").value=String(s.pdfWatermarkOpacity??0.12);
   $("setPdfWatermarkX").value=String(s.pdfWatermarkX??50);
@@ -31517,10 +31943,50 @@ function renderSettings(){
   const sysLogo=tempSystemLogo||s.systemLogo||"";
   const pdfLogo=tempPdfLogo||s.pdfLogo||"";
 
-  $("systemLogoPreview").innerHTML=sysLogo?`<img src="${sysLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
-  $("pdfLogoPreview").innerHTML=pdfLogo?`<img src="${pdfLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
+  $("systemLogoPreview").innerHTML=sysLogo?`<img src="${sysLogo}" alt="Logo atual do sistema">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
+  $("pdfLogoPreview").innerHTML=pdfLogo?`<img src="${pdfLogo}" alt="Logo atual do PDF">`:`<span class="muted">Nenhuma logo adicionada.</span>`;
+  updateSettingsThemePreviewV254();
   renderAuthUsers();
 }
+
+function updateSettingsThemePreviewV254(){
+  const preview=$("settingsThemePreviewV254");
+  if(!preview)return;
+  const accent=$("setAccent")?.value||"#2563eb";
+  const card=$("setCard")?.value||"#ffffff";
+  const text=$("setText")?.value||"#111827";
+  const muted=$("setMuted")?.value||"#6b7280";
+  const line=$("setLine")?.value||"#e5e7eb";
+  const radius=settingsV254BoundNumber("setCardRadius",18,6,30);
+  const controlRadius=settingsV254BoundNumber("setControlRadius",12,4,24);
+  const shadow=settingsV254BoundNumber("setShadowStrength",6,0,20);
+  const scale=settingsV254BoundNumber("setFontScale",100,90,115)/100;
+  const fontMap={system:'system-ui,-apple-system,"Segoe UI",sans-serif',inter:'Inter,system-ui,"Segoe UI",sans-serif',arial:'Arial,Helvetica,sans-serif',serif:'Georgia,"Times New Roman",serif',mono:'ui-monospace,Consolas,monospace'};
+  preview.style.background=card;
+  preview.style.color=text;
+  preview.style.borderColor=line;
+  preview.style.borderRadius=`${radius}px`;
+  preview.style.boxShadow=shadow?`0 ${Math.max(4,shadow)}px ${Math.max(14,shadow*4)}px rgba(15,23,42,${Math.min(.24,.035+shadow/120)})`:"none";
+  preview.style.fontFamily=fontMap[$("setFontFamily")?.value]||fontMap.system;
+  preview.style.fontSize=`${scale}em`;
+  const small=preview.querySelector("small");
+  if(small)small.style.color=muted;
+  const button=preview.querySelector("button");
+  if(button){button.style.background=accent;button.style.borderRadius=`${controlRadius}px`;}
+}
+
+window.resetAppearanceFormV254=function(){
+  const defaults={setPrimary:"#111827",setAccent:"#2563eb",setBg:"#f3f4f6",setCard:"#ffffff",setText:"#111827",setLine:"#e5e7eb",setMuted:"#6b7280",setSoft:"#eef2ff",setTableHeader:"#f9fafb",setTableZebra:"#ffffff",setSuccess:"#16a34a",setWarning:"#d97706",setDanger:"#dc2626",setFontFamily:"inter",setFontScale:"100",setSidebarWidth:"280",setCardRadius:"18",setControlRadius:"12",setShadowStrength:"6",setUiDensity:"comfortable"};
+  Object.entries(defaults).forEach(([id,value])=>{if($(id))$(id).value=value;});
+  if($("setReduceMotion"))$("setReduceMotion").checked=false;
+  updateSettingsThemePreviewV254();
+  showUndoToast("Aparência padrão carregada no formulário. Os dados operacionais não foram alterados; clique em Salvar para confirmar.");
+};
+
+["setAccent","setCard","setText","setMuted","setLine","setCardRadius","setControlRadius","setShadowStrength","setFontScale","setFontFamily"].forEach(id=>{
+  $(id)?.addEventListener("input",updateSettingsThemePreviewV254);
+  $(id)?.addEventListener("change",updateSettingsThemePreviewV254);
+});
 
 /* V213: implementação legada de saveSettings removida.
    A única rota ativa é window.saveSettings -> settingsV210Commit. */
@@ -31530,7 +31996,7 @@ function previewSystemLogo(event){
   const r=new FileReader();
   r.onload=()=>{
     tempSystemLogo=r.result;
-    $("systemLogoPreview").innerHTML=`<img src="${tempSystemLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`;
+    $("systemLogoPreview").innerHTML=`<img src="${tempSystemLogo}" alt="Nova logo do sistema">`;
   };
   r.readAsDataURL(f);
 }
@@ -31541,7 +32007,7 @@ function previewPdfLogo(event){
   const r=new FileReader();
   r.onload=()=>{
     tempPdfLogo=r.result;
-    $("pdfLogoPreview").innerHTML=`<img src="${tempPdfLogo}" style="max-height:60px;max-width:180px;border-radius:10px">`;
+    $("pdfLogoPreview").innerHTML=`<img src="${tempPdfLogo}" alt="Nova logo do PDF">`;
   };
   r.readAsDataURL(f);
 }
@@ -37245,7 +37711,31 @@ function erpArtworkSafeFileTokenV253(value){
   return String(value||"private-label").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9_-]+/gi,"-").replace(/^-+|-+$/g,"").toLowerCase()||"private-label";
 }
 
+function settingsV254SafeHex(value,fallback="#2563eb"){
+  const normalized=String(value||"").trim();
+  return /^#[0-9a-f]{6}$/i.test(normalized)?normalized:fallback;
+}
+
+function settingsV254PdfColor(rgb,value,fallback="#2563eb"){
+  const hex=settingsV254SafeHex(value,fallback).slice(1);
+  return rgb(
+    parseInt(hex.slice(0,2),16)/255,
+    parseInt(hex.slice(2,4),16)/255,
+    parseInt(hex.slice(4,6),16)/255
+  );
+}
+
+function settingsV254DocumentBrand(){
+  return String(state.settings?.pdfCompanyName||state.settings?.name||"WISENT").trim().slice(0,120)||"WISENT";
+}
+
+function settingsV254DocumentMeta(){
+  return [state.settings?.pdfCompanyDocument,state.settings?.pdfContactLine].map(value=>String(value||"").trim()).filter(Boolean).join(" • ");
+}
+
 function erpOpenPrintDocumentV253(title,content){
+  const printAccent=settingsV254SafeHex(state.settings?.pdfAccentColor,"#2563eb");
+  const printInk=settingsV254SafeHex(state.settings?.pdfTextColor,"#111827");
   const popup=window.open("","_blank","width=980,height=820");
   if(!popup){
     alert("O navegador bloqueou a janela de impressão. Autorize pop-ups para este sistema e tente novamente.");
@@ -37254,7 +37744,7 @@ function erpOpenPrintDocumentV253(title,content){
   try{popup.opener=null;}catch(error){}
   popup.document.open();
   popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>
-    @page{size:A4;margin:12mm}*{box-sizing:border-box}body{margin:0;color:#111827;background:#fff;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:0 0 10mm;border-bottom:2px solid #2563eb}header h1{margin:0;font-size:22px}header p{margin:4px 0 0;color:#475569;font-size:11px}.wisentMark{color:#2563eb;font-size:10px;font-weight:900;letter-spacing:.12em}.printPage{min-height:270mm;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8mm;break-after:page;page-break-after:always;padding-top:8mm}.printPage:last-child{break-after:auto;page-break-after:auto}.printPage h2{margin:0;font-size:16px}.artFrame{display:grid;place-items:center;min-height:0;border:1px solid #cbd5e1;border-radius:10px;padding:6mm;background:#fff}.artFrame img{display:block;width:auto;height:auto;max-width:100%;max-height:238mm;object-fit:contain;image-rendering:auto}.orderSheet{padding-top:8mm}.summaryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3mm;margin:6mm 0}.summaryGrid div,.modelCard,.notes,.finance{padding:4mm;border:1px solid #cbd5e1;border-radius:8px;break-inside:avoid}.summaryGrid b,.label{display:block;margin-bottom:1.5mm;color:#475569;font-size:9px;text-transform:uppercase}.summaryGrid span{font-size:12px;font-weight:700}.modelCard{margin:4mm 0}.modelCard h2{margin:0 0 3mm;font-size:15px}.modelCard p{margin:2mm 0;font-size:11px;line-height:1.45}.modelArts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;margin-top:4mm}.modelArt{padding:3mm;border:1px solid #e2e8f0;border-radius:7px;text-align:center}.modelArt b{display:block;margin-bottom:2mm;font-size:9px;text-transform:uppercase}.modelArt img{display:block;width:100%;height:64mm;object-fit:contain}.notes,.finance{margin-top:4mm;font-size:11px;line-height:1.5}footer{margin-top:6mm;color:#64748b;font-size:9px}@media(max-width:700px){.summaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @page{size:A4;margin:12mm}*{box-sizing:border-box}body{margin:0;color:${printInk};background:#fff;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:0 0 10mm;border-bottom:2px solid ${printAccent}}header h1{margin:0;font-size:22px}header p{margin:4px 0 0;color:#475569;font-size:11px}.wisentMark{color:${printAccent};font-size:10px;font-weight:900;letter-spacing:.12em}.printPage{min-height:270mm;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8mm;break-after:page;page-break-after:always;padding-top:8mm}.printPage:last-child{break-after:auto;page-break-after:auto}.printPage h2{margin:0;font-size:16px}.artFrame{display:grid;place-items:center;min-height:0;border:1px solid #cbd5e1;border-radius:10px;padding:6mm;background:#fff}.artFrame img{display:block;width:auto;height:auto;max-width:100%;max-height:238mm;object-fit:contain;image-rendering:auto}.orderSheet{padding-top:8mm}.summaryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3mm;margin:6mm 0}.summaryGrid div,.modelCard,.notes,.finance{padding:4mm;border:1px solid #cbd5e1;border-radius:8px;break-inside:avoid}.summaryGrid b,.label{display:block;margin-bottom:1.5mm;color:#475569;font-size:9px;text-transform:uppercase}.summaryGrid span{font-size:12px;font-weight:700}.modelCard{margin:4mm 0}.modelCard h2{margin:0 0 3mm;font-size:15px}.modelCard p{margin:2mm 0;font-size:11px;line-height:1.45}.modelArts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;margin-top:4mm}.modelArt{padding:3mm;border:1px solid #e2e8f0;border-radius:7px;text-align:center}.modelArt b{display:block;margin-bottom:2mm;font-size:9px;text-transform:uppercase}.modelArt img{display:block;width:100%;height:64mm;object-fit:contain}.notes,.finance{margin-top:4mm;font-size:11px;line-height:1.5}footer{margin-top:6mm;color:#64748b;font-size:9px}@media(max-width:700px){.summaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
   </style></head><body>${content}</body></html>`);
   popup.document.close();
   let printed=false;
@@ -37282,7 +37772,9 @@ function printErpArtworkPairV253(){
   if(!artworks.length){alert("Nenhuma imagem de estampa está disponível para impressão.");return;}
   const heading=erpArtworkViewerState.context||erpArtworkViewerState.baseLabel||"Estampas do Private Label";
   const pages=artworks.map(art=>`<section class="printPage"><div><span class="wisentMark">PRIVATE LABEL • ESTAMPA</span><h2>${esc(heading)} • ${esc(art.sideLabel)}</h2><p>${esc(art.name||"")}</p></div><div class="artFrame"><img src="${esc(art.src)}" alt="${esc(art.sideLabel)} da estampa"></div></section>`).join("");
-  erpOpenPrintDocumentV253(`Estampas — ${heading}`,`<header><div><span class="wisentMark">WISENT</span><h1>Estampas para impressão</h1><p>${esc(heading)}</p></div><p>${new Date().toLocaleString("pt-BR")}</p></header>${pages}`);
+  const meta=settingsV254DocumentMeta();
+  const generated=state.settings?.pdfShowGeneratedAt===false?"":new Date().toLocaleString("pt-BR");
+  erpOpenPrintDocumentV253(`Estampas — ${heading}`,`<header><div><span class="wisentMark">${esc(settingsV254DocumentBrand())}</span><h1>Estampas para impressão</h1><p>${esc([heading,meta].filter(Boolean).join(" • "))}</p></div><p>${esc(generated)}</p></header>${pages}`);
 }
 
 function erpBlobToDataUrlV253(blob){
@@ -37357,7 +37849,11 @@ async function downloadErpArtworkPairPDFV253(trigger=null){
     const {PDFDocument,StandardFonts,rgb}=window.PDFLib;
     const pdf=await PDFDocument.create();
     const fonts={regular:await pdf.embedFont(StandardFonts.Helvetica),bold:await pdf.embedFont(StandardFonts.HelveticaBold)};
-    const colors={blue:rgb(.12,.38,.82),ink:rgb(.04,.08,.16),muted:rgb(.3,.35,.42)};
+    const colors={
+      blue:settingsV254PdfColor(rgb,state.settings?.pdfAccentColor,"#2563eb"),
+      ink:settingsV254PdfColor(rgb,state.settings?.pdfTextColor,"#111827"),
+      muted:rgb(.3,.35,.42)
+    };
     const heading=erpArtworkViewerState.context||erpArtworkViewerState.baseLabel||"Estampas Private Label";
     for(const art of artworks)await erpAddArtworkPdfPageV253(pdf,art,heading,fonts,colors);
     const bytes=await pdf.save();
@@ -39207,7 +39703,6 @@ function renderErpStats(data){
   const late=orders.filter(erpOrderLate).length;
   const productionToday=orders.filter(o=>String(o.updatedAt||o.createdAt||"").slice(0,10)===today()).length;
   const pieces=orders.filter(order=>(order.stage||"Pedido")===ERP_PRODUCED_STAGE).reduce((sum,o)=>sum+erpOrderQtyTotal(o),0);
-  const online=(data.employees||[]).filter(e=>e.online).length;
   const lowStock=(data.stock||[]).filter(s=>Number(s.current||0)<=Number(s.min||0)).length;
   const urgent=orders.filter(erpOrderUrgent).length;
   const pendingValue=orders.filter(o=>o.stage!=="Finalizado").reduce((sum,o)=>sum+Number(o.value||0),0);
@@ -39222,7 +39717,6 @@ function renderErpStats(data){
   if($("erpPedidosAtrasados"))$("erpPedidosAtrasados").textContent=late;
   if($("erpProducaoHoje"))$("erpProducaoHoje").textContent=productionToday;
   if($("erpPecasProduzidas"))$("erpPecasProduzidas").textContent=pieces;
-  if($("erpFuncionariosOnline"))$("erpFuncionariosOnline").textContent=online;
   if($("erpEstoqueBaixo"))$("erpEstoqueBaixo").textContent=lowStock;
   if($("erpPedidosUrgentes"))$("erpPedidosUrgentes").textContent=urgent;
   if($("erpFinanceiroPendente"))$("erpFinanceiroPendente").textContent=money(totalPending);
@@ -40782,12 +41276,16 @@ function renderErpReportPDF(){
   if(typeof applyPdfWatermark==="function")applyPdfWatermark("erpReportPdfWatermark");
 
   if($("erpReportPdfSubtitle"))$("erpReportPdfSubtitle").textContent=`${erpReportRangeLabel(range)} • ${erpReportBasisName(basis)} • ${orders.length} pedido(s)`;
+  settingsV254RenderPdfMeta("erpReportCompanyMetaV254");
   if($("erpReportPdfTotalPieces"))$("erpReportPdfTotalPieces").textContent=movementPieces;
   if($("erpReportPdfOrderCount"))$("erpReportPdfOrderCount").textContent=orders.length;
   if($("erpReportPdfRevenue"))$("erpReportPdfRevenue").textContent=money(revenue);
   if($("erpReportPdfLate"))$("erpReportPdfLate").textContent=stats.late;
   if($("erpReportPdfLowStock"))$("erpReportPdfLowStock").textContent=lowStock;
-  if($("erpReportPdfGenerated"))$("erpReportPdfGenerated").textContent=generated;
+  if($("erpReportPdfGenerated")){
+    $("erpReportPdfGenerated").textContent=state.settings.pdfShowGeneratedAt===false?"Oculto":generated;
+    $("erpReportPdfGenerated").closest(".pdfBox")?.classList.toggle("hidden",state.settings.pdfShowGeneratedAt===false);
+  }
   if($("erpReportPdfInsights")){
     $("erpReportPdfInsights").innerHTML=insights.map(item=>`<div><strong>${esc(item.title)}</strong><br>${esc(item.text)}</div>`).join("");
   }
@@ -40828,7 +41326,7 @@ function renderErpReportPDF(){
   }
 
   if($("erpReportPdfFooter")){
-    $("erpReportPdfFooter").textContent=state.settings.pdfFooter||`Relatório gerado automaticamente pelo Private Label em ${generated}.`;
+    $("erpReportPdfFooter").textContent=state.settings.pdfFooter||(state.settings.pdfShowGeneratedAt===false?"Relatório gerado automaticamente pelo Private Label.":`Relatório gerado automaticamente pelo Private Label em ${generated}.`);
   }
 }
 
@@ -40948,8 +41446,10 @@ async function exportErpReportPDF(){
   try{
     const {PDFDocument,StandardFonts,rgb}=window.PDFLib;
     const pdf=await PDFDocument.create();
+    const documentBrand=settingsV254DocumentBrand();
+    const documentMeta=settingsV254DocumentMeta();
     pdf.setTitle(`Relatório Private Label - ${erpReportRangeLabel(range)}`);
-    pdf.setAuthor("Private Label");
+    pdf.setAuthor(documentBrand);
     pdf.setSubject("Relatório operacional");
     pdf.setCreator(`Private Label ${APP_BUILD_VERSION}`);
     pdf.setCreationDate(new Date());
@@ -40959,8 +41459,8 @@ async function exportErpReportPDF(){
     const pageSize=[595.28,841.89];
     const margin=38;
     const contentWidth=pageSize[0]-(margin*2);
-    const navy=rgb(0.035,0.075,0.14);
-    const blue=rgb(0.12,0.38,0.82);
+    const navy=settingsV254PdfColor(rgb,state.settings?.pdfTextColor,"#111827");
+    const blue=settingsV254PdfColor(rgb,state.settings?.pdfAccentColor,"#2563eb");
     const lightBlue=rgb(0.91,0.95,1);
     const ink=rgb(0.08,0.12,0.18);
     const muted=rgb(0.34,0.4,0.48);
@@ -40976,7 +41476,7 @@ async function exportErpReportPDF(){
       pageNumber+=1;
       y=pageSize[1]-margin;
       page.drawRectangle({x:0,y:pageSize[1]-8,width:pageSize[0],height:8,color:blue});
-      page.drawText("PRIVATE LABEL",{x:margin,y:20,size:8,font:bold,color:muted});
+      page.drawText(erpPdfSafeText(documentBrand),{x:margin,y:20,size:8,font:bold,color:muted});
       page.drawText(`Página ${pageNumber}`,{x:pageSize[0]-margin-42,y:20,size:8,font:regular,color:muted});
     }
 
@@ -41017,6 +41517,7 @@ async function exportErpReportPDF(){
     page.drawText("PRIVATE LABEL",{x:margin,y,size:25,font:bold,color:navy});
     y-=20;
     drawWrapped(`${erpReportRangeLabel(range)} | ${erpReportBasisName(basis)}`,margin,contentWidth,9,regular,muted,12);
+    if(documentMeta)drawWrapped(documentMeta,margin,contentWidth,8,regular,muted,11);
     y-=8;
 
     const gap=9;
@@ -41082,7 +41583,8 @@ async function exportErpReportPDF(){
     });
 
     drawSectionTitle("Informações de controle");
-    drawWrapped(`Estoque abaixo do mínimo: ${lowStock} item(ns). Pedidos urgentes: ${stats.urgent}. Arquivo gerado em ${new Date().toLocaleString("pt-BR")}.`,margin,contentWidth,8.5,regular,muted,12);
+    const generatedAt=state.settings?.pdfShowGeneratedAt===false?"":` Arquivo gerado em ${new Date().toLocaleString("pt-BR")}.`;
+    drawWrapped(`Estoque abaixo do mínimo: ${lowStock} item(ns). Pedidos urgentes: ${stats.urgent}.${generatedAt}`,margin,contentWidth,8.5,regular,muted,12);
     y-=5;
     drawWrapped("Este relatório foi gerado automaticamente a partir dos dados sincronizados no Private Label.",margin,contentWidth,8.5,regular,muted,12);
 
@@ -41122,7 +41624,9 @@ function printErpOrderCardV253(orderId,trigger=null){
     ["Criado em",dateBR(String(order.createdAt||today()).slice(0,10))],["Prazo do setor",dateBR(String(order.stageDueAt||erpProductionDate(order)).slice(0,10))],["Entrega",dateBR(order.dueDate)]
   ].map(([label,value])=>`<div><b>${esc(label)}</b><span>${esc(value)}</span></div>`).join("");
   const finance=payment?`<section class="finance"><span class="label">Financeiro</span><b>Valor total: ${esc(money(payment.total))}</b> • Pago: ${esc(money(payment.paid))} • Pendente: ${esc(money(payment.pending))} • ${esc(payment.status)}</section>`:"";
-  const body=`<header><div><span class="wisentMark">WISENT • PRIVATE LABEL</span><h1>${esc(order.number||"Pedido")}</h1><p>Card completo do pedido</p></div><p>Impresso em ${new Date().toLocaleString("pt-BR")}</p></header><main class="orderSheet"><div class="summaryGrid">${summary}</div>${client.doc||client.email?`<section class="notes"><span class="label">Cadastro do cliente</span>${client.doc?`Documento: ${esc(client.doc)}<br>`:""}${client.email?`E-mail: ${esc(client.email)}`:""}</section>`:""}${modelCards}${finance}<section class="notes"><span class="label">Observações</span>${esc(order.notes||"Sem observações.")}</section><footer>Documento gerado a partir do pedido sincronizado no Private Label. A impressão não altera nenhum dado.</footer></main>`;
+  const documentMeta=settingsV254DocumentMeta();
+  const printDate=state.settings?.pdfShowGeneratedAt===false?"":`Impresso em ${new Date().toLocaleString("pt-BR")}`;
+  const body=`<header><div><span class="wisentMark">${esc(settingsV254DocumentBrand())} • PRIVATE LABEL</span><h1>${esc(order.number||"Pedido")}</h1><p>${esc(["Card completo do pedido",documentMeta].filter(Boolean).join(" • "))}</p></div><p>${esc(printDate)}</p></header><main class="orderSheet"><div class="summaryGrid">${summary}</div>${client.doc||client.email?`<section class="notes"><span class="label">Cadastro do cliente</span>${client.doc?`Documento: ${esc(client.doc)}<br>`:""}${client.email?`E-mail: ${esc(client.email)}`:""}</section>`:""}${modelCards}${finance}<section class="notes"><span class="label">Observações</span>${esc(order.notes||"Sem observações.")}</section><footer>Documento gerado a partir do pedido sincronizado no Private Label. A impressão não altera nenhum dado.</footer></main>`;
   erpOpenPrintDocumentV253(`Pedido ${order.number||order.id}`,body);
 }
 
@@ -41141,25 +41645,33 @@ async function exportErpOrderPDF(orderId,trigger=null){
   const payment=isWisentAdmin()?erpOrderPaymentSummary(order):null;
   const {PDFDocument,StandardFonts,rgb}=window.PDFLib;
   const pdf=await PDFDocument.create();
+  const pdfAccent=settingsV254PdfColor(rgb,state.settings?.pdfAccentColor,"#2563eb");
+  const pdfInk=settingsV254PdfColor(rgb,state.settings?.pdfTextColor,"#111827");
+  const documentBrand=settingsV254DocumentBrand();
+  const documentMeta=settingsV254DocumentMeta();
+  pdf.setAuthor(documentBrand);
+  pdf.setTitle(`Pedido ${order.number||order.id}`);
   const regular=await pdf.embedFont(StandardFonts.Helvetica);
   const bold=await pdf.embedFont(StandardFonts.HelveticaBold);
   let page=pdf.addPage([595,842]),y=800;
-  const addLine=(text,size=9,font=regular,color=rgb(.12,.16,.22),gap=14)=>{
+  const addLine=(text,size=9,font=regular,color=pdfInk,gap=14)=>{
     const lines=erpPdfWrappedLines(text,font,size,515);
     lines.forEach(line=>{
       if(y<55){page=pdf.addPage([595,842]);y=800;}
       page.drawText(erpPdfSafeText(line),{x:40,y,size,font,color});y-=gap;
     });
   };
-  page.drawRectangle({x:0,y:830,width:595,height:12,color:rgb(.12,.38,.82)});
-  addLine("PRIVATE LABEL • PEDIDO",11,bold,rgb(.12,.38,.82),20);
-  addLine(order.number||"Pedido",24,bold,rgb(.04,.08,.16),30);
+  page.drawRectangle({x:0,y:830,width:595,height:12,color:pdfAccent});
+  addLine(`${documentBrand} • PRIVATE LABEL • PEDIDO`,11,bold,pdfAccent,20);
+  addLine(order.number||"Pedido",24,bold,pdfInk,30);
+  if(documentMeta)addLine(documentMeta,8,regular,rgb(.3,.35,.42),14);
+  if(state.settings?.pdfShowGeneratedAt!==false)addLine(`Gerado em ${new Date().toLocaleString("pt-BR")}`,8,regular,rgb(.3,.35,.42),14);
   addLine(`Data: ${dateBR(String(order.createdAt||today()).slice(0,10))}  |  Etapa: ${order.stage||"Pedido"}  |  Entrega: ${dateBR(order.dueDate)}`,9,regular);
   addLine(`Responsável: ${erpBoardResponsible(order)||"Não definido"}  |  Prioridade: ${order.priority||"Normal"}  |  Total: ${erpOrderQtyTotal(order)} peça(s)`,9,regular);
-  y-=8;addLine("CLIENTE",10,bold,rgb(.12,.38,.82),17);
+  y-=8;addLine("CLIENTE",10,bold,pdfAccent,17);
   addLine(`${order.client||"-"}${client.doc?` • ${client.doc}`:""}${order.phone?` • ${order.phone}`:""}`,10,bold);
   if(client.email)addLine(client.email);
-  y-=8;addLine("MODELOS, CORES E GRADES",10,bold,rgb(.12,.38,.82),18);
+  y-=8;addLine("MODELOS, CORES E GRADES",10,bold,pdfAccent,18);
   erpNormalizeOrderProducts(order).forEach((product,index)=>{
     addLine(`${index+1}. ${product.model}${product.reference?` • ${product.reference}`:""} — ${erpProductQty(product)} peças`,10,bold);
     product.colors.forEach(color=>{
@@ -41169,14 +41681,14 @@ async function exportErpOrderPDF(orderId,trigger=null){
     y-=5;
   });
   if(payment){
-    y-=5;addLine("FINANCEIRO",10,bold,rgb(.12,.38,.82),18);
+    y-=5;addLine("FINANCEIRO",10,bold,pdfAccent,18);
     addLine(`Valor total: ${money(payment.total)}  |  Pago: ${money(payment.paid)}  |  Pendente: ${money(payment.pending)}  |  ${payment.status}`,10,bold);
     addLine(`Percentual pago: ${payment.percent.toFixed(1).replace(".",",")}%${order.financialDueDate?`  |  Vencimento: ${dateBR(order.financialDueDate)}`:""}`);
   }
-  y-=8;addLine("PRODUÇÃO E OBSERVAÇÕES",10,bold,rgb(.12,.38,.82),18);
+  y-=8;addLine("PRODUÇÃO E OBSERVAÇÕES",10,bold,pdfAccent,18);
   addLine(`Prazo do setor: ${dateBR(String(order.stageDueAt||"").slice(0,10))}  |  Entrega prevista: ${dateBR(order.dueDate)}`);
   addLine(order.notes||"Sem observações.");
-  const artworkColors={blue:rgb(.12,.38,.82),ink:rgb(.04,.08,.16),muted:rgb(.3,.35,.42)};
+  const artworkColors={blue:pdfAccent,ink:pdfInk,muted:rgb(.3,.35,.42)};
   for(const product of erpNormalizeOrderProducts(order)){
     for(const art of erpProductArtworkPairV253(product)){
       try{
