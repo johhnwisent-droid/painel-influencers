@@ -15985,6 +15985,252 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
 @media(max-width:850px){.erpModule[data-erp-panel="dashboard"] .erpDashboardMetricsV244{grid-template-columns:repeat(2,minmax(0,1fr))!important}.erpModule[data-erp-panel="dashboard"] .erpDashboardIntroV244{grid-template-columns:auto minmax(0,1fr)!important}.erpModule[data-erp-panel="dashboard"] .erpDashboardLiveV244{grid-column:1/-1!important;width:max-content!important}}
 @media(max-width:560px){.erpModule[data-erp-panel="dashboard"] .erpDashboardMetricsV244{grid-template-columns:1fr!important}.erpModule[data-erp-panel="dashboard"] .erpMetricV244{min-height:88px!important}.erpModule[data-erp-panel="dashboard"] .erpDashboardIntroV244{padding:14px!important}.erpModule[data-erp-panel="dashboard"] .erpDashboardIntroIconV244{width:39px!important;height:39px!important}.erpModule[data-erp-panel="dashboard"] .erpDashboardIntroV244 h3{font-size:16px!important}}
 /* ===== FIM V244 DASHBOARD ===== */
+
+/* ===== V255 — DASHBOARD PRIVATE LABEL: ORDEM, CORES E TIPOGRAFIA POR HIERARQUIA ===== */
+.erpModule[data-erp-panel="dashboard"]{
+  --erp-dashboard-font:"Segoe UI Variable Display","Inter","Segoe UI",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --erp-dashboard-surface:var(--pl-surface,#080808);
+  --erp-dashboard-surface-2:color-mix(in srgb,var(--pl-surface,#080808) 84%,#17304e 16%);
+  --erp-dashboard-line:color-mix(in srgb,var(--pl-accent,#d4af37) 20%,#263851);
+  font-family:var(--erp-dashboard-font)!important;
+  font-optical-sizing:auto!important;
+  font-kerning:normal!important;
+  text-rendering:optimizeLegibility!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardIntroV244{
+  margin-bottom:16px!important;
+  padding:19px 20px!important;
+  border-color:color-mix(in srgb,var(--pl-accent,#d4af37) 22%,#29405e)!important;
+  border-radius:20px!important;
+  background:radial-gradient(circle at 87% 10%,color-mix(in srgb,var(--pl-accent,#d4af37) 15%,transparent),transparent 29%),linear-gradient(135deg,color-mix(in srgb,var(--pl-surface,#080808) 80%,#18304f 20%),var(--pl-surface,#080808))!important;
+  font-family:var(--erp-dashboard-font)!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardIntroV244>div:nth-child(2)>span{
+  color:color-mix(in srgb,var(--pl-muted,#94a3b8) 84%,#bfdbfe)!important;
+  font-size:9.5px!important;
+  font-weight:760!important;
+  letter-spacing:.16em!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardIntroV244 h3{
+  margin-top:4px!important;
+  font-size:clamp(19px,2vw,23px)!important;
+  font-weight:720!important;
+  letter-spacing:-.035em!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardIntroV244 p{
+  max-width:760px!important;
+  color:var(--pl-muted,#94a3b8)!important;
+  font-size:11.5px!important;
+  font-weight:470!important;
+  letter-spacing:-.005em!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardLiveV244{
+  border-color:rgba(45,212,160,.25)!important;
+  background:rgba(45,212,160,.08)!important;
+  color:#a7f3d0!important;
+  font-family:var(--erp-dashboard-font)!important;
+  font-weight:680!important;
+}
+
+.erpModule[data-erp-panel="dashboard"] .erpDashboardMetricsV255{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:14px!important;
+  margin:0 0 20px!important;
+  font-family:var(--erp-dashboard-font)!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255{
+  position:relative!important;
+  min-width:0!important;
+  padding:15px!important;
+  overflow:hidden!important;
+  border:1px solid var(--erp-dashboard-line)!important;
+  border-radius:19px!important;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--pl-text,#fff) 2.2%,transparent),transparent 45%),var(--erp-dashboard-surface)!important;
+  box-shadow:0 12px 34px rgba(0,0,0,.13)!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255.executive{
+  border-color:rgba(96,165,250,.24)!important;
+  background:radial-gradient(circle at 92% 5%,rgba(96,165,250,.09),transparent 30%),linear-gradient(145deg,color-mix(in srgb,var(--pl-surface,#080808) 88%,#18304f 12%),var(--pl-surface,#080808))!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255.attention{
+  border-color:rgba(251,113,133,.19)!important;
+  background:radial-gradient(circle at 92% 5%,rgba(251,113,133,.07),transparent 28%),linear-gradient(145deg,color-mix(in srgb,var(--pl-surface,#080808) 91%,#3d1720 9%),var(--pl-surface,#080808))!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255.operation{
+  border-color:rgba(69,196,232,.18)!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255.payments{
+  border-color:rgba(45,212,160,.17)!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionHeadV255{
+  display:flex!important;
+  align-items:center!important;
+  justify-content:space-between!important;
+  gap:14px!important;
+  margin:0 1px 12px!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionHeadV255>div{
+  display:flex!important;
+  align-items:center!important;
+  gap:10px!important;
+  min-width:0!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionHeadV255>div>span:last-child{
+  display:grid!important;
+  gap:2px!important;
+  min-width:0!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionIndexV255{
+  display:grid!important;
+  place-items:center!important;
+  width:30px!important;
+  height:30px!important;
+  flex:0 0 30px!important;
+  border:1px solid #2a405d!important;
+  border-radius:9px!important;
+  background:#101e31!important;
+  color:#84a7d3!important;
+  font-size:9px!important;
+  font-weight:780!important;
+  letter-spacing:.04em!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionHeadV255 b{
+  color:var(--pl-text,#ffffff)!important;
+  font-size:13px!important;
+  font-weight:690!important;
+  letter-spacing:-.015em!important;
+  line-height:1.2!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionHeadV255 small{
+  color:color-mix(in srgb,var(--pl-muted,#94a3b8) 88%,#7da5cf)!important;
+  font-size:9.5px!important;
+  font-weight:480!important;
+  line-height:1.25!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionHeadV255>em{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:25px!important;
+  padding:5px 9px!important;
+  border:1px solid #263a55!important;
+  border-radius:999px!important;
+  background:#0c192a!important;
+  color:#7690ae!important;
+  font-size:8.5px!important;
+  font-weight:680!important;
+  font-style:normal!important;
+  letter-spacing:.035em!important;
+  white-space:nowrap!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255.executive .erpDashboardSectionIndexV255{border-color:rgba(96,165,250,.28)!important;background:rgba(59,130,246,.09)!important;color:#bfdbfe!important}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255.attention .erpDashboardSectionIndexV255{border-color:rgba(251,113,133,.25)!important;background:rgba(244,63,94,.07)!important;color:#fecdd3!important}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255.operation .erpDashboardSectionIndexV255{border-color:rgba(69,196,232,.25)!important;background:rgba(34,211,238,.07)!important;color:#bae6fd!important}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255.payments .erpDashboardSectionIndexV255{border-color:rgba(45,212,160,.24)!important;background:rgba(16,185,129,.07)!important;color:#a7f3d0!important}
+
+.erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255{
+  display:grid!important;
+  gap:9px!important;
+  min-width:0!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.financial{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.attention{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.operation{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+.erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.payments{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255{
+  min-height:93px!important;
+  padding:13px!important;
+  border-color:color-mix(in srgb,var(--metric) 21%,#24364f)!important;
+  border-radius:14px!important;
+  background:linear-gradient(152deg,color-mix(in srgb,var(--metric) 7%,var(--pl-surface,#080808)),color-mix(in srgb,var(--pl-surface,#080808) 91%,#10243c 9%) 72%)!important;
+  box-shadow:0 7px 20px rgba(0,0,0,.12)!important;
+  font-family:var(--erp-dashboard-font)!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255::before{
+  content:""!important;
+  position:absolute!important;
+  z-index:2!important;
+  inset:0 13px auto!important;
+  height:2px!important;
+  border-radius:0 0 6px 6px!important;
+  background:linear-gradient(90deg,var(--metric),color-mix(in srgb,var(--metric) 20%,transparent))!important;
+  opacity:.82!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.is-emphasis{
+  min-height:112px!important;
+  padding:16px!important;
+  border-color:color-mix(in srgb,var(--metric) 30%,#263a55)!important;
+  background:radial-gradient(circle at 92% 90%,color-mix(in srgb,var(--metric) 10%,transparent),transparent 32%),linear-gradient(145deg,color-mix(in srgb,var(--metric) 8%,var(--pl-surface,#080808)),color-mix(in srgb,var(--pl-surface,#080808) 90%,#10243c 10%) 72%)!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255 .erpMetricIconV244{
+  width:39px!important;
+  height:39px!important;
+  border-radius:11px!important;
+  font-family:var(--erp-dashboard-font)!important;
+  font-size:12px!important;
+  font-weight:760!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255 small{
+  color:color-mix(in srgb,var(--pl-muted,#94a3b8) 90%,#bfdbfe)!important;
+  font-size:8.8px!important;
+  font-weight:720!important;
+  letter-spacing:.085em!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255 strong{
+  margin-top:6px!important;
+  color:color-mix(in srgb,var(--metric) 42%,var(--pl-text,#ffffff))!important;
+  font-size:clamp(21px,2vw,27px)!important;
+  font-weight:720!important;
+  letter-spacing:-.045em!important;
+  line-height:1!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.is-emphasis strong{
+  font-size:clamp(25px,2.35vw,32px)!important;
+  font-weight:730!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255 em{
+  margin-top:7px!important;
+  color:color-mix(in srgb,var(--pl-muted,#94a3b8) 82%,#64748b)!important;
+  font-size:9px!important;
+  font-weight:470!important;
+  letter-spacing:.005em!important;
+}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-indigo{--metric:#7c9cff}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-emerald{--metric:#2dd4a0}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-amber{--metric:#f5b942}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-red{--metric:#ff657a}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-orange{--metric:#ff9a45}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-yellow{--metric:#f2cd54}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-violet{--metric:#b29cff}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-blue{--metric:#5ea0ff}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-cyan{--metric:#45c4e8}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-green{--metric:#34d399}
+.erpModule[data-erp-panel="dashboard"] .erpMetricV255.tone-teal{--metric:#2dd4bf}
+
+@media(max-width:1180px){
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.attention{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:900px){
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricsV255{grid-template-columns:1fr!important}
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.financial,
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.operation{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.financial .erpMetricV255:last-child,
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.operation .erpMetricV255:last-child{grid-column:1/-1!important}
+}
+@media(max-width:620px){
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardSectionV255{padding:12px!important;border-radius:17px!important}
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardSectionHeadV255{align-items:flex-start!important;margin-bottom:10px!important}
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardSectionHeadV255>em{display:none!important}
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.financial,
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.attention,
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.operation,
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.payments{grid-template-columns:1fr!important}
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.financial .erpMetricV255:last-child,
+  .erpModule[data-erp-panel="dashboard"] .erpDashboardMetricGridV255.operation .erpMetricV255:last-child{grid-column:auto!important}
+  .erpModule[data-erp-panel="dashboard"] .erpMetricV255,.erpModule[data-erp-panel="dashboard"] .erpMetricV255.is-emphasis{min-height:88px!important;padding:13px!important}
+  .erpModule[data-erp-panel="dashboard"] .erpMetricV255.is-emphasis strong{font-size:26px!important}
+}
+/* ===== FIM V255 DASHBOARD ===== */
 </style>
 
 </head>
@@ -16062,7 +16308,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V254</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V255</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17438,19 +17684,54 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
       <span class="erpDashboardLiveV244"><i></i> Operação em tempo real</span>
     </div>
 
-    <div class="grid erpStatsGrid erpDashboardMetricsV244">
-      <div class="card erpMetricCard erpMetricV244 tone-blue"><span class="erpMetricIconV244">▣</span><div><small>Pedidos hoje</small><strong id="erpPedidosHoje">0</strong><em>Entradas do dia</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-red"><span class="erpMetricIconV244">!</span><div><small>Pedidos atrasados</small><strong id="erpPedidosAtrasados">0</strong><em>Atenção imediata</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-violet"><span class="erpMetricIconV244">◆</span><div><small>Produção hoje</small><strong id="erpProducaoHoje">0</strong><em>Movimentações no dia</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-green"><span class="erpMetricIconV244">✓</span><div><small>Peças produzidas</small><strong id="erpPecasProduzidas">0</strong><em>Produção concluída</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-orange"><span class="erpMetricIconV244">↓</span><div><small>Estoque baixo</small><strong id="erpEstoqueBaixo">0</strong><em>Itens abaixo do mínimo</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-rose"><span class="erpMetricIconV244">⚡</span><div><small>Pedidos urgentes</small><strong id="erpPedidosUrgentes">0</strong><em>Prioridade elevada</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-amber"><span class="erpMetricIconV244">R$</span><div><small>Financeiro pendente</small><strong id="erpFinanceiroPendente">R$ 0,00</strong><em>Saldo ainda a receber</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-indigo"><span class="erpMetricIconV244">R$</span><div><small>Valor dos pedidos</small><strong id="erpValorPedidos">R$ 0,00</strong><em>Carteira total</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-emerald"><span class="erpMetricIconV244">↗</span><div><small>Total recebido</small><strong id="erpTotalRecebido">R$ 0,00</strong><em>Valor já recebido</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-yellow"><span class="erpMetricIconV244">◐</span><div><small>Parcialmente pagos</small><strong id="erpPedidosParciais">0</strong><em>Pagamentos incompletos</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-teal"><span class="erpMetricIconV244">✓</span><div><small>Pedidos pagos</small><strong id="erpPedidosPagos">0</strong><em>Financeiro concluído</em></div></div>
-      <div class="card erpMetricCard erpMetricV244 tone-slate"><span class="erpMetricIconV244">✂</span><div><small>Costura sem responsável</small><strong id="erpCosturaSemResponsavel">0</strong><em>Aguardando atribuição</em></div></div>
+    <div class="erpDashboardMetricsV244 erpDashboardMetricsV255" aria-label="Indicadores do Dashboard Private Label por hierarquia">
+      <section class="erpDashboardSectionV255 executive" aria-labelledby="erpDashboardFinancialHeadingV255">
+        <header class="erpDashboardSectionHeadV255">
+          <div><span class="erpDashboardSectionIndexV255">01</span><span><b id="erpDashboardFinancialHeadingV255">Visão financeira</b><small>Valores principais da carteira</small></span></div>
+          <em>Resumo executivo</em>
+        </header>
+        <div class="erpDashboardMetricGridV255 financial">
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 is-emphasis tone-indigo"><span class="erpMetricIconV244">R$</span><div><small>Valor dos pedidos</small><strong id="erpValorPedidos">R$ 0,00</strong><em>Carteira total registrada</em></div></div>
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 is-emphasis tone-emerald"><span class="erpMetricIconV244">↗</span><div><small>Total recebido</small><strong id="erpTotalRecebido">R$ 0,00</strong><em>Valor já confirmado</em></div></div>
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 is-emphasis tone-amber"><span class="erpMetricIconV244">◷</span><div><small>Financeiro pendente</small><strong id="erpFinanceiroPendente">R$ 0,00</strong><em>Saldo ainda a receber</em></div></div>
+        </div>
+      </section>
+
+      <section class="erpDashboardSectionV255 attention" aria-labelledby="erpDashboardAttentionHeadingV255">
+        <header class="erpDashboardSectionHeadV255">
+          <div><span class="erpDashboardSectionIndexV255">02</span><span><b id="erpDashboardAttentionHeadingV255">Atenção imediata</b><small>Pontos que exigem acompanhamento</small></span></div>
+          <em>Prioridade operacional</em>
+        </header>
+        <div class="erpDashboardMetricGridV255 attention">
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-red"><span class="erpMetricIconV244">!</span><div><small>Pedidos atrasados</small><strong id="erpPedidosAtrasados">0</strong><em>Prazos já ultrapassados</em></div></div>
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-orange"><span class="erpMetricIconV244">⚡</span><div><small>Pedidos urgentes</small><strong id="erpPedidosUrgentes">0</strong><em>Prioridade elevada</em></div></div>
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-yellow"><span class="erpMetricIconV244">↓</span><div><small>Estoque baixo</small><strong id="erpEstoqueBaixo">0</strong><em>Itens abaixo do mínimo</em></div></div>
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-violet"><span class="erpMetricIconV244">✂</span><div><small>Costura sem responsável</small><strong id="erpCosturaSemResponsavel">0</strong><em>Aguardando atribuição</em></div></div>
+        </div>
+      </section>
+
+      <section class="erpDashboardSectionV255 operation" aria-labelledby="erpDashboardOperationHeadingV255">
+        <header class="erpDashboardSectionHeadV255">
+          <div><span class="erpDashboardSectionIndexV255">03</span><span><b id="erpDashboardOperationHeadingV255">Operação do dia</b><small>Entrada e evolução da produção</small></span></div>
+          <em>Ritmo operacional</em>
+        </header>
+        <div class="erpDashboardMetricGridV255 operation">
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-blue"><span class="erpMetricIconV244">▣</span><div><small>Pedidos hoje</small><strong id="erpPedidosHoje">0</strong><em>Entradas registradas no dia</em></div></div>
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-cyan"><span class="erpMetricIconV244">◆</span><div><small>Produção hoje</small><strong id="erpProducaoHoje">0</strong><em>Movimentações no dia</em></div></div>
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-green"><span class="erpMetricIconV244">✓</span><div><small>Peças produzidas</small><strong id="erpPecasProduzidas">0</strong><em>Produção concluída</em></div></div>
+        </div>
+      </section>
+
+      <section class="erpDashboardSectionV255 payments" aria-labelledby="erpDashboardPaymentsHeadingV255">
+        <header class="erpDashboardSectionHeadV255">
+          <div><span class="erpDashboardSectionIndexV255">04</span><span><b id="erpDashboardPaymentsHeadingV255">Status dos pagamentos</b><small>Conclusão financeira dos pedidos</small></span></div>
+          <em>Andamento financeiro</em>
+        </header>
+        <div class="erpDashboardMetricGridV255 payments">
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-amber"><span class="erpMetricIconV244">◐</span><div><small>Parcialmente pagos</small><strong id="erpPedidosParciais">0</strong><em>Pagamentos incompletos</em></div></div>
+          <div class="card erpMetricCard erpMetricV244 erpMetricV255 tone-teal"><span class="erpMetricIconV244">✓</span><div><small>Pedidos pagos</small><strong id="erpPedidosPagos">0</strong><em>Financeiro concluído</em></div></div>
+        </div>
+      </section>
     </div>
 
     <section id="erpDashboardFinance" class="erpDashboardFinanceV243" aria-labelledby="erpFinanceDashboardTitle">
@@ -18585,7 +18866,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V254";
+const APP_BUILD_VERSION="V255";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18619,9 +18900,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=254",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=255",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=254");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=255");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -22996,7 +23277,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V254",
+    version:"V255",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -23632,6 +23913,27 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","PERSONALIZAR_EXPANDIDO_V254","Personalizar oferece identidade, aparência, Private Label, mobile, PDF e listas, preservando usuários e dados operacionais; o card Funcionários online foi retirado apenas da interface.");
   }else{
     auditAdd(report,"error","PERSONALIZAR_EXPANDIDO_V254","Não foi possível confirmar toda a implementação isolada da Personalização V254.");
+  }
+
+  const dashboardHierarchyV255=[
+    "erpValorPedidos","erpTotalRecebido","erpFinanceiroPendente",
+    "erpPedidosAtrasados","erpPedidosUrgentes","erpEstoqueBaixo","erpCosturaSemResponsavel",
+    "erpPedidosHoje","erpProducaoHoje","erpPecasProduzidas",
+    "erpPedidosParciais","erpPedidosPagos"
+  ];
+  const dashboardOrderV255=[...document.querySelectorAll(".erpDashboardMetricsV255 .erpMetricV255 strong[id]")].map(element=>element.id);
+  if(
+    dashboardOrderV255.join("|")===dashboardHierarchyV255.join("|")&&
+    new Set(dashboardOrderV255).size===dashboardHierarchyV255.length&&
+    document.querySelectorAll(".erpDashboardMetricsV255 .erpDashboardSectionV255").length===4&&
+    String(renderErpStats).includes("erpValorPedidos")&&
+    String(renderErpStats).includes("erpPedidosAtrasados")&&
+    !String(renderErpStats).includes("writeErpTestData")&&
+    [...document.querySelectorAll("style")].some(style=>String(style.textContent||"").includes("V255 — DASHBOARD PRIVATE LABEL"))
+  ){
+    auditAdd(report,"pass","ERP_DASHBOARD_HIERARCHY_V255","Dashboard Private Label organiza os mesmos 12 indicadores em visão financeira, atenção imediata, operação do dia e pagamentos, com cores semânticas e tipografia isolada.");
+  }else{
+    auditAdd(report,"error","ERP_DASHBOARD_HIERARCHY_V255","Não foi possível confirmar toda a hierarquia visual isolada do Dashboard Private Label V255.");
   }
 
   if(

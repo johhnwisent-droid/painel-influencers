@@ -1,5 +1,5 @@
-const WISENT_VERSION="V254";
-const WISENT_CACHE="wisent-erp-static-v254";
+const WISENT_VERSION="V255";
+const WISENT_CACHE="wisent-erp-static-v255";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
@@ -154,4 +154,4 @@ self.addEventListener("fetch",event=>{
   })());
 });
 
-// WISENT V254 - Personalizar expandido e Private Label sem Funcionários online
+// WISENT V255 - hierarquia, cores e tipografia do Dashboard Private Label
