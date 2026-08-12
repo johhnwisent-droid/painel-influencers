@@ -14324,6 +14324,35 @@ body.erpSectorRestricted.erpSectorSupplies .erpModuleTabs button[data-erp-module
   .erpArtworkViewerLoading span{animation-duration:1.5s}
   .erpArtworkViewerCanvas img{transition:none}
 }
+
+/* ===== V253 PRIVATE LABEL — ESTAMPAS FRENTE/VERSO E SAÍDAS ===== */
+.erpArtworkUploadBox.erpArtworkUploadBoxV253{display:block!important;padding:14px!important}
+.erpArtworkUploadHeadingV253{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.erpArtworkUploadHeadingV253 strong{color:#f8fafc;font-size:13px;font-weight:1000}
+.erpArtworkUploadHeadingV253 small{max-width:520px;color:#94a3b8;font-size:11px;line-height:1.4;text-align:right}
+.erpArtworkSidesGridV253{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.erpArtworkSideCardV253{display:grid;grid-template-rows:auto auto;gap:10px;min-width:0;padding:11px;border:1px solid rgba(148,163,184,.20);border-radius:14px;background:rgba(2,6,23,.34)}
+.erpArtworkSideCardV253 .erpArtworkPreviewWrap{min-height:74px}
+.erpArtworkSideBadgeV253{display:inline-flex!important;width:max-content!important;margin:0 0 4px!important;padding:3px 7px!important;border:1px solid rgba(96,165,250,.30)!important;border-radius:999px!important;background:rgba(59,130,246,.12)!important;color:#bfdbfe!important;font-size:9px!important;font-weight:1000!important;letter-spacing:.08em!important;text-transform:uppercase!important}
+.erpArtworkSideCardV253 .erpArtworkActions{justify-content:flex-start!important}
+.erpArtworkViewerBox{grid-template-rows:auto auto minmax(0,1fr) auto!important}
+.erpArtworkViewerToolbarV253{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0;margin:0 0 9px}
+.erpArtworkViewerSidesV253,.erpArtworkViewerOutputV253{display:flex;align-items:center;gap:6px;min-width:0}
+.erpArtworkViewerToolbarV253 button{min-height:36px;padding:7px 11px;border:1px solid rgba(148,163,184,.26);border-radius:9px;background:#132239;color:#e2e8f0;font-size:11px;font-weight:900;white-space:nowrap}
+.erpArtworkViewerSidesV253 button.active{border-color:#60a5fa;background:#1d4ed8;color:#fff}
+.erpArtworkViewerToolbarV253 button:disabled{opacity:.38;cursor:not-allowed}
+.erpArtworkViewerOutputV253 button{border-color:rgba(34,197,94,.28);background:rgba(22,101,52,.28);color:#bbf7d0}
+.erpArtworkViewerCanvas img{image-rendering:auto}
+
+@media(max-width:760px){
+  .erpArtworkUploadHeadingV253{display:block}
+  .erpArtworkUploadHeadingV253 small{display:block;margin-top:5px;text-align:left}
+  .erpArtworkSidesGridV253{grid-template-columns:1fr}
+  .erpArtworkViewerToolbarV253{display:grid;grid-template-columns:1fr;gap:6px}
+  .erpArtworkViewerSidesV253,.erpArtworkViewerOutputV253{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .erpArtworkViewerToolbarV253 button{width:100%;min-width:0;padding-inline:6px}
+}
+/* ===== FIM V253 PRIVATE LABEL ===== */
 /* ===== V197 KANBAN SETORIAL COMPLETO ===== */
 .erpOwnSectorBadge{display:none}
 .erpDragHandle:disabled{cursor:not-allowed!important;opacity:.3!important;filter:saturate(.35)}
@@ -15930,7 +15959,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V252</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V253</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17266,6 +17295,16 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
           <button id="erpArtworkViewerClose" type="button" class="erpArtworkViewerClose" onclick="closeErpArtworkViewer()" aria-label="Fechar visualizador de imagem" title="Fechar">×</button>
         </div>
       </div>
+      <div class="erpArtworkViewerToolbarV253">
+        <div id="erpArtworkViewerSidesV253" class="erpArtworkViewerSidesV253" aria-label="Lados da estampa">
+          <button type="button" data-erp-viewer-side="front" onclick="erpArtworkViewerSelectSideV253('front')">Frente</button>
+          <button type="button" data-erp-viewer-side="back" onclick="erpArtworkViewerSelectSideV253('back')">Verso</button>
+        </div>
+        <div class="erpArtworkViewerOutputV253" aria-label="Impressão e PDF da estampa">
+          <button type="button" onclick="printErpArtworkPairV253()">Imprimir artes</button>
+          <button type="button" onclick="downloadErpArtworkPairPDFV253(this)">Baixar PDF</button>
+        </div>
+      </div>
       <div id="erpArtworkViewerCanvas" class="erpArtworkViewerCanvas" aria-label="Área da imagem. Use pinça, roda do mouse ou os botões para ampliar.">
         <div class="erpArtworkViewerLoading" role="status"><span></span>Carregando imagem…</div>
         <img id="erpArtworkViewerImage" alt="Imagem ampliada da estampa" draggable="false">
@@ -18196,6 +18235,9 @@ const CLOUD_PAYLOAD_HARD_LIMIT=900000;
 const CLOUD_STRING_HARD_LIMIT=120000;
 const ERP_ARTWORK_CLOUD_BUDGET=420000;
 const ERP_ARTWORK_SINGLE_CLOUD_LIMIT=180000;
+const ERP_ARTWORK_META_KEY_V253="__wisentArtworkV253";
+const ERP_ARTWORK_PREVIEW_MAX_CHARS_V253=90000;
+const ERP_ARTWORK_PRINT_MAX_CHARS_V253=340000;
 const ERP_RELATIONAL_ENABLED_KEY=KEY+"_erp_relational_enabled_v161";
 const ERP_RELATIONAL_PENDING_KEY=KEY+"_erp_relational_pending_v161";
 const ERP_RELATIONAL_DELETE_KEY=KEY+"_erp_relational_delete_v161";
@@ -18349,7 +18391,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V252";
+const APP_BUILD_VERSION="V253";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18383,9 +18425,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=252",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=253",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=252");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=253");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -23298,6 +23340,20 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","ERP_ORDER_TYPE_ARTWORK_V159","Private Label preserva pedidos antigos e mantém a foto de estampa vinculada individualmente a cada modelo.");
   }else{
     auditAdd(report,"warn","ERP_ORDER_TYPE_ARTWORK_V159","Não foi possível confirmar tipo do pedido e estampa por modelo.");
+  }
+
+  if(
+    String(erpNormalizeProductItem).includes("artworkBackImage")&&
+    String(erpProductSizesForCloudV253).includes("ERP_ARTWORK_META_KEY_V253")&&
+    String(addErpProductItem).includes("Upar frente")&&
+    String(addErpProductItem).includes("Upar verso")&&
+    String(downloadErpArtworkPairPDFV253).includes("erpAddArtworkPdfPageV253")&&
+    String(printErpOrderCardV253).includes("Card completo do pedido")&&
+    String(exportErpOrderPDF).includes("erpProductArtworkPairV253")
+  ){
+    auditAdd(report,"pass","ERP_ARTWORK_FRONT_BACK_V253","Private Label preserva a frente legada e oferece verso, ampliação, impressão e PDF das artes e do pedido.");
+  }else{
+    auditAdd(report,"error","ERP_ARTWORK_FRONT_BACK_V253","Não foi possível confirmar o fluxo completo de frente/verso e saídas do pedido.");
   }
 
   if(
@@ -33595,15 +33651,24 @@ function erpCloudSafeData(data){
     ...order,
     products:erpNormalizeOrderProducts(order).map(product=>{
       const next={...product};
-      const image=String(next.artworkImage||"");
-
-      if(image&&erpArtworkIsCloudSafe(image)&&image.length<=budget){
-        budget-=image.length;
-        next.artworkOmittedFromCloud=false;
-      }else if(image){
-        next.artworkImage="";
-        next.artworkOmittedFromCloud=true;
-        next.artworkOmittedReason="Imagem pesada demais para linha JSON; usar Supabase Storage na próxima etapa.";
+      [
+        {field:"artworkImage",omitted:"artworkOmittedFromCloud"},
+        {field:"artworkBackImage",omitted:"artworkBackOmittedFromCloud"}
+      ].forEach(media=>{
+        const image=String(next[media.field]||"");
+        if(image&&erpArtworkIsCloudSafe(image)&&image.length<=budget){
+          budget-=image.length;
+          next[media.omitted]=false;
+        }else if(image){
+          next[media.field]="";
+          next[media.omitted]=true;
+          next.artworkOmittedReason="Prévia excedeu o limite seguro do snapshot legado; a cópia V2 permanece preservada.";
+        }
+      });
+      if(next.artworkPrintImage||next.artworkBackPrintImage){
+        next.artworkPrintImage="";
+        next.artworkBackPrintImage="";
+        next.artworkPrintOmittedFromLegacy=true;
       }
 
       return next;
@@ -33641,8 +33706,13 @@ function erpTestCloudRow(data){
       products:erpNormalizeOrderProducts(order).map(product=>({
         ...product,
         artworkImage:"",
+        artworkPrintImage:"",
+        artworkBackImage:"",
+        artworkBackPrintImage:"",
         artworkOmittedFromCloud:!!product.artworkImage,
-        artworkOmittedReason:product.artworkImage?"Payload ERP excedeu limite seguro; imagem preservada localmente.":product.artworkOmittedReason||""
+        artworkBackOmittedFromCloud:!!product.artworkBackImage,
+        artworkPrintOmittedFromLegacy:!!(product.artworkPrintImage||product.artworkBackPrintImage),
+        artworkOmittedReason:(product.artworkImage||product.artworkBackImage)?"Payload ERP excedeu limite seguro; imagens preservadas localmente e na camada V2.":product.artworkOmittedReason||""
       }))
     }));
     safe._cloudMediaMeta={
@@ -34015,7 +34085,7 @@ async function erpV2BuildMigrationPackage(data){
         model:String(product.model||""),
         reference:String(product.reference||""),
         color:String(product.color||""),
-        sizes:ensurePlainObject(product.sizes,{}),
+        sizes:erpProductSizesForCloudV253(product),
         qty:erpProductQty(product),
         sewing_worker:String(product.sewingWorker||""),
         sewing_updated_at:product.sewingUpdatedAt?erpV2Timestamp(product.sewingUpdatedAt,updatedAt):null,
@@ -34593,7 +34663,19 @@ function erpV2OfficialDataFromRows(rowsByType,localData){
   const localArtwork=new Map();
   (local.orders||[]).forEach(order=>{
     erpNormalizeOrderProducts(order).forEach(product=>{
-      if(product?.id)localArtwork.set(String(product.id),String(product.artworkImage||""));
+      if(product?.id)localArtwork.set(String(product.id),{
+        artworkImage:String(product.artworkImage||""),
+        artworkPrintImage:String(product.artworkPrintImage||""),
+        artworkUpdatedAt:String(product.artworkUpdatedAt||""),
+        artworkUpdatedBy:String(product.artworkUpdatedBy||""),
+        artworkBackImage:String(product.artworkBackImage||""),
+        artworkBackPrintImage:String(product.artworkBackPrintImage||""),
+        artworkBackUrl:String(product.artworkBackUrl||""),
+        artworkBackStoragePath:String(product.artworkBackStoragePath||""),
+        artworkBackName:String(product.artworkBackName||""),
+        artworkBackUpdatedAt:String(product.artworkBackUpdatedAt||""),
+        artworkBackUpdatedBy:String(product.artworkBackUpdatedBy||"")
+      });
     });
   });
 
@@ -34647,19 +34729,34 @@ function erpV2OfficialDataFromRows(rowsByType,localData){
     const order=orderByUuid.get(String(row.order_id));
     if(!order)return;
     const legacyId=String(row.legacy_id||row.id);
+    const sizes=ensurePlainObject(row.sizes,{});
+    const artworkMeta=erpArtworkMetaFromSizesV253(sizes);
+    const localMedia=localArtwork.get(legacyId)||{};
     order.products.push({
       id:legacyId,
       model:row.model||"",
       reference:row.reference||"",
       color:row.color||"",
-      sizes:ensurePlainObject(row.sizes,{}),
+      sizes,
       sewingWorker:row.sewing_worker||"",
       sewingUpdatedAt:row.sewing_updated_at||"",
       sewingUpdatedBy:row.sewing_updated_by||"",
       artworkName:row.artwork_name||"",
       artworkUrl:row.artwork_url||"",
       artworkStoragePath:row.artwork_storage_path||"",
-      artworkImage:localArtwork.get(legacyId)||(String(row.artwork_url||"").startsWith("data:image")?row.artwork_url:""),
+      artworkImage:artworkMeta.authoritative
+        ?(String(row.artwork_url||"").startsWith("data:image")?row.artwork_url:"")
+        :(localMedia.artworkImage||(String(row.artwork_url||"").startsWith("data:image")?row.artwork_url:"")),
+      artworkPrintImage:artworkMeta.authoritative?String(artworkMeta.frontPrintImage||""):String(localMedia.artworkPrintImage||""),
+      artworkBackImage:artworkMeta.authoritative?String(artworkMeta.backImage||""):String(localMedia.artworkBackImage||""),
+      artworkBackPrintImage:artworkMeta.authoritative?String(artworkMeta.backPrintImage||""):String(localMedia.artworkBackPrintImage||""),
+      artworkBackUrl:artworkMeta.authoritative?String(artworkMeta.backUrl||""):String(localMedia.artworkBackUrl||""),
+      artworkBackStoragePath:artworkMeta.authoritative?String(artworkMeta.backStoragePath||""):String(localMedia.artworkBackStoragePath||""),
+      artworkBackName:artworkMeta.authoritative?String(artworkMeta.backName||""):String(localMedia.artworkBackName||""),
+      artworkUpdatedAt:artworkMeta.authoritative?String(artworkMeta.frontUpdatedAt||""):String(localMedia.artworkUpdatedAt||""),
+      artworkUpdatedBy:artworkMeta.authoritative?String(artworkMeta.frontUpdatedBy||""):String(localMedia.artworkUpdatedBy||""),
+      artworkBackUpdatedAt:artworkMeta.authoritative?String(artworkMeta.backUpdatedAt||""):String(localMedia.artworkBackUpdatedAt||""),
+      artworkBackUpdatedBy:artworkMeta.authoritative?String(artworkMeta.backUpdatedBy||""):String(localMedia.artworkBackUpdatedBy||""),
       _v2Id:row.id,
       _v2Version:Number(row.version||1),
       _position:Number(row.position||0)
@@ -35096,7 +35193,7 @@ function erpRelationalProductRow(order,product,index=0){
     order_id:String(order.id),
     model:String(p.model||"Modelo não informado"),
     color:String(p.color||""),
-    sizes:p.sizes||{},
+    sizes:erpProductSizesForCloudV253(p),
     qty:erpProductQty(p),
     sewing_worker:String(p.sewingWorker||""),
     sewing_updated_at:p.sewingUpdatedAt||null,
@@ -35104,9 +35201,9 @@ function erpRelationalProductRow(order,product,index=0){
     artwork_name:String(p.artworkName||""),
     artwork_url:String(p.artworkUrl||p.artworkURL||(erpArtworkIsCloudSafe(p.artworkImage)?p.artworkImage:"")),
     artwork_storage_path:String(p.artworkStoragePath||""),
-    artwork_has_local_image:!!p.artworkImage,
-    artwork_omitted_from_json:!!p.artworkImage,
-    artwork_note:p.artworkImage?(erpArtworkIsCloudSafe(p.artworkImage)?"Imagem compactada sincronizada entre aparelhos.":"Imagem local excede o limite; migrar para Storage."):"",
+    artwork_has_local_image:!!(p.artworkImage||p.artworkBackImage),
+    artwork_omitted_from_json:!!(p.artworkPrintImage||p.artworkBackPrintImage),
+    artwork_note:(p.artworkImage||p.artworkBackImage)?"Frente/verso versionados em sizes; prévias leves e cópias de impressão preservadas na camada V2.":"",
     position:Number(index||0),
     created_at:order.createdAt||new Date().toISOString(),
     updated_at:order.updatedAt||new Date().toISOString(),
@@ -36619,11 +36716,41 @@ function showErpModule(module){
 }
 
 
+function erpArtworkMetaFromSizesV253(sizes){
+  const value=ensurePlainObject(sizes,{});
+  const raw=ensurePlainObject(value[ERP_ARTWORK_META_KEY_V253],{});
+  const authoritative=String(raw.schema||"")==="front-back-v1";
+  return {...raw,authoritative};
+}
+
+function erpProductSizesForCloudV253(product){
+  const normalized=erpNormalizeProductItem(product);
+  const sizes={};
+  ERP_SIZES.forEach(size=>{sizes[size]=Math.max(0,Number(normalized.sizes?.[size]||0));});
+  sizes[ERP_ARTWORK_META_KEY_V253]={
+    schema:"front-back-v1",
+    frontPresent:!!erpProductArtworkSideSrcV253(normalized,"front",false),
+    frontPrintImage:String(normalized.artworkPrintImage||""),
+    frontUpdatedAt:String(normalized.artworkUpdatedAt||""),
+    frontUpdatedBy:String(normalized.artworkUpdatedBy||""),
+    backPresent:!!erpProductArtworkSideSrcV253(normalized,"back",false),
+    backImage:String(normalized.artworkBackImage||""),
+    backPrintImage:String(normalized.artworkBackPrintImage||""),
+    backUrl:String(normalized.artworkBackUrl||""),
+    backStoragePath:String(normalized.artworkBackStoragePath||""),
+    backName:String(normalized.artworkBackName||""),
+    backUpdatedAt:String(normalized.artworkBackUpdatedAt||""),
+    backUpdatedBy:String(normalized.artworkBackUpdatedBy||"")
+  };
+  return sizes;
+}
+
 function erpBlankProductItem(){
-  return {id:uid(),model:"",reference:"",colors:[{id:uid(),color:"",sizes:{PP:0,P:0,M:0,G:0,GG:0,G3:0,G4:0}}],color:"",sizes:{PP:0,P:0,M:0,G:0,GG:0,G3:0,G4:0},artworkImage:"",artworkUrl:"",artworkStoragePath:"",artworkName:"",artworkUpdatedAt:"",artworkUpdatedBy:""};
+  return {id:uid(),model:"",reference:"",colors:[{id:uid(),color:"",sizes:{PP:0,P:0,M:0,G:0,GG:0,G3:0,G4:0}}],color:"",sizes:{PP:0,P:0,M:0,G:0,GG:0,G3:0,G4:0},artworkImage:"",artworkPrintImage:"",artworkUrl:"",artworkStoragePath:"",artworkName:"",artworkUpdatedAt:"",artworkUpdatedBy:"",artworkBackImage:"",artworkBackPrintImage:"",artworkBackUrl:"",artworkBackStoragePath:"",artworkBackName:"",artworkBackUpdatedAt:"",artworkBackUpdatedBy:""};
 }
 
 function erpNormalizeProductItem(item){
+  const artworkMeta=erpArtworkMetaFromSizesV253(item?.sizes);
   const sourceColors=Array.isArray(item?.colors)&&item.colors.length
     ?item.colors
     :[{id:item?.colorId||`${item?.id||"legacy"}-color-1`,color:item?.color||"",sizes:item?.sizes||{}}];
@@ -36654,11 +36781,22 @@ function erpNormalizeProductItem(item){
     sewingUpdatedAt:item?.sewingUpdatedAt||"",
     sewingUpdatedBy:item?.sewingUpdatedBy||"",
     artworkImage:String(item?.artworkImage||""),
+    artworkPrintImage:String(artworkMeta.authoritative?artworkMeta.frontPrintImage||"":item?.artworkPrintImage||""),
     artworkUrl:String(item?.artworkUrl||item?.artworkURL||""),
     artworkStoragePath:String(item?.artworkStoragePath||""),
     artworkName:String(item?.artworkName||"").trim(),
-    artworkUpdatedAt:item?.artworkUpdatedAt||"",
-    artworkUpdatedBy:item?.artworkUpdatedBy||"",
+    artworkUpdatedAt:artworkMeta.authoritative?artworkMeta.frontUpdatedAt||item?.artworkUpdatedAt||"":item?.artworkUpdatedAt||"",
+    artworkUpdatedBy:artworkMeta.authoritative?artworkMeta.frontUpdatedBy||item?.artworkUpdatedBy||"":item?.artworkUpdatedBy||"",
+    artworkBackImage:String(artworkMeta.authoritative?artworkMeta.backImage||"":item?.artworkBackImage||""),
+    artworkBackPrintImage:String(artworkMeta.authoritative?artworkMeta.backPrintImage||"":item?.artworkBackPrintImage||""),
+    artworkBackUrl:String(artworkMeta.authoritative?artworkMeta.backUrl||"":item?.artworkBackUrl||""),
+    artworkBackStoragePath:String(artworkMeta.authoritative?artworkMeta.backStoragePath||"":item?.artworkBackStoragePath||""),
+    artworkBackName:String(artworkMeta.authoritative?artworkMeta.backName||"":item?.artworkBackName||"").trim(),
+    artworkBackUpdatedAt:artworkMeta.authoritative?artworkMeta.backUpdatedAt||"":item?.artworkBackUpdatedAt||"",
+    artworkBackUpdatedBy:artworkMeta.authoritative?artworkMeta.backUpdatedBy||"":item?.artworkBackUpdatedBy||"",
+    artworkOmittedFromCloud:!!item?.artworkOmittedFromCloud,
+    artworkBackOmittedFromCloud:!!item?.artworkBackOmittedFromCloud,
+    artworkPrintOmittedFromLegacy:!!item?.artworkPrintOmittedFromLegacy,
     _v2Id:item?._v2Id||"",
     _v2Version:Number(item?._v2Version||1)
   };
@@ -36713,7 +36851,7 @@ function erpOrderTypeClass(order){
 }
 
 function erpProductHasArtwork(product){
-  return !!erpProductArtworkSrc(product);
+  return erpProductArtworkPairV253(product).length>0;
 }
 
 function erpArtworkStoragePublicUrl(path){
@@ -36724,67 +36862,99 @@ function erpArtworkStoragePublicUrl(path){
     .replace(/^\/+/,"")
     .replace(/^storage\/v1\/object\/public\//i,"")
     .replace(/^object\/public\//i,"");
-  return clean.includes("/")?`${SUPABASE_URL}/storage/v1/object/public/${clean}`:"";
+  return clean.includes("/")?`${SUPABASE_URL}/storage/v1/object/public/${clean.split("/").map(part=>encodeURIComponent(part)).join("/")}`:"";
 }
 
-function erpProductArtworkSrc(product){
-  return String(product?.artworkImage||product?.artworkUrl||product?.artworkURL||erpArtworkStoragePublicUrl(product?.artworkStoragePath)||"").trim();
+function erpProductArtworkSideSrcV253(product,side="front",original=false){
+  const back=side==="back";
+  const preview=back
+    ?String(product?.artworkBackImage||product?.artworkBackUrl||erpArtworkStoragePublicUrl(product?.artworkBackStoragePath)||product?.artworkBackPrintImage||"")
+    :String(product?.artworkImage||product?.artworkUrl||product?.artworkURL||erpArtworkStoragePublicUrl(product?.artworkStoragePath)||product?.artworkPrintImage||"");
+  const printable=back
+    ?String(product?.artworkBackPrintImage||product?.artworkBackUrl||erpArtworkStoragePublicUrl(product?.artworkBackStoragePath)||product?.artworkBackImage||"")
+    :String(product?.artworkPrintImage||product?.artworkUrl||product?.artworkURL||erpArtworkStoragePublicUrl(product?.artworkStoragePath)||product?.artworkImage||"");
+  return String(original?printable:preview).trim();
 }
 
-function erpProductArtworkOriginalSrc(product){
-  return String(product?.artworkUrl||product?.artworkURL||erpArtworkStoragePublicUrl(product?.artworkStoragePath)||product?.artworkImage||"").trim();
+function erpProductArtworkSrc(product,side="front"){
+  return erpProductArtworkSideSrcV253(product,side,false)||erpProductArtworkSideSrcV253(product,side==="back"?"front":"back",false);
+}
+
+function erpProductArtworkOriginalSrc(product,side="front"){
+  return erpProductArtworkSideSrcV253(product,side,true)||erpProductArtworkSideSrcV253(product,side==="back"?"front":"back",true);
+}
+
+function erpProductArtworkPairV253(product){
+  return [
+    {side:"front",sideLabel:"Frente",name:String(product?.artworkName||"Estampa frente"),src:erpProductArtworkSideSrcV253(product,"front",true),preview:erpProductArtworkSideSrcV253(product,"front",false)},
+    {side:"back",sideLabel:"Verso",name:String(product?.artworkBackName||"Estampa verso"),src:erpProductArtworkSideSrcV253(product,"back",true),preview:erpProductArtworkSideSrcV253(product,"back",false)}
+  ].filter(item=>item.src||item.preview).map(item=>({...item,src:item.src||item.preview,preview:item.preview||item.src}));
 }
 
 function erpProductHasArtworkReference(product){
-  return erpProductHasArtwork(product)||!!product?.artworkOmittedFromCloud||!!String(product?.artworkName||"").trim();
+  return erpProductHasArtwork(product)||!!product?.artworkOmittedFromCloud||!!product?.artworkBackOmittedFromCloud||!!String(product?.artworkName||product?.artworkBackName||"").trim();
 }
 
-function erpArtworkLabel(product){
-  if(product?.artworkOmittedFromCloud&&!erpProductArtworkSrc(product))return `${product?.artworkName||"Estampa anexada"} (imagem indisponível neste aparelho)`;
-  return product?.artworkName||"Estampa anexada";
+function erpArtworkLabel(product,side="front"){
+  const back=side==="back";
+  if((back?product?.artworkBackOmittedFromCloud:product?.artworkOmittedFromCloud)&&!erpProductArtworkSideSrcV253(product,side,false)){
+    return `${(back?product?.artworkBackName:product?.artworkName)||"Estampa anexada"} (imagem indisponível neste aparelho)`;
+  }
+  return (back?product?.artworkBackName:product?.artworkName)||`Estampa ${back?"verso":"frente"}`;
+}
+
+function erpArtworkSummaryLabelV253(product){
+  const pair=erpProductArtworkPairV253(product);
+  if(pair.length>1)return "Estampa frente + verso";
+  if(pair.length===1)return `Estampa ${pair[0].sideLabel.toLowerCase()}`;
+  return erpArtworkLabel(product);
 }
 
 function openErpArtworkViewer(trigger){
   const row=trigger?.closest?.(".erpProductItem");
-  const src=String(
-    trigger?.dataset?.artworkSrc||
-    trigger?.currentSrc||
-    trigger?.src||
-    row?.dataset?.artworkImage||
-    row?.dataset?.artworkUrl||
-    ""
-  ).trim();
+  const product=row?readSingleErpProductItem(row):null;
+  const side=trigger?.dataset?.artworkSide==="back"?"back":"front";
+  const src=erpProductArtworkOriginalSrc(product,side)||String(trigger?.dataset?.artworkSrc||trigger?.currentSrc||trigger?.src||"").trim();
   if(!src){
     alert("A imagem desta estampa ainda não está disponível neste aparelho.");
     return;
   }
-  const label=trigger?.dataset?.artworkLabel||row?.dataset?.artworkName||"Estampa vinculada ao modelo";
-  showErpArtworkViewer(src,label,"",trigger);
+  const label=trigger?.dataset?.artworkLabel||erpArtworkLabel(product,side)||"Estampa vinculada ao modelo";
+  showErpArtworkViewer(src,label,product?.model||"Modelo em edição",trigger,{product,side});
 }
 
-function openErpOrderArtworkViewer(orderId,productId,trigger=null){
+function openErpOrderArtworkViewer(orderId,productId,trigger=null,side="front"){
   const order=(readErpTestData().orders||[]).find(item=>String(item.id)===String(orderId));
   const product=erpNormalizeOrderProducts(order||{}).find(item=>String(item.id)===String(productId));
-  const src=erpProductArtworkOriginalSrc(product);
+  const selectedSide=side==="back"?"back":"front";
+  const pair=erpProductArtworkPairV253(product);
+  const selected=pair.find(item=>item.side===selectedSide)||pair[0];
+  const src=selected?.src||"";
   if(!order||!product||!src){
     alert("A foto desta estampa não está disponível neste aparelho. Edite o pedido e envie a imagem novamente para sincronizá-la.");
     return;
   }
-  showErpArtworkViewer(src,erpArtworkLabel(product),`${order.number||"Pedido"} • ${product.model||"Modelo"}`,trigger);
+  showErpArtworkViewer(src,erpArtworkLabel(product,selected.side),`${order.number||"Pedido"} • ${product.model||"Modelo"}`,trigger,{order,product,side:selected.side});
 }
 
 function erpOrderArtworkGallery(order,products=erpNormalizeOrderProducts(order)){
-  const available=(products||[]).filter(erpProductHasArtwork);
+  const available=(products||[]).flatMap((product,index)=>erpProductArtworkPairV253(product).map(art=>({product,index,art})));
   if(!available.length)return "";
-  return `<div class="erpOrderArtworkGallery" aria-label="Imagens dos modelos do pedido">
-    <span class="erpOrderArtworkGalleryLabel">Imagens dos modelos</span>
-    <div>${available.map((product,index)=>`<button type="button" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget)" aria-label="Visualizar imagem do modelo ${esc(product.model||String(index+1))}" title="Abrir imagem de ${esc(product.model||`Modelo ${index+1}`)}"><img src="${esc(erpProductArtworkSrc(product))}" alt="Imagem do modelo ${esc(product.model||String(index+1))}" loading="lazy"><span>${esc(product.model||`Modelo ${index+1}`)}</span><small aria-hidden="true">Ampliar</small></button>`).join("")}</div>
+  return `<div class="erpOrderArtworkGallery" aria-label="Estampas frente e verso dos modelos do pedido">
+    <span class="erpOrderArtworkGalleryLabel">Estampas dos modelos</span>
+    <div>${available.map(({product,index,art})=>`<button type="button" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget,'${art.side}')" aria-label="Visualizar ${art.sideLabel.toLowerCase()} da estampa do modelo ${esc(product.model||String(index+1))}" title="Abrir ${art.sideLabel.toLowerCase()} de ${esc(product.model||`Modelo ${index+1}`)}"><img src="${esc(art.preview)}" alt="${art.sideLabel} da estampa do modelo ${esc(product.model||String(index+1))}" loading="lazy"><span>${esc(product.model||`Modelo ${index+1}`)}</span><small aria-hidden="true">${art.sideLabel} • ampliar</small></button>`).join("")}</div>
   </div>`;
 }
 
 const erpArtworkViewerState={
   open:false,
   openingSrc:"",
+  artworks:[],
+  activeSide:"front",
+  baseLabel:"",
+  context:"",
+  order:null,
+  product:null,
   scale:1,
   x:0,
   y:0,
@@ -36917,12 +37087,50 @@ function erpArtworkViewerInstallInteractions(){
   erpArtworkViewerState.interactionsReady=true;
 }
 
-function showErpArtworkViewer(src,label,context="",trigger=null){
+function erpArtworkViewerUpdateToolbarV253(){
+  const available=new Set((erpArtworkViewerState.artworks||[]).map(item=>item.side));
+  document.querySelectorAll("[data-erp-viewer-side]").forEach(button=>{
+    const side=button.dataset.erpViewerSide;
+    button.disabled=!available.has(side);
+    button.classList.toggle("active",side===erpArtworkViewerState.activeSide&&available.has(side));
+    button.setAttribute("aria-pressed",String(side===erpArtworkViewerState.activeSide&&available.has(side)));
+  });
+  document.querySelectorAll(".erpArtworkViewerOutputV253 button").forEach(button=>{button.disabled=available.size===0;});
+}
+
+function erpArtworkViewerSelectSideV253(side){
+  const selected=(erpArtworkViewerState.artworks||[]).find(item=>item.side===side);
+  if(!selected)return;
+  const image=$("erpArtworkViewerImage");
+  const box=$("erpArtworkViewerBox");
+  if(!image||!box)return;
+  erpArtworkViewerState.activeSide=selected.side;
+  erpArtworkViewerState.openingSrc=String(selected.src||"");
+  erpArtworkViewerState.pointers.clear();
+  erpArtworkViewerResetZoom();
+  erpArtworkViewerUpdateToolbarV253();
+  box.classList.add("isLoading");
+  box.classList.remove("hasError");
+  image.onload=()=>{
+    box.classList.remove("isLoading","hasError");
+    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent=`${erpArtworkViewerState.context?`${erpArtworkViewerState.context} • `:""}${selected.sideLabel} • ${image.naturalWidth} × ${image.naturalHeight} px • use pinça, arraste ou os controles para conferir.`;
+  };
+  image.onerror=()=>{
+    box.classList.remove("isLoading");
+    box.classList.add("hasError");
+    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Não foi possível carregar esta imagem. O pedido não foi alterado; tente novamente ou renove somente este anexo ao editar.";
+  };
+  image.src=selected.src;
+  if($("erpArtworkViewerTitle"))$("erpArtworkViewerTitle").textContent=`${erpArtworkViewerState.baseLabel||"Estampa"} • ${selected.sideLabel}`;
+  if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent=`Carregando ${selected.sideLabel.toLowerCase()} da estampa em alta definição...`;
+}
+
+function showErpArtworkViewer(src,label,context="",trigger=null,options={}){
   const modal=$("erpArtworkViewer");
   const image=$("erpArtworkViewerImage");
   const box=$("erpArtworkViewerBox");
   if(!modal||!image||!box||!src)return;
-  if(erpArtworkViewerState.open&&erpArtworkViewerState.openingSrc===src)return;
+  if(erpArtworkViewerState.open&&erpArtworkViewerState.openingSrc===src&&erpArtworkViewerState.activeSide===(options.side||"front"))return;
   erpArtworkViewerInstallInteractions();
   const firstOpen=!erpArtworkViewerState.open;
   if(firstOpen){
@@ -36941,24 +37149,15 @@ function showErpArtworkViewer(src,label,context="",trigger=null){
     erpArtworkViewerState.htmlOverflow=document.documentElement.style.overflow;
   }
   erpArtworkViewerState.open=true;
-  erpArtworkViewerState.openingSrc=String(src);
-  erpArtworkViewerState.pointers.clear();
-  erpArtworkViewerResetZoom();
-  box.classList.add("isLoading");
-  box.classList.remove("hasError");
-  image.onload=()=>{
-    box.classList.remove("isLoading","hasError");
-    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent=`${context?`${context} • `:""}Use pinça, arraste ou os controles para conferir os detalhes.`;
-  };
-  image.onerror=()=>{
-    box.classList.remove("isLoading");
-    box.classList.add("hasError");
-    if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Não foi possível carregar esta imagem. O pedido não foi alterado; tente novamente ou renove o anexo ao editar.";
-  };
-  image.src=src;
-  if($("erpArtworkViewerTitle"))$("erpArtworkViewerTitle").textContent=label||"Visualização da estampa";
-  if($("erpArtworkViewerMeta"))$("erpArtworkViewerMeta").textContent="Carregando imagem original da estampa...";
+  erpArtworkViewerState.product=options.product||null;
+  erpArtworkViewerState.order=options.order||null;
+  erpArtworkViewerState.context=String(context||"");
+  erpArtworkViewerState.baseLabel=String(options.product?.model||label||"Visualização da estampa");
+  const pair=options.product?erpProductArtworkPairV253(options.product):[];
+  erpArtworkViewerState.artworks=pair.length?pair:[{side:options.side==="back"?"back":"front",sideLabel:options.side==="back"?"Verso":"Frente",name:label||"Estampa",src:String(src),preview:String(src)}];
+  const initial=erpArtworkViewerState.artworks.find(item=>item.side===(options.side==="back"?"back":"front"))||erpArtworkViewerState.artworks[0];
   modal.hidden=false;
+  erpArtworkViewerSelectSideV253(initial.side);
   document.body.style.overflow="hidden";
   document.body.style.position="fixed";
   document.body.style.top=`-${erpArtworkViewerState.scrollY}px`;
@@ -36991,6 +37190,12 @@ function closeErpArtworkViewer(options={}){
   const shouldGoBack=!options.fromPopState&&erpArtworkViewerState.historyPushed;
   erpArtworkViewerState.open=false;
   erpArtworkViewerState.openingSrc="";
+  erpArtworkViewerState.artworks=[];
+  erpArtworkViewerState.activeSide="front";
+  erpArtworkViewerState.baseLabel="";
+  erpArtworkViewerState.context="";
+  erpArtworkViewerState.order=null;
+  erpArtworkViewerState.product=null;
   erpArtworkViewerState.pointers.clear();
   if(modal)modal.hidden=true;
   const image=$("erpArtworkViewerImage");
@@ -37036,7 +37241,139 @@ function closeErpArtworkViewer(options={}){
   }
 }
 
-function erpCompressArtworkFile(file,maxSize=640,quality=.58){
+function erpArtworkSafeFileTokenV253(value){
+  return String(value||"private-label").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9_-]+/gi,"-").replace(/^-+|-+$/g,"").toLowerCase()||"private-label";
+}
+
+function erpOpenPrintDocumentV253(title,content){
+  const popup=window.open("","_blank","width=980,height=820");
+  if(!popup){
+    alert("O navegador bloqueou a janela de impressão. Autorize pop-ups para este sistema e tente novamente.");
+    return false;
+  }
+  try{popup.opener=null;}catch(error){}
+  popup.document.open();
+  popup.document.write(`<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>
+    @page{size:A4;margin:12mm}*{box-sizing:border-box}body{margin:0;color:#111827;background:#fff;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;padding:0 0 10mm;border-bottom:2px solid #2563eb}header h1{margin:0;font-size:22px}header p{margin:4px 0 0;color:#475569;font-size:11px}.wisentMark{color:#2563eb;font-size:10px;font-weight:900;letter-spacing:.12em}.printPage{min-height:270mm;display:grid;grid-template-rows:auto minmax(0,1fr);gap:8mm;break-after:page;page-break-after:always;padding-top:8mm}.printPage:last-child{break-after:auto;page-break-after:auto}.printPage h2{margin:0;font-size:16px}.artFrame{display:grid;place-items:center;min-height:0;border:1px solid #cbd5e1;border-radius:10px;padding:6mm;background:#fff}.artFrame img{display:block;width:auto;height:auto;max-width:100%;max-height:238mm;object-fit:contain;image-rendering:auto}.orderSheet{padding-top:8mm}.summaryGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:3mm;margin:6mm 0}.summaryGrid div,.modelCard,.notes,.finance{padding:4mm;border:1px solid #cbd5e1;border-radius:8px;break-inside:avoid}.summaryGrid b,.label{display:block;margin-bottom:1.5mm;color:#475569;font-size:9px;text-transform:uppercase}.summaryGrid span{font-size:12px;font-weight:700}.modelCard{margin:4mm 0}.modelCard h2{margin:0 0 3mm;font-size:15px}.modelCard p{margin:2mm 0;font-size:11px;line-height:1.45}.modelArts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;margin-top:4mm}.modelArt{padding:3mm;border:1px solid #e2e8f0;border-radius:7px;text-align:center}.modelArt b{display:block;margin-bottom:2mm;font-size:9px;text-transform:uppercase}.modelArt img{display:block;width:100%;height:64mm;object-fit:contain}.notes,.finance{margin-top:4mm;font-size:11px;line-height:1.5}footer{margin-top:6mm;color:#64748b;font-size:9px}@media(max-width:700px){.summaryGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  </style></head><body>${content}</body></html>`);
+  popup.document.close();
+  let printed=false;
+  const printNow=()=>{
+    if(printed||popup.closed)return;
+    printed=true;
+    setTimeout(()=>{try{popup.focus();popup.print();}catch(error){}},180);
+  };
+  const images=[...popup.document.images];
+  if(!images.length)printNow();
+  else{
+    let pending=images.length;
+    const completed=()=>{pending-=1;if(pending<=0)printNow();};
+    images.forEach(img=>{
+      if(img.complete)completed();
+      else{img.addEventListener("load",completed,{once:true});img.addEventListener("error",completed,{once:true});}
+    });
+    setTimeout(printNow,3500);
+  }
+  return true;
+}
+
+function printErpArtworkPairV253(){
+  const artworks=erpArtworkViewerState.artworks||[];
+  if(!artworks.length){alert("Nenhuma imagem de estampa está disponível para impressão.");return;}
+  const heading=erpArtworkViewerState.context||erpArtworkViewerState.baseLabel||"Estampas do Private Label";
+  const pages=artworks.map(art=>`<section class="printPage"><div><span class="wisentMark">PRIVATE LABEL • ESTAMPA</span><h2>${esc(heading)} • ${esc(art.sideLabel)}</h2><p>${esc(art.name||"")}</p></div><div class="artFrame"><img src="${esc(art.src)}" alt="${esc(art.sideLabel)} da estampa"></div></section>`).join("");
+  erpOpenPrintDocumentV253(`Estampas — ${heading}`,`<header><div><span class="wisentMark">WISENT</span><h1>Estampas para impressão</h1><p>${esc(heading)}</p></div><p>${new Date().toLocaleString("pt-BR")}</p></header>${pages}`);
+}
+
+function erpBlobToDataUrlV253(blob){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error("Não foi possível preparar a imagem para o PDF."));
+    reader.onload=()=>resolve(String(reader.result||""));
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function erpArtworkSourceToDataUrlV253(src){
+  const value=String(src||"");
+  if(value.startsWith("data:image/"))return value;
+  const response=await fetch(value,{cache:"no-store"});
+  if(!response.ok)throw new Error(`Imagem indisponível (HTTP ${response.status}).`);
+  return erpBlobToDataUrlV253(await response.blob());
+}
+
+function erpArtworkDataUrlToJpegV253(dataUrl){
+  return new Promise((resolve,reject)=>{
+    const image=new Image();
+    image.onerror=()=>reject(new Error("Formato de imagem não suportado para o PDF."));
+    image.onload=()=>{
+      const canvas=document.createElement("canvas");
+      canvas.width=image.naturalWidth||image.width;
+      canvas.height=image.naturalHeight||image.height;
+      const context=canvas.getContext("2d",{alpha:false});
+      context.fillStyle="#fff";
+      context.fillRect(0,0,canvas.width,canvas.height);
+      context.drawImage(image,0,0);
+      resolve(canvas.toDataURL("image/jpeg",.94));
+    };
+    image.src=dataUrl;
+  });
+}
+
+async function erpEmbedArtworkImageV253(pdf,src){
+  let dataUrl=await erpArtworkSourceToDataUrlV253(src);
+  let mime=String(dataUrl.match(/^data:([^;,]+)/i)?.[1]||"").toLowerCase();
+  if(!["image/jpeg","image/jpg","image/png"].includes(mime)){
+    dataUrl=await erpArtworkDataUrlToJpegV253(dataUrl);
+    mime="image/jpeg";
+  }
+  const bytes=await (await fetch(dataUrl)).arrayBuffer();
+  return mime==="image/png"?pdf.embedPng(bytes):pdf.embedJpg(bytes);
+}
+
+async function erpAddArtworkPdfPageV253(pdf,art,heading,fonts,colors){
+  const page=pdf.addPage([595,842]);
+  const image=await erpEmbedArtworkImageV253(pdf,art.src);
+  const availableWidth=525;
+  const availableHeight=700;
+  const scale=Math.min(availableWidth/image.width,availableHeight/image.height);
+  const width=image.width*scale;
+  const height=image.height*scale;
+  page.drawRectangle({x:0,y:830,width:595,height:12,color:colors.blue});
+  page.drawText(erpPdfSafeText(`${heading} • ${art.sideLabel}`),{x:35,y:795,size:16,font:fonts.bold,color:colors.ink});
+  if(art.name)page.drawText(erpPdfSafeText(art.name),{x:35,y:776,size:8.5,font:fonts.regular,color:colors.muted});
+  page.drawImage(image,{x:(595-width)/2,y:45+(availableHeight-height)/2,width,height});
+  page.drawText("Imagem otimizada para impressão • escala proporcional preservada",{x:35,y:24,size:7.5,font:fonts.regular,color:colors.muted});
+}
+
+async function downloadErpArtworkPairPDFV253(trigger=null){
+  const artworks=erpArtworkViewerState.artworks||[];
+  if(!artworks.length){alert("Nenhuma imagem de estampa está disponível para gerar o PDF.");return;}
+  if(!window.PDFLib){alert("O gerador de PDF não foi carregado. Confirme o arquivo pdf-lib.min.js e tente novamente.");return;}
+  const button=trigger?.closest?.("button")||trigger;
+  const original=button?.textContent||"Baixar PDF";
+  if(button){button.disabled=true;button.textContent="Gerando...";}
+  try{
+    const {PDFDocument,StandardFonts,rgb}=window.PDFLib;
+    const pdf=await PDFDocument.create();
+    const fonts={regular:await pdf.embedFont(StandardFonts.Helvetica),bold:await pdf.embedFont(StandardFonts.HelveticaBold)};
+    const colors={blue:rgb(.12,.38,.82),ink:rgb(.04,.08,.16),muted:rgb(.3,.35,.42)};
+    const heading=erpArtworkViewerState.context||erpArtworkViewerState.baseLabel||"Estampas Private Label";
+    for(const art of artworks)await erpAddArtworkPdfPageV253(pdf,art,heading,fonts,colors);
+    const bytes=await pdf.save();
+    const fileName=`estampas-${erpArtworkSafeFileTokenV253(heading)}.pdf`;
+    const delivery=downloadErpPdfBytesV253(bytes,fileName);
+    if(delivery==="downloaded")setErpSyncStatus(`PDF das estampas gerado: ${fileName}`);
+    if(delivery==="shared")setErpSyncStatus("PDF das estampas compartilhado com sucesso");
+  }catch(error){
+    console.error("Falha ao gerar PDF das estampas:",error);
+    alert("Não foi possível gerar o PDF das estampas. As imagens e o pedido continuam preservados; tente novamente.");
+  }finally{
+    if(button){button.disabled=false;button.textContent=original;}
+  }
+}
+
+function erpCompressArtworkVariantV253(file,options={}){
   return new Promise((resolve,reject)=>{
     if(!file){
       reject(new Error("Arquivo não informado."));
@@ -37056,32 +37393,52 @@ function erpCompressArtworkFile(file,maxSize=640,quality=.58){
 
       img.onerror=()=>reject(new Error("Não foi possível carregar a prévia da imagem."));
       img.onload=()=>{
-        const scale=Math.min(1,maxSize/Math.max(img.width,img.height));
-        const width=Math.max(1,Math.round(img.width*scale));
-        const height=Math.max(1,Math.round(img.height*scale));
-        const canvas=document.createElement("canvas");
-        canvas.width=width;
-        canvas.height=height;
-        const ctx=canvas.getContext("2d",{alpha:false});
-        ctx.fillStyle="#fff";
-        ctx.fillRect(0,0,width,height);
-        ctx.drawImage(img,0,0,width,height);
+        const targetMax=Math.max(640,Number(options.maxSize||900));
+        const minimumMax=Math.max(640,Math.min(targetMax,Number(options.minSize||720)));
+        const maxChars=Math.max(60000,Number(options.maxChars||ERP_ARTWORK_PREVIEW_MAX_CHARS_V253));
+        const initialQuality=Math.min(.94,Math.max(.55,Number(options.quality||.82)));
+        let currentMax=targetMax;
+        let currentQuality=initialQuality;
+        let result=null;
 
-        const dataUrl=canvas.toDataURL("image/jpeg",quality);
-        const kb=Math.round((dataUrl.length*3/4)/1024);
-
-        if(kb>120){
-          reject(new Error(`Imagem ainda ficou pesada (${kb} KB). Use uma imagem menor da estampa ou corte a arte antes de enviar.`));
+        for(let attempt=0;attempt<18;attempt++){
+          const scale=Math.min(1,currentMax/Math.max(img.width,img.height));
+          const width=Math.max(1,Math.round(img.width*scale));
+          const height=Math.max(1,Math.round(img.height*scale));
+          const canvas=document.createElement("canvas");
+          canvas.width=width;
+          canvas.height=height;
+          const ctx=canvas.getContext("2d",{alpha:false});
+          ctx.imageSmoothingEnabled=true;
+          ctx.imageSmoothingQuality="high";
+          ctx.fillStyle="#fff";
+          ctx.fillRect(0,0,width,height);
+          ctx.drawImage(img,0,0,width,height);
+          const dataUrl=canvas.toDataURL("image/jpeg",currentQuality);
+          result={
+            dataUrl,
+            kb:Math.round((dataUrl.length*3/4)/1024),
+            width,
+            height,
+            originalWidth:img.naturalWidth||img.width,
+            originalHeight:img.naturalHeight||img.height,
+            name:file.name||"estampa.jpg"
+          };
+          if(dataUrl.length<=maxChars)break;
+          if(currentQuality>.58){
+            currentQuality=Math.max(.58,currentQuality-.08);
+          }else if(currentMax>minimumMax){
+            currentMax=Math.max(minimumMax,Math.round(currentMax*.84));
+            currentQuality=Math.max(.66,initialQuality-.14);
+          }else{
+            currentQuality=Math.max(.38,currentQuality-.05);
+          }
+        }
+        if(!result||result.dataUrl.length>maxChars){
+          reject(new Error("A imagem é complexa demais para sincronizar com segurança. Reduza as dimensões do arquivo e tente novamente."));
           return;
         }
-
-        resolve({
-          dataUrl,
-          kb,
-          width,
-          height,
-          name:file.name||"estampa.jpg"
-        });
+        resolve(result);
       };
 
       img.src=reader.result;
@@ -37091,52 +37448,74 @@ function erpCompressArtworkFile(file,maxSize=640,quality=.58){
   });
 }
 
+function erpCompressArtworkFile(file,maxSize=900,quality=.82){
+  return erpCompressArtworkVariantV253(file,{maxSize,quality,minSize:700,maxChars:ERP_ARTWORK_PREVIEW_MAX_CHARS_V253}).then(result=>{
+    const kb=result.kb;
+    if(kb>120)throw new Error(`Imagem ainda ficou pesada (${kb} KB). Use uma imagem menor da estampa ou corte a arte antes de enviar.`);
+    return result;
+  });
+}
+
+function erpCompressArtworkPrintFileV253(file){
+  return erpCompressArtworkVariantV253(file,{maxSize:2200,quality:.92,minSize:1200,maxChars:ERP_ARTWORK_PRINT_MAX_CHARS_V253});
+}
+
+function erpArtworkDatasetKeysV253(side="front"){
+  return side==="back"
+    ?{image:"artworkBackImage",print:"artworkBackPrintImage",url:"artworkBackUrl",path:"artworkBackStoragePath",name:"artworkBackName",updatedAt:"artworkBackUpdatedAt",updatedBy:"artworkBackUpdatedBy"}
+    :{image:"artworkImage",print:"artworkPrintImage",url:"artworkUrl",path:"artworkStoragePath",name:"artworkName",updatedAt:"artworkUpdatedAt",updatedBy:"artworkUpdatedBy"};
+}
+
 function refreshErpArtworkPreview(row){
   if(!row)return;
-  const img=row.querySelector("[data-erp-artwork-preview]");
-  const name=row.querySelector("[data-erp-artwork-name]");
-  const remove=row.querySelector("[data-erp-artwork-remove]");
-  const artwork=row.dataset.artworkImage||row.dataset.artworkUrl||"";
-  const artworkName=row.dataset.artworkName||"";
+  ["front","back"].forEach(side=>{
+    const keys=erpArtworkDatasetKeysV253(side);
+    const img=row.querySelector(`[data-erp-artwork-preview="${side}"]`);
+    const name=row.querySelector(`[data-erp-artwork-name="${side}"]`);
+    const remove=row.querySelector(`[data-erp-artwork-remove="${side}"]`);
+    const artwork=String(row.dataset[keys.image]||row.dataset[keys.url]||erpArtworkStoragePublicUrl(row.dataset[keys.path])||row.dataset[keys.print]||"");
+    const artworkName=row.dataset[keys.name]||"";
 
-  if(img){
-    img.src=artwork||"";
-    img.style.display=artwork?"block":"none";
-    img.style.cursor=artwork?"zoom-in":"";
-    img.title=artwork?"Toque para ampliar a estampa":"";
-  }
-
-  if(name){
-    name.textContent=artwork?artworkName||"Estampa anexada":"Nenhuma estampa anexada";
-    name.classList.toggle("hasArtwork",!!artwork);
-  }
-
-  if(remove)remove.style.display=artwork?"inline-flex":"none";
+    if(img){
+      img.src=artwork||"";
+      img.style.display=artwork?"block":"none";
+      img.style.cursor=artwork?"zoom-in":"";
+      img.title=artwork?`Toque para ampliar a ${side==="back"?"estampa do verso":"estampa da frente"}`:"";
+    }
+    if(name){
+      name.textContent=artwork?artworkName||`Estampa ${side==="back"?"verso":"frente"} anexada`:`Nenhuma imagem de ${side==="back"?"verso":"frente"}`;
+      name.classList.toggle("hasArtwork",!!artwork);
+    }
+    if(remove)remove.style.display=artwork?"inline-flex":"none";
+  });
 }
 
 async function handleErpProductArtworkUpload(input){
   const row=input?.closest(".erpProductItem");
   const file=input?.files?.[0];
+  const side=input?.dataset?.erpArtworkSide==="back"?"back":"front";
 
   if(!row||!file)return;
 
-  const status=row.querySelector("[data-erp-artwork-status]");
-  if(status)status.textContent="Processando imagem...";
+  const status=row.querySelector(`[data-erp-artwork-status="${side}"]`);
+  if(status)status.textContent=`Otimizando ${side==="back"?"verso":"frente"} para visualização e impressão...`;
 
   try{
-    const result=await erpCompressArtworkFile(file);
+    const [preview,print]=await Promise.all([erpCompressArtworkFile(file),erpCompressArtworkPrintFileV253(file)]);
     const audit=currentAuditInfo();
+    const keys=erpArtworkDatasetKeysV253(side);
 
-    row.dataset.artworkImage=result.dataUrl;
-    row.dataset.artworkUrl="";
-    row.dataset.artworkStoragePath="";
-    row.dataset.artworkName=result.name;
-    row.dataset.artworkUpdatedAt=audit.at||new Date().toISOString();
-    row.dataset.artworkUpdatedBy=audit.name||"Não registrado";
+    row.dataset[keys.image]=preview.dataUrl;
+    row.dataset[keys.print]=print.dataUrl;
+    row.dataset[keys.url]="";
+    row.dataset[keys.path]="";
+    row.dataset[keys.name]=preview.name;
+    row.dataset[keys.updatedAt]=audit.at||new Date().toISOString();
+    row.dataset[keys.updatedBy]=audit.name||"Não registrado";
 
     refreshErpArtworkPreview(row);
 
-    if(status)status.textContent=`Estampa vinculada ao modelo • ${result.kb} KB`;
+    if(status)status.textContent=`${side==="back"?"Verso":"Frente"} pronto • prévia ${preview.width} px • impressão ${print.width} × ${print.height} px`;
     updateErpProductBuilderTotals();
   }catch(e){
     if(status)status.textContent=String(e.message||e);
@@ -37149,18 +37528,14 @@ async function handleErpProductArtworkUpload(input){
 function removeErpProductArtwork(button){
   const row=button?.closest(".erpProductItem");
   if(!row)return;
-
-  row.dataset.artworkImage="";
-  row.dataset.artworkUrl="";
-  row.dataset.artworkStoragePath="";
-  row.dataset.artworkName="";
-  row.dataset.artworkUpdatedAt="";
-  row.dataset.artworkUpdatedBy="";
+  const side=button?.dataset?.erpArtworkSide==="back"?"back":"front";
+  const keys=erpArtworkDatasetKeysV253(side);
+  Object.values(keys).forEach(key=>{row.dataset[key]="";});
 
   refreshErpArtworkPreview(row);
 
-  const status=row.querySelector("[data-erp-artwork-status]");
-  if(status)status.textContent="Estampa removida deste modelo.";
+  const status=row.querySelector(`[data-erp-artwork-status="${side}"]`);
+  if(status)status.textContent=`Imagem de ${side==="back"?"verso":"frente"} removida deste modelo.`;
   updateErpProductBuilderTotals();
 }
 
@@ -37262,11 +37637,19 @@ function addErpProductItem(item=null){
   row.className="erpProductItem";
   row.dataset.productId=product.id;
   row.dataset.artworkImage=product.artworkImage||"";
+  row.dataset.artworkPrintImage=product.artworkPrintImage||"";
   row.dataset.artworkUrl=product.artworkUrl||"";
   row.dataset.artworkStoragePath=product.artworkStoragePath||"";
   row.dataset.artworkName=product.artworkName||"";
   row.dataset.artworkUpdatedAt=product.artworkUpdatedAt||"";
   row.dataset.artworkUpdatedBy=product.artworkUpdatedBy||"";
+  row.dataset.artworkBackImage=product.artworkBackImage||"";
+  row.dataset.artworkBackPrintImage=product.artworkBackPrintImage||"";
+  row.dataset.artworkBackUrl=product.artworkBackUrl||"";
+  row.dataset.artworkBackStoragePath=product.artworkBackStoragePath||"";
+  row.dataset.artworkBackName=product.artworkBackName||"";
+  row.dataset.artworkBackUpdatedAt=product.artworkBackUpdatedAt||"";
+  row.dataset.artworkBackUpdatedBy=product.artworkBackUpdatedBy||"";
 
   row.innerHTML=`<div class="erpProductItemTop">
     <span class="erpProductNumber" data-erp-product-number>Modelo</span>
@@ -37287,20 +37670,44 @@ function addErpProductItem(item=null){
     <div data-erp-color-list>${product.colors.map(erpColorVariationHtml).join("")}</div>
   </div>
 
-  <div class="erpArtworkUploadBox">
-    <div class="erpArtworkPreviewWrap">
-      <img data-erp-artwork-preview alt="Prévia da estampa" style="display:none" onclick="openErpArtworkViewer(this)">
-      <div>
-        <strong>Foto da estampa deste modelo</strong>
-        <span data-erp-artwork-name>Nenhuma estampa anexada</span>
-        <small data-erp-artwork-status>Imagem vinculada apenas a este card de modelo.</small>
-      </div>
+  <div class="erpArtworkUploadBox erpArtworkUploadBoxV253">
+    <div class="erpArtworkUploadHeadingV253">
+      <strong>Imagens da estampa deste modelo</strong>
+      <small>Envie frente e verso separadamente. O sistema mantém uma prévia leve para sincronização e uma cópia otimizada de maior definição para ampliar, imprimir e gerar PDF.</small>
     </div>
-    <div class="erpArtworkActions">
-      <label class="erpArtworkUploadBtn">Upar estampa
-        <input type="file" accept="image/*" onchange="handleErpProductArtworkUpload(this)">
-      </label>
-      <button type="button" class="small danger" data-erp-artwork-remove onclick="removeErpProductArtwork(this)" style="display:none">Remover estampa</button>
+    <div class="erpArtworkSidesGridV253">
+      <section class="erpArtworkSideCardV253" aria-label="Imagem da frente da estampa">
+        <div class="erpArtworkPreviewWrap">
+          <img data-erp-artwork-preview="front" data-artwork-side="front" alt="Prévia da frente da estampa" style="display:none" onclick="openErpArtworkViewer(this)">
+          <div>
+            <span class="erpArtworkSideBadgeV253">Frente</span>
+            <span data-erp-artwork-name="front">Nenhuma imagem de frente</span>
+            <small data-erp-artwork-status="front">Imagem vinculada somente a este modelo.</small>
+          </div>
+        </div>
+        <div class="erpArtworkActions">
+          <label class="erpArtworkUploadBtn">Upar frente
+            <input type="file" accept="image/*" data-erp-artwork-side="front" onchange="handleErpProductArtworkUpload(this)">
+          </label>
+          <button type="button" class="small danger" data-erp-artwork-remove="front" data-erp-artwork-side="front" onclick="removeErpProductArtwork(this)" style="display:none">Remover frente</button>
+        </div>
+      </section>
+      <section class="erpArtworkSideCardV253" aria-label="Imagem do verso da estampa">
+        <div class="erpArtworkPreviewWrap">
+          <img data-erp-artwork-preview="back" data-artwork-side="back" alt="Prévia do verso da estampa" style="display:none" onclick="openErpArtworkViewer(this)">
+          <div>
+            <span class="erpArtworkSideBadgeV253">Verso</span>
+            <span data-erp-artwork-name="back">Nenhuma imagem de verso</span>
+            <small data-erp-artwork-status="back">Imagem vinculada somente a este modelo.</small>
+          </div>
+        </div>
+        <div class="erpArtworkActions">
+          <label class="erpArtworkUploadBtn">Upar verso
+            <input type="file" accept="image/*" data-erp-artwork-side="back" onchange="handleErpProductArtworkUpload(this)">
+          </label>
+          <button type="button" class="small danger" data-erp-artwork-remove="back" data-erp-artwork-side="back" onclick="removeErpProductArtwork(this)" style="display:none">Remover verso</button>
+        </div>
+      </section>
     </div>
   </div>
 
@@ -37324,7 +37731,7 @@ function removeErpProductItem(button){
 function readErpProductItemsFromForm(){
   const rows=[...document.querySelectorAll("#erpProductItems .erpProductItem")];
   const products=rows.map(readSingleErpProductItem)
-    .filter(item=>item.model!=="Modelo não informado"||item.reference||item.colors.some(color=>color.color)||erpProductQty(item)>0);
+    .filter(item=>item.model!=="Modelo não informado"||item.reference||item.colors.some(color=>color.color)||erpProductQty(item)>0||erpProductHasArtworkReference(item));
 
   return products.length?products:[erpNormalizeProductItem({model:"Modelo não informado",colors:[{color:"",sizes:{M:1}}]})];
 }
@@ -37348,11 +37755,19 @@ function readSingleErpProductItem(row){
       colors,
       sewingWorker:row.querySelector("[data-erp-product-sewing]")?.value||"",
       artworkImage:row.dataset.artworkImage||"",
+      artworkPrintImage:row.dataset.artworkPrintImage||"",
       artworkUrl:row.dataset.artworkUrl||"",
       artworkStoragePath:row.dataset.artworkStoragePath||"",
       artworkName:row.dataset.artworkName||"",
       artworkUpdatedAt:row.dataset.artworkUpdatedAt||"",
       artworkUpdatedBy:row.dataset.artworkUpdatedBy||"",
+      artworkBackImage:row.dataset.artworkBackImage||"",
+      artworkBackPrintImage:row.dataset.artworkBackPrintImage||"",
+      artworkBackUrl:row.dataset.artworkBackUrl||"",
+      artworkBackStoragePath:row.dataset.artworkBackStoragePath||"",
+      artworkBackName:row.dataset.artworkBackName||"",
+      artworkBackUpdatedAt:row.dataset.artworkBackUpdatedAt||"",
+      artworkBackUpdatedBy:row.dataset.artworkBackUpdatedBy||"",
     });
 }
 
@@ -38841,7 +39256,7 @@ function erpProductBoxes(order,limit=3){
       </div>
       ${product.reference?`<small>${esc(product.reference)}</small>`:""}
       <div class="erpProductColorSummary">${product.colors.map(color=>`<span><b>${esc(color.color||"Sem cor")}</b> ${ERP_SIZES.filter(size=>Number(color.sizes?.[size]||0)>0).map(size=>`${size}:${Number(color.sizes[size])}`).join(" • ")||"0 peças"}</span>`).join("")}</div>
-      ${erpProductHasArtwork(product)?`<button type="button" class="erpArtworkChip hasImage" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget)" aria-label="Visualizar foto da estampa ${esc(erpArtworkLabel(product))}" title="Clique ou toque para ampliar"><img src="${esc(erpProductArtworkSrc(product))}" alt="Estampa do modelo ${esc(product.model||"")}" loading="lazy"><span>${esc(erpArtworkLabel(product))}</span><small aria-hidden="true">Toque para ampliar</small></button>`:erpProductHasArtworkReference(product)?`<button type="button" class="erpArtworkChip pending" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget)"><span>${esc(erpArtworkLabel(product))}</span></button>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
+      ${erpProductHasArtwork(product)?`<button type="button" class="erpArtworkChip hasImage" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget)" aria-label="Visualizar ${esc(erpArtworkSummaryLabelV253(product))}" title="Clique ou toque para ampliar"><img src="${esc(erpProductArtworkSrc(product))}" alt="Estampa do modelo ${esc(product.model||"")}" loading="lazy"><span>${esc(erpArtworkSummaryLabelV253(product))}</span><small aria-hidden="true">Toque para ampliar</small></button>`:erpProductHasArtworkReference(product)?`<button type="button" class="erpArtworkChip pending" onpointerdown="event.stopPropagation()" onclick="event.stopPropagation();openErpOrderArtworkViewer('${order.id}','${product.id}',event.currentTarget)"><span>${esc(erpArtworkSummaryLabelV253(product))}</span></button>`:`<div class="erpArtworkChip empty"><span>Sem foto da estampa</span></div>`}
       <div class="erpKanbanGrade">${erpProductGradeChips(product)||"<em>Sem grade</em>"}</div>
       ${isCostura?`<div class="erpSewingAssignment">
         <span><b>Costura</b>${esc(product.sewingWorker||"Sem responsável")}</span>
@@ -38886,7 +39301,7 @@ function showErpOrderProductsDetail(orderId){
     lines.push(`Cor: ${product.color||"Sem cor"}`);
     lines.push(`Quantidade: ${erpProductQty(product)} peça(s)`);
     lines.push(`Grade: ${grade}`);
-    lines.push(`Foto da estampa: ${erpProductHasArtwork(product)?erpArtworkLabel(product):"Não anexada"}`);
+    lines.push(`Estampa: ${erpProductHasArtwork(product)?erpArtworkSummaryLabelV253(product):"Não anexada"}`);
     if((order.stage||"Pedido")==="Costura")lines.push(`Responsável costura: ${product.sewingWorker||"Sem responsável"}`);
   });
 
@@ -39426,7 +39841,8 @@ function erpRenderOrderCard(order,stage,restricted,total=0){
           <button type="button" onclick="showErpOrderProductsDetail('${order.id}')">Ver detalhes</button>
           ${restricted?"":`<button type="button" onclick="editErpOrder('${order.id}')">Editar pedido</button>`}
           ${!restricted&&isWisentAdmin()?`<button type="button" onclick="openErpPaymentModal('${order.id}')">Pagamentos</button>`:""}
-          <button type="button" onclick="exportErpOrderPDF('${order.id}',this)">Exportar PDF</button>
+          <button type="button" onclick="printErpOrderCardV253('${order.id}',this)">Imprimir pedido</button>
+          <button type="button" onclick="exportErpOrderPDF('${order.id}',this)">Baixar PDF do pedido</button>
           ${canReturn?`<button type="button" onclick="returnErpOrderToPreviousStage('${order.id}')">Voltar etapa</button>`:""}
           ${canChooseStage?`<select class="erpBoardMoveSelect" aria-label="Mover pedido para outra etapa" onchange="erpBoardMoveBySelect('${order.id}',this.value);this.value='${esc(stage)}'">${erpBoardMoveOptions(stage,restricted)}</select>`:""}
           ${restricted?"":`<button type="button" class="danger" onclick="deleteErpOrder('${order.id}')">Excluir pedido</button>`}
@@ -40347,7 +40763,7 @@ function erpProductPdfText(order){
       const grade=ERP_SIZES.filter(size=>Number(color.sizes?.[size]||0)>0).map(size=>`${size}: ${Number(color.sizes[size]||0)}`).join(" | ")||"Sem grade";
       return `${color.color||"Sem cor"} [${grade}]`;
     }).join(" / ");
-    return `${index+1}. ${product.model||"Modelo não informado"}${product.reference?` (${product.reference})`:""} - ${erpProductQty(product)} peça(s) - ${variations}${erpProductHasArtwork(product)?` - Estampa: ${erpArtworkLabel(product)}`:""}${product.sewingWorker?` - Costura: ${product.sewingWorker}`:""}`;
+    return `${index+1}. ${product.model||"Modelo não informado"}${product.reference?` (${product.reference})`:""} - ${erpProductQty(product)} peça(s) - ${variations}${erpProductHasArtwork(product)?` - Estampa: ${erpArtworkSummaryLabelV253(product)}`:""}${product.sewingWorker?` - Costura: ${product.sewingWorker}`:""}`;
   }).join(" / ");
 }
 
@@ -40493,6 +40909,20 @@ async function deliverErpPdf(bytes,fileName){
   link.click();
   link.remove();
   setTimeout(()=>URL.revokeObjectURL(url),30000);
+  return "downloaded";
+}
+
+function downloadErpPdfBytesV253(bytes,fileName){
+  const blob=new Blob([bytes],{type:"application/pdf"});
+  const url=URL.createObjectURL(blob);
+  const link=document.createElement("a");
+  link.href=url;
+  link.download=fileName;
+  link.rel="noopener";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2500);
   return "downloaded";
 }
 
@@ -40670,6 +41100,32 @@ async function exportErpReportPDF(){
   }
 }
 
+function printErpOrderCardV253(orderId,trigger=null){
+  const data=readErpTestData();
+  const order=(data.orders||[]).find(item=>String(item.id)===String(orderId));
+  if(!order){alert("A demanda não foi encontrada. Atualize a esteira e tente novamente.");return;}
+  const client=(data.clients||[]).find(item=>String(item.id)===String(order.clientId))||{};
+  const products=erpNormalizeOrderProducts(order);
+  const responsible=erpBoardResponsible(order)||"Não definido";
+  const payment=isWisentAdmin()?erpOrderPaymentSummary(order):null;
+  const modelCards=products.map((product,index)=>{
+    const variations=product.colors.map(color=>{
+      const grade=ERP_SIZES.filter(size=>Number(color.sizes?.[size]||0)>0).map(size=>`${size}: ${Number(color.sizes[size])}`).join(" • ")||"Sem quantidade";
+      return `<p><b>${esc(color.color||"Sem cor")}</b> — ${esc(grade)}</p>`;
+    }).join("");
+    const arts=erpProductArtworkPairV253(product);
+    return `<section class="modelCard"><h2>${index+1}. ${esc(product.model||"Modelo não informado")}${product.reference?` • ${esc(product.reference)}`:""}</h2><p><span class="label">Quantidade do modelo</span><b>${erpProductQty(product)} peça(s)</b></p>${variations}${product.sewingWorker?`<p><span class="label">Costura</span>${esc(product.sewingWorker)}</p>`:""}${arts.length?`<div class="modelArts">${arts.map(art=>`<div class="modelArt"><b>${esc(art.sideLabel)}</b><img src="${esc(art.src)}" alt="${esc(art.sideLabel)} da estampa"></div>`).join("")}</div>`:""}</section>`;
+  }).join("");
+  const summary=[
+    ["Cliente",order.client||"-"],["Telefone",order.phone||client.phone||"-"],["Responsável",responsible],
+    ["Etapa",order.stage||"Pedido"],["Prioridade",order.priority||"Normal"],["Quantidade",`${erpOrderQtyTotal(order)} peça(s)`],
+    ["Criado em",dateBR(String(order.createdAt||today()).slice(0,10))],["Prazo do setor",dateBR(String(order.stageDueAt||erpProductionDate(order)).slice(0,10))],["Entrega",dateBR(order.dueDate)]
+  ].map(([label,value])=>`<div><b>${esc(label)}</b><span>${esc(value)}</span></div>`).join("");
+  const finance=payment?`<section class="finance"><span class="label">Financeiro</span><b>Valor total: ${esc(money(payment.total))}</b> • Pago: ${esc(money(payment.paid))} • Pendente: ${esc(money(payment.pending))} • ${esc(payment.status)}</section>`:"";
+  const body=`<header><div><span class="wisentMark">WISENT • PRIVATE LABEL</span><h1>${esc(order.number||"Pedido")}</h1><p>Card completo do pedido</p></div><p>Impresso em ${new Date().toLocaleString("pt-BR")}</p></header><main class="orderSheet"><div class="summaryGrid">${summary}</div>${client.doc||client.email?`<section class="notes"><span class="label">Cadastro do cliente</span>${client.doc?`Documento: ${esc(client.doc)}<br>`:""}${client.email?`E-mail: ${esc(client.email)}`:""}</section>`:""}${modelCards}${finance}<section class="notes"><span class="label">Observações</span>${esc(order.notes||"Sem observações.")}</section><footer>Documento gerado a partir do pedido sincronizado no Private Label. A impressão não altera nenhum dado.</footer></main>`;
+  erpOpenPrintDocumentV253(`Pedido ${order.number||order.id}`,body);
+}
+
 async function exportErpOrderPDF(orderId,trigger=null){
   const order=(readErpTestData().orders||[]).find(item=>String(item.id)===String(orderId));
   if(!order){alert("A demanda não foi encontrada. Atualize a esteira e tente novamente.");return;}
@@ -40678,7 +41134,7 @@ async function exportErpOrderPDF(orderId,trigger=null){
     return;
   }
   const button=trigger?.closest?.("button")||trigger;
-  const originalLabel=button?.textContent||"Exportar PDF";
+  const originalLabel=button?.textContent||"Baixar PDF do pedido";
   if(button){button.disabled=true;button.textContent="Gerando PDF...";}
   try{
   const client=(readErpTestData().clients||[]).find(item=>String(item.id)===String(order.clientId))||{};
@@ -40699,6 +41155,7 @@ async function exportErpOrderPDF(orderId,trigger=null){
   addLine("PRIVATE LABEL • PEDIDO",11,bold,rgb(.12,.38,.82),20);
   addLine(order.number||"Pedido",24,bold,rgb(.04,.08,.16),30);
   addLine(`Data: ${dateBR(String(order.createdAt||today()).slice(0,10))}  |  Etapa: ${order.stage||"Pedido"}  |  Entrega: ${dateBR(order.dueDate)}`,9,regular);
+  addLine(`Responsável: ${erpBoardResponsible(order)||"Não definido"}  |  Prioridade: ${order.priority||"Normal"}  |  Total: ${erpOrderQtyTotal(order)} peça(s)`,9,regular);
   y-=8;addLine("CLIENTE",10,bold,rgb(.12,.38,.82),17);
   addLine(`${order.client||"-"}${client.doc?` • ${client.doc}`:""}${order.phone?` • ${order.phone}`:""}`,10,bold);
   if(client.email)addLine(client.email);
@@ -40719,9 +41176,19 @@ async function exportErpOrderPDF(orderId,trigger=null){
   y-=8;addLine("PRODUÇÃO E OBSERVAÇÕES",10,bold,rgb(.12,.38,.82),18);
   addLine(`Prazo do setor: ${dateBR(String(order.stageDueAt||"").slice(0,10))}  |  Entrega prevista: ${dateBR(order.dueDate)}`);
   addLine(order.notes||"Sem observações.");
+  const artworkColors={blue:rgb(.12,.38,.82),ink:rgb(.04,.08,.16),muted:rgb(.3,.35,.42)};
+  for(const product of erpNormalizeOrderProducts(order)){
+    for(const art of erpProductArtworkPairV253(product)){
+      try{
+        await erpAddArtworkPdfPageV253(pdf,art,`${order.number||"Pedido"} • ${product.model||"Modelo"}`,{regular,bold},artworkColors);
+      }catch(artworkError){
+        console.warn("Uma imagem de estampa não pôde ser incluída no PDF do pedido:",artworkError);
+      }
+    }
+  }
   const bytes=await pdf.save();
   const fileName=`demanda-private-label-${String(order.number||order.id).replace(/[^a-z0-9_-]+/gi,"-")}.pdf`;
-  const delivery=await deliverErpPdf(bytes,fileName);
+  const delivery=downloadErpPdfBytesV253(bytes,fileName);
   if(delivery==="downloaded")setErpSyncStatus(`PDF da demanda gerado: ${fileName}`);
   if(delivery==="shared")setErpSyncStatus("PDF da demanda compartilhado com sucesso");
   }catch(error){
