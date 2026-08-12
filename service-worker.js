@@ -1,5 +1,5 @@
-const WISENT_VERSION="V256";
-const WISENT_CACHE="wisent-erp-static-v256";
+const WISENT_VERSION="V257";
+const WISENT_CACHE="wisent-erp-static-v257";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
@@ -154,4 +154,4 @@ self.addEventListener("fetch",event=>{
   })());
 });
 
-// WISENT V256 - tipografia do Financeiro e data atual em novos lançamentos
+// WISENT V257 - números do Financeiro com a tipografia da Visão financeira

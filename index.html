@@ -16327,6 +16327,20 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
   .erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceDateFieldV256{grid-column:1!important}
 }
 /* ===== FIM V256 FINANCEIRO ===== */
+
+/* ===== V257 — FINANCEIRO PRIVATE LABEL: NÚMEROS COM A TIPOGRAFIA DA VISÃO FINANCEIRA =====
+   Somente os quatro valores dos KPIs financeiros recebem o mesmo padrão tipográfico numérico da V255.
+*/
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceKpiV243>div>strong{
+  font-family:var(--erp-dashboard-font)!important;
+  font-weight:720!important;
+  letter-spacing:-.045em!important;
+  line-height:1!important;
+  font-variant-numeric:tabular-nums lining-nums!important;
+  font-feature-settings:"tnum" 1,"lnum" 1!important;
+  text-rendering:optimizeLegibility!important;
+}
+/* ===== FIM V257 FINANCEIRO ===== */
 </style>
 
 </head>
@@ -16404,7 +16418,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V256</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V257</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -18969,7 +18983,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V256";
+const APP_BUILD_VERSION="V257";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -19003,9 +19017,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=256",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=257",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=256");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=257");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -23380,7 +23394,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V256",
+    version:"V257",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -24059,6 +24073,32 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","ERP_FINANCE_TYPOGRAPHY_DATE_V256","Cabeçalho financeiro usa a tipografia do Dashboard Private Label e novos lançamentos iniciam com a data atual, preservando a data dos registros em edição.");
   }else{
     auditAdd(report,"error","ERP_FINANCE_TYPOGRAPHY_DATE_V256","Não foi possível confirmar toda a padronização tipográfica e o preenchimento seguro da data do Financeiro V256.");
+  }
+
+  const financeNumberTypographyStyleV257=[...document.querySelectorAll("style")].find(style=>
+    String(style.textContent||"").includes("V257 — FINANCEIRO PRIVATE LABEL: NÚMEROS")
+  );
+  const financeNumberTypographyFullTextV257=String(financeNumberTypographyStyleV257?.textContent||"");
+  const financeNumberTypographyStartV257=financeNumberTypographyFullTextV257.indexOf("V257 — FINANCEIRO PRIVATE LABEL: NÚMEROS");
+  const financeNumberTypographyEndV257=financeNumberTypographyFullTextV257.indexOf("FIM V257 FINANCEIRO",financeNumberTypographyStartV257);
+  const financeNumberTypographyTextV257=financeNumberTypographyFullTextV257.slice(financeNumberTypographyStartV257,financeNumberTypographyEndV257);
+  const financeKpiValuesV257=[
+    "erpFinanceEntradas","erpFinanceSaidas","erpFinanceLucro","erpFinancePendentes"
+  ];
+  if(
+    financeKpiValuesV257.every(id=>!!$(id))&&
+    financeKpiValuesV257.every(id=>$(id)?.matches("#erpDashboardFinance .erpFinanceKpiV243>div>strong"))&&
+    financeNumberTypographyTextV257.includes("font-family:var(--erp-dashboard-font)")&&
+    financeNumberTypographyTextV257.includes("font-weight:720")&&
+    financeNumberTypographyTextV257.includes("letter-spacing:-.045em")&&
+    financeNumberTypographyTextV257.includes("font-variant-numeric:tabular-nums lining-nums")&&
+    !financeNumberTypographyTextV257.includes("writeErpTestData")&&
+    !financeNumberTypographyTextV257.includes("erpFinanceKpiV243 small")&&
+    !financeNumberTypographyTextV257.includes("erpFinanceKpiV243 em")
+  ){
+    auditAdd(report,"pass","ERP_FINANCE_NUMBER_TYPOGRAPHY_V257","Os quatro valores do Financeiro integrado usam o mesmo padrão tipográfico numérico da Visão financeira, sem alcançar rótulos, descrições, dados ou outras áreas.");
+  }else{
+    auditAdd(report,"error","ERP_FINANCE_NUMBER_TYPOGRAPHY_V257","Não foi possível confirmar o isolamento completo da tipografia numérica do Financeiro V257.");
   }
 
   if(
