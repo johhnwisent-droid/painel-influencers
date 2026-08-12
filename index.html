@@ -13077,6 +13077,35 @@ body[data-page="commissionsPage"] .profileMenuDropdown button:hover{
 .erpCommissionLedger tbody tr:hover td{background:#172842!important}
 .erpCommissionLedger td select{min-width:125px!important}
 
+/* ===== V252 — AÇÕES ISOLADAS DO DETALHAMENTO DE COMISSÕES ===== */
+.erpCommissionSourceV252{
+  display:inline-flex!important;
+  align-items:center!important;
+  min-height:30px!important;
+  padding:5px 9px!important;
+  border:1px solid rgba(96,165,250,.24)!important;
+  border-radius:9px!important;
+  background:rgba(59,130,246,.09)!important;
+  color:#dbeafe!important;
+  font-weight:900!important;
+}
+.erpCommissionActionsV252{
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+  min-width:245px!important;
+}
+.erpCommissionActionsV252 select{flex:1 1 135px!important}
+.erpCommissionDeleteV252{
+  flex:0 0 auto!important;
+  min-width:72px!important;
+  border:1px solid rgba(248,113,113,.30)!important;
+  background:rgba(239,68,68,.13)!important;
+  color:#fecaca!important;
+}
+.erpCommissionDeleteV252:hover{background:rgba(239,68,68,.23)!important;color:#fff!important}
+.erpCommissionDeleteV252:disabled{opacity:.55!important;cursor:wait!important}
+
 @media(max-width:1100px){
   .erpCommissionFilters{grid-template-columns:repeat(3,minmax(0,1fr))!important}
   .erpModule[data-erp-panel="comissoes"] .erpStatsGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
@@ -13136,6 +13165,7 @@ body[data-page="commissionsPage"] .profileMenuDropdown button:hover{
   .erpCommissionLedger td[colspan]{display:block!important;text-align:center!important}
   .erpCommissionLedger td[colspan]::before{display:none!important}
   .erpCommissionLedger td select{width:100%!important;min-width:0!important}
+  .erpCommissionActionsV252{display:grid!important;grid-template-columns:1fr auto!important;min-width:0!important;width:100%!important}
 }
 
 @media(max-width:460px){
@@ -15900,7 +15930,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V251</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V252</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17713,7 +17743,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
         <label>Funcionário<select id="erpCommissionEmployeeFilter" onchange="renderErpCommissions()"><option value="">Todos</option></select></label>
         <label>Origem<select id="erpCommissionOriginFilter" onchange="renderErpCommissions()"><option value="">Todas</option><option>Atacado</option><option>Varejo</option><option>Private Label</option></select></label>
         <label>Status<select id="erpCommissionStatusFilter" onchange="renderErpCommissions()"><option value="">Todos</option><option>Pendente</option><option>Aprovada</option><option>Paga</option><option>Cancelada</option><option>Estornada</option></select></label>
-        <label>Pedido ou venda<input id="erpCommissionSourceFilter" placeholder="ID" oninput="renderErpCommissions()"></label>
+        <label>Pedido ou venda<input id="erpCommissionSourceFilter" placeholder="Ex.: WIS-0001" oninput="renderErpCommissions()"></label>
         <button type="button" class="primary" onclick="recalculateErpCommissions()">Calcular comissões</button>
         <button type="button" class="secondary" onclick="clearErpCommissionCustomRange()">Usar mês completo</button>
       </div>
@@ -18319,10 +18349,11 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V251";
+const APP_BUILD_VERSION="V252";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
+const ERP_COMMISSION_MANUAL_DELETIONS_V252=KEY+"_commission_manual_deletions_v252";
 let launchRecoveryPreCloudCandidatesV208=[];
 
 async function clearOldPwaCacheOnce(){
@@ -18352,9 +18383,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=251",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=252",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=251");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=252");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -31775,7 +31806,7 @@ function showPage(id){
   if(standaloneModules[currentPage]){
     showErpModule(standaloneModules[currentPage]);
     if(currentPage==="commissionsPage"){
-      syncPendingErpPrivateSellerAssignmentsV238().finally(()=>ensureErpCommissionAutoCalculated());
+      erpSyncPrivateSharedEntitiesV251().then(ready=>{if(ready)ensureErpCommissionAutoCalculated();});
     }
   }
   if(currentPage==="erpTest"||currentPage==="suppliesPage"){
@@ -31906,6 +31937,8 @@ let erpPrivateSharedSyncTimerV251=null;
 let erpPrivateSharedPollTimerV251=null;
 let erpPrivateCommissionRepairPromiseV251=null;
 let erpPrivateCommissionRepairAtV251=0;
+const erpCommissionDeletionLocksV252=new Set();
+let erpCommissionDeletionCatalogReadyV252=false;
 let erpRealtimeSocket=null;
 let erpRealtimeConnected=false;
 let erpRealtimeInstalled=false;
@@ -36058,12 +36091,14 @@ function erpV251ApplyCommissionRows(rows,{deletedRow=null,render=true}={}){
   let changed=false;
   let privateResponsibleChanged=false;
   if(deletedRow?.id){
+    erpCommissionManualDeletionRememberV252(deletedRow);
     const before=data.commissions.length;
     data.commissions=data.commissions.filter(row=>!erpV251CommissionMatches(row,deletedRow));
     changed=data.commissions.length!==before;
   }
   (Array.isArray(rows)?rows:[]).filter(row=>row?.id&&!row.deleted_at).forEach(raw=>{
     const incoming=erpV251NormalizeCommissionRow(raw);
+    if(erpCommissionManualDeletionMatchesV252(incoming))return;
     const index=data.commissions.findIndex(row=>erpV251CommissionMatches(row,incoming));
     const current=index>=0?data.commissions[index]:null;
     if(current?._sellerLinkPendingV238&&String(current.updated_at||"")>String(incoming.updated_at||""))return;
@@ -36116,16 +36151,21 @@ async function erpSyncPrivateSharedEntitiesV251(){
   if(erpPrivateSharedSyncPromiseV251)return erpPrivateSharedSyncPromiseV251;
   erpPrivateSharedSyncPromiseV251=(async()=>{
     const local=readErpTestData();
-    const [clientsResult,commissionsResult]=await Promise.allSettled([
+    const [clientsResult,commissionsResult,deletedCommissionsResult]=await Promise.allSettled([
       erpV2FetchAll("wisent_erp_v2_clients"),
-      erpV242FetchCommissionsProtected(local.commissions||[])
+      erpV242FetchCommissionsProtected(local.commissions||[]),
+      erpFetchDeletedCommissionsV252()
     ]);
     if(clientsResult.status==="fulfilled")erpV251ApplyClientRows(clientsResult.value,{render:true});
     if(commissionsResult.status==="fulfilled"&&commissionsResult.value.useRemote){
       erpV251ApplyCommissionRows(commissionsResult.value.rows,{render:true});
     }
-    await syncPendingErpPrivateSellerAssignmentsV238({force:true});
-    return clientsResult.status==="fulfilled"||commissionsResult.status==="fulfilled";
+    if(deletedCommissionsResult.status==="fulfilled"){
+      deletedCommissionsResult.value.forEach(row=>erpV251ApplyCommissionRows([],{deletedRow:row,render:true}));
+      erpCommissionDeletionCatalogReadyV252=true;
+      await syncPendingErpPrivateSellerAssignmentsV238({force:true});
+    }
+    return commissionsResult.status==="fulfilled"&&commissionsResult.value?.ok!==false&&deletedCommissionsResult.status==="fulfilled";
   })().catch(error=>{
     console.warn("V251: sincronização isolada de clientes/comissões será repetida:",error);
     return false;
@@ -37971,11 +38011,83 @@ function populateErpOrderSellerV238(preferredId="",preferredName=""){
   }
 }
 
+/* ===== V252 — EXCLUSÕES MANUAIS DE COMISSÃO NÃO SÃO RECRIADAS =====
+   O tombstone contém somente a identidade da comissão. Pedido, venda e demais
+   dados comerciais não são alterados nem usados como alvo de exclusão. */
+function erpCommissionManualDeletionsReadV252(){
+  try{
+    const parsed=JSON.parse(localStorage.getItem(ERP_COMMISSION_MANUAL_DELETIONS_V252)||"{}");
+    return parsed&&typeof parsed==="object"&&!Array.isArray(parsed)?parsed:{};
+  }catch(error){return {};}
+}
+
+function erpCommissionManualDeletionsWriteV252(map){
+  try{
+    const rows=Object.values(map&&typeof map==="object"?map:{})
+      .filter(Boolean)
+      .sort((a,b)=>String(b.deletedAt||"").localeCompare(String(a.deletedAt||"")))
+      .slice(0,2500);
+    const compact={};
+    rows.forEach(row=>{compact[String(row.key||row.id||`${row.sourceOrigin}|${row.sourceId}`)]=row;});
+    localStorage.setItem(ERP_COMMISSION_MANUAL_DELETIONS_V252,JSON.stringify(compact));
+    return true;
+  }catch(error){
+    console.warn("V252: identidade da comissão excluída não pôde ser gravada localmente:",error);
+    return false;
+  }
+}
+
+function erpCommissionManualDeletionRememberV252(row){
+  if(!row)return false;
+  const id=String(row.id||"").trim();
+  const sourceOrigin=String(row.source_origin||row.sourceOrigin||"").trim();
+  const sourceId=String(row.source_id||row.sourceId||"").trim();
+  if(!id&&!sourceId)return false;
+  const key=id||`${sourceOrigin}|${sourceId}`;
+  const map=erpCommissionManualDeletionsReadV252();
+  map[key]={
+    key,id,sourceOrigin,sourceId,
+    sellerId:String(row.seller_id||row.sellerId||""),
+    deletedAt:String(row.deleted_at||row.deletedAt||new Date().toISOString()),
+    deletedBy:String(row.updated_by||row.deletedBy||currentAuditInfo().name||"")
+  };
+  return erpCommissionManualDeletionsWriteV252(map);
+}
+
+function erpCommissionManualDeletionMatchesV252(row){
+  if(!row)return false;
+  const id=String(row.id||"").trim();
+  const sourceOrigin=String(row.source_origin||row.sourceOrigin||"").trim();
+  const sourceId=String(row.source_id||row.sourceId||"").trim();
+  if((id&&erpCommissionDeletionLocksV252.has(id))||(sourceId&&erpCommissionDeletionLocksV252.has(`${sourceOrigin}|${sourceId}`)))return true;
+  return Object.values(erpCommissionManualDeletionsReadV252()).some(deleted=>
+    (id&&String(deleted?.id||"")===id)||
+    (sourceId&&String(deleted?.sourceId||"")===sourceId&&String(deleted?.sourceOrigin||"")===sourceOrigin)
+  );
+}
+
+async function erpFetchDeletedCommissionsV252(pageSize=500){
+  const rows=[];
+  for(let offset=0;;offset+=pageSize){
+    const page=await erpV2FetchRowsWhere(
+      "wisent_erp_commissions",
+      `deleted_at=not.is.null&limit=${pageSize}&offset=${offset}`
+    );
+    if(!Array.isArray(page))break;
+    rows.push(...page);
+    if(page.length<pageSize)break;
+  }
+  return rows;
+}
+
 async function syncErpPrivateLabelCommissionForOrderV238(order,{silent=false}={}){
   if(!order||erpOrderType(order)!=="PRIVATE LABEL")return {ok:false,reason:"invalid_order"};
   const data=readErpTestData();
   const seller=erpPrivateSellerAssignmentForOrderV238(order,data);
   if(!seller.id)return {ok:false,reason:"seller_missing"};
+  if(erpCommissionManualDeletionMatchesV252({source_origin:"Private Label",source_id:String(order.id),seller_id:String(seller.id)})){
+    return {ok:false,reason:"manually_deleted"};
+  }
 
   erpPrivateSellerRememberV238(order.id,seller,{confirmed:false});
   const saleDate=String(order.createdAt||today()).slice(0,10)||today();
@@ -37997,6 +38109,23 @@ async function syncErpPrivateLabelCommissionForOrderV238(order,{silent=false}={}
     version:Number(existing?.version||1)
   };
 
+  if(erpCommissionManualDeletionMatchesV252(row))return {ok:false,reason:"manually_deleted"};
+  if(!erpCommissionDeletionCatalogReadyV252&&navigator.onLine!==false){
+    try{
+      const deletedRows=await erpV2FetchRowsWhere(
+        "wisent_erp_commissions",
+        `id=eq.${encodeURIComponent(String(row.id))}&deleted_at=not.is.null&limit=1`
+      );
+      if(deletedRows[0]?.deleted_at){
+        erpCommissionManualDeletionRememberV252({...row,...deletedRows[0]});
+        return {ok:false,reason:"manually_deleted"};
+      }
+    }catch(error){
+      console.warn("V252: verificação preventiva da comissão será repetida:",error);
+      return {ok:false,reason:"cloud_pending",error};
+    }
+  }
+
   /* O vínculo já fica visível/local antes da rede. A nuvem continua sendo a confirmação oficial. */
   const optimistic=readErpTestData();
   optimistic.commissions=(optimistic.commissions||[]).filter(item=>
@@ -38006,6 +38135,12 @@ async function syncErpPrivateLabelCommissionForOrderV238(order,{silent=false}={}
   erpLocalWriteOnly(optimistic);
 
   try{
+    if(erpCommissionManualDeletionMatchesV252(row)){
+      const latest=readErpTestData();
+      latest.commissions=(latest.commissions||[]).filter(item=>!erpV251CommissionMatches(item,row));
+      erpLocalWriteOnly(latest);
+      return {ok:false,reason:"manually_deleted"};
+    }
     const saved=await erpV174Upsert("wisent_erp_commissions",[row],"id");
     const confirmed=Array.isArray(saved)&&saved[0]?{...row,...saved[0]}:row;
     const latest=readErpTestData();
@@ -38040,6 +38175,7 @@ async function syncPendingErpPrivateSellerAssignmentsV238(options={}){
       const order={...sourceOrder};
       const assignment=erpPrivateSellerAssignmentForOrderV238(order,data);
       if(!assignment.explicit||!assignment.id)continue;
+      if(erpCommissionManualDeletionMatchesV252({source_origin:"Private Label",source_id:String(order.id),seller_id:String(assignment.id)}))continue;
       order.salesCollaboratorId=String(assignment.id);
       order.salesCollaboratorName=String(assignment.name||assignment.id);
       order.salesCollaboratorUsername=String(assignment.username||"");
@@ -38057,7 +38193,7 @@ async function syncPendingErpPrivateSellerAssignmentsV238(options={}){
   return erpPrivateCommissionRepairPromiseV251;
 }
 
-window.addEventListener("online",()=>{syncPendingErpPrivateSellerAssignmentsV238().catch(()=>{});});
+window.addEventListener("online",()=>{erpSyncPrivateSharedEntitiesV251().catch(()=>{});});
 
 function resetErpOrderForm(){
   const form=$("erpOrderForm");
@@ -38353,7 +38489,9 @@ async function saveErpOrderFromForm(e){
     syncErpProductionStepsToCloud(order),
     erpV174AuditCloud("private_label_order",String(id),existing?"updated":"created",existing||null,order)
   ]).catch(error=>console.warn("Domínios V174 aguardando sincronização:",error));
-  if(!commissionSync.ok){
+  if(commissionSync.reason==="manually_deleted"){
+    showUndoToast(`Pedido salvo para ${order.salesCollaboratorName}. A comissão removida manualmente não foi recriada.`);
+  }else if(!commissionSync.ok){
     showUndoToast(`Pedido salvo. Responsável ${order.salesCollaboratorName} preservado localmente; vínculo com comissões aguardando sincronização.`);
   }else if(!commissionSync.hasRule){
     showUndoToast(`Pedido salvo para ${order.salesCollaboratorName}. Comissão fixa de 2% já vinculada.`);
@@ -40992,6 +41130,14 @@ function erpStandaloneClassToken(value){
 
 async function recalculateErpCommissions(options={}){
   if(!isWisentAdmin())return;
+  if(!erpCommissionDeletionCatalogReadyV252&&navigator.onLine!==false&&!options._deletionCatalogCheckedV252){
+    const ready=await erpSyncPrivateSharedEntitiesV251();
+    if(!ready){
+      if(!options.silent)alert("A lista de exclusões ainda não foi confirmada pelo Supabase. Nenhuma comissão foi recalculada; tente novamente em instantes.");
+      return false;
+    }
+    return recalculateErpCommissions({...options,_deletionCatalogCheckedV252:true});
+  }
   const data=readErpTestData();
   const rules=data.commissionRules||[];
   const sales=[];
@@ -41010,13 +41156,15 @@ async function recalculateErpCommissions(options={}){
     if(!sellerId)return;
     sales.push({sourceId:String(order.id),origin:"Private Label",sellerId,sellerName:assignment.name||sellerId,gross:Number(order.value||0),discount:0,eligible:Number(order.value||0),date:String(order.createdAt||today()).slice(0,10),explicitSeller:!!assignment.explicit});
   });
-  const existing=new Map((data.commissions||[]).map(row=>[`${row.source_origin}|${row.source_id}|${row.seller_id}`,row]));
-  const existingPrivateBySource=new Map((data.commissions||[]).filter(row=>row?.source_origin==="Private Label").map(row=>[String(row.source_id),row]));
+  const activeExisting=(data.commissions||[]).filter(row=>!erpCommissionManualDeletionMatchesV252(row));
+  const existing=new Map(activeExisting.map(row=>[`${row.source_origin}|${row.source_id}|${row.seller_id}`,row]));
+  const existingPrivateBySource=new Map(activeExisting.filter(row=>row?.source_origin==="Private Label").map(row=>[String(row.source_id),row]));
   const rows=[];
   const recalculatedKeys=new Set();
   const recalculatedPrivateSources=new Set();
   for(const sale of sales){
     const isPrivateLabel=sale.origin==="Private Label";
+    if(erpCommissionManualDeletionMatchesV252({source_origin:sale.origin,source_id:sale.sourceId,seller_id:sale.sellerId}))continue;
     const rule=isPrivateLabel?null:(erpCommissionRuleFor(rules,sale.sellerId,sale.origin,sale.date)||erpCommissionRuleFor(rules,sale.sellerName,sale.origin,sale.date));
     const commissionKey=`${sale.origin}|${sale.sourceId}|${sale.sellerId}`;
     const old=isPrivateLabel?(existingPrivateBySource.get(String(sale.sourceId))||existing.get(commissionKey)):existing.get(commissionKey);
@@ -41044,6 +41192,7 @@ async function recalculateErpCommissions(options={}){
     return;
   }
   const preserved=(data.commissions||[]).filter(row=>{
+    if(erpCommissionManualDeletionMatchesV252(row))return false;
     if(row?.source_origin==="Private Label"&&recalculatedPrivateSources.has(String(row.source_id)))return false;
     return !recalculatedKeys.has(`${row.source_origin}|${row.source_id}|${row.seller_id}`);
   });
@@ -41054,6 +41203,83 @@ async function recalculateErpCommissions(options={}){
   erpV174AuditCloud("commission_batch",today().slice(0,7),"recalculated",{previousCount:existing.size},{sales:sales.length,commissions:rows.length}).catch(()=>{});
   renderErpCommissions();
   if(!options.silent)showUndoToast(`${rows.length} comissão(ões) recalculada(s) a partir de vendas reais.`);
+}
+
+function erpCommissionSourceLabelV252(row,data=null){
+  const sourceId=String(row?.source_id||"").trim();
+  if(!sourceId)return "Não identificado";
+  if(row?.source_origin==="Private Label"){
+    const sourceData=data||readErpTestData();
+    const order=(sourceData.orders||[]).find(item=>
+      String(item?.id||"")===sourceId||String(item?._v2Id||"")===sourceId
+    );
+    const deletedOrder=typeof erpOrderTombstonesReadV244==="function"
+      ?erpOrderTombstonesReadV244().find(item=>String(item?.id||"")===sourceId||String(item?.legacy_id||"")===sourceId)
+      :null;
+    return String(order?.number||deletedOrder?.number||row.order_number||row.source_label||sourceId);
+  }
+  const sale=(state.wholesaleRetail||[]).find(item=>String(item?.id||"")===sourceId);
+  return String(sale?.number||sale?.orderNumber||sale?.saleNumber||sourceId);
+}
+
+async function deleteErpCommissionV252(id,button=null){
+  if(!isWisentAdmin())return false;
+  const data=readErpTestData();
+  const row=(data.commissions||[]).find(item=>String(item?.id||"")===String(id));
+  if(!row)return false;
+  const sourceLabel=erpCommissionSourceLabelV252(row,data);
+  const confirmed=confirm(
+    `Excluir somente esta comissão?\n\nVenda/Pedido: ${sourceLabel}\nFuncionário: ${row.seller_name||"Não identificado"}\nComissão: ${money(row.commission_value||0)}\nStatus: ${row.status||"Pendente"}\n\nO pedido ou a venda não será excluído nem alterado. A comissão deixará de aparecer para todas as contas e não será recriada pelo cálculo automático.`
+  );
+  if(!confirmed)return false;
+
+  const previousButtonText=button?.textContent||"Excluir";
+  if(button){button.disabled=true;button.textContent="Excluindo...";}
+  const deletionSourceKey=`${String(row.source_origin||"")}|${String(row.source_id||"")}`;
+  erpCommissionDeletionLocksV252.add(String(row.id));
+  erpCommissionDeletionLocksV252.add(deletionSourceKey);
+  const now=new Date().toISOString();
+  const actor=currentAuditInfo().name||"Sistema";
+  try{
+    let official=await erpV174Patch("wisent_erp_commissions",String(row.id),{
+      deleted_at:now,updated_at:now,updated_by:actor
+    });
+    if(!official?.deleted_at){
+      const exact=await erpV2FetchRowsWhere(
+        "wisent_erp_commissions",
+        `id=eq.${encodeURIComponent(String(row.id))}&deleted_at=not.is.null&limit=1`
+      );
+      official=exact[0]||official;
+    }
+    if(!official?.deleted_at)throw new Error("O Supabase não confirmou a exclusão exata da comissão.");
+
+    const deletionRow={...row,...official,deleted_at:official.deleted_at||now,updated_by:official.updated_by||actor};
+    erpCommissionManualDeletionRememberV252(deletionRow);
+    erpCommissionDeletionLocksV252.delete(String(row.id));
+    erpCommissionDeletionLocksV252.delete(deletionSourceKey);
+    erpV251ApplyCommissionRows([],{deletedRow:deletionRow,render:true});
+    const latest=readErpTestData();
+    erpCommissionSafeSnapshotWriteV242(latest.commissions||[],"commission_deleted_v252");
+    appendErpAudit("commission_deleted",{
+      id:String(row.id),sourceId:String(row.source_id||""),sourceOrigin:String(row.source_origin||""),
+      sourceLabel,sellerId:String(row.seller_id||""),sellerName:String(row.seller_name||""),
+      commissionValue:Number(row.commission_value||0),deletedAt:deletionRow.deleted_at
+    });
+    erpV174AuditCloud("commission",String(row.id),"deleted",row,{
+      deletedAt:deletionRow.deleted_at,sourceLabel,deletedBy:actor
+    }).catch(()=>{});
+    renderErpCommissions();
+    showUndoToast(`Comissão de ${sourceLabel} excluída. Pedido e venda preservados.`);
+    return true;
+  }catch(error){
+    erpCommissionDeletionLocksV252.delete(String(row.id));
+    erpCommissionDeletionLocksV252.delete(deletionSourceKey);
+    console.error("V252: exclusão isolada da comissão não confirmada:",error);
+    alert("A comissão não foi excluída porque o Supabase não confirmou a operação. Nenhum dado foi removido.");
+    if(button){button.disabled=false;button.textContent=previousButtonText;}
+    renderErpCommissions();
+    return false;
+  }
 }
 
 function renderErpCommissions(){
@@ -41089,11 +41315,14 @@ function renderErpCommissions(){
   const status=$("erpCommissionStatusFilter")?.value||"";
   const source=erpReportFilterText($("erpCommissionSourceFilter")?.value);
   const rows=(data.commissions||[]).filter(row=>{
+    if(erpCommissionManualDeletionMatchesV252(row))return false;
     const date=String(row.sale_date||"").slice(0,10);
     const periodOk=(rangeStart||rangeEnd)
       ?(!rangeStart||date>=rangeStart)&&(!rangeEnd||date<=rangeEnd)
       :row.competence===competence;
-    return periodOk&&(!employee||row.seller_id===employee)&&(!origin||row.source_origin===origin)&&(!status||row.status===status)&&(!source||erpReportFilterText(row.source_id).includes(source));
+    const sourceLabel=erpCommissionSourceLabelV252(row,data);
+    const sourceSearch=erpReportFilterText(`${sourceLabel} ${row.source_id||""}`);
+    return periodOk&&(!employee||row.seller_id===employee)&&(!origin||row.source_origin===origin)&&(!status||row.status===status)&&(!source||sourceSearch.includes(source));
   });
   const sum=predicate=>rows.filter(predicate).reduce((total,row)=>total+Number(row.commission_value||0),0);
   $("erpCommissionSold").textContent=money(rows.reduce((total,row)=>total+Number(row.eligible_value||0),0));
@@ -41108,7 +41337,10 @@ function renderErpCommissions(){
       ?`Período personalizado: ${rangeStart?dateBR(rangeStart):"início"} até ${rangeEnd?dateBR(rangeEnd):"hoje"}.`
       :`Mês completo: ${monthLabel(competence)}.`;
   }
-  $("erpCommissionRows").innerHTML=rows.length?rows.map(row=>`<tr class="status-${erpStandaloneClassToken(row.status)}"><td>${esc(row.source_id)}</td><td>${esc(row.seller_name)}</td><td><span class="erpCommissionOriginV242 origin-${erpStandaloneClassToken(row.source_origin)}">${esc(row.source_origin)}</span></td><td>${money(row.eligible_value)}</td><td>${Number(row.percentage).toFixed(2)}%</td><td><strong>${money(row.commission_value)}</strong></td><td><span class="erpCommissionStatus status-${erpStandaloneClassToken(row.status)}">${esc(row.status)}</span></td><td><select aria-label="Alterar status da comissão" onchange="updateErpCommissionStatus('${row.id}',this.value)">${["Pendente","Aprovada","Paga","Cancelada","Estornada"].map(value=>`<option ${value===row.status?"selected":""}>${value}</option>`).join("")}</select></td></tr>`).join(""):`<tr><td colspan="8">Nenhuma comissão no período.</td></tr>`;
+  $("erpCommissionRows").innerHTML=rows.length?rows.map(row=>{
+    const sourceLabel=erpCommissionSourceLabelV252(row,data);
+    return `<tr class="status-${erpStandaloneClassToken(row.status)}"><td><span class="erpCommissionSourceV252">${esc(sourceLabel)}</span></td><td>${esc(row.seller_name)}</td><td><span class="erpCommissionOriginV242 origin-${erpStandaloneClassToken(row.source_origin)}">${esc(row.source_origin)}</span></td><td>${money(row.eligible_value)}</td><td>${Number(row.percentage).toFixed(2)}%</td><td><strong>${money(row.commission_value)}</strong></td><td><span class="erpCommissionStatus status-${erpStandaloneClassToken(row.status)}">${esc(row.status)}</span></td><td><div class="erpCommissionActionsV252"><select aria-label="Alterar status da comissão" onchange="updateErpCommissionStatus('${row.id}',this.value)">${["Pendente","Aprovada","Paga","Cancelada","Estornada"].map(value=>`<option ${value===row.status?"selected":""}>${value}</option>`).join("")}</select><button type="button" class="small danger erpCommissionDeleteV252" onclick="deleteErpCommissionV252('${row.id}',this)">Excluir</button></div></td></tr>`;
+  }).join(""):`<tr><td colspan="8">Nenhuma comissão no período.</td></tr>`;
 }
 
 function clearErpCommissionCustomRange(){
