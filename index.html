@@ -15900,7 +15900,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V250</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V251</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17403,7 +17403,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
         <input type="hidden" id="erpOrderClientId">
         <label>Número do pedido<input id="erpOrderNumber" placeholder="Ex.: WIS-0001"></label>
         <label>Tipo do pedido<select id="erpOrderType"><option value="PRIVATE LABEL">PRIVATE LABEL</option></select></label>
-        <label class="erpPrivateSellerFieldV238">Colaborador responsável pela venda<select id="erpOrderSeller" required><option value="">Selecione o colaborador</option></select><small>Define a origem comercial usada na Gestão de Comissões. Não altera quem criou ou editou o pedido.</small></label>
+        <label class="erpPrivateSellerFieldV238">Funcionário responsável pela criação do pedido<select id="erpOrderSeller" required><option value="">Selecione o funcionário</option></select><small>Este responsável aparecerá no pedido e receberá automaticamente a comissão de 2%. O histórico técnico de quem salvou ou editou continua preservado.</small></label>
         <label class="erpClientPicker">Cliente cadastrado<input id="erpOrderClient" autocomplete="off" placeholder="Busque por nome, documento ou telefone" oninput="searchErpOrderClients(this.value)" onfocus="searchErpOrderClients(this.value)"><div id="erpOrderClientSuggestions" class="erpClientSuggestions" hidden></div><small id="erpOrderClientValidation">Selecione um cliente da lista.</small></label>
         <label>Telefone<input id="erpOrderPhone" placeholder="Preenchido pelo cliente" readonly></label>
         <label>Data entrega<input id="erpOrderDue" type="date" onchange="syncErpProductionDueFromDelivery()"></label>
@@ -18319,7 +18319,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V250";
+const APP_BUILD_VERSION="V251";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18352,9 +18352,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=248",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=251",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=248");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=251");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -31780,7 +31780,9 @@ function showPage(id){
   }
   if(currentPage==="erpTest"||currentPage==="suppliesPage"){
     setTimeout(()=>refreshErpWorkspaceFromCloud({reason:"page-entry",force:true}),0);
+    scheduleErpPrivateSharedSyncV251(0);
   }
+  if(currentPage==="commissionsPage")scheduleErpPrivateSharedSyncV251(0);
   if(currentPage==="wholesaleRetail"||currentPage==="wholesaleOrder"){
     setTimeout(()=>{
       connectWholesaleRealtime();
@@ -31899,6 +31901,11 @@ let erpOrderDeletionSyncPromiseV250=null;
 let erpOrderDeletionSyncTimerV250=null;
 let erpOrderDeletionSyncInstalledV250=false;
 let erpOrderDeletionPollTimerV250=null;
+let erpPrivateSharedSyncPromiseV251=null;
+let erpPrivateSharedSyncTimerV251=null;
+let erpPrivateSharedPollTimerV251=null;
+let erpPrivateCommissionRepairPromiseV251=null;
+let erpPrivateCommissionRepairAtV251=0;
 let erpRealtimeSocket=null;
 let erpRealtimeConnected=false;
 let erpRealtimeInstalled=false;
@@ -31926,6 +31933,7 @@ const ERP_REALTIME_NOTIFICATION_SEEN_KEY=KEY+"_erp_sector_notification_seen_v189
 const ERP_REALTIME_LAST_DELTA_KEY=KEY+"_erp_realtime_last_delta_v189";
 const ERP_REALTIME_TABLES=[
   "wisent_erp_v2_orders",
+  "wisent_erp_v2_clients",
   "wisent_erp_v2_products",
   "wisent_erp_v2_product_colors",
   "wisent_erp_v2_product_size_quantities",
@@ -33926,6 +33934,7 @@ async function erpV2BuildMigrationPackage(data){
     const updatedAt=erpV2Timestamp(order.updatedAt,createdAt);
     const products=erpNormalizeOrderProducts(order);
 
+    const commercialResponsible=erpPrivateSellerAssignmentForOrderV238(order,normalized);
     pkg.orders.push({
       id:orderId,
       legacy_id:legacyOrderId,
@@ -33943,7 +33952,11 @@ async function erpV2BuildMigrationPackage(data){
       board_position:Number(order.boardPosition||0),
       stage_started_at:order.stageStartedAt||createdAt,
       stage_due_at:order.stageDueAt||erpStageDueFrom(order.stageStartedAt||createdAt),
-      stage_responsible:String(order.stageResponsible||""),
+      /* V251: a coluna compartilhada já existente passa a transportar o ID
+         estável do responsável comercial, sem criar schema ou migrar pedidos. */
+      stage_responsible:String(commercialResponsible.explicit&&commercialResponsible.id
+        ?commercialResponsible.id
+        :(order.stageResponsible||"")),
       notes:String(order.notes||""),
       qty:erpOrderQtyTotal(order),
       standby_active:erpIsStandby(order),
@@ -34551,7 +34564,10 @@ function erpV2OfficialDataFromRows(rowsByType,localData){
     });
   });
 
-  const orders=(rowsByType.orders||[]).map(row=>({
+  const orders=(rowsByType.orders||[]).map(row=>{
+    const sharedResponsibleKey=String(row.stage_responsible||"").trim();
+    const sharedResponsible=erpPrivateSellerByIdV238(sharedResponsibleKey);
+    return ({
     id:String(row.legacy_id||row.id),
     number:row.number||"",
     orderType:row.order_type||"WISENT",
@@ -34568,6 +34584,9 @@ function erpV2OfficialDataFromRows(rowsByType,localData){
     stageStartedAt:row.stage_started_at||row.updated_at||row.created_at,
     stageDueAt:row.stage_due_at||"",
     stageResponsible:row.stage_responsible||"",
+    salesCollaboratorId:sharedResponsible?String(sharedResponsible.id):"",
+    salesCollaboratorName:sharedResponsible?String(sharedResponsible.name||sharedResponsible.id):"",
+    salesCollaboratorUsername:sharedResponsible?String(sharedResponsible.username||""):"",
     notes:row.notes||"",
     qty:Number(row.qty||0),
     products:[],
@@ -34587,7 +34606,8 @@ function erpV2OfficialDataFromRows(rowsByType,localData){
     updatedBy:row.updated_by||"",
     _v2Id:row.id,
     _v2Version:Number(row.version||1)
-  }));
+  });
+  });
   const orderByUuid=new Map((rowsByType.orders||[]).map((row,index)=>[String(row.id),orders[index]]));
 
   (rowsByType.products||[]).forEach(row=>{
@@ -35840,7 +35860,10 @@ async function hydrateErpRealtimeDemand(orderUuid,eventData={}){
       const orderRow=orders[0];
       if(!orderRow||orderRow.deleted_at)return erpRealtimeRemoveOrder(orderUuid,eventData);
 
-      const [products,stageEvents,standbyEvents,sewingEvents,productionSteps,payments,financialSummaries]=await Promise.all([
+      const [linkedClients,products,stageEvents,standbyEvents,sewingEvents,productionSteps,payments,financialSummaries]=await Promise.all([
+        orderRow.client_id
+          ?erpRealtimeFetchOptionalWhere("wisent_erp_v2_clients",`id=eq.${encodeURIComponent(String(orderRow.client_id))}&deleted_at=is.null`)
+          :Promise.resolve([]),
         erpV2FetchRowsWhere("wisent_erp_v2_products",`order_id=eq.${encodedId}&deleted_at=is.null`),
         erpV2FetchRowsWhere("wisent_erp_v2_stage_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
         erpRealtimeFetchOptionalWhere("wisent_erp_v2_standby_events",`order_id=eq.${encodedId}&deleted_at=is.null`),
@@ -35854,8 +35877,9 @@ async function hydrateErpRealtimeDemand(orderUuid,eventData={}){
       const colors=productIds.length?await erpRealtimeFetchOptionalWhere("wisent_erp_v2_product_colors",`product_id=in.(${productIds.map(encodeURIComponent).join(",")})&deleted_at=is.null`):[];
       const colorIds=colors.map(row=>String(row.id)).filter(Boolean);
       const sizes=colorIds.length?await erpRealtimeFetchOptionalWhere("wisent_erp_v2_product_size_quantities",`color_id=in.(${colorIds.map(encodeURIComponent).join(",")})&deleted_at=is.null`):[];
-      const rowsByType={orders:[orderRow],products,stageEvents,standbyEvents,sewingEvents,clients:[],inventory:[],finance:[],employees:[],settings:[]};
+      const rowsByType={orders:[orderRow],products,stageEvents,standbyEvents,sewingEvents,clients:linkedClients,inventory:[],finance:[],employees:[],settings:[]};
       erpV2CacheRemoteVersions({...rowsByType,colors,sizes,payments,productionSteps});
+      if(linkedClients.length)erpV251ApplyClientRows(linkedClients,{render:true});
       const partial=erpApplyV174DomainRows(erpV2OfficialDataFromRows(rowsByType,readErpTestData()),{colors,sizes,payments,financialSummaries});
       const incoming=partial.orders?.[0];
       if(!incoming)continue;
@@ -35888,6 +35912,8 @@ async function hydrateErpRealtimeDemand(orderUuid,eventData={}){
       if(previousStage!==incoming.stage&&incoming.stage===erpRestrictedStage()){
         notifyErpSectorArrival({...orderRow,number:incoming.number,client:incoming.client},incoming.stage,eventData);
       }
+      /* O pedido recebido em outra conta já garante a comissão idempotente. */
+      syncPendingErpPrivateSellerAssignmentsV238({force:true}).catch(()=>{});
       setErpSyncStatus(`Pedido ${incoming.number||""} atualizado em tempo real`);
       return true;
     }catch(error){
@@ -35946,6 +35972,185 @@ async function erpRealtimeApplySupplyEvent(eventData){
   return true;
 }
 
+/* ===== V251 — CLIENTES, RESPONSÁVEL E COMISSÕES COMPARTILHADOS =====
+   Escopo isolado ao Private Label. A aplicação é incremental: registros
+   oficiais são mesclados por UUID/legacy_id e nenhum vazio remoto apaga dados. */
+function erpV251NormalizeClientRow(row){
+  return {
+    id:String(row.legacy_id||row.id),name:row.name||"",legalName:row.legal_name||"",
+    tradeName:row.trade_name||"",phone:row.phone||"",email:row.email||"",
+    doc:row.document||"",address:row.address||"",city:row.city||"",state:row.state||"",
+    notes:row.notes||"",createdAt:row.created_at||"",updatedAt:row.updated_at||"",
+    _v2Id:String(row.id||""),_v2Version:Number(row.version||1)
+  };
+}
+
+function erpV251ApplyClientRows(rows,{deletedRow=null,render=true}={}){
+  const data=readErpTestData();
+  data.clients=Array.isArray(data.clients)?data.clients:[];
+  let changed=false;
+  if(deletedRow?.id){
+    const remoteId=String(deletedRow.id);
+    const legacyId=String(deletedRow.legacy_id||"");
+    const before=data.clients.length;
+    data.clients=data.clients.filter(client=>
+      String(client._v2Id||"")!==remoteId&&String(client.id||"")!==remoteId&&(!legacyId||String(client.id||"")!==legacyId)
+    );
+    changed=data.clients.length!==before;
+  }
+  (Array.isArray(rows)?rows:[]).filter(row=>row?.id&&!row.deleted_at).forEach(row=>{
+    const incoming=erpV251NormalizeClientRow(row);
+    const index=data.clients.findIndex(client=>
+      String(client._v2Id||"")===String(incoming._v2Id)||String(client.id||"")===String(incoming.id)
+    );
+    const current=index>=0?data.clients[index]:null;
+    if(current&&Number(current._v2Version||0)>Number(incoming._v2Version||0))return;
+    if(current&&Number(current._v2Version||0)===Number(incoming._v2Version||0)&&String(current.updatedAt||"")>String(incoming.updatedAt||""))return;
+    if(index>=0)data.clients[index]={...current,...incoming};else data.clients.push(incoming);
+    changed=true;
+  });
+  if(changed)erpLocalWriteOnly(normalizeErpTestData(data));
+  if(render&&changed){
+    const latest=readErpTestData();
+    renderErpClients(latest);
+    const picker=$("erpOrderClient");
+    const suggestions=$("erpOrderClientSuggestions");
+    if(picker&&(document.activeElement===picker||suggestions?.hidden===false))searchErpOrderClients(picker.value||"");
+  }
+  return changed;
+}
+
+async function erpRealtimeApplyClientEventV251(eventData){
+  const source=eventData.record?.id?eventData.record:eventData.oldRecord||{};
+  const id=String(source.id||"");
+  if(!id)return false;
+  const deleted=String(eventData.type||"").toUpperCase()==="DELETE"||Boolean(source.deleted_at);
+  if(deleted){
+    erpV251ApplyClientRows([],{deletedRow:source,render:true});
+    return true;
+  }
+  const rows=await erpRealtimeFetchOptionalWhere("wisent_erp_v2_clients",`id=eq.${encodeURIComponent(id)}&deleted_at=is.null`);
+  erpV251ApplyClientRows(rows.length?rows:[source],{render:true});
+  setErpSyncStatus(`Cliente ${String((rows[0]||source).name||"")} sincronizado em tempo real`);
+  return true;
+}
+
+function erpV251NormalizeCommissionRow(row){
+  return {
+    ...row,id:String(row.id||""),source_id:String(row.source_id||""),
+    source_origin:String(row.source_origin||""),seller_id:String(row.seller_id||""),
+    seller_name:String(row.seller_name||row.seller_id||""),gross_value:Number(row.gross_value||0),
+    discount_value:Number(row.discount_value||0),eligible_value:Number(row.eligible_value||0),
+    percentage:Number(row.percentage||0),commission_value:Number(row.commission_value||0),
+    _sellerLinkPendingV238:false
+  };
+}
+
+function erpV251CommissionMatches(a,b){
+  if(String(a?.id||"")&&String(a.id)===String(b?.id||""))return true;
+  return a?.source_origin==="Private Label"&&b?.source_origin==="Private Label"&&
+    String(a.source_id||"")===String(b.source_id||"");
+}
+
+function erpV251ApplyCommissionRows(rows,{deletedRow=null,render=true}={}){
+  const data=readErpTestData();
+  data.commissions=Array.isArray(data.commissions)?data.commissions:[];
+  let changed=false;
+  let privateResponsibleChanged=false;
+  if(deletedRow?.id){
+    const before=data.commissions.length;
+    data.commissions=data.commissions.filter(row=>!erpV251CommissionMatches(row,deletedRow));
+    changed=data.commissions.length!==before;
+  }
+  (Array.isArray(rows)?rows:[]).filter(row=>row?.id&&!row.deleted_at).forEach(raw=>{
+    const incoming=erpV251NormalizeCommissionRow(raw);
+    const index=data.commissions.findIndex(row=>erpV251CommissionMatches(row,incoming));
+    const current=index>=0?data.commissions[index]:null;
+    if(current?._sellerLinkPendingV238&&String(current.updated_at||"")>String(incoming.updated_at||""))return;
+    if(index>=0)data.commissions[index]={...current,...incoming};else data.commissions.push(incoming);
+    if(incoming.source_origin==="Private Label"&&incoming.source_id&&incoming.seller_id){
+      erpPrivateSellerRememberV238(incoming.source_id,{
+        id:incoming.seller_id,name:incoming.seller_name,username:""
+      },{confirmed:true});
+      const orderIndex=(data.orders||[]).findIndex(order=>String(order.id)===String(incoming.source_id));
+      if(orderIndex>=0){
+        const order=data.orders[orderIndex];
+        data.orders[orderIndex]={
+          ...order,stageResponsible:String(order.stageResponsible||incoming.seller_id),
+          salesCollaboratorId:String(incoming.seller_id),
+          salesCollaboratorName:String(incoming.seller_name||incoming.seller_id),
+          salesCollaboratorUsername:String(order.salesCollaboratorUsername||"")
+        };
+        privateResponsibleChanged=true;
+      }
+    }
+    changed=true;
+  });
+  if(changed){
+    erpLocalWriteOnly(data);
+    erpCommissionSafeSnapshotWriteV242(data.commissions||[],"realtime_v251");
+  }
+  if(render&&changed&&currentPage==="commissionsPage")renderErpCommissions();
+  if(render&&privateResponsibleChanged&&currentPage==="erpTest"&&document.querySelector('[data-erp-panel="pedidos"]:not([hidden])')){
+    renderErpKanban(readErpTestData());
+  }
+  return changed;
+}
+
+async function erpRealtimeApplyCommissionEventV251(eventData){
+  const source=eventData.record?.id?eventData.record:eventData.oldRecord||{};
+  const id=String(source.id||"");
+  if(!id)return false;
+  const deleted=String(eventData.type||"").toUpperCase()==="DELETE"||Boolean(source.deleted_at);
+  if(deleted){
+    erpV251ApplyCommissionRows([],{deletedRow:source,render:true});
+    return true;
+  }
+  const rows=await erpRealtimeFetchOptionalWhere("wisent_erp_commissions",`id=eq.${encodeURIComponent(id)}&deleted_at=is.null`);
+  erpV251ApplyCommissionRows(rows.length?rows:[source],{render:true});
+  return true;
+}
+
+async function erpSyncPrivateSharedEntitiesV251(){
+  if(!erpV2Phase2Enabled()||navigator.onLine===false)return false;
+  if(erpPrivateSharedSyncPromiseV251)return erpPrivateSharedSyncPromiseV251;
+  erpPrivateSharedSyncPromiseV251=(async()=>{
+    const local=readErpTestData();
+    const [clientsResult,commissionsResult]=await Promise.allSettled([
+      erpV2FetchAll("wisent_erp_v2_clients"),
+      erpV242FetchCommissionsProtected(local.commissions||[])
+    ]);
+    if(clientsResult.status==="fulfilled")erpV251ApplyClientRows(clientsResult.value,{render:true});
+    if(commissionsResult.status==="fulfilled"&&commissionsResult.value.useRemote){
+      erpV251ApplyCommissionRows(commissionsResult.value.rows,{render:true});
+    }
+    await syncPendingErpPrivateSellerAssignmentsV238({force:true});
+    return clientsResult.status==="fulfilled"||commissionsResult.status==="fulfilled";
+  })().catch(error=>{
+    console.warn("V251: sincronização isolada de clientes/comissões será repetida:",error);
+    return false;
+  }).finally(()=>{erpPrivateSharedSyncPromiseV251=null;});
+  return erpPrivateSharedSyncPromiseV251;
+}
+
+function scheduleErpPrivateSharedSyncV251(delay=80){
+  clearTimeout(erpPrivateSharedSyncTimerV251);
+  erpPrivateSharedSyncTimerV251=setTimeout(()=>erpSyncPrivateSharedEntitiesV251(),delay);
+}
+
+function installErpPrivateSharedSyncV251(){
+  window.addEventListener("online",()=>scheduleErpPrivateSharedSyncV251(50));
+  window.addEventListener("focus",()=>scheduleErpPrivateSharedSyncV251(50));
+  document.addEventListener("visibilitychange",()=>{
+    if(document.visibilityState==="visible")scheduleErpPrivateSharedSyncV251(50);
+  });
+  clearInterval(erpPrivateSharedPollTimerV251);
+  erpPrivateSharedPollTimerV251=setInterval(()=>{
+    if(!document.hidden&&navigator.onLine!==false)scheduleErpPrivateSharedSyncV251(0);
+  },15000);
+  scheduleErpPrivateSharedSyncV251(0);
+}
+
 async function erpRealtimeInspectArrival(eventData){
   const fingerprint=erpRealtimeStableFingerprint(eventData);
   if(!fingerprint||erpRealtimeSeenEvents.has(fingerprint)||erpRealtimeWasSeen(ERP_REALTIME_EVENT_SEEN_KEY,fingerprint))return false;
@@ -35961,10 +36166,18 @@ async function erpRealtimeInspectArrival(eventData){
     return ok;
   }
 
+  if(eventData.table==="wisent_erp_v2_clients"){
+    const ok=await erpRealtimeApplyClientEventV251(eventData).catch(()=>false);
+    if(ok){erpRealtimeRememberSeen(ERP_REALTIME_EVENT_SEEN_KEY,fingerprint);erpRealtimeTouchDelta(eventData.commitTimestamp||eventData.record?.updated_at);}
+    else erpRealtimeSeenEvents.delete(fingerprint);
+    return ok;
+  }
+
   if(eventData.table==="wisent_erp_commissions"){
-    erpRealtimeRememberSeen(ERP_REALTIME_EVENT_SEEN_KEY,fingerprint);
-    erpRealtimeTouchDelta(eventData.commitTimestamp||eventData.record?.updated_at);
-    return true;
+    const ok=await erpRealtimeApplyCommissionEventV251(eventData).catch(()=>false);
+    if(ok){erpRealtimeRememberSeen(ERP_REALTIME_EVENT_SEEN_KEY,fingerprint);erpRealtimeTouchDelta(eventData.commitTimestamp||eventData.record?.updated_at);}
+    else erpRealtimeSeenEvents.delete(fingerprint);
+    return ok;
   }
 
   const orderUuid=await erpRealtimeResolveOrderUuid(eventData);
@@ -35986,7 +36199,7 @@ async function erpRealtimeSyncDelta(){
   try{
     await flushErpV2Outbox();
     const since=localStorage.getItem(ERP_REALTIME_LAST_DELTA_KEY)||new Date(erpRealtimeInstalledAt||Date.now()).toISOString();
-    const tables=ERP_REALTIME_TABLES.filter(table=>table!=="wisent_erp_commissions");
+    const tables=ERP_REALTIME_TABLES;
     const settled=await Promise.allSettled(tables.map(table=>erpV2FetchRowsWhere(table,`updated_at=gt.${encodeURIComponent(since)}&limit=500`)));
     let newest=since;
     for(let index=0;index<settled.length;index++){
@@ -36063,6 +36276,7 @@ function handleErpRealtimeMessage(raw){
       erpRealtimeSetConnected(joined);
       if(joined){
         scheduleErpOrderDeletionSyncV250(0);
+        scheduleErpPrivateSharedSyncV251(0);
         scheduleErpRealtimeCloudRefresh(40);
       }
     }else if(!joined){
@@ -36144,6 +36358,7 @@ function installErpRealtime(){
   }catch(error){}
   erpRealtimePrimeStages();
   connectErpRealtime();
+  installErpPrivateSharedSyncV251();
 
   clearInterval(erpRealtimeHeartbeatTimer);
   erpRealtimeHeartbeatTimer=setInterval(()=>{
@@ -36357,6 +36572,7 @@ function showErpModule(module){
     setTimeout(()=>refreshErpWorkspaceFromCloud({reason:"supplies-module"}),0);
   }
   if(target==="comissoes")renderErpCommissions();
+  if(["clientes","pedidos","comissoes"].includes(target))scheduleErpPrivateSharedSyncV251(0);
   if(rawRequested==="financeiro"){
     requestAnimationFrame(()=>document.getElementById("erpDashboardFinance")?.scrollIntoView({behavior:"smooth",block:"start"}));
   }
@@ -37691,6 +37907,18 @@ function erpPrivateSellerAssignmentForOrderV238(order,data=null){
     };
   }
 
+  /* V251: o responsável do pedido é compartilhado pelo ID do colaborador na
+     coluna oficial já existente. Valores antigos que não correspondem a um
+     colaborador continuam intocados e não geram comissão indevida. */
+  const sharedResponsibleKey=String(order.stageResponsible||"").trim();
+  const sharedResponsible=erpPrivateSellerByIdV238(sharedResponsibleKey);
+  if(sharedResponsible){
+    return {
+      id:String(sharedResponsible.id),name:String(sharedResponsible.name||sharedResponsible.id),
+      username:String(sharedResponsible.username||""),explicit:true,source:"shared_order_responsible"
+    };
+  }
+
   const snapshot=erpPrivateSellerAssignmentsReadV238()[String(order.id||"")];
   if(snapshot?.sellerId){
     return {
@@ -37726,7 +37954,7 @@ function populateErpOrderSellerV238(preferredId="",preferredName=""){
   if(!el)return;
   const current=String(preferredId||el.value||"");
   const users=erpPrivateSellerUsersV238({includeInactive:false});
-  el.innerHTML='<option value="">Selecione o colaborador</option>'+users.map(user=>
+  el.innerHTML='<option value="">Selecione o funcionário</option>'+users.map(user=>
     `<option value="${esc(user.id)}">${esc(user.name)}${user.username?` • ${esc(user.username)}`:""}</option>`
   ).join("");
   if(current&&users.some(user=>String(user.id)===current)){
@@ -37790,7 +38018,7 @@ async function syncErpPrivateLabelCommissionForOrderV238(order,{silent=false}={}
     erpPrivateSellerRememberV238(order.id,seller,{confirmed:true});
     erpV174AuditCloud("private_label_seller",String(order.id),existing?"updated":"assigned",existing||null,{sellerId:seller.id,sellerName:seller.name,percentage}).catch(()=>{});
     if(currentPage==="commissionsPage")renderErpCommissions();
-    return {ok:true,fixedPercentage:ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239,row:confirmed};
+    return {ok:true,hasRule:true,fixedPercentage:ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239,row:confirmed};
   }catch(error){
     console.warn("Vendedor/comissão Private Label aguardando sincronização:",error);
     if(!silent)console.info("A atribuição local foi preservada para nova tentativa.");
@@ -37798,20 +38026,35 @@ async function syncErpPrivateLabelCommissionForOrderV238(order,{silent=false}={}
   }
 }
 
-async function syncPendingErpPrivateSellerAssignmentsV238(){
+async function syncPendingErpPrivateSellerAssignmentsV238(options={}){
   if(navigator.onLine===false)return false;
-  const data=readErpTestData();
-  const map=erpPrivateSellerAssignmentsReadV238();
-  const pending=Object.values(map).filter(item=>item?.sellerId&&!item.confirmedAt);
-  for(const item of pending){
-    const order=(data.orders||[]).find(row=>String(row.id)===String(item.orderId));
-    if(!order)continue;
-    order.salesCollaboratorId=String(item.sellerId);
-    order.salesCollaboratorName=String(item.sellerName||item.sellerId);
-    order.salesCollaboratorUsername=String(item.sellerUsername||"");
-    await syncErpPrivateLabelCommissionForOrderV238(order,{silent:true});
-  }
-  return true;
+  if(erpPrivateCommissionRepairPromiseV251)return erpPrivateCommissionRepairPromiseV251;
+  const force=options.force===true;
+  if(!force&&Date.now()-erpPrivateCommissionRepairAtV251<5000)return true;
+  erpPrivateCommissionRepairAtV251=Date.now();
+  erpPrivateCommissionRepairPromiseV251=(async()=>{
+    const data=readErpTestData();
+    const map=erpPrivateSellerAssignmentsReadV238();
+    const pendingIds=new Set(Object.values(map).filter(item=>item?.sellerId&&!item.confirmedAt).map(item=>String(item.orderId)));
+    for(const sourceOrder of (data.orders||[]).filter(order=>erpOrderType(order)==="PRIVATE LABEL")){
+      const order={...sourceOrder};
+      const assignment=erpPrivateSellerAssignmentForOrderV238(order,data);
+      if(!assignment.explicit||!assignment.id)continue;
+      order.salesCollaboratorId=String(assignment.id);
+      order.salesCollaboratorName=String(assignment.name||assignment.id);
+      order.salesCollaboratorUsername=String(assignment.username||"");
+      const existing=(data.commissions||[]).find(row=>row?.source_origin==="Private Label"&&String(row.source_id)===String(order.id));
+      const expectedValue=Number((Math.max(0,Number(order.value||0))*ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239/100).toFixed(2));
+      const needsRepair=pendingIds.has(String(order.id))||!existing||
+        String(existing.seller_id||"")!==String(assignment.id)||
+        Number(existing.percentage||0)!==ERP_PRIVATE_LABEL_COMMISSION_PERCENT_V239||
+        Math.abs(Number(existing.eligible_value||0)-Math.max(0,Number(order.value||0)))>0.001||
+        Math.abs(Number(existing.commission_value||0)-expectedValue)>0.001;
+      if(needsRepair)await syncErpPrivateLabelCommissionForOrderV238(order,{silent:true});
+    }
+    return true;
+  })().finally(()=>{erpPrivateCommissionRepairPromiseV251=null;});
+  return erpPrivateCommissionRepairPromiseV251;
 }
 
 window.addEventListener("online",()=>{syncPendingErpPrivateSellerAssignmentsV238().catch(()=>{});});
@@ -38014,7 +38257,7 @@ async function saveErpOrderFromForm(e){
   const salesCollaboratorId=String($("erpOrderSeller")?.value||"").trim();
   const salesCollaborator=erpPrivateSellerByIdV238(salesCollaboratorId);
   if(!salesCollaboratorId||!salesCollaborator){
-    alert("Selecione o colaborador responsável pela venda deste pedido Private Label.");
+    alert("Selecione o funcionário responsável pela criação deste pedido Private Label.");
     $("erpOrderSeller")?.focus();
     return;
   }
@@ -38065,7 +38308,8 @@ async function saveErpOrderFromForm(e){
     updatedBy:existing?(audit.name||""):"",
     stageStartedAt,
     stageDueAt:existing?.stage===stage&&existing?.stageDueAt?existing.stageDueAt:erpStageDueFrom(stageStartedAt),
-    stageResponsible:existing?.stageResponsible||"",
+    /* V251: o ID estável é compartilhado entre contas e a interface resolve o nome. */
+    stageResponsible:String(salesCollaborator.id),
     boardPosition:existing?.stage===stage&&Number.isFinite(Number(existing?.boardPosition))
       ?Number(existing.boardPosition)
       :Math.max(0,...data.orders.filter(item=>String(item.stage||"Pedido")===stage&&String(item.id)!==String(id)).map(item=>Number(item.boardPosition||0)))+1000,
@@ -38110,9 +38354,9 @@ async function saveErpOrderFromForm(e){
     erpV174AuditCloud("private_label_order",String(id),existing?"updated":"created",existing||null,order)
   ]).catch(error=>console.warn("Domínios V174 aguardando sincronização:",error));
   if(!commissionSync.ok){
-    showUndoToast(`Pedido salvo. Vendedor ${order.salesCollaboratorName} preservado localmente; vínculo com comissões aguardando sincronização.`);
+    showUndoToast(`Pedido salvo. Responsável ${order.salesCollaboratorName} preservado localmente; vínculo com comissões aguardando sincronização.`);
   }else if(!commissionSync.hasRule){
-    showUndoToast(`Pedido salvo para ${order.salesCollaboratorName}. Venda já aparece em Comissões; percentual aguardando regra.`);
+    showUndoToast(`Pedido salvo para ${order.salesCollaboratorName}. Comissão fixa de 2% já vinculada.`);
   }else{
     showUndoToast(existing?`Pedido atualizado e comissão vinculada a ${order.salesCollaboratorName}.`:`Pedido criado e comissão vinculada a ${order.salesCollaboratorName}.`);
   }
@@ -38910,7 +39154,12 @@ function erpBoardDeadlineInfo(order){
 }
 
 function erpBoardResponsible(order){
-  if(order.stageResponsible)return String(order.stageResponsible);
+  const commercial=erpPrivateSellerAssignmentForOrderV238(order);
+  if(commercial.explicit&&commercial.name)return String(commercial.name);
+  if(order.stageResponsible){
+    const registered=erpPrivateSellerByIdV238(order.stageResponsible);
+    return String(registered?.name||order.stageResponsible);
+  }
   const workers=[...new Set(erpNormalizeOrderProducts(order).map(product=>String(product.sewingWorker||"").trim()).filter(Boolean))];
   return workers.join(", ");
 }
