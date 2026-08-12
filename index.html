@@ -15900,7 +15900,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V248</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V249</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -18319,7 +18319,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V248";
+const APP_BUILD_VERSION="V249";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -19109,14 +19109,41 @@ startApp=async function(){
    Persistência exclusivamente de navegação. Nenhum dado operacional é gravado aqui.
    V246 impede que renders do boot sobrescrevam a última tela salva antes da restauração. */
 const NAVIGATION_STATE_KEY_V245=KEY+"_navigation_state";
+const NAVIGATION_SESSION_KEY_V249=NAVIGATION_STATE_KEY_V245+"_session_v249";
+const NAVIGATION_HISTORY_KEY_V249="__wisent_navigation_v249";
+
+function navigationStateCandidateV249(value){
+  return value&&typeof value==="object"&&!Array.isArray(value)?value:null;
+}
+
+function navigationStateTimeV249(value){
+  const parsed=Date.parse(String(value?.savedAt||""));
+  return Number.isFinite(parsed)?parsed:0;
+}
 
 function readNavigationStateV245(){
+  /* V249: o estado operacional continua fora deste fluxo. Aqui são lidos somente
+     página, submódulo e o id da tela de pedido aberta. sessionStorage e
+     history.state são alternativas síncronas caso o localStorage esteja cheio. */
+  const candidates=[];
   try{
-    const parsed=JSON.parse(localStorage.getItem(NAVIGATION_STATE_KEY_V245)||"{}");
-    return parsed&&typeof parsed==="object"&&!Array.isArray(parsed)?parsed:{};
-  }catch(error){
-    return {};
-  }
+    const local=navigationStateCandidateV249(JSON.parse(localStorage.getItem(NAVIGATION_STATE_KEY_V245)||"null"));
+    if(local)candidates.push({priority:3,value:local});
+  }catch(error){}
+  try{
+    const session=navigationStateCandidateV249(JSON.parse(sessionStorage.getItem(NAVIGATION_SESSION_KEY_V249)||"null"));
+    if(session)candidates.push({priority:2,value:session});
+  }catch(error){}
+  try{
+    const historyValue=navigationStateCandidateV249(window.history?.state?.[NAVIGATION_HISTORY_KEY_V249]);
+    if(historyValue)candidates.push({priority:1,value:historyValue});
+  }catch(error){}
+
+  candidates.sort((a,b)=>{
+    const timeDiff=navigationStateTimeV249(b.value)-navigationStateTimeV249(a.value);
+    return timeDiff||b.priority-a.priority;
+  });
+  return candidates[0]?.value||{};
 }
 
 function navigationPageExistsV245(page){
@@ -19131,19 +19158,36 @@ function rememberNavigationV245(page=currentPage,erpModule=null){
   /* V246: durante o boot, renderizações internas não podem substituir a navegação
      que foi salva no carregamento anterior. A escrita só é liberada após restoreNavigationV245(). */
   if(typeof navigationBootingV246!=="undefined"&&navigationBootingV246)return false;
+  let safePage=String(page||"dashboard");
+  if(!navigationPageExistsV245(safePage))safePage="dashboard";
+  const previous=readNavigationStateV245();
+  const activeErpModule=String(erpModule||document.querySelector("[data-erp-module].active")?.dataset?.erpModule||previous.erpModule||"dashboard");
+  const nextState={
+    page:safePage,
+    erpModule:activeErpModule,
+    wholesaleOrderId:safePage==="wholesaleOrder"?String(currentWholesaleOrderId||previous.wholesaleOrderId||""):"",
+    savedAt:new Date().toISOString()
+  };
+  const serialized=JSON.stringify(nextState);
+  let stored=false;
+
   try{
-    let safePage=String(page||"dashboard");
-    if(!navigationPageExistsV245(safePage))safePage="dashboard";
-    const previous=readNavigationStateV245();
-    const activeErpModule=String(erpModule||document.querySelector("[data-erp-module].active")?.dataset?.erpModule||previous.erpModule||"dashboard");
-    localStorage.setItem(NAVIGATION_STATE_KEY_V245,JSON.stringify({
-      page:safePage,
-      erpModule:activeErpModule,
-      wholesaleOrderId:safePage==="wholesaleOrder"?String(currentWholesaleOrderId||previous.wholesaleOrderId||""):"",
-      savedAt:new Date().toISOString()
-    }));
-    return true;
-  }catch(error){return false;}
+    localStorage.setItem(NAVIGATION_STATE_KEY_V245,serialized);
+    stored=true;
+  }catch(error){}
+  try{
+    sessionStorage.setItem(NAVIGATION_SESSION_KEY_V249,serialized);
+    stored=true;
+  }catch(error){}
+  try{
+    const previousHistory=window.history?.state&&typeof window.history.state==="object"
+      ? window.history.state
+      : {};
+    window.history.replaceState({...previousHistory,[NAVIGATION_HISTORY_KEY_V249]:nextState},document.title,window.location.href);
+    stored=true;
+  }catch(error){}
+
+  return stored;
 }
 
 function restoreNavigationV245(){
