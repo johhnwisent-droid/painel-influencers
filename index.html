@@ -16231,6 +16231,102 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
   .erpModule[data-erp-panel="dashboard"] .erpMetricV255.is-emphasis strong{font-size:26px!important}
 }
 /* ===== FIM V255 DASHBOARD ===== */
+
+/* ===== V256 — FINANCEIRO PRIVATE LABEL: TIPOGRAFIA PADRÃO E DATA ATUAL =====
+   Escopo visual restrito ao cabeçalho e ao campo de data do Financeiro integrado.
+*/
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceHeroV243{
+  font-family:var(--erp-dashboard-font)!important;
+  font-optical-sizing:auto!important;
+  font-kerning:normal!important;
+  text-rendering:optimizeLegibility!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceHeroIconV243{
+  font-family:var(--erp-dashboard-font)!important;
+  font-size:15px!important;
+  font-weight:720!important;
+  letter-spacing:-.025em!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceEyebrowV243{
+  font-family:var(--erp-dashboard-font)!important;
+  font-size:9.5px!important;
+  font-weight:760!important;
+  letter-spacing:.16em!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance #erpFinanceDashboardTitle{
+  font-family:var(--erp-dashboard-font)!important;
+  font-size:clamp(19px,2vw,23px)!important;
+  font-weight:720!important;
+  letter-spacing:-.035em!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance #privateLabelFinanceSubtitleV254{
+  font-family:var(--erp-dashboard-font)!important;
+  font-size:11.5px!important;
+  font-weight:470!important;
+  letter-spacing:-.005em!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceDateFieldV256{
+  display:grid!important;
+  gap:6px!important;
+  min-width:0!important;
+  align-content:start!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceDateFieldV256>label{
+  display:block!important;
+  color:#95a8bf!important;
+  font-family:var(--erp-dashboard-font)!important;
+  font-size:10px!important;
+  font-weight:720!important;
+  letter-spacing:.025em!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceDateFieldV256>label>span{
+  padding-left:2px!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceDateControlV256{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:6px!important;
+  align-items:stretch!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceDateControlV256 #erpFinanceDate{
+  min-width:0!important;
+  font-family:var(--erp-dashboard-font)!important;
+  color-scheme:dark!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceTodayButtonV256{
+  min-width:58px!important;
+  min-height:42px!important;
+  padding:8px 10px!important;
+  border:1px solid rgba(96,165,250,.34)!important;
+  border-radius:11px!important;
+  background:rgba(59,130,246,.10)!important;
+  color:#bfdbfe!important;
+  font-family:var(--erp-dashboard-font)!important;
+  font-size:10px!important;
+  font-weight:720!important;
+  letter-spacing:.015em!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceTodayButtonV256:hover{
+  border-color:rgba(96,165,250,.58)!important;
+  background:rgba(59,130,246,.17)!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceTodayButtonV256:focus-visible{
+  outline:none!important;
+  box-shadow:0 0 0 3px rgba(59,130,246,.13)!important;
+}
+.erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceDateHintV256{
+  min-height:13px!important;
+  padding-left:2px!important;
+  color:#6f839d!important;
+  font-family:var(--erp-dashboard-font)!important;
+  font-size:8.5px!important;
+  font-weight:470!important;
+  line-height:1.35!important;
+}
+@media(max-width:480px){
+  .erpModule[data-erp-panel="dashboard"] #erpDashboardFinance .erpFinanceDateFieldV256{grid-column:1!important}
+}
+/* ===== FIM V256 FINANCEIRO ===== */
 </style>
 
 </head>
@@ -16308,7 +16404,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V255</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V256</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17772,7 +17868,14 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
           </div>
           <form id="erpFinanceForm" class="form erpFinanceFormV243">
             <input type="hidden" id="erpFinanceId">
-            <label><span>Data</span><input id="erpFinanceDate" type="date"></label>
+            <div class="erpFinanceDateFieldV256">
+              <label for="erpFinanceDate"><span>Data do lançamento</span></label>
+              <div class="erpFinanceDateControlV256">
+                <input id="erpFinanceDate" type="date" required autocomplete="off" aria-describedby="erpFinanceDateHintV256">
+                <button class="erpFinanceTodayButtonV256" type="button" onclick="setErpFinanceDateTodayV256()" title="Usar a data de hoje">Hoje</button>
+              </div>
+              <small id="erpFinanceDateHintV256" class="erpFinanceDateHintV256">Preenchida automaticamente com a data atual.</small>
+            </div>
             <label><span>Tipo</span><select id="erpFinanceType"><option value="Entrada">Entrada</option><option value="Saída">Saída</option></select></label>
             <label class="erpFinanceDescriptionFieldV243"><span>Descrição</span><input id="erpFinanceDescription" placeholder="Ex.: Compra de malha"></label>
             <label><span>Valor</span><input id="erpFinanceValue" type="number" step="0.01" min="0" placeholder="0,00"></label>
@@ -18866,7 +18969,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V255";
+const APP_BUILD_VERSION="V256";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -18900,9 +19003,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=255",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=256",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=255");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=256");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -23277,7 +23380,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V255",
+    version:"V256",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -23934,6 +24037,28 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","ERP_DASHBOARD_HIERARCHY_V255","Dashboard Private Label organiza os mesmos 12 indicadores em visão financeira, atenção imediata, operação do dia e pagamentos, com cores semânticas e tipografia isolada.");
   }else{
     auditAdd(report,"error","ERP_DASHBOARD_HIERARCHY_V255","Não foi possível confirmar toda a hierarquia visual isolada do Dashboard Private Label V255.");
+  }
+
+  const financeTypographyDateStyleV256=[...document.querySelectorAll("style")].find(style=>
+    String(style.textContent||"").includes("V256 — FINANCEIRO PRIVATE LABEL")
+  );
+  if(
+    !!financeTypographyDateStyleV256&&
+    String(financeTypographyDateStyleV256.textContent||"").includes("var(--erp-dashboard-font)")&&
+    !!document.querySelector("#erpDashboardFinance .erpFinanceHeroIconV243")&&
+    !!document.querySelector("#erpDashboardFinance .erpFinanceEyebrowV243")&&
+    !!$("erpFinanceDashboardTitle")&&
+    $("erpFinanceDate")?.required===true&&
+    !!document.querySelector("#erpDashboardFinance .erpFinanceTodayButtonV256")&&
+    String(resetErpFinanceForm).includes("setErpFinanceDateTodayV256")&&
+    String(saveErpFinanceFromForm).includes("ensureErpFinanceDateV256")&&
+    String(editErpFinance).includes("f.date||today()")&&
+    !String(setErpFinanceDateTodayV256).includes("writeErpTestData")&&
+    !String(ensureErpFinanceDateV256).includes("writeErpTestData")
+  ){
+    auditAdd(report,"pass","ERP_FINANCE_TYPOGRAPHY_DATE_V256","Cabeçalho financeiro usa a tipografia do Dashboard Private Label e novos lançamentos iniciam com a data atual, preservando a data dos registros em edição.");
+  }else{
+    auditAdd(report,"error","ERP_FINANCE_TYPOGRAPHY_DATE_V256","Não foi possível confirmar toda a padronização tipográfica e o preenchimento seguro da data do Financeiro V256.");
   }
 
   if(
@@ -39951,12 +40076,27 @@ function deleteErpStock(id){
   renderErpTest();
 }
 
+function setErpFinanceDateTodayV256(){
+  const field=$("erpFinanceDate");
+  if(!field)return today();
+  const current=today();
+  field.value=current;
+  field.defaultValue=current;
+  return current;
+}
+
+function ensureErpFinanceDateV256(){
+  const field=$("erpFinanceDate");
+  if(!field)return today();
+  return field.value||setErpFinanceDateTodayV256();
+}
+
 function resetErpFinanceForm(){
   const form=$("erpFinanceForm");
   if(!form)return;
   form.reset();
   $("erpFinanceId").value="";
-  if($("erpFinanceDate"))$("erpFinanceDate").value=today();
+  setErpFinanceDateTodayV256();
 }
 
 function saveErpFinanceFromForm(e){
@@ -39965,7 +40105,7 @@ function saveErpFinanceFromForm(e){
   const id=$("erpFinanceId")?.value||uid();
   const entry={
     id,
-    date:$("erpFinanceDate")?.value||today(),
+    date:ensureErpFinanceDateV256(),
     type:$("erpFinanceType")?.value||"Entrada",
     description:$("erpFinanceDescription")?.value||"Sem descrição",
     value:Math.max(0,finiteNumber($("erpFinanceValue")?.value,0)),
@@ -41145,6 +41285,7 @@ function renderErpStock(data){
 
 function renderErpFinance(data){
   data.finance=Array.isArray(data.finance)?data.finance:[];
+  ensureErpFinanceDateV256();
   const entradas=data.finance.filter(f=>f.type==="Entrada").reduce((s,f)=>s+Number(f.value||0),0);
   const saidas=data.finance.filter(f=>f.type==="Saída").reduce((s,f)=>s+Number(f.value||0),0);
   const pendentes=data.finance.filter(f=>f.status==="Pendente").reduce((s,f)=>s+Number(f.value||0),0);
@@ -43392,7 +43533,10 @@ $("productInfluencer").addEventListener("change",renderProductCalc);$("productVa
 if($("erpOrderForm"))$("erpOrderForm").addEventListener("submit",saveErpOrderFromForm);
 if($("erpClientForm"))$("erpClientForm").addEventListener("submit",saveErpClientFromForm);
 if($("erpStockForm"))$("erpStockForm").addEventListener("submit",saveErpStockFromForm);
-if($("erpFinanceForm"))$("erpFinanceForm").addEventListener("submit",saveErpFinanceFromForm);
+if($("erpFinanceForm")){
+  $("erpFinanceForm").addEventListener("submit",saveErpFinanceFromForm);
+  setErpFinanceDateTodayV256();
+}
 if($("erpPaymentForm"))$("erpPaymentForm").addEventListener("submit",saveErpPayment);
 if($("erpSupplyForm"))$("erpSupplyForm").addEventListener("submit",saveErpSupply);
 if($("erpCommissionRuleForm"))$("erpCommissionRuleForm").addEventListener("submit",saveErpCommissionRule);
