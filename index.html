@@ -16516,6 +16516,18 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
   }
 }
 /* ===== FIM V259 COMPROVANTE ===== */
+
+/* ===== V260 — ATACADO E VAREJO: LIMPEZA VISUAL DO COMPROVANTE =====
+   Aplicado somente à composição temporária de uma página usada no PDF e na impressão.
+   O identificador interno do pedido continua preservado nos dados e no restante do sistema.
+*/
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 #wholesaleReceiptCode{
+  display:none!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 #wholesaleReceiptFooter{
+  border-top:0!important;
+}
+/* ===== FIM V260 LIMPEZA VISUAL DO COMPROVANTE ===== */
 </style>
 
 </head>
@@ -16593,7 +16605,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V259</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V260</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19159,7 +19171,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V259";
+const APP_BUILD_VERSION="V260";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -23570,7 +23582,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V259",
+    version:"V260",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -24331,6 +24343,27 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","WHOLESALE_RECEIPT_ONE_PAGE_V259","O comprovante individual de Atacado e Varejo possui PDF e impressão em uma folha A4, escala automática e marca d'água em limites seguros, sem alterar dados nem outros relatórios.");
   }else{
     auditAdd(report,"error","WHOLESALE_RECEIPT_ONE_PAGE_V259","Não foi possível confirmar todo o isolamento da saída em uma página do comprovante V259.");
+  }
+
+  const wholesaleReceiptVisualStyleV260=[...document.querySelectorAll("style")].find(style=>
+    String(style.textContent||"").includes("V260 — ATACADO E VAREJO: LIMPEZA VISUAL DO COMPROVANTE")
+  );
+  const wholesaleReceiptVisualFullTextV260=String(wholesaleReceiptVisualStyleV260?.textContent||"");
+  const wholesaleReceiptVisualStartV260=wholesaleReceiptVisualFullTextV260.indexOf("V260 — ATACADO E VAREJO: LIMPEZA VISUAL DO COMPROVANTE");
+  const wholesaleReceiptVisualEndV260=wholesaleReceiptVisualFullTextV260.indexOf("FIM V260 LIMPEZA VISUAL DO COMPROVANTE",wholesaleReceiptVisualStartV260);
+  const wholesaleReceiptVisualTextV260=wholesaleReceiptVisualFullTextV260.slice(wholesaleReceiptVisualStartV260,wholesaleReceiptVisualEndV260);
+  if(
+    wholesaleReceiptVisualTextV260.includes("#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 #wholesaleReceiptCode")&&
+    wholesaleReceiptVisualTextV260.includes("display:none!important")&&
+    wholesaleReceiptVisualTextV260.includes("#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 #wholesaleReceiptFooter")&&
+    wholesaleReceiptVisualTextV260.includes("border-top:0!important")&&
+    !wholesaleReceiptVisualTextV260.includes("#reports")&&
+    !wholesaleReceiptVisualTextV260.includes("writeErpTestData")&&
+    String(renderWholesaleOrder).includes('$("wholesaleReceiptCode").textContent=`Pedido:')
+  ){
+    auditAdd(report,"pass","WHOLESALE_RECEIPT_VISUAL_CLEANUP_V260","A saída PDF/impressão do comprovante oculta somente o código visual do pedido e remove somente a borda superior do rodapé; o identificador interno permanece preservado.");
+  }else{
+    auditAdd(report,"error","WHOLESALE_RECEIPT_VISUAL_CLEANUP_V260","Não foi possível confirmar o isolamento completo das duas alterações visuais do comprovante V260.");
   }
 
   if(
