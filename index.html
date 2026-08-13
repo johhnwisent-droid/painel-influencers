@@ -16341,6 +16341,181 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
   text-rendering:optimizeLegibility!important;
 }
 /* ===== FIM V257 FINANCEIRO ===== */
+
+/* ===== V258 — PRIVATE LABEL: TÍTULO DA ABA ATIVA VISÍVEL =====
+   Corrige somente o contraste do texto no fundo dourado da navegação interna selecionada.
+*/
+body[data-page="erpTest"]:not(.print-erp-report) .erpTestView>.erpModuleTabs>button.active{
+  color:#090909!important;
+  -webkit-text-fill-color:#090909!important;
+}
+/* ===== FIM V258 NAVEGAÇÃO PRIVATE LABEL ===== */
+
+/* ===== V259 — ATACADO E VAREJO: COMPROVANTE EM UMA PÁGINA =====
+   Estilos ativados somente durante a medição e a saída do comprovante individual.
+*/
+body.wholesale-receipt-measure-v259 #wholesaleOrder .wholesaleReceiptPanel{
+  overflow:visible!important;
+}
+body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePageV259{
+  width:748px!important;
+  max-width:748px!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259{
+  min-height:0!important;
+  box-sizing:border-box!important;
+  padding:18px!important;
+  overflow:visible!important;
+  font-family:Arial,Helvetica,sans-serif!important;
+  -webkit-print-color-adjust:exact!important;
+  print-color-adjust:exact!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfCleanHeader{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:12px!important;
+  align-items:start!important;
+  margin-bottom:9px!important;
+  padding-bottom:8px!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfCleanHeader h1{
+  font-size:21px!important;
+  line-height:1.05!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfCleanHeader p{
+  margin-top:3px!important;
+  font-size:9px!important;
+  line-height:1.25!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .printLogo{
+  width:auto!important;
+  max-width:135px!important;
+  max-height:42px!important;
+  object-fit:contain!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfIdentity{
+  margin-bottom:8px!important;
+  padding:8px 10px!important;
+  border-radius:9px!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfIdentity h2{
+  margin:0 0 2px!important;
+  font-size:16px!important;
+  line-height:1.1!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfIdentity p{
+  display:inline-block!important;
+  margin:1px 14px 0 0!important;
+  font-size:8.5px!important;
+  line-height:1.2!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfThreeCards{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:6px!important;
+  margin:8px 0!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfBox{
+  min-width:0!important;
+  padding:8px!important;
+  border-radius:9px!important;
+  break-inside:avoid!important;
+  page-break-inside:avoid!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfBox small,
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptInfo small,
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptTotal small,
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptRealReceived small{
+  margin-bottom:3px!important;
+  font-size:7px!important;
+  line-height:1.15!important;
+  letter-spacing:.025em!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfBox strong{
+  font-size:13px!important;
+  line-height:1.1!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptGrid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:5px!important;
+  margin-top:8px!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptInfo{
+  min-width:0!important;
+  padding:7px 8px!important;
+  border-radius:8px!important;
+  break-inside:avoid!important;
+  page-break-inside:avoid!important;
+  overflow-wrap:anywhere!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptInfo strong{
+  font-size:9.5px!important;
+  line-height:1.18!important;
+  overflow-wrap:anywhere!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptInfo.obs{
+  grid-column:1/-1!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptInfo.obs strong{
+  font-size:8.5px!important;
+  line-height:1.2!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptTotal,
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptRealReceived{
+  display:inline-grid!important;
+  width:calc(50% - 4px)!important;
+  min-height:48px!important;
+  margin-top:8px!important;
+  padding:9px 11px!important;
+  border-radius:10px!important;
+  align-content:center!important;
+  vertical-align:top!important;
+  break-inside:avoid!important;
+  page-break-inside:avoid!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptTotal{
+  margin-right:4px!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptTotal strong,
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .wholesaleReceiptRealReceived strong{
+  font-size:17px!important;
+  line-height:1!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .pdfFooterClean{
+  margin-top:8px!important;
+  padding-top:5px!important;
+  font-size:7.5px!important;
+  line-height:1.2!important;
+}
+#wholesaleReceiptPrint.wholesaleReceiptOnePageV259 .reportWatermark{
+  max-width:52%!important;
+  max-height:58%!important;
+  object-fit:contain!important;
+  z-index:0!important;
+}
+@media print{
+  body.print-wholesale #wholesaleOrder .wholesaleReceiptPanel{
+    width:100%!important;
+    max-width:none!important;
+    overflow:visible!important;
+  }
+  body.print-wholesale #wholesaleReceiptPrint.wholesaleReceiptOnePageV259{
+    width:198mm!important;
+    max-width:198mm!important;
+    margin:0 auto!important;
+    padding:5mm!important;
+    border:0!important;
+    border-radius:0!important;
+    box-shadow:none!important;
+    zoom:var(--wholesale-receipt-scale-v259,1)!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+    break-after:avoid-page!important;
+    page-break-after:avoid!important;
+  }
+}
+/* ===== FIM V259 COMPROVANTE ===== */
 </style>
 
 </head>
@@ -16418,7 +16593,7 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V257</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V259</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17183,7 +17358,8 @@ body.erpSectorRestricted #erpDashboardFinance{display:none!important}
           </div>
           <div class="rightActions">
             <button class="secondary" type="button" onclick="editCurrentWholesaleRetail()">Editar pedido</button>
-            <button class="primary" type="button" onclick="printWholesaleRetailOrder()">Exportar PDF</button>
+            <button class="primary wholesaleReceiptPdfButtonV259" type="button" onclick="printWholesaleRetailOrder()">Exportar PDF</button>
+            <button class="secondary wholesaleReceiptPrintButtonV259" type="button" onclick="printWholesaleRetailOrderV259()">Imprimir</button>
           </div>
         </div>
       </div>
@@ -18983,7 +19159,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V257";
+const APP_BUILD_VERSION="V259";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -19017,9 +19193,9 @@ function registerPwa(){
       const hadController=Boolean(navigator.serviceWorker.controller);
       let reg=null;
       try{
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=257",{updateViaCache:"none"});
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=259",{updateViaCache:"none"});
       }catch(registerError){
-        reg=await navigator.serviceWorker.register("./service-worker.js?v=257");
+        reg=await navigator.serviceWorker.register("./service-worker.js?v=259");
       }
 
       reg.addEventListener("updatefound",()=>{
@@ -23394,7 +23570,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V257",
+    version:"V259",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -24099,6 +24275,62 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","ERP_FINANCE_NUMBER_TYPOGRAPHY_V257","Os quatro valores do Financeiro integrado usam o mesmo padrão tipográfico numérico da Visão financeira, sem alcançar rótulos, descrições, dados ou outras áreas.");
   }else{
     auditAdd(report,"error","ERP_FINANCE_NUMBER_TYPOGRAPHY_V257","Não foi possível confirmar o isolamento completo da tipografia numérica do Financeiro V257.");
+  }
+
+  const privateLabelActiveTabStyleV258=[...document.querySelectorAll("style")].find(style=>
+    String(style.textContent||"").includes("V258 — PRIVATE LABEL: TÍTULO DA ABA ATIVA VISÍVEL")
+  );
+  const privateLabelActiveTabFullTextV258=String(privateLabelActiveTabStyleV258?.textContent||"");
+  const privateLabelActiveTabStartV258=privateLabelActiveTabFullTextV258.indexOf("V258 — PRIVATE LABEL: TÍTULO DA ABA ATIVA VISÍVEL");
+  const privateLabelActiveTabEndV258=privateLabelActiveTabFullTextV258.indexOf("FIM V258 NAVEGAÇÃO PRIVATE LABEL",privateLabelActiveTabStartV258);
+  const privateLabelActiveTabTextV258=privateLabelActiveTabFullTextV258.slice(privateLabelActiveTabStartV258,privateLabelActiveTabEndV258);
+  const privateLabelTabsV258=[...document.querySelectorAll(".erpTestView>.erpModuleTabs>button[data-erp-module]")];
+  if(
+    privateLabelTabsV258.length===7&&
+    privateLabelTabsV258.every(button=>String(button.textContent||"").trim().length>1)&&
+    privateLabelActiveTabTextV258.includes(".erpTestView>.erpModuleTabs>button.active")&&
+    privateLabelActiveTabTextV258.includes("color:#090909!important")&&
+    privateLabelActiveTabTextV258.includes("-webkit-text-fill-color:#090909!important")&&
+    !privateLabelActiveTabTextV258.includes("background:")&&
+    !privateLabelActiveTabTextV258.includes("display:")&&
+    !privateLabelActiveTabTextV258.includes("writeErpTestData")&&
+    !String(showErpModule).includes("writeErpTestData")
+  ){
+    auditAdd(report,"pass","ERP_ACTIVE_TAB_TITLE_VISIBLE_V258","O título da aba selecionada do Private Label mantém contraste escuro sobre o fundo dourado, sem alterar navegação, ícones, dados ou outras áreas.");
+  }else{
+    auditAdd(report,"error","ERP_ACTIVE_TAB_TITLE_VISIBLE_V258","Não foi possível confirmar o isolamento completo da correção visual da aba ativa do Private Label V258.");
+  }
+
+  const wholesaleReceiptStyleV259=[...document.querySelectorAll("style")].find(style=>
+    String(style.textContent||"").includes("V259 — ATACADO E VAREJO: COMPROVANTE EM UMA PÁGINA")
+  );
+  const wholesaleReceiptFullStyleV259=String(wholesaleReceiptStyleV259?.textContent||"");
+  const wholesaleReceiptStyleStartV259=wholesaleReceiptFullStyleV259.indexOf("V259 — ATACADO E VAREJO: COMPROVANTE EM UMA PÁGINA");
+  const wholesaleReceiptStyleEndV259=wholesaleReceiptFullStyleV259.indexOf("FIM V259 COMPROVANTE",wholesaleReceiptStyleStartV259);
+  const wholesaleReceiptIsolatedStyleV259=wholesaleReceiptFullStyleV259.slice(wholesaleReceiptStyleStartV259,wholesaleReceiptStyleEndV259);
+  if(
+    !!document.querySelector("#wholesaleOrder .wholesaleReceiptPdfButtonV259")&&
+    !!document.querySelector("#wholesaleOrder .wholesaleReceiptPrintButtonV259")&&
+    wholesaleReceiptIsolatedStyleV259.includes("#wholesaleReceiptPrint.wholesaleReceiptOnePageV259")&&
+    wholesaleReceiptIsolatedStyleV259.includes("grid-template-columns:repeat(3,minmax(0,1fr))")&&
+    wholesaleReceiptIsolatedStyleV259.includes("zoom:var(--wholesale-receipt-scale-v259,1)")&&
+    wholesaleReceiptIsolatedStyleV259.includes("body.print-wholesale")&&
+    !wholesaleReceiptIsolatedStyleV259.includes("#reports")&&
+    !wholesaleReceiptIsolatedStyleV259.includes(".erpReportPdf")&&
+    String(wholesaleReceiptPageStyleV259).includes("A4 portrait")&&
+    String(wholesaleReceiptPrintScaleV259).includes("targetHeight=1015")&&
+    String(positionWholesaleReceiptWatermarkV259).includes("pdfWatermarkX")&&
+    String(positionWholesaleReceiptWatermarkV259).includes("pdfWatermarkY")&&
+    String(openWholesaleReceiptOutputV259).includes("window.print()")&&
+    String(openWholesaleReceiptOutputV259).includes("afterprint")&&
+    String(printWholesaleRetailOrder).includes('openWholesaleReceiptOutputV259("pdf")')&&
+    String(printWholesaleRetailOrderV259).includes('openWholesaleReceiptOutputV259("print")')&&
+    !String(openWholesaleReceiptOutputV259).includes("save()")&&
+    !String(openWholesaleReceiptOutputV259).includes("writeErpTestData")
+  ){
+    auditAdd(report,"pass","WHOLESALE_RECEIPT_ONE_PAGE_V259","O comprovante individual de Atacado e Varejo possui PDF e impressão em uma folha A4, escala automática e marca d'água em limites seguros, sem alterar dados nem outros relatórios.");
+  }else{
+    auditAdd(report,"error","WHOLESALE_RECEIPT_ONE_PAGE_V259","Não foi possível confirmar todo o isolamento da saída em uma página do comprovante V259.");
   }
 
   if(
@@ -31165,26 +31397,113 @@ function renderWholesaleOrder(){
   $("wholesaleReceiptFooter").textContent=state.settings.pdfFooter||"Comprovante gerado automaticamente pelo painel.";
 }
 
-function printWholesaleRetailOrder(){
+let wholesaleReceiptOutputCleanupV259=null;
+
+function wholesaleReceiptSafeNumberV259(value,fallback){
+  const parsed=Number(value);
+  return Number.isFinite(parsed)?parsed:fallback;
+}
+
+function wholesaleReceiptClampV259(value,min,max,fallback){
+  return Math.min(max,Math.max(min,wholesaleReceiptSafeNumberV259(value,fallback)));
+}
+
+function positionWholesaleReceiptWatermarkV259(){
+  const watermark=$("wholesaleReceiptWatermark");
+  if(!watermark||watermark.style.display==="none")return;
+  const settings=state.settings||{};
+  watermark.style.left=wholesaleReceiptClampV259(settings.pdfWatermarkX,18,82,50)+"%";
+  watermark.style.top=wholesaleReceiptClampV259(settings.pdfWatermarkY,20,80,50)+"%";
+  watermark.style.width=wholesaleReceiptClampV259(settings.pdfWatermarkSize,18,52,38)+"%";
+  watermark.style.opacity=String(wholesaleReceiptClampV259(settings.pdfWatermarkOpacity,0.03,0.24,0.12));
+}
+
+function wholesaleReceiptPageStyleV259(){
+  let style=$("wholesaleReceiptPageStyleV259");
+  if(!style){
+    style=document.createElement("style");
+    style.id="wholesaleReceiptPageStyleV259";
+    style.textContent="@page{size:A4 portrait;margin:6mm}";
+    document.head.appendChild(style);
+  }
+  return style;
+}
+
+function wholesaleReceiptPrintScaleV259(receipt){
+  const height=Math.max(
+    wholesaleReceiptSafeNumberV259(receipt?.scrollHeight,0),
+    wholesaleReceiptSafeNumberV259(receipt?.getBoundingClientRect?.().height,0),
+    1
+  );
+  const targetHeight=1015;
+  return Math.max(0.05,Math.min(1,targetHeight/height));
+}
+
+function openWholesaleReceiptOutputV259(mode="pdf"){
   const w=wholesaleRetailById(currentWholesaleOrderId);
   if(!w){
-    alert("Abra um pedido antes de exportar o PDF.");
+    alert(mode==="print"?"Abra um pedido antes de imprimir o comprovante.":"Abra um pedido antes de exportar o PDF.");
     return;
   }
 
+  if(typeof wholesaleReceiptOutputCleanupV259==="function")wholesaleReceiptOutputCleanupV259();
   renderWholesaleOrder();
 
+  const receipt=$("wholesaleReceiptPrint");
+  if(!receipt)return;
   const oldTitle=document.title;
-  document.title=`Comprovante Atacado e Varejo - ${w.clientName||"pedido"}`;
+  const oldOutputMode=document.body.dataset.wholesaleReceiptOutputV259;
+  const watermark=$("wholesaleReceiptWatermark");
+  const oldWatermarkStyle=watermark?.getAttribute("style");
+  const pageStyle=wholesaleReceiptPageStyleV259();
+  let cleaned=false;
 
-  document.body.classList.remove("print-report","print-accumulation");
-  document.body.classList.add("print-wholesale");
-  window.print();
-
-  setTimeout(()=>{
-    document.body.classList.remove("print-wholesale");
+  const cleanup=()=>{
+    if(cleaned)return;
+    cleaned=true;
+    document.body.classList.remove("print-wholesale","wholesale-receipt-measure-v259");
+    if(oldOutputMode===undefined)delete document.body.dataset.wholesaleReceiptOutputV259;
+    else document.body.dataset.wholesaleReceiptOutputV259=oldOutputMode;
+    receipt.classList.remove("wholesaleReceiptOnePageV259");
+    receipt.style.removeProperty("--wholesale-receipt-scale-v259");
+    if(watermark){
+      if(oldWatermarkStyle===null)watermark.removeAttribute("style");
+      else watermark.setAttribute("style",oldWatermarkStyle);
+    }
+    pageStyle.remove();
     document.title=oldTitle;
-  },700);
+    window.removeEventListener("afterprint",cleanup);
+    if(wholesaleReceiptOutputCleanupV259===cleanup)wholesaleReceiptOutputCleanupV259=null;
+  };
+
+  wholesaleReceiptOutputCleanupV259=cleanup;
+  document.title=`Comprovante Atacado e Varejo - ${w.clientName||"pedido"}`;
+  document.body.dataset.wholesaleReceiptOutputV259=mode;
+  document.body.classList.remove(
+    "print-report","print-accumulation","print-wholesale-list","print-launches-list","print-collab-sales","print-erp-report"
+  );
+  receipt.classList.add("wholesaleReceiptOnePageV259");
+  document.body.classList.add("wholesale-receipt-measure-v259");
+  positionWholesaleReceiptWatermarkV259();
+
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    if(cleaned)return;
+    const scale=wholesaleReceiptPrintScaleV259(receipt);
+    receipt.style.setProperty("--wholesale-receipt-scale-v259",scale.toFixed(4));
+    document.body.classList.remove("wholesale-receipt-measure-v259");
+    document.body.classList.add("print-wholesale");
+    window.addEventListener("afterprint",cleanup,{once:true});
+    window.print();
+    setTimeout(cleanup,1200);
+  }));
+}
+
+function printWholesaleRetailOrder(){
+  openWholesaleReceiptOutputV259("pdf");
+}
+
+function printWholesaleRetailOrderV259(){
+  openWholesaleReceiptOutputV259("print");
 }
 
 
