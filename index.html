@@ -16528,6 +16528,22 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
   border-top:0!important;
 }
 /* ===== FIM V260 LIMPEZA VISUAL DO COMPROVANTE ===== */
+
+/* ===== V261 — ATACADO E VAREJO: MARCA D'ÁGUA NA ÁREA INFERIOR =====
+   Somente na mídia de impressão do comprovante individual, posiciona a marca no espaço
+   vazio inferior da folha. Imagem, tamanho e opacidade configurados permanecem intactos.
+*/
+@media print{
+  body.print-wholesale #wholesaleReceiptPrint.wholesaleReceiptOnePageV259 #wholesaleReceiptWatermark{
+    position:fixed!important;
+    left:50%!important;
+    top:76%!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:translate(-50%,-50%)!important;
+  }
+}
+/* ===== FIM V261 MARCA D'ÁGUA INFERIOR ===== */
 </style>
 
 </head>
@@ -16605,7 +16621,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V260</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V261</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19171,7 +19187,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V260";
+const APP_BUILD_VERSION="V261";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -23582,7 +23598,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V260",
+    version:"V261",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -24364,6 +24380,32 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","WHOLESALE_RECEIPT_VISUAL_CLEANUP_V260","A saída PDF/impressão do comprovante oculta somente o código visual do pedido e remove somente a borda superior do rodapé; o identificador interno permanece preservado.");
   }else{
     auditAdd(report,"error","WHOLESALE_RECEIPT_VISUAL_CLEANUP_V260","Não foi possível confirmar o isolamento completo das duas alterações visuais do comprovante V260.");
+  }
+
+  const wholesaleReceiptWatermarkStyleV261=[...document.querySelectorAll("style")].find(style=>
+    String(style.textContent||"").includes("V261 — ATACADO E VAREJO: MARCA D'ÁGUA NA ÁREA INFERIOR")
+  );
+  const wholesaleReceiptWatermarkFullTextV261=String(wholesaleReceiptWatermarkStyleV261?.textContent||"");
+  const wholesaleReceiptWatermarkStartV261=wholesaleReceiptWatermarkFullTextV261.indexOf("V261 — ATACADO E VAREJO: MARCA D'ÁGUA NA ÁREA INFERIOR");
+  const wholesaleReceiptWatermarkEndV261=wholesaleReceiptWatermarkFullTextV261.indexOf("FIM V261 MARCA D'ÁGUA INFERIOR",wholesaleReceiptWatermarkStartV261);
+  const wholesaleReceiptWatermarkTextV261=wholesaleReceiptWatermarkFullTextV261.slice(wholesaleReceiptWatermarkStartV261,wholesaleReceiptWatermarkEndV261);
+  if(
+    wholesaleReceiptWatermarkTextV261.includes("@media print")&&
+    wholesaleReceiptWatermarkTextV261.includes("body.print-wholesale #wholesaleReceiptPrint.wholesaleReceiptOnePageV259 #wholesaleReceiptWatermark")&&
+    wholesaleReceiptWatermarkTextV261.includes("position:fixed!important")&&
+    wholesaleReceiptWatermarkTextV261.includes("left:50%!important")&&
+    wholesaleReceiptWatermarkTextV261.includes("top:76%!important")&&
+    wholesaleReceiptWatermarkTextV261.includes("transform:translate(-50%,-50%)!important")&&
+    !wholesaleReceiptWatermarkTextV261.includes("opacity:")&&
+    !wholesaleReceiptWatermarkTextV261.includes("width:")&&
+    !wholesaleReceiptWatermarkTextV261.includes("#reports")&&
+    !wholesaleReceiptWatermarkTextV261.includes("writeErpTestData")&&
+    String(positionWholesaleReceiptWatermarkV259).includes("pdfWatermarkSize")&&
+    String(positionWholesaleReceiptWatermarkV259).includes("pdfWatermarkOpacity")
+  ){
+    auditAdd(report,"pass","WHOLESALE_RECEIPT_WATERMARK_BOTTOM_V261","A marca d'água do comprovante individual fica centralizada na área vazia inferior somente no PDF/impressão, preservando imagem, tamanho, opacidade, dados e outros relatórios.");
+  }else{
+    auditAdd(report,"error","WHOLESALE_RECEIPT_WATERMARK_BOTTOM_V261","Não foi possível confirmar o isolamento completo da nova posição da marca d'água V261.");
   }
 
   if(

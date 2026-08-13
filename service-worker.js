@@ -1,5 +1,5 @@
-const WISENT_VERSION="V260";
-const WISENT_CACHE="wisent-erp-static-v260";
+const WISENT_VERSION="V261";
+const WISENT_CACHE="wisent-erp-static-v261";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
@@ -154,4 +154,4 @@ self.addEventListener("fetch",event=>{
   })());
 });
 
-// WISENT V260 - limpeza visual isolada do comprovante de Atacado e Varejo
+// WISENT V261 - marca d'água do comprovante na área inferior da folha
