@@ -16551,7 +16551,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
 @media print{
   body.print-wholesale #wholesaleReceiptPrint.wholesaleReceiptOnePageV259 #wholesaleReceiptWatermark{
     left:var(--wholesale-receipt-watermark-left-v262,50%)!important;
-    top:var(--wholesale-receipt-watermark-top-v262,76%)!important;
+    top:var(--wholesale-receipt-watermark-top-v262,74%)!important;
   }
 }
 /* ===== FIM V262 POSIÇÃO CONFIGURÁVEL DO COMPROVANTE ===== */
@@ -16580,9 +16580,37 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
 #settings .wholesaleReceiptWatermarkPreviewV263{position:relative;min-height:244px;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#fff;box-shadow:0 8px 20px rgba(15,23,42,.08)}
 #settings .wholesaleReceiptWatermarkPreviewV263::before{content:"PÁGINA A4";position:absolute;top:9px;left:10px;color:#94a3b8;font-size:7px;font-weight:900;letter-spacing:.08em}
 #settings .wholesaleReceiptWatermarkPreviewLinesV263{position:absolute;top:30px;right:10px;left:10px;height:72px;border-radius:6px;background:repeating-linear-gradient(180deg,#e2e8f0 0 3px,transparent 3px 10px);opacity:.75}
-#settings .wholesaleReceiptWatermarkPreviewMarkV263{position:absolute;left:50%;top:86%;width:68%;transform:translate(-50%,-50%);padding:8px 5px;border:1px dashed color-mix(in srgb,var(--accent) 55%,#94a3b8);border-radius:6px;background:color-mix(in srgb,var(--accent) 9%,#fff);color:color-mix(in srgb,var(--accent) 72%,#475569);font-size:7.5px;font-weight:1000;text-align:center;letter-spacing:.04em;transition:left .16s ease,top .16s ease}
+#settings .wholesaleReceiptWatermarkPreviewMarkV263{position:absolute;left:50%;top:74%;width:68%;transform:translate(-50%,-50%);padding:8px 5px;border:1px dashed color-mix(in srgb,var(--accent) 55%,#94a3b8);border-radius:6px;background:color-mix(in srgb,var(--accent) 9%,#fff);color:color-mix(in srgb,var(--accent) 72%,#475569);font-size:7.5px;font-weight:1000;text-align:center;letter-spacing:.04em;transition:left .16s ease,top .16s ease}
 @media(max-width:700px){#settings .wholesaleReceiptWatermarkGridV263{grid-template-columns:1fr}#settings .wholesaleReceiptWatermarkControlsV263{grid-template-columns:1fr}#settings .wholesaleReceiptWatermarkControlsV263>.full{grid-column:1}#settings .wholesaleReceiptWatermarkPreviewV263{min-height:300px}}
 /* ===== FIM V263 POSIÇÃO LIVRE DO COMPROVANTE ===== */
+
+/* ===== V264 — COMPROVANTE ATACADO E VAREJO: COORDENADA FÍSICA NA FOLHA =====
+   A coordenada escolhida em Personalizar representa a posição final na página A4.
+   O JavaScript compensa somente a redução automática usada para caber em uma folha.
+*/
+#settings .wholesaleReceiptWatermarkHintV264{border-color:color-mix(in srgb,var(--accent) 34%,var(--line));background:color-mix(in srgb,var(--accent) 8%,var(--soft))}
+/* ===== FIM V264 COORDENADA FÍSICA ===== */
+
+/* ===== V265 — MARCA D'ÁGUA COMO CAMADA DIRETA DA FOLHA A4 =====
+   Fora do comprovante reduzido, a coordenada corresponde diretamente à página impressa.
+*/
+@media print{
+  body.print-wholesale > #wholesaleReceiptWatermark.wholesaleReceiptPageOverlayV265{
+    display:block!important;
+    position:fixed!important;
+    left:var(--wholesale-receipt-page-left-v265,50%)!important;
+    top:var(--wholesale-receipt-page-top-v265,74%)!important;
+    right:auto!important;
+    bottom:auto!important;
+    transform:translate(-50%,-50%)!important;
+    max-width:52%!important;
+    max-height:58%!important;
+    object-fit:contain!important;
+    z-index:0!important;
+    pointer-events:none!important;
+  }
+}
+/* ===== FIM V265 CAMADA DIRETA DA FOLHA A4 ===== */
 </style>
 
 </head>
@@ -16660,7 +16688,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V263</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V265</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -18828,8 +18856,8 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
                   <div class="wholesaleReceiptWatermarkControlsV263">
                     <label class="full">Posição rápida no comprovante<select id="setWholesaleReceiptWatermarkPositionV262" onchange="setWholesaleReceiptWatermarkPresetV263(this.value)"><option value="custom">Personalizada</option><option value="top-left">Superior esquerda</option><option value="top-center">Superior centro</option><option value="top-right">Superior direita</option><option value="middle-left">Meio esquerda</option><option value="center">Centro</option><option value="middle-right">Meio direita</option><option value="bottom-left">Inferior esquerda</option><option value="bottom-center">Inferior centro</option><option value="bottom-right">Inferior direita</option></select></label>
                     <label>Ajuste horizontal no comprovante<div class="wholesaleReceiptRangeV263"><input type="range" id="setWholesaleReceiptWatermarkXV263" min="8" max="92" step="1" oninput="updateWholesaleReceiptWatermarkControlsV263()"><output id="setWholesaleReceiptWatermarkXValueV263">50%</output></div></label>
-                    <label>Ajuste vertical no comprovante<div class="wholesaleReceiptRangeV263"><input type="range" id="setWholesaleReceiptWatermarkYV263" min="8" max="92" step="1" oninput="updateWholesaleReceiptWatermarkControlsV263()"><output id="setWholesaleReceiptWatermarkYValueV263">86%</output></div></label>
-                    <p class="wholesaleReceiptWatermarkHintV263 full"><b>Para descer mais:</b> aumente o ajuste vertical. O limite de 92% permite aproveitar o espaço vazio próximo ao final da página A4. Nada será salvo até clicar em “Salvar personalização”.</p>
+                    <label>Ajuste vertical na folha A4<div class="wholesaleReceiptRangeV263"><input type="range" id="setWholesaleReceiptWatermarkYV263" min="8" max="92" step="1" oninput="updateWholesaleReceiptWatermarkControlsV263()"><output id="setWholesaleReceiptWatermarkYValueV263">74%</output></div></label>
+                    <p class="wholesaleReceiptWatermarkHintV263 wholesaleReceiptWatermarkHintV264 full"><b>Centro do espaço vazio:</b> horizontal 50% e vertical 74%. Agora a posição representa o local final na folha A4 e permanece igual mesmo quando o comprovante é reduzido para caber em uma página. Nada será salvo até clicar em “Salvar personalização”.</p>
                   </div>
                   <div id="wholesaleReceiptWatermarkPreviewV263" class="wholesaleReceiptWatermarkPreviewV263" aria-label="Prévia da posição na página A4">
                     <div class="wholesaleReceiptWatermarkPreviewLinesV263"></div>
@@ -19246,7 +19274,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V263";
+const APP_BUILD_VERSION="V265";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -19687,10 +19715,11 @@ function settingsV210CollectFromForm(){
   s.pdfWatermarkY=Number($("setPdfWatermarkY")?.value||72);
   s.pdfWatermarkSize=Number($("setPdfWatermarkSize")?.value||45);
   const receiptWatermarkXV263=wholesaleReceiptWatermarkBoundV263($("setWholesaleReceiptWatermarkXV263")?.value,50);
-  const receiptWatermarkYV263=wholesaleReceiptWatermarkBoundV263($("setWholesaleReceiptWatermarkYV263")?.value,86);
+  const receiptWatermarkYV263=wholesaleReceiptWatermarkBoundV263($("setWholesaleReceiptWatermarkYV263")?.value,74);
   s.wholesaleReceiptWatermarkXV263=receiptWatermarkXV263;
   s.wholesaleReceiptWatermarkYV263=receiptWatermarkYV263;
   s.wholesaleReceiptWatermarkPositionV262=wholesaleReceiptWatermarkPresetForPointV263(receiptWatermarkXV263,receiptWatermarkYV263);
+  s.wholesaleReceiptWatermarkCoordinateModelV264="page-a4-v1";
   if(typeof tempSystemLogo!=="undefined"&&tempSystemLogo!==null){s.systemLogo=tempSystemLogo;tempSystemLogo=null;}
   if(typeof tempPdfLogo!=="undefined"&&tempPdfLogo!==null){s.pdfLogo=tempPdfLogo;tempPdfLogo=null;}
   if(typeof tempWatermarkLogo!=="undefined"&&tempWatermarkLogo!==null){s.pdfWatermarkLogo=tempWatermarkLogo;tempWatermarkLogo=null;}
@@ -23662,7 +23691,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V263",
+    version:"V265",
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -24534,6 +24563,64 @@ function runLocalSystemAudit(){
     auditAdd(report,"pass","WHOLESALE_RECEIPT_WATERMARK_FINE_POSITION_V263","O Personalizar identifica explicitamente o Comprovante - Atacado e Varejo e permite posicionar sua marca d'água no PDF e na impressão, com atalhos, ajuste horizontal/vertical de 8% a 92% e prévia isolada.");
   }else{
     auditAdd(report,"error","WHOLESALE_RECEIPT_WATERMARK_FINE_POSITION_V263","Não foi possível confirmar o isolamento completo do ajuste fino da marca d'água do Comprovante - Atacado e Varejo.");
+  }
+
+  const wholesaleReceiptWatermarkStyleV264=[...document.querySelectorAll("style")].find(style=>
+    String(style.textContent||"").includes("V264 — COMPROVANTE ATACADO E VAREJO: COORDENADA FÍSICA NA FOLHA")
+  );
+  const wholesaleReceiptLegacyCenterV264=wholesaleReceiptWatermarkCoordinatesV264({
+    wholesaleReceiptWatermarkPositionV262:"bottom-center",
+    wholesaleReceiptWatermarkXV263:50,
+    wholesaleReceiptWatermarkYV263:86
+  },[50,86]);
+  const wholesaleReceiptCustomPointV264=wholesaleReceiptWatermarkCoordinatesV264({
+    wholesaleReceiptWatermarkCoordinateModelV264:"page-a4-v1",
+    wholesaleReceiptWatermarkPositionV262:"custom",
+    wholesaleReceiptWatermarkXV263:67,
+    wholesaleReceiptWatermarkYV263:92
+  },[67,92]);
+  if(
+    wholesaleReceiptWatermarkPanelV263?.textContent?.includes("Centro do espaço vazio:")&&
+    wholesaleReceiptWatermarkPanelV263?.textContent?.includes("horizontal 50% e vertical 74%")&&
+    wholesaleReceiptWatermarkStyleV264?.textContent?.includes("#settings .wholesaleReceiptWatermarkHintV264")&&
+    !wholesaleReceiptWatermarkStyleV264?.textContent?.includes("#reports")&&
+    wholesaleReceiptLegacyCenterV264[0]===50&&
+    wholesaleReceiptLegacyCenterV264[1]===74&&
+    wholesaleReceiptCustomPointV264[0]===67&&
+    wholesaleReceiptCustomPointV264[1]===92&&
+    WHOLESALE_RECEIPT_WATERMARK_POSITIONS_V262["bottom-center"][1]===74&&
+    String(settingsV210CollectFromForm).includes("wholesaleReceiptWatermarkCoordinateModelV264")&&
+    String(renderSettings).includes("wholesaleReceiptWatermarkCoordinatesV264")&&
+    (String(openWholesaleReceiptOutputV259).includes("positionWholesaleReceiptWatermarkForScaleV264(scale)")||String(openWholesaleReceiptOutputV259).includes("mountWholesaleReceiptWatermarkOnPageV265(watermark)"))&&
+    String(positionWholesaleReceiptWatermarkForScaleV264).includes("pageTopV264/safeScale")&&
+    !String(positionWholesaleReceiptWatermarkForScaleV264).includes("save(")&&
+    !String(positionWholesaleReceiptWatermarkForScaleV264).includes("writeErpTestData")&&
+    !String(wholesaleReceiptWatermarkCoordinatesV264).includes("cloudSaveNow")
+  ){
+    auditAdd(report,"pass","WHOLESALE_RECEIPT_WATERMARK_PAGE_CALIBRATION_V264","A marca d'água do Comprovante - Atacado e Varejo foi calibrada no centro da área vazia da folha A4 (50%/74%), compensando a redução de uma página igualmente no PDF e na impressão e mantendo Personalizar sincronizado.");
+  }else{
+    auditAdd(report,"error","WHOLESALE_RECEIPT_WATERMARK_PAGE_CALIBRATION_V264","Não foi possível confirmar a calibração isolada da marca d'água no espaço vazio da folha A4.");
+  }
+
+  const wholesaleReceiptWatermarkStyleV265=[...document.querySelectorAll("style")].find(style=>
+    String(style.textContent||"").includes("V265 — MARCA D'ÁGUA COMO CAMADA DIRETA DA FOLHA A4")
+  );
+  const wholesaleReceiptWatermarkTextV265=String(wholesaleReceiptWatermarkStyleV265?.textContent||"");
+  if(
+    wholesaleReceiptWatermarkTextV265.includes("body.print-wholesale > #wholesaleReceiptWatermark.wholesaleReceiptPageOverlayV265")&&
+    wholesaleReceiptWatermarkTextV265.includes("--wholesale-receipt-page-left-v265,50%")&&
+    wholesaleReceiptWatermarkTextV265.includes("--wholesale-receipt-page-top-v265,74%")&&
+    !wholesaleReceiptWatermarkTextV265.includes("#reports")&&
+    String(openWholesaleReceiptOutputV259).includes("mountWholesaleReceiptWatermarkOnPageV265(watermark)")&&
+    String(mountWholesaleReceiptWatermarkOnPageV265).includes("document.body.appendChild(watermark)")&&
+    String(mountWholesaleReceiptWatermarkOnPageV265).includes("originalParent.insertBefore")&&
+    !String(mountWholesaleReceiptWatermarkOnPageV265).includes("save(")&&
+    !String(mountWholesaleReceiptWatermarkOnPageV265).includes("writeErpTestData")&&
+    String(renderSettings).includes("wholesaleReceiptWatermarkCoordinatesV264")
+  ){
+    auditAdd(report,"pass","WHOLESALE_RECEIPT_WATERMARK_PAGE_OVERLAY_V265","No PDF e na impressão, a marca d'água é montada temporariamente como filha direta da folha, fora do comprovante reduzido, em 50%/74%; depois retorna ao card original e Personalizar permanece sincronizado.");
+  }else{
+    auditAdd(report,"error","WHOLESALE_RECEIPT_WATERMARK_PAGE_OVERLAY_V265","Não foi possível confirmar o isolamento da camada direta da marca d'água na folha A4.");
   }
 
   if(
@@ -31618,9 +31705,9 @@ const WHOLESALE_RECEIPT_WATERMARK_POSITIONS_V262=Object.freeze({
   "middle-left":[18,50],
   "center":[50,50],
   "middle-right":[82,50],
-  "bottom-left":[18,86],
-  "bottom-center":[50,86],
-  "bottom-right":[82,86]
+  "bottom-left":[18,74],
+  "bottom-center":[50,74],
+  "bottom-right":[82,74]
 });
 
 function normalizeWholesaleReceiptWatermarkPositionV262(value){
@@ -31654,9 +31741,9 @@ function wholesaleReceiptWatermarkPresetForPointV263(x,y){
 function updateWholesaleReceiptWatermarkControlsV263(){
   const xInput=$("setWholesaleReceiptWatermarkXV263");
   const yInput=$("setWholesaleReceiptWatermarkYV263");
-  if(!xInput||!yInput)return [50,86];
+  if(!xInput||!yInput)return [50,74];
   const x=wholesaleReceiptWatermarkBoundV263(xInput.value,50);
-  const y=wholesaleReceiptWatermarkBoundV263(yInput.value,86);
+  const y=wholesaleReceiptWatermarkBoundV263(yInput.value,74);
   xInput.value=String(x);
   yInput.value=String(y);
   if($("setWholesaleReceiptWatermarkXValueV263"))$("setWholesaleReceiptWatermarkXValueV263").textContent=x+"%";
@@ -31677,6 +31764,53 @@ function setWholesaleReceiptWatermarkPresetV263(value){
   return updateWholesaleReceiptWatermarkControlsV263();
 }
 
+const WHOLESALE_RECEIPT_WATERMARK_COORDINATE_MODEL_V264="page-a4-v1";
+const WHOLESALE_RECEIPT_WATERMARK_EMPTY_AREA_V264=Object.freeze([50,74]);
+
+function wholesaleReceiptWatermarkCoordinatesV264(settings=state.settings||{},coordinatesV263){
+  const previous=Array.isArray(coordinatesV263)?coordinatesV263:wholesaleReceiptWatermarkCoordinatesV263(settings);
+  if(settings.wholesaleReceiptWatermarkCoordinateModelV264!==WHOLESALE_RECEIPT_WATERMARK_COORDINATE_MODEL_V264){
+    return [...WHOLESALE_RECEIPT_WATERMARK_EMPTY_AREA_V264];
+  }
+  return [
+    wholesaleReceiptWatermarkBoundV263(previous[0],50),
+    wholesaleReceiptWatermarkBoundV263(previous[1],74)
+  ];
+}
+
+function positionWholesaleReceiptWatermarkForScaleV264(scale){
+  const watermark=$("wholesaleReceiptWatermark");
+  if(!watermark||watermark.style.display==="none")return null;
+  const safeScale=wholesaleReceiptClampV259(scale,0.05,1,1);
+  const coordinatesV263=wholesaleReceiptWatermarkCoordinatesV263(state.settings||{});
+  const [pageLeftV264,pageTopV264]=wholesaleReceiptWatermarkCoordinatesV264(state.settings||{},coordinatesV263);
+  const compensatedTopV264=pageTopV264/safeScale;
+  watermark.style.setProperty("--wholesale-receipt-watermark-left-v262",pageLeftV264+"%");
+  watermark.style.setProperty("--wholesale-receipt-watermark-top-v262",compensatedTopV264.toFixed(4)+"%");
+  return {left:pageLeftV264,top:pageTopV264,cssTop:compensatedTopV264,scale:safeScale};
+}
+
+function mountWholesaleReceiptWatermarkOnPageV265(watermark){
+  if(!watermark||watermark.style.display==="none")return null;
+  const originalParent=watermark.parentNode;
+  const originalNextSibling=watermark.nextSibling;
+  const coordinatesV263=wholesaleReceiptWatermarkCoordinatesV263(state.settings||{});
+  const [pageLeftV265,pageTopV265]=wholesaleReceiptWatermarkCoordinatesV264(state.settings||{},coordinatesV263);
+  watermark.classList.add("wholesaleReceiptPageOverlayV265");
+  watermark.style.setProperty("--wholesale-receipt-page-left-v265",pageLeftV265+"%");
+  watermark.style.setProperty("--wholesale-receipt-page-top-v265",pageTopV265+"%");
+  document.body.appendChild(watermark);
+  return ()=>{
+    watermark.classList.remove("wholesaleReceiptPageOverlayV265");
+    watermark.style.removeProperty("--wholesale-receipt-page-left-v265");
+    watermark.style.removeProperty("--wholesale-receipt-page-top-v265");
+    if(originalParent){
+      if(originalNextSibling&&originalNextSibling.parentNode===originalParent)originalParent.insertBefore(watermark,originalNextSibling);
+      else originalParent.appendChild(watermark);
+    }
+  };
+}
+
 function positionWholesaleReceiptWatermarkV259(){
   const watermark=$("wholesaleReceiptWatermark");
   if(!watermark||watermark.style.display==="none")return;
@@ -31685,9 +31819,10 @@ function positionWholesaleReceiptWatermarkV259(){
   watermark.style.top=wholesaleReceiptClampV259(settings.pdfWatermarkY,20,80,50)+"%";
   watermark.style.width=wholesaleReceiptClampV259(settings.pdfWatermarkSize,18,52,38)+"%";
   watermark.style.opacity=String(wholesaleReceiptClampV259(settings.pdfWatermarkOpacity,0.03,0.24,0.12));
-  const [receiptLeftV263,receiptTopV263]=wholesaleReceiptWatermarkCoordinatesV263(settings);
-  watermark.style.setProperty("--wholesale-receipt-watermark-left-v262",receiptLeftV263+"%");
-  watermark.style.setProperty("--wholesale-receipt-watermark-top-v262",receiptTopV263+"%");
+  const coordinatesV263=wholesaleReceiptWatermarkCoordinatesV263(settings);
+  const [receiptLeftV264,receiptTopV264]=wholesaleReceiptWatermarkCoordinatesV264(settings,coordinatesV263);
+  watermark.style.setProperty("--wholesale-receipt-watermark-left-v262",receiptLeftV264+"%");
+  watermark.style.setProperty("--wholesale-receipt-watermark-top-v262",receiptTopV264+"%");
 }
 
 function wholesaleReceiptPageStyleV259(){
@@ -31727,7 +31862,9 @@ function openWholesaleReceiptOutputV259(mode="pdf"){
   const oldOutputMode=document.body.dataset.wholesaleReceiptOutputV259;
   const watermark=$("wholesaleReceiptWatermark");
   const oldWatermarkStyle=watermark?.getAttribute("style");
+  const oldWatermarkClass=watermark?.getAttribute("class");
   const pageStyle=wholesaleReceiptPageStyleV259();
+  let restoreWatermarkPageV265=null;
   let cleaned=false;
 
   const cleanup=()=>{
@@ -31739,8 +31876,11 @@ function openWholesaleReceiptOutputV259(mode="pdf"){
     receipt.classList.remove("wholesaleReceiptOnePageV259");
     receipt.style.removeProperty("--wholesale-receipt-scale-v259");
     if(watermark){
+      if(typeof restoreWatermarkPageV265==="function")restoreWatermarkPageV265();
       if(oldWatermarkStyle===null)watermark.removeAttribute("style");
       else watermark.setAttribute("style",oldWatermarkStyle);
+      if(oldWatermarkClass===null)watermark.removeAttribute("class");
+      else watermark.setAttribute("class",oldWatermarkClass);
     }
     pageStyle.remove();
     document.title=oldTitle;
@@ -31762,6 +31902,7 @@ function openWholesaleReceiptOutputV259(mode="pdf"){
     if(cleaned)return;
     const scale=wholesaleReceiptPrintScaleV259(receipt);
     receipt.style.setProperty("--wholesale-receipt-scale-v259",scale.toFixed(4));
+    restoreWatermarkPageV265=mountWholesaleReceiptWatermarkOnPageV265(watermark);
     document.body.classList.remove("wholesale-receipt-measure-v259");
     document.body.classList.add("print-wholesale");
     window.addEventListener("afterprint",cleanup,{once:true});
@@ -32997,9 +33138,10 @@ function renderSettings(){
   $("setPdfWatermarkY").value=String(s.pdfWatermarkY??72);
   $("setPdfWatermarkSize").value=String(s.pdfWatermarkSize??45);
   $("setPdfWatermarkPreset").value="";
-  const [receiptWatermarkXV263,receiptWatermarkYV263]=wholesaleReceiptWatermarkCoordinatesV263(s);
-  $("setWholesaleReceiptWatermarkXV263").value=String(receiptWatermarkXV263);
-  $("setWholesaleReceiptWatermarkYV263").value=String(receiptWatermarkYV263);
+  const receiptWatermarkCoordinatesV263=wholesaleReceiptWatermarkCoordinatesV263(s);
+  const [receiptWatermarkXV264,receiptWatermarkYV264]=wholesaleReceiptWatermarkCoordinatesV264(s,receiptWatermarkCoordinatesV263);
+  $("setWholesaleReceiptWatermarkXV263").value=String(receiptWatermarkXV264);
+  $("setWholesaleReceiptWatermarkYV263").value=String(receiptWatermarkYV264);
   updateWholesaleReceiptWatermarkControlsV263();
 
   const sysLogo=tempSystemLogo||s.systemLogo||"";

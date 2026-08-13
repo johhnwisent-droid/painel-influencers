@@ -1,5 +1,5 @@
-const WISENT_VERSION="V263";
-const WISENT_CACHE="wisent-erp-static-v263";
+const WISENT_VERSION="V265";
+const WISENT_CACHE="wisent-erp-static-v265";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
@@ -154,4 +154,4 @@ self.addEventListener("fetch",event=>{
   })());
 });
 
-// WISENT V263 - ajuste fino da marca d'água do Comprovante - Atacado e Varejo
+// WISENT V265 - marca d'água em camada direta da folha A4
