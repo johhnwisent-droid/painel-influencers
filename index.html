@@ -16611,6 +16611,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
   }
 }
 /* ===== FIM V265 CAMADA DIRETA DA FOLHA A4 ===== */
+
 </style>
 
 </head>
@@ -16688,7 +16689,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V265</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V266</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19274,7 +19275,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V265";
+const APP_BUILD_VERSION="V266";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -20835,6 +20836,16 @@ function handleLoginSubmit(e){
   setSessionUser(user);
   if($("loginPassword"))$("loginPassword").value="";
   hideLoginScreen();
+
+  /* V266: ao entrar como Admin, consulta primeiro a fonte oficial e só então
+     verifica a correção pontual protegida do pedido de Beatriz Costa. */
+  if(isWisentAdmin()){
+    setTimeout(()=>{
+      syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"admin-login-v266"})
+        .then(()=>applyBeatrizCostaFinancialCorrectionV266({source:"admin-login"}))
+        .catch(error=>console.warn("V266: verificação financeira adiada sem afetar os dados:",error));
+    },0);
+  }
 
   if(isErpScopedRestrictedUser()){
     restoreNavigationV245();
@@ -23372,6 +23383,145 @@ async function applyJorgeRibeiroRateCorrectionV233(){
   return {ok:false,status:"awaiting_confirmation",updated:1};
 }
 
+/* ===== V266 — CORREÇÃO PONTUAL E FECHADA DO PEDIDO DE BEATRIZ COSTA =====
+   Não existe editor genérico de total ou desconto nesta versão.
+   A única mutação aceita por este bloco exige UUID, identidade e valores
+   anteriores exatos, altera somente total/discountValue e confirma no Supabase.
+*/
+const WHOLESALE_BEATRIZ_ORDER_ID_V266="38c710d0-e1eb-4148-ac10-7c42418888cc";
+const WHOLESALE_BEATRIZ_ROW_ID_V266="524d3595-cc9f-4041-b2d9-24088f74b947";
+const WHOLESALE_BEATRIZ_CORRECTION_KEY_V266="beatriz-costa-628-78-v266";
+let wholesaleBeatrizCorrectionPromiseV266=null;
+
+function wholesaleRoundMoneyV266(value){
+  const number=Number(value);
+  return Number.isFinite(number)?Math.round((number+Number.EPSILON)*100)/100:NaN;
+}
+
+function wholesaleFinancialValuesMatchV266(row,total,discount){
+  return !!row&&
+    wholesaleApproxV233(row.total,total,0.0049)&&
+    wholesaleApproxV233(row.discountValue,discount,0.0049);
+}
+
+function refreshWholesaleFinancialViewsV266(orderId=""){
+  /* Faturamento, descontos, vendas por colaborador, listagem e PDF continuam
+     derivados do mesmo registro confirmado em state.wholesaleRetail. */
+  renderWholesaleRetail();
+  if(String(currentWholesaleOrderId||"")===String(orderId||""))renderWholesaleOrder();
+}
+
+function wholesaleBeatrizCorrectionTargetV266(row){
+  if(!row||row.deleted===true)return false;
+  const rowId=String(row._wholesaleRowId||"");
+  return String(row.id||"")===WHOLESALE_BEATRIZ_ORDER_ID_V266&&
+    wholesaleNormalizeNameV233(row.clientName)==="beatriz costa"&&
+    normalizeDateOnly(row.date)==="2026-08-25"&&
+    (!rowId||rowId===WHOLESALE_BEATRIZ_ROW_ID_V266);
+}
+
+async function applyBeatrizCostaFinancialCorrectionV266({source="startup"}={}){
+  if(!isWisentAdmin())return {ok:false,status:"admin_required",updated:0};
+  if(wholesaleBeatrizCorrectionPromiseV266)return wholesaleBeatrizCorrectionPromiseV266;
+
+  wholesaleBeatrizCorrectionPromiseV266=(async()=>{
+    const index=(state.wholesaleRetail||[]).findIndex(row=>
+      String(row?.id||"")===WHOLESALE_BEATRIZ_ORDER_ID_V266&&row?.deleted!==true
+    );
+    if(index<0)return {ok:false,status:"target_not_found",updated:0};
+
+    const target=state.wholesaleRetail[index];
+    if(!wholesaleBeatrizCorrectionTargetV266(target)){
+      updateCloudDebug("V266: UUID de Beatriz localizado, mas a identidade protegida divergiu; nenhuma alteração automática foi feita.");
+      return {ok:false,status:"identity_guard",updated:0};
+    }
+    if(wholesaleFinancialValuesMatchV266(target,628,78)){
+      return {ok:true,status:"already_correct",updated:0};
+    }
+    if(target.beatrizFinancialCorrectionV266?.key===WHOLESALE_BEATRIZ_CORRECTION_KEY_V266){
+      updateCloudDebug("V266: a correção pontual já foi aplicada; qualquer valor posterior foi respeitado.");
+      return {ok:true,status:"previously_applied",updated:0};
+    }
+
+    const originalValuesMatch=
+      wholesaleApproxV233(target.total,635.4,0.0049)&&
+      wholesaleApproxV233(target.discountValue,70.6,0.0049)&&
+      wholesaleApproxV233(target.productPrice,706,0.0049)&&
+      wholesaleApproxV233(target.freightCost,0,0.0049);
+    if(!originalValuesMatch){
+      updateCloudDebug("V266: o pedido de Beatriz mudou desde o backup; a proteção impediu qualquer sobrescrita automática.");
+      return {ok:false,status:"value_guard",updated:0};
+    }
+
+    const original=cloneSafe(target,target);
+    const corrected=cloneSafe(target,target)||{};
+    const audit=currentAuditInfo();
+    corrected.total=628;
+    corrected.discountValue=78;
+    corrected.updatedAt=audit.at||new Date().toISOString();
+    corrected.updatedById=audit.id||"";
+    corrected.updatedByName=audit.name||"Administrador";
+    corrected.updatedByUsername=audit.username||"";
+    corrected.beatrizFinancialCorrectionV266={
+      key:WHOLESALE_BEATRIZ_CORRECTION_KEY_V266,
+      source:String(source||"startup"),
+      previousTotal:wholesaleRoundMoneyV266(original.total),
+      previousDiscount:wholesaleRoundMoneyV266(original.discountValue),
+      total:628,
+      discount:78,
+      at:corrected.updatedAt,
+      actorId:audit.id||"",
+      actorName:audit.name||"Administrador"
+    };
+
+    /* Somente o índice do UUID protegido é substituído localmente. */
+    state.wholesaleRetail[index]=corrected;
+    writeWholesaleSnapshot(state.wholesaleRetail);
+    queueWholesaleCloudRecord(corrected,{baseRecord:original});
+    persistWholesaleLocalCache();
+    refreshWholesaleFinancialViewsV266(corrected.id);
+    updateCloudStatus("Pendente • confirmando a correção pontual de Beatriz no Supabase",true);
+
+    try{
+      const flushed=await flushWholesalePendingQueue();
+      if(!flushed){
+        updateCloudDebug("V266: correção de Beatriz preservada na fila durável; aguardando confirmação.");
+        return {ok:false,status:"queued",updated:1};
+      }
+
+      const official=await fetchConfirmedWholesaleRecord(corrected.id,{minimumVersion:1,attempts:7});
+      if(!official||!wholesaleFinancialValuesMatchV266(official,628,78)){
+        updateCloudDebug("V266: a fonte oficial ainda não confirmou exatamente R$ 628,00/R$ 78,00; nenhuma coleção foi substituída.");
+        return {ok:false,status:"awaiting_confirmation",updated:1};
+      }
+
+      wholesaleApplySingleOfficialRecord(official,{renderNow:false});
+      refreshWholesaleFinancialViewsV266(official.id);
+      updateCloudStatus("Salvo • correção de Beatriz confirmada no Supabase para todas as contas");
+      appendErpAudit("wholesale_beatriz_financial_correction_v266",{
+        orderId:String(official.id),
+        clientName:official.clientName||"",
+        before:{total:wholesaleRoundMoneyV266(original.total),discount:wholesaleRoundMoneyV266(original.discountValue)},
+        after:{total:628,discount:78},
+        source:String(source||"startup")
+      });
+      erpV174AuditCloud(
+        "wholesale_order",String(official.id),"beatriz_financial_correction_v266",
+        {total:wholesaleRoundMoneyV266(original.total),discount:wholesaleRoundMoneyV266(original.discountValue)},
+        {total:628,discount:78}
+      ).catch(error=>console.warn("Auditoria remota V266 aguardando disponibilidade:",error));
+      updateCloudDebug("V266: pedido exato de Beatriz Costa confirmado em R$ 628,00, com R$ 78,00 de desconto; totais derivados foram atualizados.");
+      return {ok:true,status:"confirmed",updated:1,official};
+    }catch(error){
+      console.warn("V266: correção pontual preservada para nova tentativa:",error);
+      updateCloudStatus("Pendente • correção de Beatriz protegida para nova tentativa",true);
+      return {ok:false,status:"queued",updated:1,error:String(error?.message||error)};
+    }
+  })().finally(()=>{wholesaleBeatrizCorrectionPromiseV266=null;});
+
+  return wholesaleBeatrizCorrectionPromiseV266;
+}
+
 function normalizeRecoveredWholesaleLaunch(obj,source="armazenamento desconhecido"){
   const item=cloneSafe(obj,{})||{};
 
@@ -23691,7 +23841,7 @@ function localStorageBytesEstimate(){
 
 function runLocalSystemAudit(){
   const report={
-    version:"V265",
+    version:APP_BUILD_VERSION,
     generatedAt:new Date().toISOString(),
     generatedBy:currentUser?.name||"Sem login",
     deviceId:getDeviceId(),
@@ -26300,6 +26450,11 @@ async function startApp(){
         await applyJorgeRibeiroRateCorrectionV233();
       }catch(error){
         console.warn("V233: correção pontual de Jorge Ribeiro preservada sem interromper a inicialização:",error);
+      }
+      try{
+        await applyBeatrizCostaFinancialCorrectionV266({source:"startup-official-sync"});
+      }catch(error){
+        console.warn("V266: correção pontual de Beatriz preservada sem interromper a inicialização:",error);
       }
       installWholesaleSyncWatchers();
       installWholesaleDraftProtection();
