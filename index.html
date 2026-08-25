@@ -23386,11 +23386,11 @@ async function applyJorgeRibeiroRateCorrectionV233(){
 /* ===== V266 — CORREÇÃO PONTUAL E FECHADA DO PEDIDO DE BEATRIZ COSTA =====
    Não existe editor genérico de total ou desconto nesta versão.
    A única mutação aceita por este bloco exige UUID, identidade e valores
-   anteriores exatos, altera somente total/discountValue e confirma no Supabase.
+   anteriores exatos, altera somente total/discountValue/realReceived e confirma no Supabase.
 */
 const WHOLESALE_BEATRIZ_ORDER_ID_V266="38c710d0-e1eb-4148-ac10-7c42418888cc";
 const WHOLESALE_BEATRIZ_ROW_ID_V266="524d3595-cc9f-4041-b2d9-24088f74b947";
-const WHOLESALE_BEATRIZ_CORRECTION_KEY_V266="beatriz-costa-628-78-v266";
+const WHOLESALE_BEATRIZ_CORRECTION_KEY_V266="beatriz-costa-628-78-real-628-v266";
 let wholesaleBeatrizCorrectionPromiseV266=null;
 
 function wholesaleRoundMoneyV266(value){
@@ -23398,10 +23398,11 @@ function wholesaleRoundMoneyV266(value){
   return Number.isFinite(number)?Math.round((number+Number.EPSILON)*100)/100:NaN;
 }
 
-function wholesaleFinancialValuesMatchV266(row,total,discount){
+function wholesaleFinancialValuesMatchV266(row,total,discount,realReceived){
   return !!row&&
     wholesaleApproxV233(row.total,total,0.0049)&&
-    wholesaleApproxV233(row.discountValue,discount,0.0049);
+    wholesaleApproxV233(row.discountValue,discount,0.0049)&&
+    wholesaleApproxV233(row.realReceived,realReceived,0.0049);
 }
 
 function refreshWholesaleFinancialViewsV266(orderId=""){
@@ -23435,7 +23436,7 @@ async function applyBeatrizCostaFinancialCorrectionV266({source="startup"}={}){
       updateCloudDebug("V266: UUID de Beatriz localizado, mas a identidade protegida divergiu; nenhuma alteração automática foi feita.");
       return {ok:false,status:"identity_guard",updated:0};
     }
-    if(wholesaleFinancialValuesMatchV266(target,628,78)){
+    if(wholesaleFinancialValuesMatchV266(target,628,78,628)){
       return {ok:true,status:"already_correct",updated:0};
     }
     if(target.beatrizFinancialCorrectionV266?.key===WHOLESALE_BEATRIZ_CORRECTION_KEY_V266){
@@ -23444,10 +23445,13 @@ async function applyBeatrizCostaFinancialCorrectionV266({source="startup"}={}){
     }
 
     const originalValuesMatch=
-      wholesaleApproxV233(target.total,635.4,0.0049)&&
-      wholesaleApproxV233(target.discountValue,70.6,0.0049)&&
+      ((wholesaleApproxV233(target.total,635.4,0.0049)&&wholesaleApproxV233(target.discountValue,70.6,0.0049))||
+       (wholesaleApproxV233(target.total,628,0.0049)&&wholesaleApproxV233(target.discountValue,78,0.0049)))&&
+      wholesaleApproxV233(target.realReceived,635.4,0.0049)&&
       wholesaleApproxV233(target.productPrice,706,0.0049)&&
-      wholesaleApproxV233(target.freightCost,0,0.0049);
+      wholesaleApproxV233(target.freightCost,0,0.0049)&&
+      String(target.paymentMethod||"")==="PIX"&&
+      wholesaleApproxV233(target.feeValue,0,0.0049);
     if(!originalValuesMatch){
       updateCloudDebug("V266: o pedido de Beatriz mudou desde o backup; a proteção impediu qualquer sobrescrita automática.");
       return {ok:false,status:"value_guard",updated:0};
@@ -23458,6 +23462,7 @@ async function applyBeatrizCostaFinancialCorrectionV266({source="startup"}={}){
     const audit=currentAuditInfo();
     corrected.total=628;
     corrected.discountValue=78;
+    corrected.realReceived=628;
     corrected.updatedAt=audit.at||new Date().toISOString();
     corrected.updatedById=audit.id||"";
     corrected.updatedByName=audit.name||"Administrador";
@@ -23467,8 +23472,10 @@ async function applyBeatrizCostaFinancialCorrectionV266({source="startup"}={}){
       source:String(source||"startup"),
       previousTotal:wholesaleRoundMoneyV266(original.total),
       previousDiscount:wholesaleRoundMoneyV266(original.discountValue),
+      previousRealReceived:wholesaleRoundMoneyV266(original.realReceived),
       total:628,
       discount:78,
+      realReceived:628,
       at:corrected.updatedAt,
       actorId:audit.id||"",
       actorName:audit.name||"Administrador"
@@ -23490,8 +23497,8 @@ async function applyBeatrizCostaFinancialCorrectionV266({source="startup"}={}){
       }
 
       const official=await fetchConfirmedWholesaleRecord(corrected.id,{minimumVersion:1,attempts:7});
-      if(!official||!wholesaleFinancialValuesMatchV266(official,628,78)){
-        updateCloudDebug("V266: a fonte oficial ainda não confirmou exatamente R$ 628,00/R$ 78,00; nenhuma coleção foi substituída.");
+      if(!official||!wholesaleFinancialValuesMatchV266(official,628,78,628)){
+        updateCloudDebug("V266: a fonte oficial ainda não confirmou total R$ 628,00, desconto R$ 78,00 e valor real R$ 628,00; nenhuma coleção foi substituída.");
         return {ok:false,status:"awaiting_confirmation",updated:1};
       }
 
@@ -23501,16 +23508,16 @@ async function applyBeatrizCostaFinancialCorrectionV266({source="startup"}={}){
       appendErpAudit("wholesale_beatriz_financial_correction_v266",{
         orderId:String(official.id),
         clientName:official.clientName||"",
-        before:{total:wholesaleRoundMoneyV266(original.total),discount:wholesaleRoundMoneyV266(original.discountValue)},
-        after:{total:628,discount:78},
+        before:{total:wholesaleRoundMoneyV266(original.total),discount:wholesaleRoundMoneyV266(original.discountValue),realReceived:wholesaleRoundMoneyV266(original.realReceived)},
+        after:{total:628,discount:78,realReceived:628},
         source:String(source||"startup")
       });
       erpV174AuditCloud(
         "wholesale_order",String(official.id),"beatriz_financial_correction_v266",
-        {total:wholesaleRoundMoneyV266(original.total),discount:wholesaleRoundMoneyV266(original.discountValue)},
-        {total:628,discount:78}
+        {total:wholesaleRoundMoneyV266(original.total),discount:wholesaleRoundMoneyV266(original.discountValue),realReceived:wholesaleRoundMoneyV266(original.realReceived)},
+        {total:628,discount:78,realReceived:628}
       ).catch(error=>console.warn("Auditoria remota V266 aguardando disponibilidade:",error));
-      updateCloudDebug("V266: pedido exato de Beatriz Costa confirmado em R$ 628,00, com R$ 78,00 de desconto; totais derivados foram atualizados.");
+      updateCloudDebug("V266: Beatriz Costa confirmada com total R$ 628,00, desconto R$ 78,00 e valor real recebido R$ 628,00; totais derivados foram atualizados.");
       return {ok:true,status:"confirmed",updated:1,official};
     }catch(error){
       console.warn("V266: correção pontual preservada para nova tentativa:",error);
