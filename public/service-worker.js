@@ -1,5 +1,5 @@
-const CACHE_NAME = 'coach-fit-pro-pwa-20260909-treinos-auto-recovery-fix-v1'
-const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/fit-coach-icon.svg']
+const CACHE_NAME = 'fit-coach-app-v4-admin-entry'
+const APP_SHELL = ['/', '/admin/', '/admin/index.html', '/index.html', '/manifest.webmanifest', '/fit-coach-icon.svg']
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -25,15 +25,8 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return
 
   if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request, { cache: 'no-store' })
-        .then((response) => {
-          const copy = response.clone()
-          caches.open(CACHE_NAME).then((cache) => cache.put('/index.html', copy))
-          return response
-        })
-        .catch(() => caches.match('/index.html')),
-    )
+    const fallbackPath = url.pathname.toLowerCase().startsWith('/admin') ? '/admin/index.html' : '/index.html'
+    event.respondWith(fetch(request).catch(() => caches.match(fallbackPath).then((cached) => cached || caches.match('/index.html'))))
     return
   }
 
@@ -48,19 +41,3 @@ self.addEventListener('fetch', (event) => {
     }),
   )
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
