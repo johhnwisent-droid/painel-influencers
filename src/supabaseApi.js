@@ -3,6 +3,8 @@ const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 const PHOTO_BUCKET = 'checkin-photos'
 const WORKOUT_VIDEO_BUCKET = 'workout-videos'
 const MESSAGE_ATTACHMENT_BUCKET = 'message-attachments'
+const NUTRITION_PLAN_METADATA_PREFIX = '[coachfitpro-nutrition-meta]'
+export const NUTRITION_RLS_MIGRATION_FILE = '20260909_fix_nutrition_rls_policies.sql'
 
 let sessionToken = ''
 const REQUEST_TIMEOUT_MS = 25000
@@ -17,7 +19,7 @@ async function fetchWithTimeout(url, options = {}) {
   const controller = new AbortController()
   const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
   try {
-    return await fetch(url, { ...options, signal: controller.signal })
+    return await fetch(url, { cache: 'no-store', ...options, signal: controller.signal })
   } catch (error) {
     if (error?.name === 'AbortError') {
       throw new Error('A conexão demorou demais. Verifique sua internet e tente novamente.')
@@ -146,11 +148,37 @@ async function rpcRequest(functionName, body) {
   })
 }
 
-export async function signUpCoach({ name, email, password }) {
+async function functionRequest(functionName, body) {
+  if (!supabaseEnabled) {
+    throw new Error('Supabase não configurado')
+  }
+
+  const response = await fetchWithTimeout(`${SUPABASE_URL}/functions/v1/${functionName}`, {
+    method: 'POST',
+    headers: authHeaders({ 'Content-Type': 'application/json' }),
+    body: JSON.stringify(body),
+  })
+
+  const text = await response.text()
+  let payload = {}
+  try {
+    payload = text ? JSON.parse(text) : {}
+  } catch {
+    payload = { message: text }
+  }
+
+  if (!response.ok) {
+    throw new Error(payload.error || payload.message || `Erro na função ${functionName}`)
+  }
+
+  return payload
+}
+
+export async function signUpCoach({ name, email, password, role = 'Coach principal' }) {
   const payload = await authRequest('signup', {
     email,
     password,
-    data: { name },
+    data: { name, role },
   })
 
   if (!payload.access_token) {
@@ -158,7 +186,7 @@ export async function signUpCoach({ name, email, password }) {
   }
 
   setSupabaseSession(payload.access_token)
-  return toSession(payload, name, email)
+  return toSession(payload, name, email, role)
 }
 
 export async function signInCoach({ email, password }) {
@@ -212,6 +240,21 @@ export async function updateRecoveredPassword(accessToken, password) {
   }
 }
 
+export async function deleteRemoteCoachAccount({ email, confirmation }) {
+  const normalizedEmail = String(email || '').trim().toLowerCase()
+  const normalizedConfirmation = String(confirmation || '').trim().toLowerCase()
+
+  if (!normalizedEmail || normalizedConfirmation !== normalizedEmail) {
+    throw new Error('Confirme a exclusao digitando exatamente o e-mail da conta.')
+  }
+
+  return functionRequest('delete-coach-account', {
+    email: normalizedEmail,
+    confirmation: normalizedConfirmation,
+    requestedAt: new Date().toISOString(),
+  })
+}
+
 export async function refreshCoachSession(refreshToken) {
   if (!refreshToken) {
     throw new Error('Sessão sem token de renovação')
@@ -226,7 +269,7 @@ export async function refreshCoachSession(refreshToken) {
 }
 
 export async function loadRemoteData() {
-  const [users, students, checkins, notifications, workouts, nutritionPlans, workoutLogs, messages, appointments, invoices, assessments, coachSettings, invites, anamneses, coachSubscriptions, appAdminSettings] = await Promise.all([
+  const [users, students, checkins, notifications, workouts, nutritionPlans, workoutLogs, messages, appointments, invoices, assessments, coachSettings, invites, anamneses, coachSubscriptions, exerciseLibrary, workoutProgressionDecisions, appAdminSettings] = await Promise.all([
     request('users?select=*&order=created_at.desc&limit=1'),
     request('students?select=*&order=created_at.desc'),
     request('checkins?select=*,checkin_photos(*)&order=created_at.desc'),
@@ -242,20 +285,24 @@ export async function loadRemoteData() {
     request('student_invites?select=*&order=created_at.desc'),
     request('student_anamneses?select=*&order=submitted_at.desc'),
     optionalTableRequest('coach_subscriptions?select=*&limit=1'),
+    optionalTableRequest('exercise_library?select=*&active=eq.true&order=muscle_group.asc,name.asc'),
+    optionalTableRequest('workout_progression_decisions?select=*&order=created_at.desc'),
     loadRemoteAppAdminSettings().catch(() => null),
   ])
 
   const hydratedCheckins = await Promise.all(checkins.map(hydrateCheckinRow))
+  const hydratedMessages = await Promise.all(messages.map(hydrateMessageRow))
+  const hydratedWorkouts = await Promise.all(workouts.map(hydrateWorkoutRow))
 
   return {
     user: users[0] ? fromUserRow(users[0]) : null,
     students: students.map(fromStudentRow),
     checkins: hydratedCheckins,
     notifications: notifications.map(fromNotificationRow),
-    workouts: workouts.map(fromWorkoutRow),
+    workouts: hydratedWorkouts,
     nutritionPlans: nutritionPlans.map(fromNutritionPlanRow),
     workoutLogs: workoutLogs.map(fromWorkoutLogRow),
-    messages: messages.map(fromMessageRow),
+    messages: hydratedMessages,
     appointments: appointments.map(fromAppointmentRow),
     invoices: invoices.map(fromInvoiceRow),
     assessments: assessments.map(fromAssessmentRow),
@@ -263,6 +310,8 @@ export async function loadRemoteData() {
     invites: invites.map(fromInviteRow),
     anamneses: anamneses.map(fromAnamnesisRow),
     coachSubscription: coachSubscriptions[0] ? fromCoachSubscriptionRow(coachSubscriptions[0]) : null,
+    exerciseLibrary: exerciseLibrary.map(fromExerciseLibraryRow),
+    workoutProgressionDecisions: workoutProgressionDecisions.map(fromWorkoutProgressionDecisionRow),
     appAdminSettings,
   }
 }
@@ -285,47 +334,23 @@ export async function saveRemoteAppAdminSettings(settings) {
   return rows[0]?.settings || settings
 }
 
-
-export async function loadRemoteAdminOverview() {
-  const [users, subscriptions] = await Promise.all([
-    optionalTableRequest('users?select=*&order=created_at.desc'),
-    optionalTableRequest('coach_subscriptions?select=*&order=updated_at.desc'),
-  ])
-
-  return {
-    users: users.map(fromUserRow),
-    subscriptions: subscriptions.map(fromCoachSubscriptionRow),
-  }
+export async function loadRemoteLeadEvents(limit = 120) {
+  const rows = await optionalTableRequest(`lead_events?select=*&order=created_at.desc&limit=${encodeURIComponent(limit)}`)
+  return rows.map(fromLeadEventRow)
 }
 
-export async function updateRemoteAdminCoachSubscription(input = {}) {
-  if (!isUuid(input.coachId)) return null
-
-  const now = new Date().toISOString()
-  const payload = {
-    coach_id: input.coachId,
-    status: input.status || 'active',
-    updated_at: now,
-  }
-
-  if (input.nextBillingAt !== undefined) payload.next_billing_at = input.nextBillingAt || null
-  if (input.currentPeriodEndsAt !== undefined) payload.current_period_ends_at = input.currentPeriodEndsAt || null
-  if (input.paidAt !== undefined) payload.paid_at = input.paidAt || null
-  if (input.provider !== undefined) payload.provider = input.provider || 'manual_admin'
-
-  const rows = await request('coach_subscriptions?on_conflict=coach_id', {
+export async function saveRemoteLeadEvent(event) {
+  const rows = await request('lead_events', {
     method: 'POST',
-    body: JSON.stringify(payload),
-    headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
+    body: JSON.stringify(toLeadEventRow(event)),
   })
-
-  return rows[0] ? fromCoachSubscriptionRow(rows[0]) : null
+  return rows?.[0] ? fromLeadEventRow(rows[0]) : event
 }
 
 export async function loadRemoteMessages(studentId = '') {
   const filter = studentId ? `&student_id=eq.${encodeURIComponent(studentId)}` : ''
   const rows = await request(`messages?select=*${filter}&order=created_at.desc`)
-  return rows.map(fromMessageRow)
+  return Promise.all(rows.map(hydrateMessageRow))
 }
 
 export async function loadRemoteStudentMessages(studentId) {
@@ -336,7 +361,19 @@ export async function loadRemoteStudentMessages(studentId) {
 export async function loadRemoteStudentMessagesByInvite(inviteCode) {
   if (!inviteCode) return []
   const result = await rpcRequest('get_student_messages', { invite_code: inviteCode })
-  return (Array.isArray(result) ? result : []).map(fromMessageRow)
+  return Promise.all((Array.isArray(result) ? result : []).map(hydrateMessageRow))
+}
+
+export async function fetchRemoteExerciseMedia(query) {
+  const search = String(query || '').trim()
+  if (!search) throw new Error('Digite o nome do exercício antes de buscar na biblioteca.')
+
+  const payload = await functionRequest('ascendapi-exercises', { query: search })
+  if (!payload?.exercise) {
+    throw new Error(payload?.message || 'Exercício não encontrado na AscendAPI.')
+  }
+
+  return payload.exercise
 }
 
 export async function upsertRemoteUser(user) {
@@ -489,7 +526,7 @@ async function uploadWorkoutVideo(file, workoutId, exerciseIndex) {
     throw serviceError(response.status, message || 'Erro ao enviar vídeo do exercício')
   }
 
-  return `${SUPABASE_URL}/storage/v1/object/public/${WORKOUT_VIDEO_BUCKET}/${safeName}`
+  return safeName
 }
 
 export async function updateRemotePayment(studentId, payment) {
@@ -511,9 +548,10 @@ export async function markRemoteNotificationsRead() {
 }
 
 export async function createRemoteStudentInvite(studentId, coachId) {
+  const safeCoachId = requireCoachId(coachId)
   const now = encodeURIComponent(new Date().toISOString())
   const activeInvites = await request(
-    `student_invites?student_id=eq.${encodeURIComponent(studentId)}&coach_id=eq.${encodeURIComponent(coachId)}&status=eq.active&expires_at=gt.${now}&order=created_at.desc&limit=1`,
+    `student_invites?student_id=eq.${encodeURIComponent(studentId)}&coach_id=eq.${encodeURIComponent(safeCoachId)}&status=eq.active&expires_at=gt.${now}&order=created_at.desc&limit=1`,
   )
 
   if (activeInvites[0]) {
@@ -524,7 +562,7 @@ export async function createRemoteStudentInvite(studentId, coachId) {
   const rows = await request('student_invites', {
     method: 'POST',
     body: JSON.stringify({
-      coach_id: coachId,
+      coach_id: safeCoachId,
       student_id: studentId,
       code,
       status: 'active',
@@ -543,22 +581,26 @@ export async function loadRemoteStudentByInvite(code) {
   }
 
   const hydratedCheckins = await Promise.all((payload.checkins ?? []).map(hydrateCheckinRow))
+  const hydratedWorkouts = await Promise.all((payload.workouts ?? []).map(hydrateWorkoutRow))
+  const hydratedMessages = await Promise.all((payload.messages ?? []).map(hydrateMessageRow))
 
   const anamnesisResult = await rpcRequest('get_student_anamnesis', { invite_code: code })
   const anamnesis = Array.isArray(anamnesisResult) ? anamnesisResult[0] : anamnesisResult
+  const exerciseLibrary = await optionalTableRequest('exercise_library?select=*&active=eq.true&order=muscle_group.asc,name.asc')
 
   return {
     invite: fromInviteRow(invite),
     student: fromStudentRow(payload.student),
     consentAccepted: Boolean(payload.consent_accepted),
     checkins: hydratedCheckins,
-    workouts: (payload.workouts ?? []).map(fromWorkoutRow),
+    workouts: hydratedWorkouts,
     nutritionPlans: (payload.nutrition_plans ?? []).map(fromNutritionPlanRow),
     workoutLogs: (payload.workout_logs ?? []).map(fromWorkoutLogRow),
-    messages: (payload.messages ?? []).map(fromMessageRow),
+    messages: hydratedMessages,
     appointments: (payload.appointments ?? []).map(fromAppointmentRow),
     invoices: (payload.invoices ?? []).map(fromInvoiceRow),
     assessments: (payload.assessments ?? []).map(fromAssessmentRow),
+    exerciseLibrary: exerciseLibrary.map(fromExerciseLibraryRow),
     coachSettings: payload.coach_settings ? fromCoachSettingsRow(payload.coach_settings) : null,
     anamnesis: anamnesis?.id ? fromAnamnesisRow(anamnesis) : null,
     anamnesisRequired: payload.student.require_anamnesis !== false,
@@ -569,7 +611,7 @@ export async function loadRemoteStudentByInvite(code) {
 export async function acceptRemoteStudentConsent(code) {
   await rpcRequest('accept_student_consent', {
     invite_code: code,
-    consent_version_value: '1.0',
+    consent_version_value: '2026-07-13-web-pwa',
   })
 
   return loadRemoteStudentByInvite(code)
@@ -585,8 +627,10 @@ export async function submitRemoteStudentAnamnesis(code, answers) {
 }
 
 export async function saveRemoteWorkout(workout, coachId) {
-  const workoutRows = await request('workouts', {
-    method: 'POST',
+  const isUpdatingWorkout = isUuid(workout.id)
+  const workoutPath = isUpdatingWorkout ? `workouts?id=eq.${encodeURIComponent(workout.id)}` : 'workouts'
+  const workoutRows = await request(workoutPath, {
+    method: isUpdatingWorkout ? 'PATCH' : 'POST',
     body: JSON.stringify({
       coach_id: coachId,
       student_id: workout.studentId,
@@ -600,6 +644,12 @@ export async function saveRemoteWorkout(workout, coachId) {
   let exerciseRows = []
   const uploadWarnings = []
   try {
+    if (isUpdatingWorkout) {
+      await request(`workout_exercises?workout_id=eq.${encodeURIComponent(workoutRows[0].id)}`, {
+        method: 'DELETE',
+      })
+    }
+
     const exercises = await Promise.all(workout.exercises.map(async (exercise, index) => {
       let uploadedVideoUrl = ''
       if (exercise.videoFile) {
@@ -621,6 +671,8 @@ export async function saveRemoteWorkout(workout, coachId) {
         equipment: exercise.equipment || null,
         instructions: exercise.instructions || null,
         video_url: uploadedVideoUrl || exercise.videoUrl || null,
+        image_url: exercise.imageUrl || exercise.thumbnailUrl || null,
+        external_id: exercise.ascendapiId || exercise.exerciseId || null,
         order_index: index,
       }
     }))
@@ -632,7 +684,9 @@ export async function saveRemoteWorkout(workout, coachId) {
       })
     }
   } catch (error) {
-    await request(`workouts?id=eq.${workoutRows[0].id}`, { method: 'DELETE' }).catch(() => null)
+    if (!isUpdatingWorkout) {
+      await request(`workouts?id=eq.${workoutRows[0].id}`, { method: 'DELETE' }).catch(() => null)
+    }
     throw error
   }
 
@@ -644,6 +698,27 @@ export async function saveRemoteWorkout(workout, coachId) {
   }
 }
 
+const WORKOUT_METADATA_PREFIX = '[coachfitpro-workout-meta]'
+
+function parseWorkoutMetadata(notes = '') {
+  const line = String(notes || '').split('\n').find((item) => item.trim().startsWith(WORKOUT_METADATA_PREFIX))
+  if (!line) return {}
+  try {
+    const parsed = JSON.parse(line.trim().slice(WORKOUT_METADATA_PREFIX.length))
+    return parsed && typeof parsed === 'object' ? parsed : {}
+  } catch {
+    return {}
+  }
+}
+
+function stripWorkoutMetadata(notes = '') {
+  return String(notes || '')
+    .split('\n')
+    .filter((line) => !line.trim().startsWith(WORKOUT_METADATA_PREFIX))
+    .join('\n')
+    .trim()
+}
+
 export async function archiveRemoteWorkout(workoutId) {
   if (!isUuid(workoutId)) return null
   const rows = await request(`workouts?id=eq.${workoutId}`, {
@@ -653,11 +728,87 @@ export async function archiveRemoteWorkout(workoutId) {
   return rows[0] ? fromWorkoutRow(rows[0]) : null
 }
 
-export async function saveRemoteNutritionPlan(plan, coachId) {
-  const planRows = await request('nutrition_plans', {
+export async function saveRemoteWorkoutProgressionDecision(decision, coachId) {
+  const rows = await request('workout_progression_decisions', {
     method: 'POST',
     body: JSON.stringify({
+      coach_id: coachId || null,
+      student_id: decision.studentId,
+      workout_id: isUuid(decision.workoutId) ? decision.workoutId : null,
+      exercise_name: decision.exerciseName,
+      action: decision.action,
+      suggestion: decision.suggestion,
+      reason: decision.reason,
+      confidence: decision.confidence,
+      status: decision.status || 'approved',
+      previous_target: decision.previousTarget || {},
+      next_target: decision.nextTarget || {},
+      source: decision.source || 'local_rules',
+    }),
+  })
+  return rows[0] ? fromWorkoutProgressionDecisionRow(rows[0]) : decision
+}
+
+async function loadRemoteNutritionMealIdsForCoach(planId, coachId) {
+  try {
+    return await request(`nutrition_meals?select=id,nutrition_plans!inner(coach_id)&nutrition_plan_id=eq.${encodeURIComponent(planId)}&nutrition_plans.coach_id=eq.${encodeURIComponent(coachId)}`)
+  } catch {
+    return request(`nutrition_meals?nutrition_plan_id=eq.${encodeURIComponent(planId)}&select=id`)
+  }
+}
+
+async function saveRemoteNutritionPlanViaRpc(plan, coachId) {
+  const payload = await rpcRequest('save_nutrition_plan', {
+    plan: {
+      id: isUuid(plan.id) ? plan.id : null,
       coach_id: coachId,
+      student_id: plan.studentId,
+      title: plan.title,
+      calories: plan.calories,
+      protein: plan.protein,
+      notes: plan.notes,
+      meals: (plan.meals ?? []).map((meal, index) => ({
+        id: isUuid(meal.id) ? meal.id : null,
+        name: meal.name,
+        foods: meal.foods,
+        macros: meal.macros,
+        time: meal.time,
+        order_index: index,
+      })),
+    },
+  })
+  const row = Array.isArray(payload) ? payload[0] : payload
+  if (!row?.id) {
+    throw new Error('Não foi possível confirmar o salvamento da dieta no banco.')
+  }
+  return fromNutritionPlanRow(row)
+}
+
+export async function saveRemoteNutritionPlan(plan, coachId) {
+  const safeCoachId = requireCoachId(coachId)
+  try {
+    const normalizedPlan = await saveRemoteNutritionPlanViaRpc(plan, safeCoachId)
+    return {
+      ...normalizedPlan,
+      clientRequestId: plan.clientRequestId,
+      createdAt: plan.createdAt,
+      meals: normalizedPlan.meals.map((meal, index) => ({
+        ...meal,
+        items: plan.meals?.[index]?.items ?? [],
+      })),
+    }
+  } catch (rpcError) {
+    if (!/PGRST202|save_nutrition_plan|function/i.test(rpcError?.message || '')) {
+      throw rpcError
+    }
+  }
+
+  const isUpdatingNutritionPlan = isUuid(plan.id)
+  const planPath = isUpdatingNutritionPlan ? `nutrition_plans?id=eq.${encodeURIComponent(plan.id)}&coach_id=eq.${encodeURIComponent(safeCoachId)}` : 'nutrition_plans'
+  const planRows = await request(planPath, {
+    method: isUpdatingNutritionPlan ? 'PATCH' : 'POST',
+    body: JSON.stringify({
+      coach_id: safeCoachId,
       student_id: plan.studentId,
       title: plan.title,
       calories: plan.calories,
@@ -667,39 +818,72 @@ export async function saveRemoteNutritionPlan(plan, coachId) {
     }),
   })
 
+  if (!planRows?.[0]) {
+    throw new Error('Não foi possível confirmar o salvamento da dieta no banco. Verifique o vínculo do aluno com sua conta.')
+  }
   const savedPlan = planRows[0]
-  const meals = plan.meals.map((meal, index) => ({
-    nutrition_plan_id: savedPlan.id,
-    name: meal.name,
-    foods: meal.foods,
-    macros: meal.macros,
-    time_label: meal.time,
-    order_index: index,
-  }))
+  const previousMealRows = isUpdatingNutritionPlan
+    ? await loadRemoteNutritionMealIdsForCoach(savedPlan.id, safeCoachId).catch(() => [])
+    : []
+  const currentMealIds = new Set((plan.meals ?? []).map((meal) => meal.id).filter(Boolean).map(String))
+  const removedMealIds = previousMealRows
+    .map((meal) => meal.id)
+    .filter((mealId) => mealId && !currentMealIds.has(String(mealId)))
 
-  let mealRows = []
-  try {
-    mealRows = meals.length
-      ? await request('nutrition_meals', {
-        method: 'POST',
-        body: JSON.stringify(meals),
-      })
-      : []
-  } catch (error) {
-    await request(`nutrition_plans?id=eq.${savedPlan.id}`, { method: 'DELETE' }).catch(() => null)
-    throw error
+  const savedMeals = []
+  for (const [index, meal] of (plan.meals ?? []).entries()) {
+    const mealPayload = {
+      nutrition_plan_id: savedPlan.id,
+      name: meal.name,
+      foods: meal.foods,
+      macros: meal.macros,
+      time_label: meal.time,
+      order_index: index,
+    }
+    const isExistingMeal = isUpdatingNutritionPlan && meal.id && previousMealRows.some((row) => String(row.id) === String(meal.id))
+    const mealPath = isExistingMeal
+      ? `nutrition_meals?id=eq.${encodeURIComponent(meal.id)}&nutrition_plan_id=eq.${encodeURIComponent(savedPlan.id)}`
+      : 'nutrition_meals'
+    const mealRows = await request(mealPath, {
+      method: isExistingMeal ? 'PATCH' : 'POST',
+      body: JSON.stringify(mealPayload),
+    })
+    savedMeals.push(mealRows?.[0] ?? { ...mealPayload, id: meal.id })
   }
 
-  return fromNutritionPlanRow({ ...savedPlan, nutrition_meals: mealRows })
+  for (const mealId of removedMealIds) {
+    await request(`nutrition_meals?id=eq.${encodeURIComponent(mealId)}&nutrition_plan_id=eq.${encodeURIComponent(savedPlan.id)}`, { method: 'DELETE' }).catch(() => null)
+  }
+
+  const normalizedPlan = fromNutritionPlanRow({ ...savedPlan, nutrition_meals: savedMeals })
+  return {
+    ...normalizedPlan,
+    clientRequestId: plan.clientRequestId,
+    createdAt: plan.createdAt,
+    meals: normalizedPlan.meals.map((meal, index) => ({
+      ...meal,
+      id: meal.id ?? plan.meals?.[index]?.id,
+      items: plan.meals?.[index]?.items ?? [],
+    })),
+  }
 }
 
-export async function archiveRemoteNutritionPlan(planId) {
+export async function saveRemoteNutritionQuestionnaire() {
+  // Remote nutrition questionnaires require Supabase schema setup before server persistence.
+  throw new Error('Questionários de nutrição ainda precisam da atualização de schema no Supabase para sincronização remota.')
+}
+
+export async function archiveRemoteNutritionPlan(planId, coachId, active = false) {
   if (!isUuid(planId)) return null
-  const rows = await request(`nutrition_plans?id=eq.${planId}`, {
+  const safeCoachId = requireCoachId(coachId)
+  const rows = await request(`nutrition_plans?id=eq.${planId}&coach_id=eq.${encodeURIComponent(safeCoachId)}`, {
     method: 'PATCH',
-    body: JSON.stringify({ active: false }),
+    body: JSON.stringify({ active: Boolean(active) }),
   })
-  return rows[0] ? fromNutritionPlanRow(rows[0]) : null
+  if (!rows?.[0]) {
+    throw new Error(active ? 'Não foi possível confirmar a restauração da dieta no banco.' : 'Não foi possível confirmar o arquivamento da dieta no banco.')
+  }
+  return fromNutritionPlanRow(rows[0])
 }
 
 export async function saveRemoteWorkoutLog(log) {
@@ -745,7 +929,7 @@ export async function saveRemoteMessage(message) {
       attachment_type: attachmentType || null,
       attachment_name: attachmentName || null,
     })
-    return fromMessageRow(Array.isArray(result) ? result[0] : result)
+    return hydrateMessageRow(Array.isArray(result) ? result[0] : result)
   }
 
   const rows = await request('messages', {
@@ -762,7 +946,7 @@ export async function saveRemoteMessage(message) {
     }),
   })
 
-  return fromMessageRow(rows[0])
+  return hydrateMessageRow(rows[0])
 }
 
 async function uploadMessageAttachment(file, studentId, inviteCode = '') {
@@ -783,7 +967,7 @@ async function uploadMessageAttachment(file, studentId, inviteCode = '') {
     throw serviceError(response.status, message || 'Erro ao enviar anexo da conversa')
   }
 
-  return `${SUPABASE_URL}/storage/v1/object/public/${MESSAGE_ATTACHMENT_BUCKET}/${safeName}`
+  return safeName
 }
 
 export async function markRemoteStudentMessagesRead(studentId) {
@@ -913,7 +1097,7 @@ export async function saveRemoteCoachSettings(settings, coachId) {
   return fromCoachSettingsRow(rows[0])
 }
 
-function toSession(payload, fallbackName, fallbackEmail) {
+function toSession(payload, fallbackName, fallbackEmail, fallbackRole = 'Coach principal') {
   const user = payload.user ?? {}
   const metadata = user.user_metadata ?? {}
 
@@ -926,7 +1110,7 @@ function toSession(payload, fallbackName, fallbackEmail) {
       id: user.id,
       name: metadata.name || fallbackName || user.email || 'Coach',
       email: user.email || fallbackEmail,
-      role: 'Coach principal',
+      role: metadata.role || fallbackRole || 'Coach principal',
     },
   }
 }
@@ -938,6 +1122,29 @@ function fromUserRow(row) {
     email: row.email,
     role: row.role ?? 'Coach principal',
     createdAt: row.created_at,
+  }
+}
+
+function fromLeadEventRow(row) {
+  return {
+    id: row.id,
+    type: row.event_type,
+    email: row.email ?? '',
+    planId: row.plan_id ?? '',
+    attribution: row.attribution ?? {},
+    metadata: row.metadata ?? {},
+    createdAt: row.created_at,
+  }
+}
+
+function toLeadEventRow(event = {}) {
+  return {
+    event_type: event.type || event.eventType || 'visit',
+    email: event.email || event.metadata?.email || null,
+    plan_id: event.planId || event.metadata?.planId || null,
+    attribution: event.attribution || {},
+    metadata: event.metadata || {},
+    created_at: event.createdAt || new Date().toISOString(),
   }
 }
 
@@ -973,6 +1180,13 @@ function toUserRow(user) {
   }
 }
 
+function requireCoachId(coachId) {
+  if (!isUuid(coachId)) {
+    throw new Error('Sessão do treinador não identificada. Saia e entre novamente antes de cadastrar alunos.')
+  }
+  return coachId
+}
+
 function fromStudentRow(row) {
   return {
     id: row.id,
@@ -1003,7 +1217,7 @@ function fromStudentRow(row) {
 
 function toStudentRow(student, coachId) {
   return {
-    coach_id: coachId || null,
+    coach_id: requireCoachId(coachId),
     name: student.name,
     email: student.email,
     phone: student.phone,
@@ -1057,15 +1271,55 @@ async function hydrateCheckinRow(row) {
 }
 
 async function signCheckinPhoto(storageValue) {
-  const path = extractStoragePath(storageValue)
+  return signStorageObject(PHOTO_BUCKET, storageValue, 60 * 60)
+}
+
+async function hydrateMessageRow(row) {
+  const message = fromMessageRow(row)
+  if (!message.attachmentUrl) return message
+
+  const path = extractStoragePath(message.attachmentUrl, MESSAGE_ATTACHMENT_BUCKET)
+  if (!path) return message
+
+  const signedUrl = await signStorageObject(MESSAGE_ATTACHMENT_BUCKET, path, 60 * 60).catch(() => '')
+  return {
+    ...message,
+    attachmentPath: path,
+    attachmentUrl: signedUrl || message.attachmentUrl,
+  }
+}
+
+async function hydrateWorkoutRow(row) {
+  const workout = fromWorkoutRow(row)
+  const exercises = await Promise.all(workout.exercises.map(async (exercise) => {
+    const path = extractStoragePath(exercise.videoUrl, WORKOUT_VIDEO_BUCKET)
+    if (!path || /^https?:\/\//i.test(path)) return exercise
+
+    const signedUrl = await signStorageObject(WORKOUT_VIDEO_BUCKET, path, 60 * 60).catch(() => '')
+    return {
+      ...exercise,
+      videoPath: path,
+      videoUrl: signedUrl || exercise.videoUrl,
+    }
+  }))
+
+  return { ...workout, exercises }
+}
+
+async function signStorageObject(bucket, storageValue, expiresIn = 3600) {
+  if (/^https?:\/\//i.test(String(storageValue || '')) && !String(storageValue).includes('/storage/v1/object/')) {
+    return String(storageValue)
+  }
+
+  const path = extractStoragePath(storageValue, bucket)
   if (!path) return ''
 
   const response = await fetchWithTimeout(
-    `${SUPABASE_URL}/storage/v1/object/sign/${PHOTO_BUCKET}/${encodeStoragePath(path)}`,
+    `${SUPABASE_URL}/storage/v1/object/sign/${bucket}/${encodeStoragePath(path)}`,
     {
       method: 'POST',
       headers: authHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify({ expiresIn: 60 * 60 }),
+      body: JSON.stringify({ expiresIn }),
     },
   )
 
@@ -1079,20 +1333,25 @@ async function signCheckinPhoto(storageValue) {
   return signedPath.startsWith('http') ? signedPath : `${SUPABASE_URL}${signedPath}`
 }
 
-function extractStoragePath(value) {
+function extractStoragePath(value, bucket = PHOTO_BUCKET) {
   if (!value) return ''
-  const publicMarker = `/storage/v1/object/public/${PHOTO_BUCKET}/`
-  const signedMarker = `/storage/v1/object/sign/${PHOTO_BUCKET}/`
-
-  if (value.includes(publicMarker)) {
-    return decodeURIComponent(value.split(publicMarker)[1].split('?')[0])
+  const normalized = String(value)
+  if (!/^https?:\/\//i.test(normalized) && !normalized.includes('/storage/v1/object/')) {
+    return normalized.replace(/^\/+/, '')
   }
 
-  if (value.includes(signedMarker)) {
-    return decodeURIComponent(value.split(signedMarker)[1].split('?')[0])
+  const publicMarker = `/storage/v1/object/public/${bucket}/`
+  const signedMarker = `/storage/v1/object/sign/${bucket}/`
+
+  if (normalized.includes(publicMarker)) {
+    return decodeURIComponent(normalized.split(publicMarker)[1].split('?')[0])
   }
 
-  return String(value).replace(/^\/+/, '')
+  if (normalized.includes(signedMarker)) {
+    return decodeURIComponent(normalized.split(signedMarker)[1].split('?')[0])
+  }
+
+  return normalized
 }
 
 function encodeStoragePath(path) {
@@ -1131,12 +1390,19 @@ function fromInviteRow(row) {
 }
 
 function fromAnamnesisRow(row) {
+  const answers = row.answers && typeof row.answers === 'object' ? row.answers : {}
   return {
     id: row.id,
     coachId: row.coach_id,
     studentId: row.student_id,
     inviteId: row.invite_id,
+    answers,
     birthDate: row.birth_date ?? '',
+    biologicalSex: row.biological_sex ?? answers.biologicalSex ?? answers.gender ?? '',
+    gender: row.gender ?? row.sex ?? row.biological_sex ?? answers.biologicalSex ?? answers.gender ?? '',
+    heightCm: row.height_cm ?? answers.heightCm ?? '',
+    weightKg: row.weight_kg ?? answers.weightKg ?? '',
+    activityLevel: row.activity_level ?? answers.activityLevel ?? '',
     occupation: row.occupation ?? '',
     trainingExperience: row.training_experience ?? '',
     trainingFrequency: row.training_frequency ?? '',
@@ -1159,14 +1425,24 @@ function fromAnamnesisRow(row) {
 }
 
 function fromWorkoutRow(row) {
+  const workoutMetadata = parseWorkoutMetadata(row.notes)
   return {
     id: row.id,
     coachId: row.coach_id,
     studentId: row.student_id,
     title: row.title ?? '',
     focus: row.focus ?? '',
-    notes: row.notes ?? '',
-    active: Boolean(row.active),
+    notes: stripWorkoutMetadata(row.notes ?? ''),
+    level: workoutMetadata.level ?? '',
+    frequency: workoutMetadata.frequency ?? '',
+    organization: workoutMetadata.organization ?? '',
+    displayMode: workoutMetadata.displayMode ?? '',
+    guidance: workoutMetadata.guidance ?? '',
+    allowStudentPdfDownload: Boolean(workoutMetadata.allowStudentPdfDownload),
+    days: Array.isArray(workoutMetadata.days) ? workoutMetadata.days : undefined,
+    active: row.active !== false,
+    createdAt: row.created_at ?? '',
+    updatedAt: row.updated_at ?? row.created_at ?? '',
     exercises: (row.workout_exercises ?? [])
       .slice()
       .sort((a, b) => Number(a.order_index ?? 0) - Number(b.order_index ?? 0))
@@ -1178,14 +1454,59 @@ function fromWorkoutRow(row) {
         load: exercise.load ?? '',
         rest: exercise.rest ?? '',
         muscleGroup: exercise.muscle_group ?? '',
+        primaryMuscle: exercise.primary_muscle ?? '',
+        secondaryMuscles: Array.isArray(exercise.secondary_muscles) ? exercise.secondary_muscles : [],
         equipment: exercise.equipment ?? '',
         instructions: exercise.instructions ?? '',
         videoUrl: exercise.video_url ?? '',
+        imageUrl: exercise.image_url ?? '',
+        thumbnailUrl: exercise.image_url ?? '',
+        ascendapiId: exercise.external_id ?? '',
       })),
   }
 }
 
+function fromExerciseLibraryRow(row) {
+  return {
+    id: row.id,
+    name: row.name ?? '',
+    group: row.muscle_group ?? row.group_name ?? '',
+    primaryMuscle: row.primary_muscle ?? '',
+    secondaryMuscles: Array.isArray(row.secondary_muscles) ? row.secondary_muscles : [],
+    equipment: row.equipment ?? '',
+    cues: row.instructions ?? row.cues ?? '',
+    videoUrl: row.video_url ?? '',
+    thumbnailUrl: row.thumbnail_url ?? row.image_url ?? '',
+    imageUrl: row.image_url ?? row.thumbnail_url ?? '',
+    externalId: row.external_id ?? row.exercise_id ?? '',
+    exerciseId: row.external_id ?? row.exercise_id ?? '',
+    muscleMap: row.muscle_map ?? '',
+    aliases: Array.isArray(row.aliases) ? row.aliases : [],
+    source: 'supabase',
+  }
+}
+
+function fromWorkoutProgressionDecisionRow(row) {
+  return {
+    id: row.id,
+    coachId: row.coach_id,
+    studentId: row.student_id,
+    workoutId: row.workout_id,
+    exerciseName: row.exercise_name ?? '',
+    action: row.action ?? '',
+    suggestion: row.suggestion ?? '',
+    reason: row.reason ?? '',
+    confidence: row.confidence ?? '',
+    status: row.status ?? '',
+    previousTarget: row.previous_target ?? {},
+    nextTarget: row.next_target ?? {},
+    source: row.source ?? 'local_rules',
+    createdAt: row.created_at,
+  }
+}
+
 function fromNutritionPlanRow(row) {
+  const metadata = parseNutritionPlanMetadata(row.notes)
   return {
     id: row.id,
     coachId: row.coach_id,
@@ -1193,19 +1514,35 @@ function fromNutritionPlanRow(row) {
     title: row.title ?? '',
     calories: row.calories ?? '',
     protein: row.protein ?? '',
-    notes: row.notes ?? '',
-    active: Boolean(row.active),
+    notes: stripNutritionPlanMetadata(row.notes ?? ''),
+    active: row.active !== false,
     meals: (row.nutrition_meals ?? [])
       .slice()
       .sort((a, b) => Number(a.order_index ?? 0) - Number(b.order_index ?? 0))
-      .map((meal) => ({
+      .map((meal, index) => ({
         id: meal.id,
         name: meal.name ?? '',
         foods: meal.foods ?? '',
         macros: meal.macros ?? '',
         time: meal.time_label ?? '',
+        items: metadata.meals?.find((item) => String(item.id) === String(meal.id))?.items ?? metadata.meals?.[index]?.items ?? [],
       })),
   }
+}
+
+function parseNutritionPlanMetadata(notes = '') {
+  const markerIndex = String(notes || '').indexOf(NUTRITION_PLAN_METADATA_PREFIX)
+  if (markerIndex < 0) return {}
+  try {
+    return JSON.parse(String(notes).slice(markerIndex + NUTRITION_PLAN_METADATA_PREFIX.length).trim()) || {}
+  } catch {
+    return {}
+  }
+}
+
+function stripNutritionPlanMetadata(notes = '') {
+  const markerIndex = String(notes || '').indexOf(NUTRITION_PLAN_METADATA_PREFIX)
+  return markerIndex >= 0 ? String(notes).slice(0, markerIndex).trim() : String(notes || '')
 }
 
 function fromWorkoutLogRow(row) {
