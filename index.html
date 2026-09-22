@@ -16689,7 +16689,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V266</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V267</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19275,7 +19275,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V266";
+const APP_BUILD_VERSION="V267";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -21488,7 +21488,13 @@ async function flushCriticalRecordQueues(){
   return results.every(Boolean);
 }
 
-async function flushStrictSharedSave(){
+let strictSharedFlushPromiseV267=null;
+function flushStrictSharedSave(){
+  if(strictSharedFlushPromiseV267)return strictSharedFlushPromiseV267;
+  strictSharedFlushPromiseV267=strictSharedSaveWorkerV267().finally(()=>{strictSharedFlushPromiseV267=null;});
+  return strictSharedFlushPromiseV267;
+}
+async function strictSharedSaveWorkerV267(){
   if(strictSharedFlushBusy)return false;
 
   const tokenAtStart=latestSharedSaveToken||readSharedSavePending()?.token||"";
@@ -21504,7 +21510,8 @@ async function flushStrictSharedSave(){
   try{
     setSaveUiState("saving","enviando para Supabase",true);
 
-    const stateOk=await cloudSaveNow();
+    // As duas confirmações são independentes; ambas continuam obrigatórias.
+    const [stateOk,recordsOk]=await Promise.all([cloudSaveNow(),flushCriticalRecordQueues()]);
 
     if(tokenAtStart&&latestSharedSaveToken&&String(tokenAtStart)!==String(latestSharedSaveToken)){
       markSharedSavePending("painel","há alteração mais recente aguardando envio",latestSharedSaveToken);
@@ -21512,8 +21519,6 @@ async function flushStrictSharedSave(){
       scheduleCloudSaveRetry();
       return false;
     }
-
-    const recordsOk=await flushCriticalRecordQueues();
 
     if(stateOk&&recordsOk){
       markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
@@ -28431,7 +28436,7 @@ function persistLaunchControlV231(l){
   save();
   render();
   flushInfluencerLaunchPendingQueue()
-    .then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}))
+    .then(ok=>{if(ok)render();})
     .catch(()=>{});
 }
 
@@ -33148,13 +33153,73 @@ function renderReport(){
   }
 }
 
+let reportPrintPromiseV267=null;
+function reportAcknowledgeConflictsV267(influencerId){
+  const belongs=record=>String(record?.influencerId||"")===String(influencerId);
+  const launches=coreReadLocalV211(INFLUENCER_LAUNCH_CONFLICT_KEY_V209,[]);
+  const core=coreReadLocalV211(CORE_CONFLICTS_KEY_V211,[]);
+  const hasConflict=(Array.isArray(launches)?launches:[]).some(item=>belongs(item.localRecord)||belongs(item.remoteRecord))||
+    (Array.isArray(core)?core:[]).some(item=>belongs(item.payload)||belongs(item.official?.payload)||
+      (item.module==="influencers"&&String(item.recordId)===String(influencerId)));
+  if(!hasConflict)return true;
+  return confirm("Há conflitos de edição preservados no histórico deste parceiro. Uma alteração local pode não ter sido aplicada. Deseja exportar SOMENTE os valores oficiais confirmados no Supabase? Cancele para conferir os conflitos primeiro.");
+}
+async function reportEnsureConfirmedV267(){
+  if(navigator.onLine===false||!coreReadyV211)return false;
+  const conflicts=launchConflictRevisionV267;
+  const coreConflicts=JSON.stringify(coreReadLocalV211(CORE_CONFLICTS_KEY_V211,[]));
+  // Capturar pagamentos/resgates pendentes antes de consultar os saldos oficiais.
+  clearTimeout(coreCaptureTimerV211);
+  coreCaptureAndQueueV211();
+  const saved=await Promise.all([
+    flushInfluencerLaunchPendingQueue(),coreFlushOutboxV211(),
+    readSharedSavePending()?flushStrictSharedSave():Promise.resolve(true)
+  ]);
+  if(!saved.every(Boolean))return false;
+  const refreshed=await Promise.all([
+    syncInfluencerLaunchRecordsFromCloud({showStatus:false}),
+    coreSyncFromCloudV211({showStatus:false})
+  ]);
+  return refreshed.every(Boolean)&&navigator.onLine!==false&&
+    !readInfluencerLaunchPendingQueue().length&&!coreOutboxV211.length&&
+    conflicts===launchConflictRevisionV267&&
+    coreConflicts===JSON.stringify(coreReadLocalV211(CORE_CONFLICTS_KEY_V211,[]));
+}
 function printReport(){
-  if(!$("reportInfluencer").value){alert("Selecione um influencer.");return}
-  renderReport();
-  document.body.classList.remove("print-accumulation");
-  document.body.classList.add("print-report");
-  window.print();
-  setTimeout(()=>document.body.classList.remove("print-report"),500);
+  if(reportPrintPromiseV267)return reportPrintPromiseV267;
+  const influencerId=$("reportInfluencer").value;
+  if(!influencerId){alert("Selecione um influencer.");return Promise.resolve(false);}
+  if(!reportAcknowledgeConflictsV267(influencerId))return Promise.resolve(false);
+  const month=selectedMonth();
+  const revision=launchEditRevisionV267;
+  const saveToken=latestSharedSaveToken;
+  showUndoToast("Conferindo lançamentos e comissões antes de gerar o PDF...");
+  reportPrintPromiseV267=(async()=>{
+    try{
+      const confirmed=await timeoutBool(reportEnsureConfirmedV267(),30000);
+      if(!confirmed){
+        alert("PDF não gerado: ainda não foi possível confirmar os lançamentos e as comissões no Supabase. Os dados locais continuam preservados. Aguarde a sincronização e tente novamente.");
+        return false;
+      }
+      if(influencerId!==$("reportInfluencer").value||month!==selectedMonth()||
+        revision!==launchEditRevisionV267||saveToken!==latestSharedSaveToken||
+        readInfluencerLaunchPendingQueue().length||coreOutboxV211.length){
+        alert("O relatório ou os dados mudaram durante a conferência. Clique novamente em Exportar PDF para usar a seleção e os valores atuais.");
+        return false;
+      }
+      renderReport();
+      document.body.classList.remove("print-accumulation");
+      document.body.classList.add("print-report");
+      window.print();
+      setTimeout(()=>document.body.classList.remove("print-report"),500);
+      return true;
+    }catch(error){
+      document.body.classList.remove("print-report");
+      alert("Não foi possível concluir o PDF. Nenhum dado foi apagado. Tente novamente após a sincronização.");
+      return false;
+    }finally{reportPrintPromiseV267=null;}
+  })();
+  return reportPrintPromiseV267;
 }
 
 function markReportSent(){
@@ -44198,7 +44263,7 @@ $("launchForm").addEventListener("submit",e=>{
     .then(ok=>{
       if(ok){
         showUndoToast("Lançamento salvo e blindado na nuvem.");
-        return syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+        render();
       }
     })
     .catch(()=>{});
@@ -44625,6 +44690,13 @@ let launchSyncPromiseV209=null;
 let launchSyncRequestedV209=false;
 let launchRealtimeDebounceV209=null;
 let launchBroadcastV209=null;
+// V267: coordenação de operações; nenhuma chave/tabela de dados foi trocada.
+let launchFlushPromiseV267=null;
+let launchEditRevisionV267=0;
+let launchConflictRevisionV267=0;
+let launchLastFullSyncV267=0;
+let launchLastAutoAttemptV267=0;
+let launchRealtimeSeenV267=[];
 
 function launchV209Now(){return new Date().toISOString();}
 function launchV209MutationId(id,operation="upsert"){
@@ -44849,6 +44921,11 @@ function launchV209NormalizeOutboxEntry(entry){
     attempts:Math.max(0,Number(entry?.attempts||0)),
     status:String(entry?.status||"pending"),
     migrationCandidate:!!entry?.migrationCandidate,
+    supersedesMutationId:String(entry?.supersedesMutationId||""),
+    ancestorMutationIds:[...new Set([
+      ...(Array.isArray(entry?.ancestorMutationIds)?entry.ancestorMutationIds:[]),
+      entry?.supersedesMutationId
+    ].filter(value=>typeof value==="string"&&value))],
     lastError:String(entry?.lastError||"")
   };
 }
@@ -44875,6 +44952,7 @@ function writeInfluencerLaunchPendingQueue(queue){
 }
 function launchV209QueueEntry(record,{migrationCandidate=false}={}){
   if(!record?.id)return false;
+  launchEditRevisionV267+=1;
   const id=String(record.id);
   const operation=record.deleted===true?"delete":"upsert";
   const queue=readInfluencerLaunchPendingQueue();
@@ -44888,6 +44966,8 @@ function launchV209QueueEntry(record,{migrationCandidate=false}={}){
     operation,
     baseVersion,
     mutationId:launchV209MutationId(id,operation),
+    supersedesMutationId:previous?.supersedesMutationId||previous?.mutationId||"",
+    ancestorMutationIds:[...(previous?.ancestorMutationIds||[]),...(previous?[previous.mutationId]:[])],
     queuedAt:launchV209Now(),
     attempts:0,
     status:"pending",
@@ -45031,6 +45111,8 @@ async function launchV209CallMutation(entry){
   return result;
 }
 function launchV209SaveConflict(entry,remoteRow,reason){
+  launchConflictRevisionV267+=1;
+  if(remoteRow)launchAcceptOfficialRowV267(remoteRow);
   const conflict={
     conflictId:launchV209MutationId(entry.id,"conflict"),
     id:entry.id,
@@ -45061,10 +45143,52 @@ function launchV209UpdateOutboxEntry(updated){
   const next=queue.map(entry=>entry.mutationId===updated.mutationId?launchV209NormalizeOutboxEntry(updated):entry);
   writeInfluencerLaunchPendingQueue(next);
 }
-async function flushInfluencerLaunchPendingQueue(){
+function launchAcceptOfficialRowV267(row){
+  if(!row?.legacy_id)return false;
+  const id=String(row.legacy_id);
+  const previous=launchOfficialRowsV209.get(id);
+  if(previous&&Number(previous.version||0)>Number(row.version||0))return false;
+  launchOfficialRowsV209.set(id,row);
+  launchOfficialVersionByIdV209.set(id,Number(row.version||0));
+  const record=launchV209RowToRecord(row);
+  if(record)launchV209DbPut("records",record);
+  return true;
+}
+function launchAdvanceAncestorV267(entry,row){
+  if(!row||String(entry.id)!==String(row.legacy_id)||Number(entry.baseVersion)>Number(row.version))return false;
+  const ancestors=entry.ancestorMutationIds||[];
+  const index=ancestors.indexOf(String(row.client_mutation_id||""));
+  if(index<0)return false;
+  entry.baseVersion=Number(row.version||0);
+  entry.ancestorMutationIds=ancestors.slice(index+1);
+  entry.supersedesMutationId="";
+  return true;
+}
+function launchAdvanceQueuedDescendantsV267(row){
+  const queue=readInfluencerLaunchPendingQueue();
+  let changed=false;
+  queue.forEach(item=>{if(launchAdvanceAncestorV267(item,row))changed=true;});
+  if(changed)writeInfluencerLaunchPendingQueue(queue);
+}
+function launchConfirmMutationV267(entry,row){
+  if(!row?.legacy_id||String(row.legacy_id)!==String(entry.id)||String(row.client_mutation_id||"")!==entry.mutationId)return false;
+  launchAcceptOfficialRowV267(row);
+  // Reconhece a cadeia causal exata, inclusive substituições antes do envio e F5.
+  launchAdvanceQueuedDescendantsV267(row);
+  launchV209RemoveOutboxMutation(entry.mutationId);
+  return true;
+}
+function flushInfluencerLaunchPendingQueue(){
+  if(launchFlushPromiseV267)return launchFlushPromiseV267;
+  launchFlushPromiseV267=launchFlushPendingWorkerV267().finally(()=>{launchFlushPromiseV267=null;});
+  return launchFlushPromiseV267;
+}
+async function launchFlushPendingWorkerV267(){
   if(launchFlushBusy)return false;
   if(navigator.onLine===false)return false;
   launchFlushBusy=true;
+  const conflictAtStart=launchConflictRevisionV267;
+  let changed=false;
   try{
     await launchV209HydrateDurableState();
     let queue=readInfluencerLaunchPendingQueue();
@@ -45086,10 +45210,16 @@ async function flushInfluencerLaunchPendingQueue(){
       }
 
       const remoteVersion=Math.max(0,Number(remoteRow?.version||0));
+      // Recuperação após F5: reconhecer só o predecessor exato já confirmado.
+      if(launchAdvanceAncestorV267(entry,remoteRow)){
+        launchAdvanceQueuedDescendantsV267(remoteRow);
+        launchV209UpdateOutboxEntry(entry);
+      }
       const hadExplicitBase=Number(entry.baseVersion||0)>0;
 
       if(remoteRow&&String(remoteRow.client_mutation_id||"")===entry.mutationId){
-        launchV209RemoveOutboxMutation(entry.mutationId);
+        launchConfirmMutationV267(entry,remoteRow);
+        changed=true;
         queue=readInfluencerLaunchPendingQueue();
         continue;
       }
@@ -45150,19 +45280,19 @@ async function flushInfluencerLaunchPendingQueue(){
       }
 
       const savedRow=launchV209RpcRecord(result)||await launchV209FetchOne(entry.id,{includeDeleted:true});
-      if(savedRow){
-        launchOfficialRowsV209.set(String(savedRow.legacy_id),savedRow);
-        launchOfficialVersionByIdV209.set(String(savedRow.legacy_id),Number(savedRow.version||0));
-        const savedRecord=launchV209RowToRecord(savedRow);
-        if(savedRecord)launchV209DbPut("records",savedRecord);
+      if(!launchConfirmMutationV267(entry,savedRow)){
+        entry.status="retrying";
+        entry.lastError="Histórico confirmado; aguardando a linha da mesma mutação";
+        launchV209UpdateOutboxEntry(entry);
+        return false;
       }
-      launchV209RemoveOutboxMutation(entry.mutationId);
+      changed=true;
       launchV209ShadowBackup(entry.operation==="delete"
         ?{...entry.record,id:entry.id,deleted:true,deletedAt:launchV209Now()}
         :entry.record);
       queue=readInfluencerLaunchPendingQueue();
     }
-    return true;
+    return conflictAtStart===launchConflictRevisionV267;
   }catch(error){
     console.warn("Outbox V209 preservada para nova tentativa:",error);
     const queue=readInfluencerLaunchPendingQueue();
@@ -45176,6 +45306,9 @@ async function flushInfluencerLaunchPendingQueue(){
     return false;
   }finally{
     launchFlushBusy=false;
+    // Uma resposta parcial nunca substitui todos os lançamentos locais.
+    if(launchOfficialReadyV209)launchV209ApplyOfficialState({renderNow:true});
+    if(changed)launchBroadcastV209?.postMessage({type:"launch-sync",at:Date.now()});
   }
 }
 
@@ -45251,6 +45384,10 @@ function launchV209ReplaceOfficialRows(rows){
   if(launchOfficialRowsV209.size>0&&next.size===0){
     throw new Error("Proteção V209 recusou substituir um conjunto oficial existente por resposta vazia.");
   }
+  // Escritas/Reatime confirmadas durante a consulta prevalecem sobre a resposta antiga.
+  launchOfficialRowsV209.forEach((row,id)=>{
+    if(!next.has(id)||Number(row.version||0)>Number(next.get(id).version||0))next.set(id,row);
+  });
   launchOfficialRowsV209=next;
   launchOfficialVersionByIdV209=new Map([...next.entries()].map(([id,row])=>[id,Number(row.version||0)]));
   launchOfficialReadyV209=true;
@@ -45325,7 +45462,6 @@ function launchV209QueueMissingMigrationCandidates(){
 }
 async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
   if(launchSyncPromiseV209){
-    launchSyncRequestedV209=true;
     return launchSyncPromiseV209;
   }
   launchSyncPromiseV209=(async()=>{
@@ -45333,20 +45469,16 @@ async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
       await launchV209HydrateDurableState();
       const firstRows=await launchV209FetchAllRows();
       launchV209ReplaceOfficialRows(firstRows);
-      const migrated=launchV209QueueMissingMigrationCandidates();
+      launchV209QueueMissingMigrationCandidates();
       const flushed=await flushInfluencerLaunchPendingQueue();
-      if(flushed||migrated){
-        const finalRows=await launchV209FetchAllRows();
-        launchV209ReplaceOfficialRows(finalRows);
-      }
+      launchLastFullSyncV267=Date.now();
       if(showStatus){
         const active=[...launchOfficialRowsV209.values()].filter(row=>!row.deleted_at).length;
         const pending=readInfluencerLaunchPendingQueue().length;
         updateCloudStatus(`Lançamentos protegidos • ${active} registro(s) oficiais${pending?` • ${pending} pendente(s)`:""}`);
         updateCloudDebug("V209: tabela relacional, histórico imutável, Realtime e reconciliação confirmados");
       }
-      launchBroadcastV209?.postMessage({type:"launch-sync",at:Date.now()});
-      return true;
+      return flushed;
     }catch(error){
       console.warn("Fonte oficial V209 indisponível; dados locais não foram apagados:",error);
       if(showStatus){
@@ -45356,27 +45488,21 @@ async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
       return false;
     }finally{
       launchSyncPromiseV209=null;
-      if(launchSyncRequestedV209){
-        launchSyncRequestedV209=false;
-        setTimeout(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}),80);
-      }
     }
   })();
   return launchSyncPromiseV209;
 }
 
 function launchV209RealtimeSeen(){
-  try{
-    const rows=JSON.parse(localStorage.getItem(INFLUENCER_LAUNCH_REALTIME_SEEN_KEY_V209)||"[]");
-    return Array.isArray(rows)?rows.map(String):[];
-  }catch(error){return [];}
+  // Deduplicação por aba: outra aba não pode consumir o evento desta tela.
+  return launchRealtimeSeenV267.slice();
 }
 function launchV209RememberRealtime(fingerprint){
   if(!fingerprint)return false;
   const rows=launchV209RealtimeSeen();
   if(rows.includes(fingerprint))return false;
   rows.push(fingerprint);
-  try{localStorage.setItem(INFLUENCER_LAUNCH_REALTIME_SEEN_KEY_V209,JSON.stringify(rows.slice(-500)));}catch(error){}
+  launchRealtimeSeenV267=rows.slice(-500);
   return true;
 }
 function launchV209RealtimeFingerprint(row,type,table){
@@ -45399,16 +45525,11 @@ async function launchV209ApplyRealtimeEvent(payload){
     }
     const row=await launchV209FetchOne(legacyId,{includeDeleted:true});
     if(row){
-      launchOfficialRowsV209.set(legacyId,row);
-      launchOfficialVersionByIdV209.set(legacyId,Number(row.version||0));
-      launchOfficialReadyV209=true;
-      const record=launchV209RowToRecord(row);
-      if(record)launchV209DbPut("records",record);
-      launchV209ApplyOfficialState({renderNow:true});
+      launchAcceptOfficialRowV267(row);
+      if(launchOfficialReadyV209)launchV209ApplyOfficialState({renderNow:true});
       launchRealtimeLastEventAtV209=Date.now();
       launchV209RememberRealtime(fingerprint);
       updateCloudStatus("Lançamentos sincronizados em tempo real.");
-      launchBroadcastV209?.postMessage({type:"launch-sync",id:legacyId,at:Date.now()});
       return true;
     }
     launchV209RememberRealtime(fingerprint);
@@ -45525,6 +45646,8 @@ function installInfluencerLaunchSyncWatchers(){
   const refresh=()=>{
     if(navigator.onLine===false)return;
     launchV209ConnectRealtime();
+    if(Date.now()-Math.max(launchLastFullSyncV267,launchLastAutoAttemptV267)<30000)return;
+    launchLastAutoAttemptV267=Date.now();
     syncInfluencerLaunchRecordsFromCloud({showStatus:false});
   };
   window.addEventListener("focus",refresh);
@@ -45533,14 +45656,15 @@ function installInfluencerLaunchSyncWatchers(){
     if(document.visibilityState==="visible")refresh();
   });
   window.addEventListener("storage",event=>{
-    if([INFLUENCER_LAUNCH_OUTBOX_KEY_V209,INFLUENCER_LAUNCH_SNAPSHOT_KEY_V209].includes(event?.key))refresh();
+    if(event?.key===INFLUENCER_LAUNCH_OUTBOX_KEY_V209)refresh();
   });
   clearInterval(launchPollTimerV209);
   launchPollTimerV209=setInterval(()=>{
     if(document.hidden||navigator.onLine===false)return;
     launchV209ConnectRealtime();
-    const stale=!launchRealtimeConnectedV209||!launchRealtimeLastEventAtV209||Date.now()-launchRealtimeLastEventAtV209>45000;
-    if(stale)syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+    if(readInfluencerLaunchPendingQueue().length)flushInfluencerLaunchPendingQueue();
+    const interval=launchRealtimeConnectedV209?300000:60000;
+    if(Date.now()-Math.max(launchLastFullSyncV267,launchLastAutoAttemptV267)>=interval)refresh();
   },12000);
 }
 
@@ -45625,6 +45749,10 @@ let coreRealtimeLastEventAtV211=0;
 let coreReconnectAttemptV211=0;
 let coreBroadcastV211=null;
 let coreCaptureTimerV211=null;
+let coreFlushPromiseV267=null;
+let coreSyncPromiseV267=null;
+let coreLastFullSyncV267=0;
+let coreLastAutoAttemptV267=0;
 
 function coreCloneV211(value,fallback=null){
   try{return JSON.parse(JSON.stringify(value));}
@@ -45993,6 +46121,10 @@ async function coreFetchAllV211(){
     if(row)map.set(coreKeyV211(row.module,row.record_id),row);
   });
   const previous=new Map(coreOfficialRowsV211);
+  previous.forEach((row,key)=>{
+    const incoming=map.get(key);
+    if(incoming&&Number(row.version||0)>Number(incoming.version||0))map.set(key,row);
+  });
   if(previous.size&&map.size<previous.size){
     previous.forEach((row,key)=>{if(!map.has(key))map.set(key,row);});
     updateCloudStatus("Resposta incompleta do Supabase bloqueada. O snapshot oficial anterior foi preservado.",true);
@@ -46188,8 +46320,14 @@ async function coreSendEntryV211(entry){
   }
   throw new Error(result?.message||"Supabase não confirmou a operação V211");
 }
-async function coreFlushOutboxV211(){
+function coreFlushOutboxV211(){
+  if(coreFlushPromiseV267)return coreFlushPromiseV267;
+  coreFlushPromiseV267=coreFlushWorkerV267().finally(()=>{coreFlushPromiseV267=null;});
+  return coreFlushPromiseV267;
+}
+async function coreFlushWorkerV267(){
   if(coreFlushBusyV211||navigator.onLine===false||!coreReadyV211)return false;
+  if(!coreOutboxV211.length)return true;
   coreFlushBusyV211=true;
   try{
     let guard=0;
@@ -46219,12 +46357,18 @@ async function coreFlushOutboxV211(){
   }finally{coreFlushBusyV211=false;}
 }
 
-async function coreSyncFromCloudV211({showStatus=false}={}){
+function coreSyncFromCloudV211(options={}){
+  if(coreSyncPromiseV267)return coreSyncPromiseV267;
+  coreSyncPromiseV267=coreSyncWorkerV267(options).finally(()=>{coreSyncPromiseV267=null;});
+  return coreSyncPromiseV267;
+}
+async function coreSyncWorkerV267({showStatus=false}={}){
   if(coreSyncBusyV211||navigator.onLine===false)return false;
   coreSyncBusyV211=true;
   try{
     const localBefore=coreCollectLocalCandidatesV212();
     await coreFetchAllV211();
+    coreLastFullSyncV267=Date.now();
     const reconciliation=coreReconcileLocalWithOfficialV212(localBefore,{queueMissing:true});
     coreApplyRowsToStateV211({renderNow:true});
     if(reconciliation.queued)await coreFlushOutboxV211();
@@ -46332,19 +46476,22 @@ function coreInstallWatchersV211(){
   const refresh=()=>{
     if(navigator.onLine===false)return;
     coreConnectRealtimeV211();
+    if(Date.now()-Math.max(coreLastFullSyncV267,coreLastAutoAttemptV267)<30000)return;
+    coreLastAutoAttemptV267=Date.now();
     coreFlushOutboxV211().then(()=>coreSyncFromCloudV211({showStatus:false}));
   };
   window.addEventListener("focus",refresh);
   window.addEventListener("pageshow",refresh);
   document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")refresh();});
   window.addEventListener("storage",event=>{
-    if([CORE_OUTBOX_KEY_V211,CORE_SNAPSHOT_KEY_V211].includes(event?.key))refresh();
+    if(event?.key===CORE_OUTBOX_KEY_V211)refresh();
   });
   clearInterval(corePollTimerV211);
   corePollTimerV211=setInterval(()=>{
     if(document.hidden||navigator.onLine===false)return;
-    const stale=!coreRealtimeConnectedV211||!coreRealtimeLastEventAtV211||Date.now()-coreRealtimeLastEventAtV211>45000;
-    if(stale)refresh();
+    if(coreOutboxV211.length)coreFlushOutboxV211();
+    const interval=coreRealtimeConnectedV211?300000:60000;
+    if(Date.now()-Math.max(coreLastFullSyncV267,coreLastAutoAttemptV267)>=interval)refresh();
   },15000);
 }
 
