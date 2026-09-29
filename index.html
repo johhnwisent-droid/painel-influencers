@@ -20843,6 +20843,25 @@ function initAuthUi(){
   renderAuthUsers();
 }
 
+let adminAccessLoadPromiseV268=null;
+async function ensureWisentAdminAccessV268(){
+  if(window.WisentAdminAccessV268)return window.WisentAdminAccessV268;
+  if(!adminAccessLoadPromiseV268){
+    adminAccessLoadPromiseV268=import("./wisent-admin-access-v268.mjs?v=268.1")
+      .then(()=>{
+        if(!window.WisentAdminAccessV268){
+          throw new Error("Módulo seguro de administração indisponível.");
+        }
+        return window.WisentAdminAccessV268;
+      })
+      .catch(error=>{
+        adminAccessLoadPromiseV268=null;
+        throw error;
+      });
+  }
+  return adminAccessLoadPromiseV268;
+}
+
 async function handleLoginSubmit(e){
   e.preventDefault();
   normalizeAuthUsers();
@@ -20861,11 +20880,11 @@ async function handleLoginSubmit(e){
   adminPartnerSecureReadyV268=false;
   if(isWisentAdmin()){
     try{
-      if(!window.WisentAdminAccessV268)throw new Error("Módulo seguro ainda não carregado.");
-      await window.WisentAdminAccessV268.signIn(password);
+      const adminAccess=await ensureWisentAdminAccessV268();
+      await adminAccess.signIn(password);
       adminPartnerSecureReadyV268=true;
     }catch(error){
-      console.warn("V268: administração de parceiros indisponível sem afetar o painel.");
+      console.warn("V268: administração de parceiros indisponível sem afetar o painel.",error);
       showUndoToast("Painel liberado. Para criar acessos de parceiros, conclua a ativação segura do ADMIN.");
     }
   }
