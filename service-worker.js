@@ -1,9 +1,16 @@
-const WISENT_VERSION="V267";
-const WISENT_CACHE="wisent-erp-static-v267-sync-20260922";
+const WISENT_VERSION="V268";
+const WISENT_CACHE="wisent-erp-static-v268-partners-product-admin-20260929";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
-const WISENT_STATIC=["./index.html","./pdf-lib.min.js","./manifest.json"];
+const WISENT_STATIC=[
+  "./index.html","./pdf-lib.min.js","./manifest.json",
+  "./parceiros.html","./wisent-partners-v268.css",
+  "./wisent-partners-config-v268.mjs","./wisent-partners-auth-v268.mjs",
+  "./wisent-partners-source-v268.mjs","./wisent-partners-accounting-v268.mjs",
+  "./wisent-partners-report-v268.mjs","./wisent-partners-app-v268.mjs",
+  "./wisent-admin-access-v268.mjs"
+];
 
 async function readStableCacheName(){
   try{
@@ -73,6 +80,19 @@ async function currentOrStableIndex(){
   return previousOrStableIndex();
 }
 
+async function currentOrStableAsset(asset){
+  const current=await caches.open(WISENT_CACHE);
+  const currentAsset=await current.match(asset);
+  if(currentAsset)return currentAsset;
+  const stable=await readStableCacheName();
+  if(stable){
+    const stableCache=await caches.open(stable);
+    const stableAsset=await stableCache.match(asset);
+    if(stableAsset)return stableAsset;
+  }
+  return null;
+}
+
 function offlineRecoveryResponse(){
   const html='<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Private Label</title><body style="margin:0;display:grid;place-items:center;min-height:100vh;padding:24px;box-sizing:border-box;background:#020617;color:#f8fafc;font-family:system-ui,sans-serif"><main style="max-width:440px;padding:24px;border:1px solid #334155;border-radius:18px;background:#0f172a"><h1 style="font-size:20px">Aplicativo temporariamente offline</h1><p style="color:#cbd5e1;line-height:1.5">Não foi possível carregar o arquivo do aplicativo. Seus dados não foram apagados.</p><button onclick="location.reload()" style="width:100%;min-height:46px;border:0;border-radius:10px;background:#2563eb;color:white;font-weight:800">Tentar novamente</button></main></body></html>';
   return new Response(html,{status:503,headers:{"Content-Type":"text/html; charset=utf-8","Cache-Control":"no-store"}});
@@ -114,6 +134,8 @@ self.addEventListener("fetch",event=>{
 
   if(request.mode==="navigate"){
     event.respondWith((async()=>{
+      const partnerNavigation=url.pathname.endsWith("/parceiros.html");
+      const navigationAsset=partnerNavigation?"./parceiros.html":"./index.html";
       if(url.searchParams.get("wisent_rollback")==="1"){
         return (await previousOrStableIndex())||(await currentOrStableIndex())||offlineRecoveryResponse();
       }
@@ -124,15 +146,16 @@ self.addEventListener("fetch",event=>{
         if(contentType.includes("text/html")){
           const html=await response.clone().text();
           if(html.length<1000||!html.toLowerCase().includes("</html>"))throw new Error("HTML incompleto");
-          if(!html.includes('APP_BUILD_VERSION="'+WISENT_VERSION+'"')){
-            throw new Error("index.html de rede ainda não corresponde à "+WISENT_VERSION);
+          const expected=partnerNavigation?'wisent-partners-app-v268.mjs':'APP_BUILD_VERSION="'+WISENT_VERSION+'"';
+          if(!html.includes(expected)){
+            throw new Error("HTML de rede ainda não corresponde à "+WISENT_VERSION);
           }
         }
         const cache=await caches.open(WISENT_CACHE);
-        await cache.put("./index.html",response.clone());
+        await cache.put(navigationAsset,response.clone());
         return response;
       }catch(error){
-        return (await currentOrStableIndex())||offlineRecoveryResponse();
+        return (await currentOrStableAsset(navigationAsset))||offlineRecoveryResponse();
       }
     })());
     return;

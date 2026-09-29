@@ -16613,6 +16613,14 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
 /* ===== FIM V265 CAMADA DIRETA DA FOLHA A4 ===== */
 
 </style>
+<style>
+.partnerAccessDialogV268{border:0;border-radius:20px;padding:0;width:min(520px,calc(100vw - 28px));box-shadow:0 24px 70px rgba(15,23,42,.28);color:var(--text)}
+.partnerAccessDialogV268::backdrop{background:rgba(15,23,42,.58)}
+.partnerAccessCardV268{padding:22px;background:var(--card);display:grid;gap:14px}
+.partnerAccessCardV268 h3{margin:0;font-size:20px}.partnerAccessCardV268 p{margin:0}
+.partnerAccessActionsV268{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}.partnerAccessMessageV268{min-height:18px;font-size:13px;font-weight:800;color:var(--muted)}
+.partnerAccessMessageV268.success{color:var(--success)}.partnerAccessMessageV268.error{color:var(--danger)}
+</style>
 
 </head>
 <body class="page-dashboard authLocked">
@@ -16644,9 +16652,21 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
       <button id="loginSubmitV254" class="primary" type="submit">Entrar no painel</button>
       <p id="loginMsg" class="loginMsg">Carregando dados do painel...</p>
       <p id="loginHintV254" class="loginHint">Login interno simples para rastrear quem fez cada lançamento.</p>
+      <a href="./parceiros.html" class="secondary" style="display:block;text-align:center;text-decoration:none;padding:11px 14px;border-radius:12px;margin-top:10px">Parceiros WISENT →</a>
     </form>
   </div>
 </div>
+
+<dialog id="partnerAccessDialogV268" class="partnerAccessDialogV268 noPrint">
+  <form id="partnerAccessFormV268" class="partnerAccessCardV268" onsubmit="submitPartnerAccessV268(event)">
+    <div><h3>Parceiros WISENT — acesso</h3><p class="muted">Influencer selecionado: <strong id="partnerAccessNameV268">-</strong></p></div>
+    <label>Ação<select id="partnerAccessActionV268" onchange="updatePartnerAccessFieldsV268()"><option value="create">Criar acesso</option><option value="reset_password">Redefinir senha</option><option value="disable">Desativar acesso</option></select></label>
+    <label id="partnerAccessEmailRowV268">E-mail do influencer<input id="partnerAccessEmailV268" type="email" autocomplete="off" placeholder="nome@exemplo.com"></label>
+    <label id="partnerAccessPasswordRowV268">Senha inicial ou nova senha<input id="partnerAccessPasswordV268" type="password" autocomplete="new-password" minlength="10" placeholder="Mínimo de 10 caracteres"></label>
+    <p id="partnerAccessMessageV268" class="partnerAccessMessageV268" role="status" aria-live="polite"></p>
+    <div class="partnerAccessActionsV268"><button type="button" class="secondary" onclick="closePartnerAccessV268()">Cancelar</button><button id="partnerAccessSubmitV268" type="submit" class="primary">Confirmar</button></div>
+  </form>
+</dialog>
 
 <div class="app">
     <div id="pwaUpdateToast" class="pwaUpdateToast noPrint">
@@ -16689,7 +16709,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V267</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V268</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -18984,6 +19004,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
   },12000);
 })();
 </script>
+<script type="module" src="./wisent-admin-access-v268.mjs"></script>
 <script src="./pdf-lib.min.js"></script>
 <script>
 const INITIAL_STATE = {"settings": {"systemName": "Painel de Influencers", "subtitle": "Controle de comissões, acúmulos, produtos, PIX e relatórios", "primaryColor": "#111827", "accentColor": "#2563eb", "backgroundColor": "#f3f4f6", "cardColor": "#ffffff", "textColor": "#111827", "origins": ["Site", "WhatsApp", "Loja física", "Instagram"], "statuses": ["Pendente", "Enviado", "Pago", "Cancelado"], "pdfTitle": "Relatório de comissão", "pdfMessage": "Segue abaixo o resumo de comissão do período selecionado.", "pdfFooter": "Relatório gerado automaticamente pelo painel.", "logo": "", "pdfWatermarkLogo": "", "pdfWatermarkOpacity": 0.12, "pdfWatermarkX": 50, "pdfWatermarkY": 72, "pdfWatermarkSize": 45, "mobileMenuBg": "#0b0f19", "mobileMenuText": "#ffffff", "mobileMenuActiveBg": "#ffffff", "mobileMenuActiveText": "#111827", "mobileBottomBg": "#0b0f19", "mobileBottomText": "#ffffff", "mobileBottomActiveBg": "#ffffff", "mobileBottomActiveText": "#111827", "authUsers": [{"id": "admin", "name": "Administrador", "username": "admin", "password": "1234", "role": "Admin", "active": true}]}, "influencers": [{"id": "LAV", "name": "LAV", "coupon": "LAV", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STEIN", "name": "STEIN", "coupon": "STEIN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "BONADIMAN", "name": "BONADIMAN", "coupon": "BONADIMAN", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LONEWOLF", "name": "LONEWOLF", "coupon": "LONEWOLF", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "ADK10", "name": "ADK10", "coupon": "ADK10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "STUART", "name": "STUART", "coupon": "STUART", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "DAVILA10", "name": "DAVILA10", "coupon": "DAVILA10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "LEANDRO", "name": "LEANDRO", "coupon": "LEANDRO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SENNA", "name": "SENNA", "coupon": "SENNA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "JAPA", "name": "JAPA", "coupon": "JAPA", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "AKILES10", "name": "AKILES10", "coupon": "AKILES10", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "SMANHOTTO", "name": "SMANHOTTO", "coupon": "SMANHOTTO", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}, {"id": "INFLUENCER", "name": "INFLUENCER", "coupon": "INFLUENCER", "productRate": 20, "cashRate": 10, "pix": "", "instagram": "", "whatsapp": ""}], "launches": [], "redemptions": [], "wholesaleRetail": []};
@@ -19275,7 +19296,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V267";
+const APP_BUILD_VERSION="V268";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -20289,6 +20310,7 @@ const esc=v=>String(v??"").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&
 
 const AUTH_SESSION_KEY="painel_login_interno_usuario_v81";
 let currentUser=null;
+let adminPartnerSecureReadyV268=false;
 
 
 const UNDO_KEY=KEY+"_undo_v85";
@@ -20821,7 +20843,7 @@ function initAuthUi(){
   renderAuthUsers();
 }
 
-function handleLoginSubmit(e){
+async function handleLoginSubmit(e){
   e.preventDefault();
   normalizeAuthUsers();
   const username=($("loginUsername")?.value||"").trim();
@@ -20834,8 +20856,20 @@ function handleLoginSubmit(e){
   }
 
   setSessionUser(user);
-  if($("loginPassword"))$("loginPassword").value="";
   hideLoginScreen();
+
+  adminPartnerSecureReadyV268=false;
+  if(isWisentAdmin()){
+    try{
+      if(!window.WisentAdminAccessV268)throw new Error("Módulo seguro ainda não carregado.");
+      await window.WisentAdminAccessV268.signIn(password);
+      adminPartnerSecureReadyV268=true;
+    }catch(error){
+      console.warn("V268: administração de parceiros indisponível sem afetar o painel.");
+      showUndoToast("Painel liberado. Para criar acessos de parceiros, conclua a ativação segura do ADMIN.");
+    }
+  }
+  if($("loginPassword"))$("loginPassword").value="";
 
   /* V266: ao entrar como Admin, consulta primeiro a fonte oficial e só então
      verifica a correção pontual protegida do pedido de Beatriz Costa. */
@@ -20858,6 +20892,8 @@ function handleLoginSubmit(e){
 }
 
 function logoutUser(){
+  adminPartnerSecureReadyV268=false;
+  if(window.WisentAdminAccessV268)window.WisentAdminAccessV268.signOut().catch(()=>{});
   setSessionUser(null);
   showLoginScreen("Você saiu do painel.");
 }
@@ -29958,6 +29994,60 @@ function stopAccumulatingInfluencer(infId){
   }
 }
 function resetInfForm(){$("infForm").reset();$("infId").value="";$("infProductRate").value=20;$("infCashRate").value=10;}
+let partnerAccessTargetV268="";
+let partnerAccessBusyV268=false;
+function updatePartnerAccessFieldsV268(){
+  const action=$("partnerAccessActionV268")?.value||"create";
+  if($("partnerAccessEmailRowV268"))$("partnerAccessEmailRowV268").hidden=action!=="create";
+  if($("partnerAccessPasswordRowV268"))$("partnerAccessPasswordRowV268").hidden=action==="disable";
+}
+function openPartnerAccessV268(influencerId){
+  const influencer=infById(influencerId);
+  if(!isWisentAdmin()||!influencer){alert("Acesso administrativo indisponível.");return;}
+  if(!adminPartnerSecureReadyV268||!window.WisentAdminAccessV268){alert("Entre novamente como ADMIN após concluir a ativação segura no Supabase.");return;}
+  partnerAccessTargetV268=influencer.id;
+  $("partnerAccessNameV268").textContent=`${influencer.name||"Influencer"} • ${influencer.coupon||"sem cupom"}`;
+  $("partnerAccessActionV268").value="create";
+  $("partnerAccessEmailV268").value="";
+  $("partnerAccessPasswordV268").value="";
+  $("partnerAccessMessageV268").textContent="";
+  $("partnerAccessMessageV268").className="partnerAccessMessageV268";
+  updatePartnerAccessFieldsV268();
+  $("partnerAccessDialogV268").showModal();
+}
+function closePartnerAccessV268(){
+  if(partnerAccessBusyV268)return;
+  $("partnerAccessPasswordV268").value="";
+  $("partnerAccessDialogV268").close();
+}
+async function submitPartnerAccessV268(event){
+  event.preventDefault();
+  if(partnerAccessBusyV268)return;
+  const influencer=infById(partnerAccessTargetV268);
+  if(!influencer){alert("O influencer selecionado não está mais disponível.");return;}
+  if(!isWisentAdmin()||!adminPartnerSecureReadyV268||!window.WisentAdminAccessV268){alert("Autenticação administrativa segura necessária.");return;}
+  const action=$("partnerAccessActionV268").value;
+  const emailInput=$("partnerAccessEmailV268");
+  const passwordInput=$("partnerAccessPasswordV268");
+  const message=$("partnerAccessMessageV268");
+  if(action==="disable"&&!confirm(`Desativar o acesso de ${influencer.name}?`))return;
+  partnerAccessBusyV268=true;
+  $("partnerAccessSubmitV268").disabled=true;
+  message.textContent="Processando com segurança...";message.className="partnerAccessMessageV268";
+  try{
+    const result=await window.WisentAdminAccessV268.invoke(action,{influencerId:partnerAccessTargetV268,email:emailInput.value.trim(),password:passwordInput.value});
+    message.textContent=result.status==="created"?"Acesso criado e vinculado com sucesso.":result.status==="disabled"?"Acesso desativado com sucesso.":"Senha redefinida com sucesso.";
+    message.className="partnerAccessMessageV268 success";
+    emailInput.value="";
+  }catch(error){
+    message.textContent=error?.message||"Não foi possível concluir a operação.";
+    message.className="partnerAccessMessageV268 error";
+  }finally{
+    passwordInput.value="";
+    partnerAccessBusyV268=false;
+    $("partnerAccessSubmitV268").disabled=false;
+  }
+}
 function renderInfluencers(){
   const term=($("infSearch")?.value||"").trim().toLowerCase();
   const rows=state.influencers.filter(i=>{
@@ -29972,7 +30062,7 @@ function renderInfluencers(){
     <td><span class="mobileValueText">${Number(i.cashRate||0)}%</span></td>
     <td>${esc(i.instagram||"")}</td>
     <td>${esc(i.whatsapp||"")}</td>
-    <td><button class="small secondary" onclick="editInf('${i.id}')">Editar</button> <button class="small danger" onclick="deleteInf('${i.id}')">Excluir</button></td>
+    <td><button class="small secondary" onclick="editInf('${i.id}')">Editar</button> ${isWisentAdmin()?`<button class="small secondary" onclick="openPartnerAccessV268('${i.id}')">Gerenciar acesso</button>`:""} <button class="small danger" onclick="deleteInf('${i.id}')">Excluir</button></td>
   </tr>`).join(""):`<tr><td colspan="7">${term?"Nenhum influencer encontrado para essa busca.":"Nenhum influencer cadastrado."}</td></tr>`;
 }
 function editInf(id){const i=infById(id);if(!i)return;showPage("influencers");$("infId").value=i.id;$("infName").value=i.name;$("infCoupon").value=i.coupon;$("infProductRate").value=i.productRate;$("infCashRate").value=i.cashRate;$("infInstagram").value=i.instagram||"";$("infWhatsapp").value=i.whatsapp||"";}
@@ -32447,8 +32537,28 @@ function productUsed(infId,period=null){return state.redemptions.filter(r=>{
   if(period&&accumulationHasPeriod(period))return accumulationDateInPeriod(r.date,period);
   return true;
 }).reduce((a,r)=>a+Number(r.used||0),0);}
-function productAvailable(infId){const earned=accumulatedRows().filter(l=>l.influencerId===infId).reduce((a,l)=>a+Number(l.productCommission||0),0);return Math.max(0,earned-productUsed(infId));}
-function renderProductCalc(){const infId=$("productInfluencer").value;const available=productAvailable(infId);$("productAvailable").value=money(available);const value=Number($("productValue").value||0);if(!$("productId").value){$("productUsed").value=Math.min(available,value||available).toFixed(2)}const used=Number($("productUsed").value||0);$("productDifference").value=money(Math.max(0,value-used));}
+function officialProductAvailableV268(infId,dateOrMonth=today()){
+  const raw=String(dateOrMonth||today());
+  const month=/^\d{4}-\d{2}/.test(raw)?raw.slice(0,7):String(today()).slice(0,7);
+  const range=reportMonthRange(month);
+  const balance=reportPdfBalanceForRangeV229(String(infId||""),range.start,range.end);
+  const value=Number(balance?.product||0);
+  return Number.isFinite(value)?Math.max(0,value):0;
+}
+function productAvailable(infId){return officialProductAvailableV268(infId,$("productDate")?.value||today());}
+function renderProductCalc(){const infId=$("productInfluencer").value;const available=officialProductAvailableV268(infId,$("productDate")?.value||today());$("productAvailable").value=money(available);const value=Number($("productValue").value||0);if(!$("productId").value){$("productUsed").value=Math.min(available,value||available).toFixed(2)}const used=Number($("productUsed").value||0);$("productDifference").value=money(Math.max(0,value-used));}
+function refreshProductBalanceV268(reason="state"){
+  if(currentPage!=="products"||!$("productInfluencer")||!$("productAvailable"))return 0;
+  renderProductCalc();
+  return Number(String($("productAvailable").value||"").replace(/[^0-9,-]/g,"").replace(".","").replace(",","."))||0;
+}
+function scheduleProductBalanceRefreshV268(reason="state"){
+  if(scheduleProductBalanceRefreshV268.timer)return;
+  scheduleProductBalanceRefreshV268.timer=setTimeout(()=>{
+    scheduleProductBalanceRefreshV268.timer=null;
+    refreshProductBalanceV268(reason);
+  },0);
+}
 function resetProductForm(){$("productForm").reset();$("productId").value="";$("productDate").value=today();if(state.influencers[0])$("productInfluencer").value=state.influencers[0].id;$("productStatus").value="Pendente";renderProductCalc();}
 function renderProducts(){renderProductCalc();$("productRows").innerHTML=state.redemptions.length?state.redemptions.map(r=>{const i=infById(r.influencerId)||{};return `<tr><td>${dateBR(r.date)}</td><td><span class="mobileKeyText mobileInfluencerName">${esc(i.name||"-")}</span></td><td><span class="mobileCouponText">${esc(i.coupon||"-")}</span></td><td>${esc(r.name)}</td><td><span class="mobileValueText">${money(r.value)}</span></td><td><span class="mobileValueText">${money(r.used)}</span></td><td><span class="mobileValueText">${money(r.difference)}</span></td><td><span class="badge ${r.status==="Pago"||r.status==="Resgatado"?"green":r.status==="Cancelado"?"red":"yellow"}">${esc(r.status)}</span></td><td><button class="small secondary" onclick="editProduct('${r.id}')">Editar</button> <button class="small danger" onclick="deleteProduct('${r.id}')">Excluir</button></td></tr>`}).join(""):`<tr><td colspan="9">Nenhum produto registrado.</td></tr>`;}
 function editProduct(id){const r=state.redemptions.find(x=>x.id===id);if(!r)return;showPage("products");$("productId").value=r.id;$("productDate").value=r.date;$("productInfluencer").value=r.influencerId;$("productName").value=r.name;$("productValue").value=r.value;$("productUsed").value=r.used;$("productStatus").value=r.status;$("productNotes").value=r.notes||"";renderProductCalc();}
@@ -44533,7 +44643,7 @@ if($("wholesaleForm")){
 }
 
 
-$("productInfluencer").addEventListener("change",renderProductCalc);$("productValue").addEventListener("input",renderProductCalc);$("productUsed").addEventListener("input",renderProductCalc);
+$("productInfluencer").addEventListener("change",renderProductCalc);$("productDate").addEventListener("change",renderProductCalc);$("productValue").addEventListener("input",renderProductCalc);$("productUsed").addEventListener("input",renderProductCalc);
 if($("erpOrderForm"))$("erpOrderForm").addEventListener("submit",saveErpOrderFromForm);
 if($("erpClientForm"))$("erpClientForm").addEventListener("submit",saveErpClientFromForm);
 if($("erpStockForm"))$("erpStockForm").addEventListener("submit",saveErpStockFromForm);
