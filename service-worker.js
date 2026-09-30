@@ -1,5 +1,5 @@
 const WISENT_VERSION="V268";
-const WISENT_CACHE="wisent-erp-static-v268-partners-product-admin-20260929b";
+const WISENT_CACHE="wisent-erp-static-v268-partners-product-admin-20260930c";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
@@ -80,14 +80,14 @@ async function currentOrStableIndex(){
   return previousOrStableIndex();
 }
 
-async function currentOrStableAsset(asset){
+async function currentOrStableAsset(asset,matchOptions={}){
   const current=await caches.open(WISENT_CACHE);
-  const currentAsset=await current.match(asset);
+  const currentAsset=await current.match(asset,matchOptions);
   if(currentAsset)return currentAsset;
   const stable=await readStableCacheName();
   if(stable){
     const stableCache=await caches.open(stable);
-    const stableAsset=await stableCache.match(asset);
+    const stableAsset=await stableCache.match(asset,matchOptions);
     if(stableAsset)return stableAsset;
   }
   return null;
@@ -162,7 +162,7 @@ self.addEventListener("fetch",event=>{
   }
 
   event.respondWith((async()=>{
-    const cached=await caches.match(request,{ignoreSearch:true});
+    const cached=await currentOrStableAsset(request,{ignoreSearch:true});
     if(cached)return cached;
     try{
       const response=await fetch(request);

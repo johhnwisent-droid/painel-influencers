@@ -9,7 +9,15 @@ export class AdminAccessV268{
     this.url=endpoint.origin;this.key=key;this.adminEmail=String(adminEmail||'').trim().toLowerCase();this.fetchImpl=fetchImpl;this.storage=storage;
   }
   session(){try{const value=JSON.parse(this.storage.getItem(SESSION_KEY)||'null');return value?.accessToken?value:null;}catch{return null;}}
-  accessToken(){return this.session()?.accessToken||'';}
+  hasValidSession(now=Date.now()){
+    const value=this.session();
+    if(!value?.accessToken||Number(value.expiresAt||0)<=Number(now)+30000){
+      if(value)this.persist(null);
+      return false;
+    }
+    return true;
+  }
+  accessToken(){return this.hasValidSession()?this.session()?.accessToken||'':'';}
   persist(value){
     if(!value){this.storage.removeItem(SESSION_KEY);return null;}
     const safe={accessToken:value.accessToken,refreshToken:value.refreshToken||'',expiresAt:Number(value.expiresAt||0),userId:String(value.userId||'')};
@@ -20,13 +28,20 @@ export class AdminAccessV268{
     if(!this.adminEmail||this.adminEmail==='admin_email_preencher')throw new Error('A configuração segura do ADMIN ainda não foi ativada.');
     try{
       const response=await this.fetchImpl(`${this.url}/auth/v1/token?grant_type=password`,{method:'POST',redirect:'error',cache:'no-store',headers:{apikey:this.key,'Content-Type':'application/json'},body:JSON.stringify({email:this.adminEmail,password:String(password||'')}),signal:AbortSignal.timeout(15000)});
-      if(!response.ok)throw new Error('denied');
-      const data=await response.json();
-      if(!data?.access_token||!data?.user?.id)throw new Error('denied');
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok){
+        const code=String(data?.code||data?.error_code||data?.error||'').toLowerCase();
+        let message='A validação segura do ADMIN não foi concluída.';
+        if(code==='invalid_credentials')message='A senha ADMIN não corresponde à conta Auth do Supabase.';
+        if(code==='email_not_confirmed')message='O e-mail ADMIN ainda não está confirmado no Supabase.';
+        const denied=new Error(message);denied.status=response.status;denied.code=code||'auth_failed';denied.safeAdminAuth=true;throw denied;
+      }
+      if(!data?.access_token||!data?.user?.id){const denied=new Error('A resposta de autenticação do ADMIN ficou incompleta.');denied.status=401;denied.safeAdminAuth=true;throw denied;}
       return this.persist({accessToken:data.access_token,refreshToken:data.refresh_token,expiresAt:Date.now()+Math.max(30,Number(data.expires_in||3600))*1000,userId:data.user.id});
     }catch(error){
       this.persist(null);
-      const neutral=new Error('A validação segura do ADMIN não foi concluída.');neutral.status=401;throw neutral;
+      if(error?.safeAdminAuth)throw error;
+      const neutral=new Error('Não foi possível conectar ao login seguro do Supabase. Tente novamente.');neutral.status=503;throw neutral;
     }
   }
   async invoke(action,payload={}){

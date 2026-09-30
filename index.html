@@ -16620,6 +16620,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
 .partnerAccessCardV268 h3{margin:0;font-size:20px}.partnerAccessCardV268 p{margin:0}
 .partnerAccessActionsV268{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap}.partnerAccessMessageV268{min-height:18px;font-size:13px;font-weight:800;color:var(--muted)}
 .partnerAccessMessageV268.success{color:var(--success)}.partnerAccessMessageV268.error{color:var(--danger)}
+.adminReauthHintV268{font-size:13px;line-height:1.5;color:var(--muted)}
 </style>
 
 </head>
@@ -16665,6 +16666,15 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     <label id="partnerAccessPasswordRowV268">Senha inicial ou nova senha<input id="partnerAccessPasswordV268" type="password" autocomplete="new-password" minlength="10" placeholder="Mínimo de 10 caracteres"></label>
     <p id="partnerAccessMessageV268" class="partnerAccessMessageV268" role="status" aria-live="polite"></p>
     <div class="partnerAccessActionsV268"><button type="button" class="secondary" onclick="closePartnerAccessV268()">Cancelar</button><button id="partnerAccessSubmitV268" type="submit" class="primary">Confirmar</button></div>
+  </form>
+</dialog>
+
+<dialog id="adminReauthDialogV268" class="partnerAccessDialogV268 noPrint">
+  <form id="adminReauthFormV268" class="partnerAccessCardV268" onsubmit="submitAdminReauthV268(event)">
+    <div><h3>Confirmar acesso ADMIN</h3><p class="adminReauthHintV268">Digite a senha da conta ADMIN para liberar o gerenciamento seguro de parceiros no Supabase.</p></div>
+    <label>Senha do ADMIN<input id="adminReauthPasswordV268" type="password" autocomplete="current-password" required placeholder="Digite a senha do ADMIN"></label>
+    <p id="adminReauthMessageV268" class="partnerAccessMessageV268" role="status" aria-live="polite"></p>
+    <div class="partnerAccessActionsV268"><button type="button" class="secondary" onclick="closeAdminReauthV268()">Cancelar</button><button id="adminReauthSubmitV268" type="submit" class="primary">Autenticar e continuar</button></div>
   </form>
 </dialog>
 
@@ -30015,15 +30025,14 @@ function stopAccumulatingInfluencer(infId){
 function resetInfForm(){$("infForm").reset();$("infId").value="";$("infProductRate").value=20;$("infCashRate").value=10;}
 let partnerAccessTargetV268="";
 let partnerAccessBusyV268=false;
+let pendingPartnerAccessTargetV268="";
+let adminReauthBusyV268=false;
 function updatePartnerAccessFieldsV268(){
   const action=$("partnerAccessActionV268")?.value||"create";
   if($("partnerAccessEmailRowV268"))$("partnerAccessEmailRowV268").hidden=action!=="create";
   if($("partnerAccessPasswordRowV268"))$("partnerAccessPasswordRowV268").hidden=action==="disable";
 }
-function openPartnerAccessV268(influencerId){
-  const influencer=infById(influencerId);
-  if(!isWisentAdmin()||!influencer){alert("Acesso administrativo indisponível.");return;}
-  if(!adminPartnerSecureReadyV268||!window.WisentAdminAccessV268){alert("Entre novamente como ADMIN após concluir a ativação segura no Supabase.");return;}
+function showPartnerAccessDialogV268(influencer){
   partnerAccessTargetV268=influencer.id;
   $("partnerAccessNameV268").textContent=`${influencer.name||"Influencer"} • ${influencer.coupon||"sem cupom"}`;
   $("partnerAccessActionV268").value="create";
@@ -30033,6 +30042,62 @@ function openPartnerAccessV268(influencerId){
   $("partnerAccessMessageV268").className="partnerAccessMessageV268";
   updatePartnerAccessFieldsV268();
   $("partnerAccessDialogV268").showModal();
+}
+async function openPartnerAccessV268(influencerId){
+  const influencer=infById(influencerId);
+  if(!isWisentAdmin()||!influencer){alert("Acesso administrativo indisponível.");return;}
+  let adminAccess;
+  try{adminAccess=await ensureWisentAdminAccessV268();}
+  catch(error){alert("O módulo seguro do ADMIN não foi carregado. Atualize a página e tente novamente.");return;}
+  if(adminAccess.hasValidSession()){
+    adminPartnerSecureReadyV268=true;
+    showPartnerAccessDialogV268(influencer);
+    return;
+  }
+  adminPartnerSecureReadyV268=false;
+  pendingPartnerAccessTargetV268=influencer.id;
+  $("adminReauthPasswordV268").value="";
+  $("adminReauthMessageV268").textContent="";
+  $("adminReauthMessageV268").className="partnerAccessMessageV268";
+  $("adminReauthDialogV268").showModal();
+  $("adminReauthPasswordV268")?.focus?.();
+}
+function closeAdminReauthV268(){
+  if(adminReauthBusyV268)return;
+  $("adminReauthPasswordV268").value="";
+  pendingPartnerAccessTargetV268="";
+  $("adminReauthDialogV268").close();
+}
+async function submitAdminReauthV268(event){
+  event.preventDefault();
+  if(adminReauthBusyV268)return;
+  const influencer=infById(pendingPartnerAccessTargetV268);
+  if(!isWisentAdmin()||!influencer){
+    $("adminReauthMessageV268").textContent="O influencer selecionado não está mais disponível.";
+    $("adminReauthMessageV268").className="partnerAccessMessageV268 error";
+    return;
+  }
+  const passwordInput=$("adminReauthPasswordV268");
+  const message=$("adminReauthMessageV268");
+  adminReauthBusyV268=true;
+  $("adminReauthSubmitV268").disabled=true;
+  message.textContent="Autenticando com segurança...";message.className="partnerAccessMessageV268";
+  try{
+    const adminAccess=await ensureWisentAdminAccessV268();
+    await adminAccess.signIn(passwordInput.value);
+    adminPartnerSecureReadyV268=true;
+    $("adminReauthDialogV268").close();
+    pendingPartnerAccessTargetV268="";
+    showPartnerAccessDialogV268(influencer);
+  }catch(error){
+    adminPartnerSecureReadyV268=false;
+    message.textContent=error?.message||"Não foi possível autenticar o ADMIN.";
+    message.className="partnerAccessMessageV268 error";
+  }finally{
+    passwordInput.value="";
+    adminReauthBusyV268=false;
+    $("adminReauthSubmitV268").disabled=false;
+  }
 }
 function closePartnerAccessV268(){
   if(partnerAccessBusyV268)return;
