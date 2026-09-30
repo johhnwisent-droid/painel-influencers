@@ -23,11 +23,26 @@ export class AdminAccessV268{
     const safe={accessToken:value.accessToken,refreshToken:value.refreshToken||'',expiresAt:Number(value.expiresAt||0),userId:String(value.userId||'')};
     this.storage.setItem(SESSION_KEY,JSON.stringify(safe));return safe;
   }
+  async authRequest(url,options){
+    let lastError;
+    for(let attempt=0;attempt<2;attempt++){
+      const controller=typeof AbortController==='function'?new AbortController():null;
+      const timeoutId=controller?setTimeout(()=>controller.abort(),30000):null;
+      try{return await this.fetchImpl(url,{...options,...(controller?{signal:controller.signal}:{})});}
+      catch(error){
+        lastError=error;
+        const transient=['AbortError','TimeoutError','TypeError'].includes(String(error?.name||''));
+        if(attempt===0&&transient)continue;
+        throw error;
+      }finally{if(timeoutId!==null)clearTimeout(timeoutId);}
+    }
+    throw lastError;
+  }
   async signIn(password){
     this.persist(null);
     if(!this.adminEmail||this.adminEmail==='admin_email_preencher')throw new Error('A configuração segura do ADMIN ainda não foi ativada.');
     try{
-      const response=await this.fetchImpl(`${this.url}/auth/v1/token?grant_type=password`,{method:'POST',redirect:'error',cache:'no-store',headers:{apikey:this.key,'Content-Type':'application/json'},body:JSON.stringify({email:this.adminEmail,password:String(password||'')}),signal:AbortSignal.timeout(15000)});
+      const response=await this.authRequest(`${this.url}/auth/v1/token?grant_type=password`,{method:'POST',redirect:'error',cache:'no-store',headers:{apikey:this.key,'Content-Type':'application/json'},body:JSON.stringify({email:this.adminEmail,password:String(password||'')})});
       const data=await response.json().catch(()=>({}));
       if(!response.ok){
         const code=String(data?.code||data?.error_code||data?.error||'').toLowerCase();
@@ -41,7 +56,8 @@ export class AdminAccessV268{
     }catch(error){
       this.persist(null);
       if(error?.safeAdminAuth)throw error;
-      const neutral=new Error('Não foi possível conectar ao login seguro do Supabase. Tente novamente.');neutral.status=503;throw neutral;
+      const timeout=['AbortError','TimeoutError'].includes(String(error?.name||''));
+      const neutral=new Error(timeout?'O Supabase demorou para responder mesmo após nova tentativa. Aguarde alguns segundos e tente novamente.':'Não foi possível conectar ao login seguro do Supabase. Verifique a conexão e tente novamente.');neutral.status=503;throw neutral;
     }
   }
   async invoke(action,payload={}){
