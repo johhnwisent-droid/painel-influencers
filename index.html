@@ -16719,7 +16719,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V268</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V269</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19306,8 +19306,84 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V268";
+const APP_BUILD_VERSION="V269";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
+/* V269 — orçamento de tráfego Supabase.
+   Realtime continua entregando alterações pontuais. As leituras completas são
+   apenas uma rede de segurança espaçada e somente uma aba por navegador as faz. */
+const WISENT_SYNC_POLICY_V269=Object.freeze({
+  settings:900000,
+  wholesale:900000,
+  erpDelta:300000,
+  erpShared:900000,
+  erpDeletions:900000,
+  launchesConnected:900000,
+  launchesFallback:180000,
+  coreConnected:900000,
+  coreFallback:180000,
+  focusStale:180000,
+  retry:180000,
+  legacyPanelBackup:1800000,
+  leaderLease:180000
+});
+const WISENT_SYNC_LEADER_KEY_V269=KEY+"_sync_leader_v269";
+const WISENT_SYNC_LAST_PREFIX_V269=KEY+"_sync_last_v269_";
+const WISENT_EGRESS_BLOCK_KEY_V269=KEY+"_egress_block_until_v269";
+const WISENT_EGRESS_BLOCK_MS_V269=900000;
+const WISENT_SYNC_TAB_ID_V269=(globalThis.crypto?.randomUUID?.()||`tab-${Date.now()}-${Math.random().toString(36).slice(2)}`);
+
+function wisentSyncPolicyV269(name){
+  return Number(WISENT_SYNC_POLICY_V269[name]||WISENT_SYNC_POLICY_V269.focusStale);
+}
+
+function wisentEgressBlockedUntilV269(){
+  try{
+    const until=Number(localStorage.getItem(WISENT_EGRESS_BLOCK_KEY_V269)||0);
+    if(until>Date.now())return until;
+    if(until)localStorage.removeItem(WISENT_EGRESS_BLOCK_KEY_V269);
+  }catch(error){}
+  return 0;
+}
+
+function wisentObserveSupabaseResponseV269(response,url=""){
+  if(!String(url||"").startsWith(String(SUPABASE_URL||"")))return response;
+  if(Number(response?.status)!==402)return response;
+  const until=Date.now()+WISENT_EGRESS_BLOCK_MS_V269;
+  try{localStorage.setItem(WISENT_EGRESS_BLOCK_KEY_V269,String(until));}catch(error){}
+  try{
+    updateCloudStatus("Supabase pausado por limite de Egress. Dados locais e filas permanecem preservados.",true);
+    updateCloudDebug(`V269: novas tentativas automáticas suspensas até ${new Date(until).toLocaleTimeString("pt-BR")}.`);
+  }catch(error){}
+  return response;
+}
+
+function wisentCanRunBackgroundSyncV269(scope,minInterval=wisentSyncPolicyV269("focusStale")){
+  if(navigator.onLine===false||document.hidden||wisentEgressBlockedUntilV269())return false;
+  const now=Date.now();
+  try{
+    let leader=null;
+    try{leader=JSON.parse(localStorage.getItem(WISENT_SYNC_LEADER_KEY_V269)||"null");}catch(error){}
+    if(leader?.tabId&&leader.tabId!==WISENT_SYNC_TAB_ID_V269&&Number(leader.expiresAt||0)>now)return false;
+    localStorage.setItem(WISENT_SYNC_LEADER_KEY_V269,JSON.stringify({
+      tabId:WISENT_SYNC_TAB_ID_V269,
+      expiresAt:now+wisentSyncPolicyV269("leaderLease")
+    }));
+    const key=WISENT_SYNC_LAST_PREFIX_V269+String(scope||"general");
+    const last=Number(localStorage.getItem(key)||0);
+    if(last&&now-last<Math.max(1,Number(minInterval)||1))return false;
+    localStorage.setItem(key,String(now));
+    return true;
+  }catch(error){
+    return true;
+  }
+}
+
+function wisentRememberBackgroundSyncV269(scope){
+  try{
+    localStorage.setItem(WISENT_SYNC_LAST_PREFIX_V269+String(scope||"general"),String(Date.now()));
+  }catch(error){}
+  return true;
+}
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
 const ERP_COMMISSION_MANUAL_DELETIONS_V252=KEY+"_commission_manual_deletions_v252";
@@ -19910,6 +19986,7 @@ async function settingsV210SyncFromCloud({showStatus=false}={}){
     try{
       /* V213: consulta a versão oficial antes de reenviar qualquer pendência antiga. */
       const row=await settingsV210FetchOfficial();
+      wisentRememberBackgroundSyncV269("settings");
       const pending=await settingsV210ReadDurable(SYSTEM_SETTINGS_OUTBOX_KEY_V210);
       if(pending?.mutationId){
         const enriched={
@@ -19964,7 +20041,7 @@ function settingsV210RealtimeMessage(event){
   settingsV210SyncFromCloud({showStatus:false});
 }
 function settingsV210ConnectRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
   if(systemSettingsSocketV210&&[0,1].includes(systemSettingsSocketV210.readyState))return true;
   try{
     const base=String(SUPABASE_URL||"").replace(/^http/i,"ws").replace(/\/+$/g,"");
@@ -19994,23 +20071,30 @@ function settingsV210InstallWatchers(){
   if(typeof BroadcastChannel!=="undefined"){
     try{
       systemSettingsBroadcastV210=new BroadcastChannel("wisent-system-settings-v210");
-      systemSettingsBroadcastV210.addEventListener("message",()=>settingsV210SyncFromCloud({showStatus:false}));
+      systemSettingsBroadcastV210.addEventListener("message",()=>{
+        if(wisentCanRunBackgroundSyncV269("settings",wisentSyncPolicyV269("focusStale")))settingsV210SyncFromCloud({showStatus:false});
+      });
     }catch(error){systemSettingsBroadcastV210=null;}
   }
   settingsV210ConnectRealtime();
   window.addEventListener("online",()=>{
     settingsV210ConnectRealtime();
-    settingsV210FlushOutbox({showStatus:true}).then(()=>settingsV210SyncFromCloud({showStatus:false}));
+    settingsV210FlushOutbox({showStatus:true}).then(()=>{
+      if(wisentCanRunBackgroundSyncV269("settings",wisentSyncPolicyV269("focusStale")))settingsV210SyncFromCloud({showStatus:false});
+    });
   });
-  window.addEventListener("focus",()=>settingsV210SyncFromCloud({showStatus:false}));
+  window.addEventListener("focus",()=>{
+    if(wisentCanRunBackgroundSyncV269("settings",wisentSyncPolicyV269("focusStale")))settingsV210SyncFromCloud({showStatus:false});
+  });
   document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible")settingsV210SyncFromCloud({showStatus:false});
+    if(document.visibilityState==="visible"&&wisentCanRunBackgroundSyncV269("settings",wisentSyncPolicyV269("focusStale")))settingsV210SyncFromCloud({showStatus:false});
   });
   clearInterval(systemSettingsPollTimerV210);
   systemSettingsPollTimerV210=setInterval(()=>{
     if(document.hidden||navigator.onLine===false)return;
+    if(!wisentCanRunBackgroundSyncV269("settings",wisentSyncPolicyV269("settings")))return;
     settingsV210SyncFromCloud({showStatus:false});
-  },20000);
+  },wisentSyncPolicyV269("settings"));
   clearInterval(systemSettingsHeartbeatTimerV210);
   systemSettingsHeartbeatTimerV210=setInterval(()=>{
     try{
@@ -21670,6 +21754,12 @@ async function flushCriticalRecordQueues(){
     tasks.push(timeoutBool(flushProductChoicePendingQueue(),15000));
   }
 
+  /* V269: módulos principais são oficiais em wisent_core_records. A confirmação
+     do usuário não depende mais de baixar novamente o backup painel_state. */
+  if(typeof coreFlushOutboxV211==="function"){
+    tasks.push(timeoutBool(coreFlushOutboxV211(),15000));
+  }
+
   if(!tasks.length)return true;
 
   const results=await Promise.all(tasks);
@@ -21698,8 +21788,7 @@ async function strictSharedSaveWorkerV267(){
   try{
     setSaveUiState("saving","enviando para Supabase",true);
 
-    // As duas confirmações são independentes; ambas continuam obrigatórias.
-    const [stateOk,recordsOk]=await Promise.all([cloudSaveNow(),flushCriticalRecordQueues()]);
+    const recordsOk=await flushCriticalRecordQueues();
 
     if(tokenAtStart&&latestSharedSaveToken&&String(tokenAtStart)!==String(latestSharedSaveToken)){
       markSharedSavePending("painel","há alteração mais recente aguardando envio",latestSharedSaveToken);
@@ -21708,20 +21797,19 @@ async function strictSharedSaveWorkerV267(){
       return false;
     }
 
-    if(stateOk&&recordsOk){
+    if(recordsOk){
       markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
       setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
-      updateCloudDebug("confirmação V197: painel geral confirmado; módulos críticos usam tabelas individuais");
+      updateCloudDebug("confirmação V269: registros oficiais confirmados; backup legado será atualizado sem bloquear o trabalho");
+      scheduleLegacyPanelBackupV269();
       return true;
     }
 
-    const reason=stateOk
-      ?"painel_state confirmado, mas há filas críticas pendentes"
-      :"painel_state não confirmou. Verifique/execute o SQL V163 seguro da tabela personalizacao.";
+    const reason="há registros oficiais preservados na fila aguardando confirmação";
 
     markSharedSavePending("painel",reason,tokenAtStart||latestSharedSaveToken);
-    setSaveUiState(stateOk?"retrying":"failed",reason,true);
-    if(stateOk)scheduleCloudSaveRetry();
+    setSaveUiState("retrying",reason,true);
+    scheduleCloudSaveRetry();
     return false;
   }finally{
     strictSharedFlushBusy=false;
@@ -21740,7 +21828,7 @@ function installStrictSharedSaveWatchers(){
   setInterval(()=>{
     if(document.hidden)return;
     if(readSharedSavePending())flushStrictSharedSave();
-  },12000);
+  },wisentSyncPolicyV269("retry"));
 }
 
 
@@ -21944,12 +22032,21 @@ function cloudHeaders(extra={}){
 }
 
 async function fetchWithTimeout(url,options={},timeout=10000){
+  const isSupabase=String(url||"").startsWith(String(SUPABASE_URL||""));
+  const blockedUntil=isSupabase?wisentEgressBlockedUntilV269():0;
+  if(blockedUntil){
+    return new Response(JSON.stringify({
+      message:"Supabase temporarily paused after HTTP 402",
+      code:"wisent_egress_circuit_open",
+      retryAt:new Date(blockedUntil).toISOString()
+    }),{status:402,headers:{"Content-Type":"application/json","X-Wisent-Egress-Circuit":"open"}});
+  }
   const controller=new AbortController();
   const timer=setTimeout(()=>controller.abort(),timeout);
   try{
     const response=await fetch(url,{...options,signal:controller.signal});
     clearTimeout(timer);
-    return response;
+    return wisentObserveSupabaseResponseV269(response,url);
   }catch(e){
     clearTimeout(timer);
     throw e;
@@ -22944,6 +23041,7 @@ async function syncWholesaleLaunchRecordsFromCloud({showStatus=false,reason="syn
 
         const changed=applyWholesaleCloudRecords(records,{syncStartedAt,pullSequence});
         wholesaleLastSuccessfulSyncAt=Date.now();
+        wisentRememberBackgroundSyncV269("wholesale");
 
         const activeOfficial=records.filter(record=>record&&record.deleted!==true);
         const deletedOfficial=records.length-activeOfficial.length;
@@ -23086,6 +23184,7 @@ function installWholesaleBroadcastChannel(){
     wholesaleBroadcastChannel=new BroadcastChannel("wisent-wholesale-v199");
     wholesaleBroadcastChannel.addEventListener("message",event=>{
       if(event?.data?.type!=="wholesale-sync")return;
+      if(!wisentCanRunBackgroundSyncV269("wholesale",wisentSyncPolicyV269("focusStale")))return;
       syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
     });
   }catch(error){
@@ -23190,10 +23289,12 @@ function wholesaleRealtimeMessage(raw){
       wholesaleRealtimeReconnectAttempt=0;
       wholesaleRealtimeLastEventAt=Date.now();
       updateCloudStatus("Tempo real conectado • Atacado e Varejo compartilhado");
-      setTimeout(()=>syncWholesaleLaunchRecordsFromCloud({
-        showStatus:false,
-        reason:"realtime-connected"
-      }),40);
+      if(wisentCanRunBackgroundSyncV269("wholesale",wisentSyncPolicyV269("focusStale"))){
+        setTimeout(()=>syncWholesaleLaunchRecordsFromCloud({
+          showStatus:false,
+          reason:"realtime-connected"
+        }),40);
+      }
     }else{
       updateCloudStatus("Realtime indisponível • usando reconciliação automática",true);
       try{wholesaleRealtimeSocket?.close();}catch(error){}
@@ -23229,7 +23330,7 @@ function scheduleWholesaleRealtimeReconnect(){
 }
 
 function connectWholesaleRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
   if(wholesaleRealtimeSocket&&[0,1].includes(wholesaleRealtimeSocket.readyState))return true;
   clearTimeout(wholesaleRealtimeReconnectTimer);
   try{
@@ -23300,7 +23401,9 @@ function installWholesaleSyncWatchers(){
   window.addEventListener("online",()=>{
     scheduleCloudSave(50);
     connectWholesaleRealtime();
-    syncWholesaleLaunchRecordsFromCloud({showStatus:true,reason:"watcher"});
+    if(wisentCanRunBackgroundSyncV269("wholesale",wisentSyncPolicyV269("focusStale"))){
+      syncWholesaleLaunchRecordsFromCloud({showStatus:true,reason:"watcher"});
+    }
   });
 
   window.addEventListener("offline",()=>{
@@ -23311,6 +23414,7 @@ function installWholesaleSyncWatchers(){
 
   const refreshSharedWholesale=()=>{
     connectWholesaleRealtime();
+    if(!wisentCanRunBackgroundSyncV269("wholesale",wisentSyncPolicyV269("focusStale")))return;
     syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
   };
 
@@ -23325,19 +23429,9 @@ function installWholesaleSyncWatchers(){
   wholesalePollTimer=setInterval(()=>{
     if(document.hidden||navigator.onLine===false)return;
     connectWholesaleRealtime();
-
-    /*
-      Realtime é a via principal. A leitura periódica é a rede de segurança
-      para aparelhos que suspenderam o navegador ou perderam eventos.
-    */
-    const staleRealtime=!wholesaleRealtimeConnected||
-      !wholesaleRealtimeLastEventAt||
-      Date.now()-wholesaleRealtimeLastEventAt>45000;
-
-    if(staleRealtime||Date.now()-wholesaleLastSuccessfulSyncAt>15000){
-      syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"background"});
-    }
-  },12000);
+    if(!wisentCanRunBackgroundSyncV269("wholesale",wisentSyncPolicyV269("wholesale")))return;
+    syncWholesaleLaunchRecordsFromCloud({showStatus:false,reason:"safety-budget"});
+  },wisentSyncPolicyV269("wholesale"));
 }
 
 function collectWholesaleCandidatesFromDevice(){
@@ -26047,7 +26141,10 @@ updateCloudStatus("VERSÃO "+APP_BUILD_VERSION+" carregada. Conectando ao Supaba
 function scheduleCloudSaveRetry(){
   clearTimeout(cloudSaveRetryTimer);
 
-  const delay=Math.min(20000,1500*Math.pow(2,Math.min(cloudSaveRetryAttempt,4)));
+  const circuitUntil=wisentEgressBlockedUntilV269();
+  const delay=circuitUntil
+    ?Math.max(1000,circuitUntil-Date.now()+1000)
+    :Math.min(wisentSyncPolicyV269("retry"),3000*Math.pow(2,Math.min(cloudSaveRetryAttempt,6)));
   cloudSaveRetryAttempt+=1;
 
   cloudSaveRetryTimer=setTimeout(()=>{
@@ -26058,6 +26155,15 @@ function scheduleCloudSaveRetry(){
     if(readSharedSavePending())flushStrictSharedSave();
     else cloudSaveNow();
   },delay);
+}
+
+let legacyPanelBackupTimerV269=null;
+function scheduleLegacyPanelBackupV269(delay=2500){
+  clearTimeout(legacyPanelBackupTimerV269);
+  legacyPanelBackupTimerV269=setTimeout(()=>{
+    if(!wisentCanRunBackgroundSyncV269("legacy-panel",wisentSyncPolicyV269("legacyPanelBackup")))return;
+    cloudSaveNow().catch(error=>console.warn("Backup legado V269 adiado:",error));
+  },Math.max(500,Number(delay)||2500));
 }
 
 
@@ -26473,7 +26579,7 @@ async function cloudSaveNow(){
 
       const response=await fetchWithTimeout(SUPABASE_URL+"/rest/v1/personalizacao?on_conflict=chave",{
         method:"POST",
-        headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=representation"}),
+        headers:cloudHeaders({"Prefer":"resolution=merge-duplicates,return=minimal"}),
         body:JSON.stringify({
           chave:CLOUD_STATE_KEY,
           valor:statePayload
@@ -26485,50 +26591,25 @@ async function cloudSaveNow(){
 
       if(!response.ok){
         console.error("Erro ao salvar Supabase:",responseText);
-        markSharedSavePending("painel","Supabase recusou envio; nova tentativa automática",expectedToken);
-        updateStrictMutationStatus(expectedToken,"failed",responseText);
-        setSaveUiState("failed","Supabase recusou o envio; alteração preservada e será reenviada",true);
-        updateCloudDebug("Supabase recusou o salvamento; fila/local preservados. Detalhe: "+responseText.slice(0,180));
-        scheduleCloudSaveRetry();
+        updateCloudDebug("Backup legado adiado; registros oficiais e filas continuam preservados. Detalhe: "+responseText.slice(0,180));
         return false;
-      }
-
-      let verified=await verifyCloudStateSaved(expectedToken,responseText);
-
-      if(!verified){
-        updateCloudDebug("POST aceito, mas token não encontrado. Aplicando PATCH direto em personalizacao/chave para corrigir possível duplicidade/RLS parcial.");
-        verified=await forcePatchPersonalizacaoState(statePayload,expectedToken);
       }
 
       clearTimeout(cloudSaveRetryTimer);
       cloudSaveRetryAttempt=0;
       cloudLastSavedAt=new Date();
       cloudLastSaveResultAt=Date.now();
-
-      if(verified&&(!latestSharedSaveToken||String(expectedToken)===String(latestSharedSaveToken))){
-        updateStrictMutationStatus(expectedToken,"cloud_state_confirmed","");
-        updateCloudDebug(
-          `painel_state confirmado no Supabase: ${cloudLastSavedAt.toLocaleTimeString("pt-BR")} • token ${expectedToken} • ${savePackage.info.kb} KB`
-        );
-        return true;
-      }
-
-      const reason="Supabase aceitou o envio, mas a tabela personalizacao não devolveu o token. Aplique o SQL V163 seguro de correção da personalizacao.";
-      updateStrictMutationStatus(expectedToken,"failed",reason);
-      markSharedSavePending("painel",reason,expectedToken);
-      setSaveUiState("failed",reason,true);
-      updateCloudDebug(reason+" • Isso normalmente indica duplicidade em chave, ausência de UNIQUE(chave) ou policy SELECT/RLS incorreta.");
-      return false;
+      updateStrictMutationStatus(expectedToken,"cloud_state_backup_sent","");
+      updateCloudDebug(
+        `backup painel_state enviado sem download de retorno: ${cloudLastSavedAt.toLocaleTimeString("pt-BR")} • ${savePackage.info.kb} KB`
+      );
+      return true;
     }catch(e){
       console.error("Falha ao salvar na nuvem:",e);
-      markSharedSavePending("painel","nuvem instável; nova tentativa agendada",latestSharedSaveToken);
-      updateStrictMutationStatus(latestSharedSaveToken,"retrying",e.message||e);
-      setSaveUiState("retrying","nuvem instável; alteração preservada e será reenviada",true);
       updateCloudDebug(
         (e.name==="AbortError"?"tempo esgotado no Supabase":"erro de salvamento: "+(e.message||e))+
-        " • dados locais, filas e snapshots preservados"
+        " • backup legado adiado; dados oficiais, filas e snapshots preservados"
       );
-      scheduleCloudSaveRetry();
       return false;
     }
   })();
@@ -26538,11 +26619,7 @@ async function cloudSaveNow(){
       const result=await Promise.race([task,cloudSaveTimeoutPromise()]);
 
       if(result&&result.timeout){
-        markSharedSavePending("painel","timeout de segurança; tentando novamente",latestSharedSaveToken);
-        updateStrictMutationStatus(latestSharedSaveToken,"retrying","tempo limite do monitor V197");
-        setSaveUiState("retrying","timeout de segurança; tentativa automática agendada",true);
-        updateCloudDebug(`monitor ${APP_BUILD_VERSION}: confirmação demorou mais de ${Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)}s; nova tentativa agendada`);
-        scheduleCloudSaveRetry();
+        updateCloudDebug(`monitor ${APP_BUILD_VERSION}: backup legado demorou mais de ${Math.round(CLOUD_SAVE_WATCHDOG_MS/1000)}s e foi adiado; registros oficiais permanecem preservados`);
         return false;
       }
 
@@ -35612,6 +35689,7 @@ async function erpSyncRemoteOrderDeletionsV250(options={}){
   erpOrderDeletionSyncPromiseV250=(async()=>{
     const rows=await erpFetchRemoteOrderDeletionsV250();
     await erpApplyRemoteOrderDeletionsV250(rows,{publish:options.publish!==false});
+    wisentRememberBackgroundSyncV269("erp-deletions");
     return true;
   })().catch(error=>{
     console.warn("V250: leitura isolada das exclusões oficiais será repetida:",error);
@@ -35628,19 +35706,23 @@ function scheduleErpOrderDeletionSyncV250(delay=80){
 function installErpOrderDeletionSyncV250(){
   if(erpOrderDeletionSyncInstalledV250)return;
   erpOrderDeletionSyncInstalledV250=true;
-  window.addEventListener("online",()=>scheduleErpOrderDeletionSyncV250(40));
-  window.addEventListener("focus",()=>scheduleErpOrderDeletionSyncV250(40));
+  window.addEventListener("online",()=>{
+    if(wisentCanRunBackgroundSyncV269("erp-deletions",wisentSyncPolicyV269("focusStale")))scheduleErpOrderDeletionSyncV250(40);
+  });
+  window.addEventListener("focus",()=>{
+    if(wisentCanRunBackgroundSyncV269("erp-deletions",wisentSyncPolicyV269("focusStale")))scheduleErpOrderDeletionSyncV250(40);
+  });
   document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible")scheduleErpOrderDeletionSyncV250(40);
+    if(document.visibilityState==="visible"&&wisentCanRunBackgroundSyncV269("erp-deletions",wisentSyncPolicyV269("focusStale")))scheduleErpOrderDeletionSyncV250(40);
   });
   window.addEventListener("storage",event=>{
-    if(event.key===ERP_ORDER_DELETION_SIGNAL_V250)scheduleErpOrderDeletionSyncV250(0);
+    if(event.key===ERP_ORDER_DELETION_SIGNAL_V250&&wisentCanRunBackgroundSyncV269("erp-deletions",wisentSyncPolicyV269("focusStale")))scheduleErpOrderDeletionSyncV250(0);
   });
   clearInterval(erpOrderDeletionPollTimerV250);
   erpOrderDeletionPollTimerV250=setInterval(()=>{
-    if(!document.hidden&&navigator.onLine!==false)scheduleErpOrderDeletionSyncV250(0);
-  },7000);
-  scheduleErpOrderDeletionSyncV250(0);
+    if(!document.hidden&&navigator.onLine!==false&&wisentCanRunBackgroundSyncV269("erp-deletions",wisentSyncPolicyV269("erpDeletions")))scheduleErpOrderDeletionSyncV250(0);
+  },wisentSyncPolicyV269("erpDeletions"));
+  if(wisentCanRunBackgroundSyncV269("erp-deletions",wisentSyncPolicyV269("focusStale")))scheduleErpOrderDeletionSyncV250(0);
 }
 
 function erpLocalWriteOnly(data){
@@ -38476,6 +38558,7 @@ async function erpSyncPrivateSharedEntitiesV251(){
       erpCommissionDeletionCatalogReadyV252=true;
       await syncPendingErpPrivateSellerAssignmentsV238({force:true});
     }
+    wisentRememberBackgroundSyncV269("erp-shared");
     return commissionsResult.status==="fulfilled"&&commissionsResult.value?.ok!==false&&deletedCommissionsResult.status==="fulfilled";
   })().catch(error=>{
     console.warn("V251: sincronização isolada de clientes/comissões será repetida:",error);
@@ -38490,16 +38573,20 @@ function scheduleErpPrivateSharedSyncV251(delay=80){
 }
 
 function installErpPrivateSharedSyncV251(){
-  window.addEventListener("online",()=>scheduleErpPrivateSharedSyncV251(50));
-  window.addEventListener("focus",()=>scheduleErpPrivateSharedSyncV251(50));
+  window.addEventListener("online",()=>{
+    if(wisentCanRunBackgroundSyncV269("erp-shared",wisentSyncPolicyV269("focusStale")))scheduleErpPrivateSharedSyncV251(50);
+  });
+  window.addEventListener("focus",()=>{
+    if(wisentCanRunBackgroundSyncV269("erp-shared",wisentSyncPolicyV269("focusStale")))scheduleErpPrivateSharedSyncV251(50);
+  });
   document.addEventListener("visibilitychange",()=>{
-    if(document.visibilityState==="visible")scheduleErpPrivateSharedSyncV251(50);
+    if(document.visibilityState==="visible"&&wisentCanRunBackgroundSyncV269("erp-shared",wisentSyncPolicyV269("focusStale")))scheduleErpPrivateSharedSyncV251(50);
   });
   clearInterval(erpPrivateSharedPollTimerV251);
   erpPrivateSharedPollTimerV251=setInterval(()=>{
-    if(!document.hidden&&navigator.onLine!==false)scheduleErpPrivateSharedSyncV251(0);
-  },15000);
-  scheduleErpPrivateSharedSyncV251(0);
+    if(!document.hidden&&navigator.onLine!==false&&wisentCanRunBackgroundSyncV269("erp-shared",wisentSyncPolicyV269("erpShared")))scheduleErpPrivateSharedSyncV251(0);
+  },wisentSyncPolicyV269("erpShared"));
+  if(wisentCanRunBackgroundSyncV269("erp-shared",wisentSyncPolicyV269("focusStale")))scheduleErpPrivateSharedSyncV251(0);
 }
 
 async function erpRealtimeInspectArrival(eventData){
@@ -38564,6 +38651,7 @@ async function erpRealtimeSyncDelta(){
       }
     }
     erpRealtimeTouchDelta(newest||new Date().toISOString());
+    wisentRememberBackgroundSyncV269("erp-delta");
     updateErpRealtimeUi();
     return true;
   }catch(error){
@@ -38667,7 +38755,7 @@ function scheduleErpRealtimeReconnect(){
 }
 
 function connectErpRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false){erpRealtimeSetConnected(false);return false;}
+  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269()){erpRealtimeSetConnected(false);return false;}
   if(erpRealtimeSocket&&[0,1].includes(erpRealtimeSocket.readyState))return true;
 
   clearTimeout(erpRealtimeReconnectTimer);
@@ -38727,21 +38815,22 @@ function installErpRealtime(){
 
   window.addEventListener("online",()=>{
     connectErpRealtime();
-    scheduleErpRealtimeCloudRefresh(80);
+    if(wisentCanRunBackgroundSyncV269("erp-delta",wisentSyncPolicyV269("focusStale")))scheduleErpRealtimeCloudRefresh(80);
   });
   window.addEventListener("offline",()=>{erpRealtimeSetConnected(false);setErpSyncStatus("Sem conexão • dados locais preservados",true);});
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState==="visible"){
       connectErpRealtime();
-      scheduleErpRealtimeCloudRefresh(80);
+      if(wisentCanRunBackgroundSyncV269("erp-delta",wisentSyncPolicyV269("focusStale")))scheduleErpRealtimeCloudRefresh(80);
     }
   });
 
   setInterval(()=>{
     if(document.hidden||erpRealtimeConnected)return;
+    if(!wisentCanRunBackgroundSyncV269("erp-delta",wisentSyncPolicyV269("erpDelta")))return;
     scheduleErpRealtimeCloudRefresh(0);
     connectErpRealtime();
-  },5000);
+  },wisentSyncPolicyV269("erpDelta"));
 }
 
 function installErpTestSyncWatchers(){
@@ -38749,30 +38838,42 @@ function installErpTestSyncWatchers(){
   erpTestSyncWatchersInstalled=true;
 
   window.addEventListener("online",()=>{
-    if(erpV2Phase2Enabled())erpReconcileOrderTombstonesV247({showStatus:true}).then(()=>erpRealtimeSyncDelta());
+    if(erpV2Phase2Enabled())erpReconcileOrderTombstonesV247({showStatus:true}).then(()=>{
+      if(wisentCanRunBackgroundSyncV269("erp-delta",wisentSyncPolicyV269("focusStale")))return erpRealtimeSyncDelta();
+      return true;
+    });
     else flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:true}));
   });
 
   window.addEventListener("focus",()=>{
-    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>erpRealtimeSyncDelta());
+    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>{
+      if(wisentCanRunBackgroundSyncV269("erp-delta",wisentSyncPolicyV269("focusStale")))return erpRealtimeSyncDelta();
+      return true;
+    });
     else syncErpTestCloud({showStatus:false});
   });
 
   document.addEventListener("visibilitychange",()=>{
     if(document.visibilityState==="visible"){
-      if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>erpRealtimeSyncDelta());
+      if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>{
+        if(wisentCanRunBackgroundSyncV269("erp-delta",wisentSyncPolicyV269("focusStale")))return erpRealtimeSyncDelta();
+        return true;
+      });
       else syncErpTestCloud({showStatus:false});
     }
   });
 
   setInterval(()=>{
     if(document.hidden)return;
-    if(erpV2Phase2Enabled())flushErpV2Outbox().then(()=>erpRealtimeSyncDelta());
+    if(erpV2Phase2Enabled()){
+      flushErpV2Outbox();
+      if(wisentCanRunBackgroundSyncV269("erp-delta",wisentSyncPolicyV269("erpDelta")))erpRealtimeSyncDelta();
+    }
     else{
       flushErpTestPendingQueue().then(()=>syncErpTestCloud({showStatus:false}));
       if(erpRelationalEnabled())flushErpRelationalSyncQueue();
     }
-  },10000);
+  },wisentSyncPolicyV269("erpDelta"));
 }
 
 function writeErpTestData(data,options={}){
@@ -45789,6 +45890,7 @@ async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
       launchV209QueueMissingMigrationCandidates();
       const flushed=await flushInfluencerLaunchPendingQueue();
       launchLastFullSyncV267=Date.now();
+      wisentRememberBackgroundSyncV269("launches");
       if(showStatus){
         const active=[...launchOfficialRowsV209.values()].filter(row=>!row.deleted_at).length;
         const pending=readInfluencerLaunchPendingQueue().length;
@@ -45865,7 +45967,9 @@ function launchV209RealtimeMessage(raw){
     if(launchRealtimeConnectedV209){
       launchRealtimeReconnectAttemptV209=0;
       launchRealtimeLastEventAtV209=Date.now();
-      setTimeout(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}),40);
+      if(wisentCanRunBackgroundSyncV269("launches",wisentSyncPolicyV269("focusStale"))){
+        setTimeout(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:false}),40);
+      }
     }else{
       try{launchRealtimeSocketV209?.close();}catch(error){}
       launchV209ScheduleRealtimeReconnect();
@@ -45894,7 +45998,7 @@ function launchV209ScheduleRealtimeReconnect(){
   launchRealtimeReconnectTimerV209=setTimeout(launchV209ConnectRealtime,delay);
 }
 function launchV209ConnectRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
   if(launchRealtimeSocketV209&&[0,1].includes(launchRealtimeSocketV209.readyState))return true;
   clearTimeout(launchRealtimeReconnectTimerV209);
   try{
@@ -45938,7 +46042,7 @@ function installInfluencerLaunchSyncWatchers(){
     try{
       launchBroadcastV209=new BroadcastChannel("wisent-influencer-launches-v209");
       launchBroadcastV209.addEventListener("message",event=>{
-        if(event?.data?.type==="launch-sync")syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+        if(event?.data?.type==="launch-sync"&&wisentCanRunBackgroundSyncV269("launches",wisentSyncPolicyV269("focusStale")))syncInfluencerLaunchRecordsFromCloud({showStatus:false});
       });
     }catch(error){launchBroadcastV209=null;}
   }
@@ -45953,7 +46057,10 @@ function installInfluencerLaunchSyncWatchers(){
   },25000);
   window.addEventListener("online",()=>{
     launchV209ConnectRealtime();
-    flushInfluencerLaunchPendingQueue().then(()=>syncInfluencerLaunchRecordsFromCloud({showStatus:true}));
+    flushInfluencerLaunchPendingQueue().then(()=>{
+      if(wisentCanRunBackgroundSyncV269("launches",wisentSyncPolicyV269("focusStale")))return syncInfluencerLaunchRecordsFromCloud({showStatus:true});
+      return true;
+    });
   });
   window.addEventListener("offline",()=>{
     launchRealtimeConnectedV209=false;
@@ -45963,7 +46070,8 @@ function installInfluencerLaunchSyncWatchers(){
   const refresh=()=>{
     if(navigator.onLine===false)return;
     launchV209ConnectRealtime();
-    if(Date.now()-Math.max(launchLastFullSyncV267,launchLastAutoAttemptV267)<30000)return;
+    const interval=launchRealtimeConnectedV209?wisentSyncPolicyV269("launchesConnected"):wisentSyncPolicyV269("launchesFallback");
+    if(!wisentCanRunBackgroundSyncV269("launches",interval))return;
     launchLastAutoAttemptV267=Date.now();
     syncInfluencerLaunchRecordsFromCloud({showStatus:false});
   };
@@ -45980,9 +46088,9 @@ function installInfluencerLaunchSyncWatchers(){
     if(document.hidden||navigator.onLine===false)return;
     launchV209ConnectRealtime();
     if(readInfluencerLaunchPendingQueue().length)flushInfluencerLaunchPendingQueue();
-    const interval=launchRealtimeConnectedV209?300000:60000;
+    const interval=launchRealtimeConnectedV209?wisentSyncPolicyV269("launchesConnected"):wisentSyncPolicyV269("launchesFallback");
     if(Date.now()-Math.max(launchLastFullSyncV267,launchLastAutoAttemptV267)>=interval)refresh();
-  },12000);
+  },wisentSyncPolicyV269("launchesFallback"));
 }
 
 window.exportInfluencerLaunchSafetyBackupV209=function(){
@@ -46688,6 +46796,7 @@ async function coreSyncWorkerV267({showStatus=false}={}){
     const localBefore=coreCollectLocalCandidatesV212();
     await coreFetchAllV211();
     coreLastFullSyncV267=Date.now();
+    wisentRememberBackgroundSyncV269("core");
     const reconciliation=coreReconcileLocalWithOfficialV212(localBefore,{queueMissing:true});
     coreApplyRowsToStateV211({renderNow:true});
     if(reconciliation.queued)await coreFlushOutboxV211();
@@ -46708,7 +46817,7 @@ function coreRealtimeMessageV211(event){
     if(coreRealtimeConnectedV211){
       coreReconnectAttemptV211=0;
       coreRealtimeLastEventAtV211=Date.now();
-      coreSyncFromCloudV211({showStatus:false});
+      if(wisentCanRunBackgroundSyncV269("core",wisentSyncPolicyV269("focusStale")))coreSyncFromCloudV211({showStatus:false});
     }
     return;
   }
@@ -46737,7 +46846,7 @@ function coreScheduleReconnectV211(){
   coreReconnectTimerV211=setTimeout(coreConnectRealtimeV211,delay);
 }
 function coreConnectRealtimeV211(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
   if(coreSocketV211&&[0,1].includes(coreSocketV211.readyState))return true;
   try{
     const base=String(SUPABASE_URL||"").replace(/^http/i,"ws").replace(/\/+$/g,"");
@@ -46770,7 +46879,7 @@ function coreInstallWatchersV211(){
     try{
       coreBroadcastV211=new BroadcastChannel("wisent-core-records-v211");
       coreBroadcastV211.addEventListener("message",event=>{
-        if(event?.data?.type==="core-sync")coreSyncFromCloudV211({showStatus:false});
+        if(event?.data?.type==="core-sync"&&wisentCanRunBackgroundSyncV269("core",wisentSyncPolicyV269("focusStale")))coreSyncFromCloudV211({showStatus:false});
       });
     }catch(error){coreBroadcastV211=null;}
   }
@@ -46785,7 +46894,10 @@ function coreInstallWatchersV211(){
   },25000);
   window.addEventListener("online",()=>{
     coreConnectRealtimeV211();
-    coreFlushOutboxV211().then(()=>coreSyncFromCloudV211({showStatus:true}));
+    coreFlushOutboxV211().then(()=>{
+      if(wisentCanRunBackgroundSyncV269("core",wisentSyncPolicyV269("focusStale")))return coreSyncFromCloudV211({showStatus:true});
+      return true;
+    });
   });
   window.addEventListener("offline",()=>{
     coreRealtimeConnectedV211=false;
@@ -46795,7 +46907,8 @@ function coreInstallWatchersV211(){
   const refresh=()=>{
     if(navigator.onLine===false)return;
     coreConnectRealtimeV211();
-    if(Date.now()-Math.max(coreLastFullSyncV267,coreLastAutoAttemptV267)<30000)return;
+    const interval=coreRealtimeConnectedV211?wisentSyncPolicyV269("coreConnected"):wisentSyncPolicyV269("coreFallback");
+    if(!wisentCanRunBackgroundSyncV269("core",interval))return;
     coreLastAutoAttemptV267=Date.now();
     coreFlushOutboxV211().then(()=>coreSyncFromCloudV211({showStatus:false}));
   };
@@ -46809,9 +46922,9 @@ function coreInstallWatchersV211(){
   corePollTimerV211=setInterval(()=>{
     if(document.hidden||navigator.onLine===false)return;
     if(coreOutboxV211.length)coreFlushOutboxV211();
-    const interval=coreRealtimeConnectedV211?300000:60000;
+    const interval=coreRealtimeConnectedV211?wisentSyncPolicyV269("coreConnected"):wisentSyncPolicyV269("coreFallback");
     if(Date.now()-Math.max(coreLastFullSyncV267,coreLastAutoAttemptV267)>=interval)refresh();
-  },15000);
+  },wisentSyncPolicyV269("coreFallback"));
 }
 
 async function coreStartupV211(){
@@ -46822,6 +46935,7 @@ async function coreStartupV211(){
     let fetched=false;
     try{
       await coreFetchAllV211();
+      wisentRememberBackgroundSyncV269("core");
       fetched=true;
     }catch(error){
       console.warn("Tabela oficial de dados principais ainda não disponível:",error);
@@ -46835,7 +46949,6 @@ async function coreStartupV211(){
       coreApplyRowsToStateV211({renderNow:true});
       coreBaselineV211=coreStateMapV211();
       await coreFlushOutboxV211();
-      await coreSyncFromCloudV211({showStatus:false});
       updateCloudStatus(reconciliation.recovery
         ?`Dados oficiais sincronizados. ${reconciliation.recovery} divergência(s) local(is) foram preservadas no backup de recuperação.`
         :`Dados principais protegidos e sincronizados pela fonte oficial ${APP_BUILD_VERSION}.`,

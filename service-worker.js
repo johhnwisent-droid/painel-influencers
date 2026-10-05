@@ -1,5 +1,5 @@
-const WISENT_VERSION="V268";
-const WISENT_CACHE="wisent-erp-static-v268-partners-product-admin-login-fixed-20261005f";
+const WISENT_VERSION="V269";
+const WISENT_CACHE="wisent-erp-static-v269-egress-budget-20261005a";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
