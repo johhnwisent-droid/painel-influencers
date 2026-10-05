@@ -20666,6 +20666,58 @@ function normalizeAuthUsers(){
   }
 }
 
+async function findAuthUserWithRecoveryV269(username,password){
+  const normalizedUsername=String(username||"").trim().toLowerCase();
+  const exactMatch=users=>(Array.isArray(users)?users:[]).find(user=>
+    user?.active!==false&&
+    String(user?.username||"").trim().toLowerCase()===normalizedUsername&&
+    String(user?.password||"")===String(password||"")
+  )||null;
+  const current=Array.isArray(state?.settings?.authUsers)?state.settings.authUsers:[];
+  const currentMatch=exactMatch(current);
+  if(currentMatch)return currentMatch;
+
+  const merged=new Map();
+  const addGroup=(rows,priority)=>{
+    (Array.isArray(rows)?rows:[]).forEach(user=>{
+      if(!user||typeof user!=="object")return;
+      const key=String(user.username||user.id||"").trim().toLowerCase();
+      if(!key)return;
+      const timestamp=Date.parse(String(user.updatedAt||user.createdAt||""))||0;
+      const previous=merged.get(key);
+      if(!previous||timestamp>previous.timestamp||(timestamp===previous.timestamp&&priority>=previous.priority)){
+        merged.set(key,{user:{...user},timestamp,priority});
+      }
+    });
+  };
+
+  addGroup(current,0);
+  addGroup(Array.isArray(state?.collaborators)?state.collaborators:[],1);
+  try{
+    const coreSnapshot=typeof coreDbGetV211==="function"?await coreDbGetV211("snapshot"):[];
+    addGroup((Array.isArray(coreSnapshot)?coreSnapshot:[])
+      .filter(row=>row?.module==="collaborators"&&!row?.deleted_at)
+      .map(row=>row?.payload).filter(Boolean),2);
+  }catch(error){}
+  try{
+    const durable=typeof coreDbGetV211==="function"?await coreDbGetV211("collaborators-v237"):[];
+    addGroup(durable,3);
+  }catch(error){}
+  try{
+    const snapshot=typeof collabReadSnapshotV237==="function"?collabReadSnapshotV237():[];
+    addGroup(snapshot,4);
+  }catch(error){}
+
+  const recovered=[...merged.values()].map(entry=>entry.user);
+  const match=exactMatch(recovered);
+  if(!match)return null;
+  state.settings=state.settings||{};
+  state.settings.authUsers=recovered;
+  state.collaborators=recovered.map(user=>({...user}));
+  try{if(typeof collabPersistSnapshotV237==="function")collabPersistSnapshotV237(recovered);}catch(error){}
+  return match;
+}
+
 function dateTimeBR(v){
   if(!v)return "-";
   const d=new Date(v);
@@ -20877,7 +20929,8 @@ async function handleLoginSubmit(e){
   normalizeAuthUsers();
   const username=($("loginUsername")?.value||"").trim();
   const password=String($("loginPassword")?.value||"");
-  const user=(state.settings.authUsers||[]).find(u=>u.active!==false && u.username.toLowerCase()===username.toLowerCase() && String(u.password)===password);
+  let user=(state.settings.authUsers||[]).find(u=>u.active!==false && u.username.toLowerCase()===username.toLowerCase() && String(u.password)===password);
+  if(!user)user=await findAuthUserWithRecoveryV269(username,password);
 
   if(!user){
     showLoginScreen("Usuário ou senha incorretos.",true);
@@ -46278,11 +46331,13 @@ function coreApplyRowsToStateV211({renderNow=true}={}){
         state[config.stateKey]=rows[0]?coreCloneV211(rows[0].payload,{}):{};
       }else if(config.module==="collaborators"){
         const collaborators=rows.map(row=>coreCloneV211(row.payload,{})).filter(Boolean);
+        const localCollaborators=Array.isArray(state?.settings?.authUsers)?coreCloneV211(state.settings.authUsers,[]):[];
+        const safeCollaborators=collaborators.length?collaborators:localCollaborators;
         state.settings=state.settings||{};
-        state.settings.authUsers=coreCloneV211(collaborators,[]);
-        if(typeof collabPersistSnapshotV237==="function")collabPersistSnapshotV237(state.settings.authUsers);
+        state.settings.authUsers=coreCloneV211(safeCollaborators,[]);
+        if(collaborators.length&&typeof collabPersistSnapshotV237==="function")collabPersistSnapshotV237(state.settings.authUsers);
         /* Espelho compatível para qualquer rotina antiga que ainda leia state.collaborators. */
-        state.collaborators=coreCloneV211(collaborators,[]);
+        state.collaborators=coreCloneV211(safeCollaborators,[]);
       }else{
         state[config.stateKey]=rows.map(row=>coreCloneV211(row.payload,{})).filter(Boolean);
       }
