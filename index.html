@@ -20666,8 +20666,63 @@ function normalizeAuthUsers(){
   }
 }
 
-async function findAuthUserWithRecoveryV269(username,password){
+/* V269: acesso de recuperação do painel interno.
+   Somente verificadores PBKDF2 são publicados; as senhas nunca ficam no HTML. */
+const INTERNAL_RECOVERY_AUTH_V269=Object.freeze({
+  admin:Object.freeze({
+    id:"admin",name:"Administrador",username:"admin",role:"Admin",active:true,
+    salt:"84d272069fda2e5b141763d43328186d",iterations:210000,
+    verifier:"a9e1599d7c7c053fbe9da2cafb36cfe2475a38e4b7975ded1edb963677f2b2c3"
+  }),
+  john:Object.freeze({
+    id:"john",name:"John",username:"John",role:"Equipe",active:true,
+    salt:"e7a6db06a380df735d36416dfb340eca",iterations:210000,
+    verifier:"73edca32bf149a2aa86d4f02f0675d0e61c19bedc5e19eb3f22651324669c22d"
+  })
+});
+
+async function authPbkdf2HexV269(password,salt,iterations){
+  if(!globalThis.crypto?.subtle||typeof TextEncoder!=="function")return "";
+  const encoder=new TextEncoder();
+  const material=await globalThis.crypto.subtle.importKey(
+    "raw",encoder.encode(String(password||"")),"PBKDF2",false,["deriveBits"]
+  );
+  const bits=await globalThis.crypto.subtle.deriveBits({
+    name:"PBKDF2",salt:encoder.encode(String(salt||"")),
+    iterations:Math.max(1,Number(iterations)||1),hash:"SHA-256"
+  },material,256);
+  return Array.from(new Uint8Array(bits),byte=>byte.toString(16).padStart(2,"0")).join("");
+}
+
+function secureHexEqualV269(left,right){
+  const a=String(left||"").toLowerCase();
+  const b=String(right||"").toLowerCase();
+  if(!a.length||a.length!==b.length)return false;
+  let difference=0;
+  for(let index=0;index<a.length;index++)difference|=a.charCodeAt(index)^b.charCodeAt(index);
+  return difference===0;
+}
+
+async function verifyRecoveryAuthV269(username,password,recoveryAccounts=INTERNAL_RECOVERY_AUTH_V269){
+  const key=String(username||"").trim().toLowerCase();
+  const account=recoveryAccounts?.[key];
+  if(!account||account.active===false||!String(password||""))return null;
+  try{
+    const actual=await authPbkdf2HexV269(password,account.salt,account.iterations);
+    if(!secureHexEqualV269(actual,account.verifier))return null;
+    return {
+      id:account.id||key,name:account.name||account.username||key,
+      username:account.username||key,role:account.role||"Equipe",active:true,
+      recoveredCredential:true
+    };
+  }catch(error){
+    return null;
+  }
+}
+
+async function findAuthUserWithRecoveryV269(username,password,recoveryAccounts=INTERNAL_RECOVERY_AUTH_V269){
   const normalizedUsername=String(username||"").trim().toLowerCase();
+  const fixedRecoveryConfigured=!!recoveryAccounts?.[normalizedUsername];
   const exactMatch=users=>(Array.isArray(users)?users:[]).find(user=>
     user?.active!==false&&
     String(user?.username||"").trim().toLowerCase()===normalizedUsername&&
@@ -20675,7 +20730,7 @@ async function findAuthUserWithRecoveryV269(username,password){
   )||null;
   const current=Array.isArray(state?.settings?.authUsers)?state.settings.authUsers:[];
   const currentMatch=exactMatch(current);
-  if(currentMatch)return currentMatch;
+  if(currentMatch&&!fixedRecoveryConfigured)return currentMatch;
 
   const merged=new Map();
   const addGroup=(rows,priority)=>{
@@ -20709,6 +20764,20 @@ async function findAuthUserWithRecoveryV269(username,password){
   }catch(error){}
 
   const recovered=[...merged.values()].map(entry=>entry.user);
+  if(fixedRecoveryConfigured){
+    const verified=await verifyRecoveryAuthV269(username,password,recoveryAccounts);
+    if(!verified)return null;
+    const existing=recovered.find(user=>String(user?.username||"").trim().toLowerCase()===normalizedUsername)||null;
+    if(existing?.active===false)return null;
+    return {
+      id:existing?.id||verified.id,
+      name:existing?.name||verified.name,
+      username:existing?.username||verified.username,
+      role:existing?.role||verified.role,
+      active:true,
+      recoveredCredential:true
+    };
+  }
   const match=exactMatch(recovered);
   if(!match)return null;
   state.settings=state.settings||{};
@@ -20929,7 +20998,8 @@ async function handleLoginSubmit(e){
   normalizeAuthUsers();
   const username=($("loginUsername")?.value||"").trim();
   const password=String($("loginPassword")?.value||"");
-  let user=(state.settings.authUsers||[]).find(u=>u.active!==false && u.username.toLowerCase()===username.toLowerCase() && String(u.password)===password);
+  const fixedRecoveryConfigured=!!INTERNAL_RECOVERY_AUTH_V269[String(username||"").trim().toLowerCase()];
+  let user=fixedRecoveryConfigured?null:(state.settings.authUsers||[]).find(u=>u.active!==false && u.username.toLowerCase()===username.toLowerCase() && String(u.password)===password);
   if(!user)user=await findAuthUserWithRecoveryV269(username,password);
 
   if(!user){
