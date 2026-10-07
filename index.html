@@ -16719,7 +16719,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V270</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V272</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19308,7 +19308,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V270";
+const APP_BUILD_VERSION="V272";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
@@ -21267,6 +21267,52 @@ function collabCloneV237(value,fallback=[]){
   try{return JSON.parse(JSON.stringify(value));}
   catch(error){return fallback;}
 }
+
+/* V271 — uma resposta parcial nunca pode apagar colaboradores já conhecidos.
+   A identidade usa primeiro o ID e também o usuário normalizado para unir
+   cadastros legados que receberam IDs diferentes durante migrações anteriores. */
+function collaboratorIdentityV271(value){
+  const row=value&&typeof value==="object"?value:{};
+  return {
+    id:String(row.id||row.record_id||"").trim().toLowerCase(),
+    username:String(row.username||"").trim().toLowerCase()
+  };
+}
+function mergeCollaboratorCollectionsV271(...collections){
+  const rows=[];
+  (collections.flat()).forEach(raw=>{
+    if(!raw||typeof raw!=="object")return;
+    const item=collabCloneV237(raw,{});
+    const identity=collaboratorIdentityV271(item);
+    if(!identity.id&&!identity.username)return;
+    const index=rows.findIndex(existing=>{
+      const known=collaboratorIdentityV271(existing);
+      return (identity.id&&known.id===identity.id)||
+        (identity.username&&known.username===identity.username);
+    });
+    if(index<0){
+      rows.push(item);
+      return;
+    }
+    const current=rows[index];
+    const currentTime=Date.parse(String(current?.updatedAt||current?.createdAt||""))||0;
+    const nextTime=Date.parse(String(item?.updatedAt||item?.createdAt||""))||0;
+    if(nextTime>currentTime||(nextTime===currentTime)){
+      rows[index]={...current,...item};
+    }else{
+      rows[index]={...item,...current};
+    }
+  });
+  return rows;
+}
+function filterExplicitCollaboratorDeletesV271(rows,deletedIds){
+  const ids=deletedIds instanceof Set?deletedIds:new Set(Array.isArray(deletedIds)?deletedIds:[]);
+  return (Array.isArray(rows)?rows:[]).filter(row=>{
+    const identity=collaboratorIdentityV271(row);
+    return (!identity.id||!ids.has(identity.id))&&
+      (!identity.username||!ids.has("username:"+identity.username));
+  });
+}
 function collabReadSnapshotV237(){
   try{
     const parsed=JSON.parse(localStorage.getItem(COLLAB_SNAPSHOT_KEY_V237)||"[]");
@@ -21822,7 +21868,7 @@ async function strictSharedSaveWorkerV267(){
     if(recordsOk){
       markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
       setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
-      updateCloudDebug("confirmação V270: registros oficiais confirmados; backup legado será atualizado sem bloquear o trabalho");
+      updateCloudDebug("confirmação V271: registros oficiais confirmados; backup legado será atualizado sem bloquear o trabalho");
       scheduleLegacyPanelBackupV269();
       return true;
     }
@@ -26069,7 +26115,7 @@ function installProductChoiceSyncWatchers(){
   },30000);
 }
 
-function wisentLegacyPanelMergeV270(localState,cloudState,hadLocalState){
+function wisentLegacyPanelMergeV271(localState,cloudState,hadLocalState){
   const clone=value=>{
     try{return structuredClone(value);}
     catch(error){
@@ -26085,8 +26131,8 @@ function wisentLegacyPanelMergeV270(localState,cloudState,hadLocalState){
     ?localState
     :{};
   const protectedKeys=[
-    "settings","influencers","cashPayments","paidAdjustments",
-    "accumulationHistory","reportHistory","collaborators","pix"
+    "influencers","cashPayments","paidAdjustments",
+    "accumulationHistory","reportHistory","pix"
   ];
   protectedKeys.forEach(key=>{
     const value=local[key];
@@ -26095,6 +26141,30 @@ function wisentLegacyPanelMergeV270(localState,cloudState,hadLocalState){
       :value&&typeof value==="object"&&Object.keys(value).length>0;
     if(usable)cloud[key]=clone(value);
   });
+
+  const cloudSettings=cloud.settings&&typeof cloud.settings==="object"&&!Array.isArray(cloud.settings)
+    ?cloud.settings
+    :{};
+  const localSettings=local.settings&&typeof local.settings==="object"&&!Array.isArray(local.settings)
+    ?local.settings
+    :{};
+  cloud.settings={
+    ...clone(cloudSettings),
+    ...clone(localSettings),
+    authUsers:mergeCollaboratorCollectionsV271(
+      Array.isArray(cloudSettings.authUsers)?cloudSettings.authUsers:[],
+      Array.isArray(localSettings.authUsers)?localSettings.authUsers:[]
+    )
+  };
+  cloud.collaborators=mergeCollaboratorCollectionsV271(
+    Array.isArray(cloud.collaborators)?cloud.collaborators:[],
+    Array.isArray(local.collaborators)?local.collaborators:[],
+    cloud.settings.authUsers
+  );
+  cloud.wholesaleRetail=mergeWholesaleCollections(
+    Array.isArray(cloud.wholesaleRetail)?cloud.wholesaleRetail:[],
+    Array.isArray(local.wholesaleRetail)?local.wholesaleRetail:[]
+  );
   return cloud;
 }
 
@@ -26139,14 +26209,20 @@ updateCloudStatus("VERSÃO "+APP_BUILD_VERSION+" carregada. Conectando ao Supaba
         const localPaidAdjustmentsBeforeCloud=ensureArray(state.paidAdjustments);
 
         const legacyCloudState=JSON.parse(row.valor);
-        state=wisentLegacyPanelMergeV270(
+        state=wisentLegacyPanelMergeV271(
           localStateBeforeCloud,
           legacyCloudState,
           WISENT_BOOT_HAD_LOCAL_STATE_V270
         );
 
-        /* V197: painel_state não é fonte de Atacado e Varejo. */
-        state.wholesaleRetail=mergeWholesaleCollections(localWholesaleBeforeCloud);
+        /* V271: o painel_state é somente uma cópia de recuperação. Seus pedidos
+           são mesclados com os snapshots atuais; tombstones explícitos da tabela
+           individual continuam vencendo quando a fonte oficial responder. */
+        state.wholesaleRetail=mergeWholesaleCollections(
+          Array.isArray(legacyCloudState.wholesaleRetail)?legacyCloudState.wholesaleRetail:[],
+          Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[],
+          localWholesaleBeforeCloud
+        );
 
         state.launches=mergeInfluencerLaunchCollections(
           Array.isArray(state.launches)?state.launches:[],
@@ -26225,7 +26301,7 @@ function scheduleLegacyPanelBackupV269(delay=2500){
   clearTimeout(legacyPanelBackupTimerV269);
   legacyPanelBackupTimerV269=setTimeout(()=>{
     if(!wisentCanRunBackgroundSyncV269("legacy-panel",wisentSyncPolicyV269("legacyPanelBackup")))return;
-    cloudSaveNow().catch(error=>console.warn("Backup legado V270 adiado:",error));
+    cloudSaveNow().catch(error=>console.warn("Backup legado V271 adiado:",error));
   },Math.max(500,Number(delay)||2500));
 }
 
@@ -26788,7 +26864,7 @@ async function startApp(){
       installStrictSharedSaveWatchers();
       updateStrictSharedStatus();
     }catch(error){
-      console.warn("V270: monitor da fila será retomado no próximo foco:",error);
+      console.warn("V271: monitor da fila será retomado no próximo foco:",error);
     }
 
     try{
@@ -32063,6 +32139,19 @@ function wholesaleCompareNewestFirstV228(a,b){
   return String(b?.id||"").localeCompare(String(a?.id||""));
 }
 
+const WHOLESALE_AUTO_REVEAL_KEY_V271=KEY+"_wholesale_auto_reveal_v271";
+function wholesaleShouldAutoRevealAllV271({allCount=0,visibleCount=0,mode="month",type="",status="",alreadyRevealed=false}={}){
+  return Number(allCount)>0&&Number(visibleCount)===0&&mode==="month"&&
+    !String(type||"").trim()&&!String(status||"").trim()&&!alreadyRevealed;
+}
+function wholesaleAutoRevealAlreadyV271(){
+  try{return sessionStorage.getItem(WHOLESALE_AUTO_REVEAL_KEY_V271)==="ok";}
+  catch(error){return false;}
+}
+function wholesaleMarkAutoRevealV271(){
+  try{sessionStorage.setItem(WHOLESALE_AUTO_REVEAL_KEY_V271,"ok");}catch(error){}
+}
+
 function wholesaleRetailRows(){
   ensureWholesaleDefaultPeriod();
 
@@ -32132,12 +32221,30 @@ function renderWholesaleRetail(){
   if(!$("wholesaleRows"))return;
 
   ensureWholesaleDefaultPeriod();
+  let rows=wholesaleRetailRows();
+  const allCount=(state.wholesaleRetail||[]).filter(row=>row&&row.deleted!==true).length;
+  const type=String($("wholesaleFilterType")?.value||"").trim();
+  const status=String($("wholesaleFilterStatus")?.value||"").trim();
+  if(wholesaleShouldAutoRevealAllV271({
+    allCount,
+    visibleCount:rows.length,
+    mode:readWholesalePeriodMode(),
+    type,
+    status,
+    alreadyRevealed:wholesaleAutoRevealAlreadyV271()
+  })){
+    wholesaleMarkAutoRevealV271();
+    if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value="";
+    writeWholesaleRange({start:"",end:""});
+    writeWholesalePeriodMode("all");
+    rows=wholesaleRetailRows();
+    updateCloudDebug(`V271: ${rows.length} lançamento(s) reapareceram ao liberar o filtro automático do mês.`);
+  }
   renderWholesaleRangeStatus();
   renderWholesaleActivePeriodLabel();
   syncWholesaleListPeriodInputsV228();
   calcWholesaleRetail();
 
-  const rows=wholesaleRetailRows();
   renderWholesaleIntegrityNotice(rows);
 
   const totalFiltered=rows.reduce((a,w)=>a+Number(w.total||0),0);
@@ -45151,6 +45258,8 @@ const INFLUENCER_LAUNCH_DB_V209="wisent_influencer_launches_v209";
 const INFLUENCER_LAUNCH_DB_VERSION_V209=1;
 const INFLUENCER_LAUNCH_REALTIME_TOPIC_V209="realtime:wisent-influencer-launches-v209";
 const INFLUENCER_LAUNCH_PAGE_SIZE_V209=1000;
+const INFLUENCER_LAUNCH_MARKER_KEY_V272=KEY+"_influencer_launch_marker_v272";
+const INFLUENCER_LAUNCH_PROBE_MS_V272=60000;
 
 const legacyLaunchV208={
   writeSnapshot(rows){
@@ -45192,6 +45301,7 @@ let launchConflictRevisionV267=0;
 let launchLastFullSyncV267=0;
 let launchLastAutoAttemptV267=0;
 let launchRealtimeSeenV267=[];
+let launchChangeMarkerV272="";
 
 function launchV209Now(){return new Date().toISOString();}
 function launchV209MutationId(id,operation="upsert"){
@@ -45549,6 +45659,68 @@ async function launchV209FetchAllRows(){
   }
   return all;
 }
+function launchV272MarkerFromRows(rows,totalOverride=null){
+  const list=(Array.isArray(rows)?rows:[]).filter(Boolean).slice().sort((a,b)=>
+    String(b.updated_at||"").localeCompare(String(a.updated_at||""))||
+    String(b.id||"").localeCompare(String(a.id||""))
+  );
+  const latest=list[0]||{};
+  const total=totalOverride!==null&&Number.isFinite(Number(totalOverride))?Number(totalOverride):list.length;
+  return [
+    Math.max(0,total),
+    String(latest.updated_at||""),
+    String(latest.id||""),
+    String(latest.legacy_id||""),
+    Math.max(0,Number(latest.version||0)),
+    String(latest.deleted_at||"")
+  ].join("|");
+}
+function launchV272RememberMarker(rows,totalOverride=null){
+  launchChangeMarkerV272=launchV272MarkerFromRows(rows,totalOverride);
+  try{localStorage.setItem(INFLUENCER_LAUNCH_MARKER_KEY_V272,launchChangeMarkerV272);}catch(error){}
+  return launchChangeMarkerV272;
+}
+async function launchV272FetchChangeMarker(){
+  const url=SUPABASE_URL+"/rest/v1/"+INFLUENCER_LAUNCH_TABLE_V209+
+    "?select=id,legacy_id,version,updated_at,deleted_at"+
+    "&order=updated_at.desc,id.desc&limit=1";
+  const response=await fetchWithTimeout(url,{
+    method:"GET",
+    headers:cloudHeaders({"Prefer":"count=exact","Cache-Control":"no-cache"})
+  },8000);
+  if(!response.ok){
+    const body=await response.text().catch(()=>"");
+    const error=new Error("HTTP "+response.status+" ao verificar mudanças dos lançamentos: "+body.slice(0,180));
+    error.status=response.status;
+    throw error;
+  }
+  const rows=await response.json();
+  const range=String(response.headers.get("content-range")||"");
+  const totalText=range.split("/")[1];
+  const total=totalText&&totalText!=="*"?Number(totalText):(Array.isArray(rows)?rows.length:0);
+  return launchV272MarkerFromRows(rows,total);
+}
+async function launchV272ProbeForChanges({force=false,budgetReserved=false,showStatus=false}={}){
+  if(navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
+  if(!force&&!budgetReserved&&!wisentCanRunBackgroundSyncV269("launches-probe",INFLUENCER_LAUNCH_PROBE_MS_V272))return false;
+  try{
+    const remoteMarker=await launchV272FetchChangeMarker();
+    // O marcador em memória comprova que ESTA aba já carregou a mudança.
+    // O localStorage é apenas diagnóstico; outra aba não pode validar esta tela.
+    const currentMarker=launchChangeMarkerV272;
+    if(currentMarker&&remoteMarker===currentMarker)return false;
+    const synced=await syncInfluencerLaunchRecordsFromCloud({showStatus});
+    return synced!==false;
+  }catch(error){
+    if(showStatus){
+      updateCloudStatus("Lançamentos preservados; a verificação entre contas será repetida.",true);
+      updateCloudDebug("V272 probe: "+String(error.message||error).slice(0,220));
+    }
+    return false;
+  }finally{
+    wisentRememberBackgroundSyncV269("launches-probe");
+  }
+}
 async function launchV209MutationConfirmed(mutationId){
   if(!mutationId)return false;
   const url=SUPABASE_URL+"/rest/v1/"+INFLUENCER_LAUNCH_HISTORY_TABLE_V209+
@@ -45647,6 +45819,7 @@ function launchAcceptOfficialRowV267(row){
   launchOfficialVersionByIdV209.set(id,Number(row.version||0));
   const record=launchV209RowToRecord(row);
   if(record)launchV209DbPut("records",record);
+  if(launchOfficialReadyV209)launchV272RememberMarker([...launchOfficialRowsV209.values()]);
   return true;
 }
 function launchAdvanceAncestorV267(entry,row){
@@ -45815,7 +45988,15 @@ function launchV209ApplyOfficialState({renderNow=true}={}){
   const active=official.filter(record=>!record.deleted);
   const deletedIds=new Set(official.filter(record=>record.deleted).map(record=>String(record.id)));
   const pending=readInfluencerLaunchPendingQueue();
-  const map=new Map(active.map(record=>[String(record.id),record]));
+  // V272: uma resposta parcial nunca esconde registros confiáveis deste aparelho.
+  // A linha oficial prevalece e somente um tombstone explícito remove um ID.
+  const trustedLocal=mergeInfluencerLaunchCollections(
+    Array.isArray(state.launches)?state.launches:[],
+    readInfluencerLaunchSnapshot()
+  ).filter(record=>record?.id&&!record.deleted);
+  const map=new Map(trustedLocal.map(record=>[String(record.id),record]));
+  active.forEach(record=>map.set(String(record.id),record));
+  deletedIds.forEach(id=>map.delete(id));
   pending.forEach(entry=>{
     const id=String(entry.id);
     if(entry.operation==="delete"||entry.record?.deleted===true){
@@ -45888,8 +46069,9 @@ function launchV209ReplaceOfficialRows(rows){
   launchOfficialReadyV209=true;
   const records=launchV209CurrentOfficialRecords();
   try{localStorage.setItem(INFLUENCER_LAUNCH_SNAPSHOT_KEY_V209,JSON.stringify(records.filter(r=>!r.deleted)));}catch(error){}
-  launchV209DbReplaceRecords(records);
-  return launchV209ApplyOfficialState({renderNow:true});
+  const applied=launchV209ApplyOfficialState({renderNow:true});
+  launchV209DbReplaceRecords(applied);
+  return applied;
 }
 function activeLocalInfluencerLaunchCandidates(){
   const groups=[
@@ -45964,6 +46146,7 @@ async function syncInfluencerLaunchRecordsFromCloud({showStatus=false}={}){
       await launchV209HydrateDurableState();
       const firstRows=await launchV209FetchAllRows();
       launchV209ReplaceOfficialRows(firstRows);
+      launchV272RememberMarker(firstRows,firstRows.length);
       launchV209QueueMissingMigrationCandidates();
       const flushed=await flushInfluencerLaunchPendingQueue();
       launchLastFullSyncV267=Date.now();
@@ -46125,7 +46308,7 @@ function installInfluencerLaunchSyncWatchers(){
     try{
       launchBroadcastV209=new BroadcastChannel("wisent-influencer-launches-v209");
       launchBroadcastV209.addEventListener("message",event=>{
-        if(event?.data?.type==="launch-sync"&&wisentCanRunBackgroundSyncV269("launches",wisentSyncPolicyV269("focusStale")))syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+        if(event?.data?.type==="launch-sync")launchV272ProbeForChanges({force:true,showStatus:false});
       });
     }catch(error){launchBroadcastV209=null;}
   }
@@ -46141,8 +46324,7 @@ function installInfluencerLaunchSyncWatchers(){
   window.addEventListener("online",()=>{
     launchV209ConnectRealtime();
     flushInfluencerLaunchPendingQueue().then(()=>{
-      if(wisentCanRunBackgroundSyncV269("launches",wisentSyncPolicyV269("focusStale")))return syncInfluencerLaunchRecordsFromCloud({showStatus:true});
-      return true;
+      return launchV272ProbeForChanges({force:true,showStatus:true});
     });
   });
   window.addEventListener("offline",()=>{
@@ -46153,10 +46335,9 @@ function installInfluencerLaunchSyncWatchers(){
   const refresh=()=>{
     if(navigator.onLine===false)return;
     launchV209ConnectRealtime();
-    const interval=launchRealtimeConnectedV209?wisentSyncPolicyV269("launchesConnected"):wisentSyncPolicyV269("launchesFallback");
-    if(!wisentCanRunBackgroundSyncV269("launches",interval))return;
+    if(!wisentCanRunBackgroundSyncV269("launches-probe",INFLUENCER_LAUNCH_PROBE_MS_V272))return;
     launchLastAutoAttemptV267=Date.now();
-    syncInfluencerLaunchRecordsFromCloud({showStatus:false});
+    launchV272ProbeForChanges({budgetReserved:true,showStatus:false});
   };
   window.addEventListener("focus",refresh);
   window.addEventListener("pageshow",refresh);
@@ -46171,9 +46352,8 @@ function installInfluencerLaunchSyncWatchers(){
     if(document.hidden||navigator.onLine===false)return;
     launchV209ConnectRealtime();
     if(readInfluencerLaunchPendingQueue().length)flushInfluencerLaunchPendingQueue();
-    const interval=launchRealtimeConnectedV209?wisentSyncPolicyV269("launchesConnected"):wisentSyncPolicyV269("launchesFallback");
-    if(Date.now()-Math.max(launchLastFullSyncV267,launchLastAutoAttemptV267)>=interval)refresh();
-  },wisentSyncPolicyV269("launchesFallback"));
+    refresh();
+  },INFLUENCER_LAUNCH_PROBE_MS_V272);
 }
 
 window.exportInfluencerLaunchSafetyBackupV209=function(){
@@ -46520,6 +46700,7 @@ async function coreLoadDurableV211(){
   const localOutbox=coreReadLocalV211(CORE_OUTBOX_KEY_V211,[]);
   const dbSnapshot=await coreDbGetV211("snapshot");
   const dbOutbox=await coreDbGetV211("outbox");
+  const dbCollaborators=await coreDbGetV211("collaborators-v237");
   const rows=[...(Array.isArray(localSnapshot)?localSnapshot:[]),...(Array.isArray(dbSnapshot)?dbSnapshot:[])];
   rows.forEach(raw=>{
     const row=coreRowNormalizeV211(raw);
@@ -46538,6 +46719,21 @@ async function coreLoadDurableV211(){
     if(!existing||String(item.queuedAt||"")>=String(existing.queuedAt||""))outboxMap.set(key,item);
   });
   coreOutboxV211=[...outboxMap.values()];
+
+  /* O snapshot exclusivo pode sobreviver mesmo quando a resposta parcial já
+     reduziu o snapshot geral. Recolocamos esses candidatos no estado visível
+     antes da reconciliação, sem executar nenhuma exclusão por ausência. */
+  const durableCollaborators=mergeCollaboratorCollectionsV271(
+    typeof collabReadSnapshotV237==="function"?collabReadSnapshotV237():[],
+    Array.isArray(dbCollaborators)?dbCollaborators:[],
+    Array.isArray(state?.collaborators)?state.collaborators:[],
+    Array.isArray(state?.settings?.authUsers)?state.settings.authUsers:[]
+  );
+  if(durableCollaborators.length){
+    state.settings=state.settings||{};
+    state.settings.authUsers=coreCloneV211(durableCollaborators,[]);
+    state.collaborators=coreCloneV211(durableCollaborators,[]);
+  }
 }
 function corePersistOutboxV211(){
   const safe=coreCloneV211(coreOutboxV211,[]);
@@ -46593,10 +46789,29 @@ function coreApplyRowsToStateV211({renderNow=true}={}){
       }else if(config.module==="collaborators"){
         const collaborators=rows.map(row=>coreCloneV211(row.payload,{})).filter(Boolean);
         const localCollaborators=Array.isArray(state?.settings?.authUsers)?coreCloneV211(state.settings.authUsers,[]):[];
-        const safeCollaborators=collaborators.length?collaborators:localCollaborators;
+        const legacyCollaborators=Array.isArray(state?.collaborators)?coreCloneV211(state.collaborators,[]):[];
+        const snapshotCollaborators=typeof collabReadSnapshotV237==="function"?collabReadSnapshotV237():[];
+        const explicitDeletes=new Set();
+        [...effective.values()]
+          .filter(row=>row.module==="collaborators"&&row.deleted_at)
+          .forEach(row=>{
+            const id=String(row.record_id||"").trim().toLowerCase();
+            const username=String(row.payload?.username||"").trim().toLowerCase();
+            if(id)explicitDeletes.add(id);
+            if(username)explicitDeletes.add("username:"+username);
+          });
+        const safeCollaborators=filterExplicitCollaboratorDeletesV271(
+          mergeCollaboratorCollectionsV271(
+            snapshotCollaborators,
+            legacyCollaborators,
+            localCollaborators,
+            collaborators
+          ),
+          explicitDeletes
+        );
         state.settings=state.settings||{};
         state.settings.authUsers=coreCloneV211(safeCollaborators,[]);
-        if(collaborators.length&&typeof collabPersistSnapshotV237==="function")collabPersistSnapshotV237(state.settings.authUsers);
+        if(typeof collabPersistSnapshotV237==="function")collabPersistSnapshotV237(state.settings.authUsers);
         /* Espelho compatível para qualquer rotina antiga que ainda leia state.collaborators. */
         state.collaborators=coreCloneV211(safeCollaborators,[]);
       }else{
