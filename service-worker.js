@@ -1,5 +1,5 @@
-const WISENT_VERSION="V269";
-const WISENT_CACHE="wisent-erp-static-v269-egress-budget-20261005a";
+const WISENT_VERSION="V270";
+const WISENT_CACHE="wisent-erp-static-v270-stability-20261007a";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";

@@ -16719,7 +16719,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V269</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V270</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19276,9 +19276,11 @@ function safeStorageRemove(){
 }
 
 let state;
+let WISENT_BOOT_RAW_V270=null;
+try{WISENT_BOOT_RAW_V270=safeStorageGet();}catch(error){WISENT_BOOT_RAW_V270=null;}
+const WISENT_BOOT_HAD_LOCAL_STATE_V270=!!WISENT_BOOT_RAW_V270;
 try{
-  const saved=safeStorageGet();
-  state=saved?JSON.parse(saved):structuredClone(INITIAL_STATE);
+  state=WISENT_BOOT_RAW_V270?JSON.parse(WISENT_BOOT_RAW_V270):structuredClone(INITIAL_STATE);
 }catch(e){
   state=structuredClone(INITIAL_STATE);
 }
@@ -19306,7 +19308,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V269";
+const APP_BUILD_VERSION="V270";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
@@ -19328,6 +19330,8 @@ const WISENT_SYNC_POLICY_V269=Object.freeze({
 });
 const WISENT_SYNC_LEADER_KEY_V269=KEY+"_sync_leader_v269";
 const WISENT_SYNC_LAST_PREFIX_V269=KEY+"_sync_last_v269_";
+const WISENT_SYNC_ACTIVE_PREFIX_V270=KEY+"_sync_active_v270_";
+const WISENT_SYNC_ACTIVE_MS_V270=30000;
 const WISENT_EGRESS_BLOCK_KEY_V269=KEY+"_egress_block_until_v269";
 const WISENT_EGRESS_BLOCK_MS_V269=900000;
 const WISENT_SYNC_TAB_ID_V269=(globalThis.crypto?.randomUUID?.()||`tab-${Date.now()}-${Math.random().toString(36).slice(2)}`);
@@ -19352,7 +19356,7 @@ function wisentObserveSupabaseResponseV269(response,url=""){
   try{localStorage.setItem(WISENT_EGRESS_BLOCK_KEY_V269,String(until));}catch(error){}
   try{
     updateCloudStatus("Supabase pausado por limite de Egress. Dados locais e filas permanecem preservados.",true);
-    updateCloudDebug(`V269: novas tentativas automáticas suspensas até ${new Date(until).toLocaleTimeString("pt-BR")}.`);
+    updateCloudDebug(`V270: novas tentativas automáticas suspensas até ${new Date(until).toLocaleTimeString("pt-BR")}.`);
   }catch(error){}
   return response;
 }
@@ -19371,7 +19375,10 @@ function wisentCanRunBackgroundSyncV269(scope,minInterval=wisentSyncPolicyV269("
     const key=WISENT_SYNC_LAST_PREFIX_V269+String(scope||"general");
     const last=Number(localStorage.getItem(key)||0);
     if(last&&now-last<Math.max(1,Number(minInterval)||1))return false;
-    localStorage.setItem(key,String(now));
+    const activeKey=WISENT_SYNC_ACTIVE_PREFIX_V270+String(scope||"general");
+    const activeAt=Number(localStorage.getItem(activeKey)||0);
+    if(activeAt&&now-activeAt<WISENT_SYNC_ACTIVE_MS_V270)return false;
+    localStorage.setItem(activeKey,String(now));
     return true;
   }catch(error){
     return true;
@@ -19381,8 +19388,16 @@ function wisentCanRunBackgroundSyncV269(scope,minInterval=wisentSyncPolicyV269("
 function wisentRememberBackgroundSyncV269(scope){
   try{
     localStorage.setItem(WISENT_SYNC_LAST_PREFIX_V269+String(scope||"general"),String(Date.now()));
+    localStorage.removeItem(WISENT_SYNC_ACTIVE_PREFIX_V270+String(scope||"general"));
   }catch(error){}
   return true;
+}
+
+function wisentRealtimeResumeDelayV270(baseDelay=1000){
+  const normal=Math.max(250,Number(baseDelay)||1000);
+  const blockedUntil=wisentEgressBlockedUntilV269();
+  if(!blockedUntil)return normal;
+  return Math.max(1000,blockedUntil-Date.now()+1000);
 }
 const APP_CACHE_RECOVERY_KEY="painel_cache_recovery_v203";
 const GLOBAL_MONTH_SELECTION_KEY=KEY+"_global_month_selection_v208";
@@ -20026,7 +20041,10 @@ function settingsV210Broadcast(message){
 function settingsV210ScheduleReconnect(){
   clearTimeout(systemSettingsReconnectTimerV210);
   if(navigator.onLine===false)return;
-  systemSettingsReconnectTimerV210=setTimeout(()=>settingsV210ConnectRealtime(),1800);
+  systemSettingsReconnectTimerV210=setTimeout(
+    ()=>settingsV210ConnectRealtime(),
+    wisentRealtimeResumeDelayV270(1800)
+  );
 }
 function settingsV210RealtimeMessage(event){
   let message=null;
@@ -20041,7 +20059,11 @@ function settingsV210RealtimeMessage(event){
   settingsV210SyncFromCloud({showStatus:false});
 }
 function settingsV210ConnectRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(wisentEgressBlockedUntilV269()){
+    settingsV210ScheduleReconnect();
+    return false;
+  }
   if(systemSettingsSocketV210&&[0,1].includes(systemSettingsSocketV210.readyState))return true;
   try{
     const base=String(SUPABASE_URL||"").replace(/^http/i,"ws").replace(/\/+$/g,"");
@@ -21800,7 +21822,7 @@ async function strictSharedSaveWorkerV267(){
     if(recordsOk){
       markSharedSaveConfirmed("painel",tokenAtStart||latestSharedSaveToken||"");
       setSaveUiState("saved","confirmado no Supabase; todos os usuários podem ver");
-      updateCloudDebug("confirmação V269: registros oficiais confirmados; backup legado será atualizado sem bloquear o trabalho");
+      updateCloudDebug("confirmação V270: registros oficiais confirmados; backup legado será atualizado sem bloquear o trabalho");
       scheduleLegacyPanelBackupV269();
       return true;
     }
@@ -23325,12 +23347,18 @@ function wholesaleRealtimeMessage(raw){
 function scheduleWholesaleRealtimeReconnect(){
   clearTimeout(wholesaleRealtimeReconnectTimer);
   if(navigator.onLine===false)return;
-  const delay=Math.min(20000,900*Math.pow(1.8,Math.min(wholesaleRealtimeReconnectAttempt++,6)));
+  const delay=wisentRealtimeResumeDelayV270(
+    Math.min(20000,900*Math.pow(1.8,Math.min(wholesaleRealtimeReconnectAttempt++,6)))
+  );
   wholesaleRealtimeReconnectTimer=setTimeout(connectWholesaleRealtime,delay);
 }
 
 function connectWholesaleRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(wisentEgressBlockedUntilV269()){
+    scheduleWholesaleRealtimeReconnect();
+    return false;
+  }
   if(wholesaleRealtimeSocket&&[0,1].includes(wholesaleRealtimeSocket.readyState))return true;
   clearTimeout(wholesaleRealtimeReconnectTimer);
   try{
@@ -26041,6 +26069,35 @@ function installProductChoiceSyncWatchers(){
   },30000);
 }
 
+function wisentLegacyPanelMergeV270(localState,cloudState,hadLocalState){
+  const clone=value=>{
+    try{return structuredClone(value);}
+    catch(error){
+      try{return JSON.parse(JSON.stringify(value));}
+      catch(innerError){return value;}
+    }
+  };
+  const cloud=cloudState&&typeof cloudState==="object"&&!Array.isArray(cloudState)
+    ?clone(cloudState)
+    :{};
+  if(!hadLocalState)return cloud;
+  const local=localState&&typeof localState==="object"&&!Array.isArray(localState)
+    ?localState
+    :{};
+  const protectedKeys=[
+    "settings","influencers","cashPayments","paidAdjustments",
+    "accumulationHistory","reportHistory","collaborators","pix"
+  ];
+  protectedKeys.forEach(key=>{
+    const value=local[key];
+    const usable=Array.isArray(value)
+      ?value.length>0
+      :value&&typeof value==="object"&&Object.keys(value).length>0;
+    if(usable)cloud[key]=clone(value);
+  });
+  return cloud;
+}
+
 
 async function cloudLoad(){
   cloudOfficialSourceChecked=false;
@@ -26075,12 +26132,18 @@ updateCloudStatus("VERSÃO "+APP_BUILD_VERSION+" carregada. Conectando ao Supaba
 
     if(row&&row.valor){
       try{
+        const localStateBeforeCloud=cloneSafe(state,{});
         const localWholesaleBeforeCloud=activeLocalWholesaleCandidates();
         const localInfluencerLaunchesBeforeCloud=activeLocalInfluencerLaunchCandidates();
         const localProductChoicesBeforeCloud=activeLocalProductChoiceCandidates();
         const localPaidAdjustmentsBeforeCloud=ensureArray(state.paidAdjustments);
 
-        state=JSON.parse(row.valor);
+        const legacyCloudState=JSON.parse(row.valor);
+        state=wisentLegacyPanelMergeV270(
+          localStateBeforeCloud,
+          legacyCloudState,
+          WISENT_BOOT_HAD_LOCAL_STATE_V270
+        );
 
         /* V197: painel_state não é fonte de Atacado e Varejo. */
         state.wholesaleRetail=mergeWholesaleCollections(localWholesaleBeforeCloud);
@@ -26162,7 +26225,7 @@ function scheduleLegacyPanelBackupV269(delay=2500){
   clearTimeout(legacyPanelBackupTimerV269);
   legacyPanelBackupTimerV269=setTimeout(()=>{
     if(!wisentCanRunBackgroundSyncV269("legacy-panel",wisentSyncPolicyV269("legacyPanelBackup")))return;
-    cloudSaveNow().catch(error=>console.warn("Backup legado V269 adiado:",error));
+    cloudSaveNow().catch(error=>console.warn("Backup legado V270 adiado:",error));
   },Math.max(500,Number(delay)||2500));
 }
 
@@ -26719,6 +26782,15 @@ async function startApp(){
       showLoginScreen("Use seu usuário interno para entrar.");
     }
 
+    /* V270: a recuperação das filas precisa existir mesmo se um módulo opcional
+       falhar durante a sequência de inicialização abaixo. */
+    try{
+      installStrictSharedSaveWatchers();
+      updateStrictSharedStatus();
+    }catch(error){
+      console.warn("V270: monitor da fila será retomado no próximo foco:",error);
+    }
+
     try{
       await hydrateWholesaleDurableStorage();
       await seedWholesaleRecordsOnce();
@@ -26754,9 +26826,7 @@ async function startApp(){
       installErpTestSyncWatchers();
       installErpRealtime();
       installErpOrderDeletionSyncV250();
-      installStrictSharedSaveWatchers();
       erpSecurityGuidePromptOnce();
-      updateStrictSharedStatus();
 
       render();
     }catch(e){
@@ -38750,12 +38820,19 @@ function handleErpRealtimeMessage(raw){
 function scheduleErpRealtimeReconnect(){
   clearTimeout(erpRealtimeReconnectTimer);
   if(navigator.onLine===false){erpRealtimeSetConnected(false);return;}
-  const delay=Math.min(20000,1200*Math.pow(1.7,Math.min(erpRealtimeReconnectAttempt++,6)));
+  const delay=wisentRealtimeResumeDelayV270(
+    Math.min(20000,1200*Math.pow(1.7,Math.min(erpRealtimeReconnectAttempt++,6)))
+  );
   erpRealtimeReconnectTimer=setTimeout(connectErpRealtime,delay);
 }
 
 function connectErpRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269()){erpRealtimeSetConnected(false);return false;}
+  if(typeof WebSocket==="undefined"||navigator.onLine===false){erpRealtimeSetConnected(false);return false;}
+  if(wisentEgressBlockedUntilV269()){
+    erpRealtimeSetConnected(false);
+    scheduleErpRealtimeReconnect();
+    return false;
+  }
   if(erpRealtimeSocket&&[0,1].includes(erpRealtimeSocket.readyState))return true;
 
   clearTimeout(erpRealtimeReconnectTimer);
@@ -45994,11 +46071,17 @@ function launchV209RealtimeMessage(raw){
 function launchV209ScheduleRealtimeReconnect(){
   clearTimeout(launchRealtimeReconnectTimerV209);
   if(navigator.onLine===false)return;
-  const delay=Math.min(20000,900*Math.pow(1.8,Math.min(launchRealtimeReconnectAttemptV209++,6)));
+  const delay=wisentRealtimeResumeDelayV270(
+    Math.min(20000,900*Math.pow(1.8,Math.min(launchRealtimeReconnectAttemptV209++,6)))
+  );
   launchRealtimeReconnectTimerV209=setTimeout(launchV209ConnectRealtime,delay);
 }
 function launchV209ConnectRealtime(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(wisentEgressBlockedUntilV269()){
+    launchV209ScheduleRealtimeReconnect();
+    return false;
+  }
   if(launchRealtimeSocketV209&&[0,1].includes(launchRealtimeSocketV209.readyState))return true;
   clearTimeout(launchRealtimeReconnectTimerV209);
   try{
@@ -46842,11 +46925,17 @@ function coreRealtimeMessageV211(event){
 function coreScheduleReconnectV211(){
   clearTimeout(coreReconnectTimerV211);
   if(navigator.onLine===false)return;
-  const delay=Math.min(20000,900*Math.pow(1.8,Math.min(coreReconnectAttemptV211++,6)));
+  const delay=wisentRealtimeResumeDelayV270(
+    Math.min(20000,900*Math.pow(1.8,Math.min(coreReconnectAttemptV211++,6)))
+  );
   coreReconnectTimerV211=setTimeout(coreConnectRealtimeV211,delay);
 }
 function coreConnectRealtimeV211(){
-  if(typeof WebSocket==="undefined"||navigator.onLine===false||wisentEgressBlockedUntilV269())return false;
+  if(typeof WebSocket==="undefined"||navigator.onLine===false)return false;
+  if(wisentEgressBlockedUntilV269()){
+    coreScheduleReconnectV211();
+    return false;
+  }
   if(coreSocketV211&&[0,1].includes(coreSocketV211.readyState))return true;
   try{
     const base=String(SUPABASE_URL||"").replace(/^http/i,"ws").replace(/\/+$/g,"");
