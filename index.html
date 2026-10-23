@@ -16623,6 +16623,226 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
 .adminReauthHintV268{font-size:13px;line-height:1.5;color:var(--muted)}
 </style>
 
+<style id="wisent-v273-report-mobile-a4">
+/* ===== WISENT V273 — RELATÓRIO PDF MOBILE/A4 =====
+   Camada visual isolada: não altera dados, cálculos ou sincronização. */
+#reports{
+  min-width:0;
+  overflow-x:clip;
+}
+#reports .printPanel{
+  width:100%;
+  max-width:1240px;
+  min-width:0;
+  overflow-x:clip;
+}
+#reports #printArea{
+  width:100%;
+  max-width:1080px;
+  min-width:0;
+  overflow:hidden;
+}
+#reports #printArea::before{
+  background:linear-gradient(90deg,var(--pdf-text,#1c1810),var(--pdf-accent,#a98227),var(--pdf-text,#1c1810));
+}
+#reports .pdfBox:nth-child(1)::before{
+  background:linear-gradient(90deg,var(--pdf-text,#1c1810),var(--pdf-accent,#a98227));
+}
+#reports .pdfBox:nth-child(2)::before{
+  background:linear-gradient(90deg,var(--pdf-accent,#a98227),var(--pdf-text,#1c1810));
+}
+#reports .pdfBox:nth-child(3)::before{
+  background:linear-gradient(90deg,var(--pdf-text,#1c1810),var(--pdf-accent,#a98227));
+}
+#reports .pdfBox strong{
+  max-width:100%;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+#reports .printLogo{
+  object-fit:contain;
+}
+
+@media(max-width:760px){
+  #reports,
+  #reports .printPanel{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    margin-right:0;
+    margin-left:0;
+    overflow-x:clip;
+  }
+  #reports .printPanel{
+    padding:4px;
+  }
+  #reports #printArea{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    padding:clamp(14px,4vw,22px);
+    overflow:hidden;
+    border-radius:18px;
+  }
+  #reports .pdfCleanHeader{
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:start;
+    gap:12px;
+    margin-bottom:18px;
+    padding-bottom:16px;
+  }
+  #reports .pdfCleanHeader h1{
+    font-size:clamp(24px,7.4vw,32px);
+    overflow-wrap:anywhere;
+  }
+  #reports .pdfCleanHeader p{
+    font-size:12px;
+    line-height:1.45;
+    overflow-wrap:anywhere;
+  }
+  #reports .printLogo{
+    width:auto;
+    max-width:min(116px,32vw);
+    max-height:62px;
+    object-fit:contain;
+  }
+  #reports .pdfIdentity{
+    grid-template-columns:1fr;
+    grid-template-areas:"name" "coupon" "period";
+    gap:7px;
+    padding:17px;
+    border-radius:17px;
+  }
+  #reports #reportPeriod{
+    justify-content:flex-start;
+    margin-top:5px;
+    padding:11px 0 0;
+    border-top:1px solid color-mix(in srgb,var(--pdf-accent,#a98227) 32%,#e2e8f0);
+    border-left:0;
+    text-align:left;
+  }
+  #reports .pdfThreeCards{
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  #reports .pdfBox{
+    min-width:0;
+    min-height:0;
+    padding:17px 16px;
+    border-radius:16px;
+  }
+  #reports .pdfBox small{
+    min-height:0;
+    margin-bottom:9px;
+  }
+  #reports .pdfBox strong{
+    font-size:clamp(25px,8vw,30px);
+    overflow-wrap:anywhere;
+  }
+}
+
+@media(max-width:350px){
+  #reports .pdfCleanHeader{
+    grid-template-columns:1fr;
+  }
+  #reports .printLogo{
+    max-width:120px;
+    max-height:56px;
+  }
+}
+
+@media print{
+  @page{size:A4 portrait;margin:12mm}
+  body.print-report #reports,
+  body.print-report #reports .printPanel{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+  }
+  body.print-report #reports #printArea{
+    width:100%!important;
+    max-width:none!important;
+    min-width:0!important;
+    min-height:242mm!important;
+    margin:0!important;
+    padding:15mm 14mm 17mm!important;
+    overflow:hidden!important;
+    border:1px solid #d8c8a3!important;
+    border-radius:7mm!important;
+    background:linear-gradient(180deg,#ffffff 0%,#ffffff 72%,#fffefb 100%)!important;
+    box-shadow:none!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  body.print-report #reports #printArea::before{
+    height:2.2mm!important;
+    background:linear-gradient(90deg,var(--pdf-text,#1c1810),var(--pdf-accent,#a98227),var(--pdf-text,#1c1810))!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  body.print-report #reports .pdfCleanHeader{
+    grid-template-columns:minmax(0,1fr) auto!important;
+    align-items:center!important;
+    gap:9mm!important;
+    margin:0 0 9mm!important;
+    padding:1mm 0 6mm!important;
+  }
+  body.print-report #reports .printLogo{
+    width:auto!important;
+    max-width:45mm!important;
+    max-height:20mm!important;
+    object-fit:contain!important;
+  }
+  body.print-report #reports .pdfIdentity{
+    grid-template-columns:minmax(0,1fr) 52mm!important;
+    grid-template-areas:"name period" "coupon period"!important;
+    gap:2mm 7mm!important;
+    padding:7mm!important;
+  }
+  body.print-report #reports #reportPeriod{
+    justify-content:flex-end!important;
+    margin-top:0!important;
+    padding:0 0 0 7mm!important;
+    border-top:0!important;
+    border-left:1px solid #dfd0aa!important;
+    text-align:right!important;
+  }
+  body.print-report #reports .pdfThreeCards{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:4mm!important;
+  }
+  body.print-report #reports .pdfBox{
+    min-width:0!important;
+    min-height:39mm!important;
+    padding:6.5mm 5.5mm 5.5mm!important;
+    border-radius:5mm!important;
+    box-shadow:none!important;
+    break-inside:avoid!important;
+    page-break-inside:avoid!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  body.print-report #reports .pdfBox:nth-child(1)::before{
+    background:linear-gradient(90deg,var(--pdf-text,#1c1810),var(--pdf-accent,#a98227))!important;
+  }
+  body.print-report #reports .pdfBox:nth-child(2)::before{
+    background:linear-gradient(90deg,var(--pdf-accent,#a98227),var(--pdf-text,#1c1810))!important;
+  }
+  body.print-report #reports .pdfBox:nth-child(3)::before{
+    background:linear-gradient(90deg,var(--pdf-text,#1c1810),var(--pdf-accent,#a98227))!important;
+  }
+  body.print-report #reports .pdfBox strong{
+    max-width:100%!important;
+    font-size:20pt!important;
+    overflow-wrap:anywhere!important;
+  }
+}
+/* ===== FIM V273 RELATÓRIO PDF MOBILE/A4 ===== */
+</style>
+
 </head>
 <body class="page-dashboard authLocked">
 
@@ -16719,7 +16939,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V272</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V273</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19308,7 +19528,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V272";
+const APP_BUILD_VERSION="V273";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
