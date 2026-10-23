@@ -16939,7 +16939,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V274</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V275</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19528,7 +19528,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V274";
+const APP_BUILD_VERSION="V275";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
@@ -31422,13 +31422,52 @@ function wholesaleCollaboratorUserByKey(key){
   return row?.createdByUsername||"";
 }
 
+function normalizeWholesaleCollaboratorIdentity(value){
+  return String(value||"")
+    .trim()
+    .toLocaleLowerCase("pt-BR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g," ");
+}
+
+function wholesaleCollaboratorIdentityByKey(key){
+  key=String(key||"").trim();
+
+  const username=normalizeWholesaleCollaboratorIdentity(
+    wholesaleCollaboratorUserByKey(key)
+  );
+  if(username)return `user:${username}`;
+
+  const name=normalizeWholesaleCollaboratorIdentity(
+    wholesaleCollaboratorNameByKey(key)
+  );
+  if(name&&name!=="nao registrado"&&name!=="colaborador"){
+    return `name:${name}`;
+  }
+
+  return `key:${normalizeWholesaleCollaboratorIdentity(key)||"nao-registrado"}`;
+}
+
+function wholesaleCollaboratorKeysMatch(leftKey,rightKey){
+  return wholesaleCollaboratorIdentityByKey(leftKey)===wholesaleCollaboratorIdentityByKey(rightKey);
+}
+
 function renderWholesaleCollaboratorOptions(){
   const el=$("wholesaleCollabFilter");
   if(!el)return;
 
   const current=el.value||"";
   const map=wholesaleCollaboratorRegistry();
-  const options=[...map.values()].sort((a,b)=>String(a.name).localeCompare(String(b.name),"pt-BR"));
+  const identities=new Set();
+  const options=[...map.values()]
+    .filter(user=>{
+      const identity=wholesaleCollaboratorIdentityByKey(user.key);
+      if(identities.has(identity))return false;
+      identities.add(identity);
+      return true;
+    })
+    .sort((a,b)=>String(a.name).localeCompare(String(b.name),"pt-BR"));
 
   el.innerHTML=`<option value="">Todos os colaboradores</option>`+options.map(u=>{
     const label=`${u.name}${u.username?` • ${u.username}`:""}`;
@@ -31550,7 +31589,7 @@ function wholesaleCollaboratorFilteredRows(){
   */
   let rows=(state.wholesaleRetail||[]).slice();
 
-  if(collab)rows=rows.filter(w=>wholesaleCollaboratorKey(w)===collab);
+  if(collab)rows=rows.filter(w=>wholesaleCollaboratorKeysMatch(wholesaleCollaboratorKey(w),collab));
 
   if(start||end){
     rows=rows.filter(w=>{
@@ -31573,7 +31612,7 @@ function groupWholesaleCollaboratorRows(rows){
   rows.forEach(w=>{
     const key=wholesaleCollaboratorKey(w);
     const type=String(w.saleType||"Varejo").trim()||"Varejo";
-    const groupKey=key;
+    const groupKey=wholesaleCollaboratorIdentityByKey(key);
 
     if(!map.has(groupKey)){
       map.set(groupKey,{
@@ -31603,6 +31642,10 @@ function groupWholesaleCollaboratorRows(rows){
     const {types:ignoredTypes,...values}=group;
     return {
       ...values,
+      total:Math.round((Number(values.total||0)+Number.EPSILON)*100)/100,
+      real:Math.round((Number(values.real||0)+Number.EPSILON)*100)/100,
+      discount:Math.round((Number(values.discount||0)+Number.EPSILON)*100)/100,
+      freight:Math.round((Number(values.freight||0)+Number.EPSILON)*100)/100,
       type:types.length===1?types[0]:"Atacado + Varejo",
       receiptType:types.length===1?types[0]:""
     };
@@ -31641,7 +31684,7 @@ function wholesaleCollaboratorReceiptRows(key,type){
 
   return (state.wholesaleRetail||[])
     .filter(w=>{
-      if(key&&wholesaleCollaboratorKey(w)!==key)return false;
+      if(key&&!wholesaleCollaboratorKeysMatch(wholesaleCollaboratorKey(w),key))return false;
 
       const rowType=String(w.saleType||"Varejo").trim()||"Varejo";
       if(type&&rowType!==type)return false;

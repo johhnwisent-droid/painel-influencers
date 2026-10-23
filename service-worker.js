@@ -1,5 +1,5 @@
-const WISENT_VERSION="V274";
-const WISENT_CACHE="wisent-erp-static-v274-collaborator-sales-20261023a";
+const WISENT_VERSION="V275";
+const WISENT_CACHE="wisent-erp-static-v275-collaborator-identity-20261023a";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
