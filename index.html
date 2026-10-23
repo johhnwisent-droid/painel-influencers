@@ -16939,7 +16939,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V273</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V274</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19528,7 +19528,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V273";
+const APP_BUILD_VERSION="V274";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
@@ -31573,12 +31573,12 @@ function groupWholesaleCollaboratorRows(rows){
   rows.forEach(w=>{
     const key=wholesaleCollaboratorKey(w);
     const type=String(w.saleType||"Varejo").trim()||"Varejo";
-    const groupKey=`${key}__${type}`;
+    const groupKey=key;
 
     if(!map.has(groupKey)){
       map.set(groupKey,{
         key,
-        type,
+        types:new Set(),
         name:wholesaleCollaboratorNameByKey(key),
         username:wholesaleCollaboratorUserByKey(key),
         count:0,
@@ -31590,6 +31590,7 @@ function groupWholesaleCollaboratorRows(rows){
     }
 
     const g=map.get(groupKey);
+    g.types.add(type);
     g.count+=1;
     g.total+=Number(w.total||0);
     g.real+=Number(w.realReceived||0);
@@ -31597,7 +31598,15 @@ function groupWholesaleCollaboratorRows(rows){
     g.freight+=Number(w.freightCost||0);
   });
 
-  return [...map.values()].sort((a,b)=>{
+  return [...map.values()].map(group=>{
+    const types=[...group.types].sort((a,b)=>String(a).localeCompare(String(b),"pt-BR"));
+    const {types:ignoredTypes,...values}=group;
+    return {
+      ...values,
+      type:types.length===1?types[0]:"Atacado + Varejo",
+      receiptType:types.length===1?types[0]:""
+    };
+  }).sort((a,b)=>{
     if(b.total!==a.total)return b.total-a.total;
     return String(a.name).localeCompare(String(b.name),"pt-BR");
   });
@@ -31916,7 +31925,7 @@ function renderWholesaleCollaboratorPanel(){
           type="button"
           class="collabPersonButton"
           data-collab-key="${esc(g.key)}"
-          data-collab-type="${esc(g.type)}"
+          data-collab-type="${esc(g.receiptType)}"
           onclick="openWholesaleCollaboratorReceiptFromButton(this)"
           title="Abrir comprovante com produtos e pedidos"
         >
