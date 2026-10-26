@@ -17021,7 +17021,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V276</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V277</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19610,7 +19610,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V276";
+const APP_BUILD_VERSION="V277";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
@@ -27914,6 +27914,123 @@ function reportNumberV217(value){
   const parsed=Number(raw);
   return Number.isFinite(parsed)?parsed:0;
 }
+
+/* ===== V277 — CUPOM DE ATACADO E VAREJO NO RELATÓRIO DO INFLUENCER =====
+   Projeção somente de leitura: o pedido continua sendo a única fonte salva.
+   Nenhuma linha automática é enviada à fila de lançamentos ou ao Supabase. */
+function wholesaleCouponKeyV277(value){
+  return reportIdentityKeyV217(value);
+}
+
+function wholesaleCouponDerivedLaunchesV277(){
+  const influencers=Array.isArray(state.influencers)?state.influencers:[];
+  const couponOwners=new Map();
+
+  influencers.forEach(influencer=>{
+    const key=wholesaleCouponKeyV277(influencer?.coupon);
+    if(!key)return;
+    const owners=couponOwners.get(key)||[];
+    owners.push(influencer);
+    couponOwners.set(key,owners);
+  });
+
+  const roundMoney=value=>Math.round((Number(value||0)+Number.EPSILON)*100)/100;
+  return (Array.isArray(state.wholesaleRetail)?state.wholesaleRetail:[])
+    .filter(order=>{
+      if(!order?.id||order.deleted===true||order.deletedAt)return false;
+      const date=normalizeDateOnly(order.date);
+      if(!date||date<"2026-10-01")return false;
+      const status=reportIdentityKeyV217(order.orderStatus||order.status);
+      if(status==="cancelado"||status==="cancelada"||status==="excluido"||status==="excluida")return false;
+      return true;
+    })
+    .map(order=>{
+      const couponKey=wholesaleCouponKeyV277(order.couponName||order.couponUsed||order.coupon);
+      const owners=couponOwners.get(couponKey)||[];
+      const total=roundMoney(reportNumberV217(order.total));
+      if(!couponKey||owners.length!==1||!(total>0))return null;
+      const influencer=owners[0];
+      const date=normalizeDateOnly(order.date);
+      const month=date.slice(0,7);
+      return {
+        id:`wholesale-coupon-v277:${String(order.id)}`,
+        sourceType:"wholesaleCouponV277",
+        sourceId:String(order.id),
+        sourceCoupon:couponKey,
+        automaticSource:true,
+        date,
+        month,
+        accountingMonth:month,
+        periodMode:"day",
+        influencerId:String(influencer.id||""),
+        influencerName:String(influencer.name||""),
+        coupon:String(influencer.coupon||""),
+        origin:String(order.origin||"Atacado e Varejo"),
+        originKey:reportIdentityKeyV217(order.origin||"Atacado e Varejo"),
+        sold:total,
+        productCommission:roundMoney(total*reportNumberV217(influencer.productRate)/100),
+        cashCommission:roundMoney(total*reportNumberV217(influencer.cashRate)/100),
+        status:"Pendente",
+        pdfSent:false,
+        accumulate:false,
+        paid:false,
+        paidAt:"",
+        paidMonth:"",
+        paidMethod:"",
+        paidAccountingAt:"",
+        notes:`Venda vinculada automaticamente pelo cupom ${String(influencer.coupon||"")}`,
+        createdAt:String(order.createdAt||order.updatedAt||`${date}T00:00:00.000Z`),
+        updatedAt:String(order.updatedAt||order.createdAt||`${date}T00:00:00.000Z`)
+      };
+    })
+    .filter(Boolean)
+    .sort((a,b)=>String(a.date).localeCompare(String(b.date))||String(a.sourceId).localeCompare(String(b.sourceId)));
+}
+
+function effectiveInfluencerLaunchesV277(){
+  const manual=(Array.isArray(state.launches)?state.launches:[]).filter(Boolean);
+  const derived=wholesaleCouponDerivedLaunchesV277();
+  const explicitSourceIds=new Set();
+  const legacyManual=[];
+
+  manual.forEach(row=>{
+    const sourceId=String(row.sourceId||row.wholesaleOrderId||"").trim();
+    if(sourceId){
+      explicitSourceIds.add(sourceId);
+      return;
+    }
+    legacyManual.push(row);
+  });
+
+  const usedManual=new Set();
+  const unmatched=[];
+  derived.forEach(candidate=>{
+    if(explicitSourceIds.has(String(candidate.sourceId)))return;
+    const candidateCoupon=wholesaleCouponKeyV277(candidate.coupon||candidate.sourceCoupon);
+    const candidateDate=normalizeDateOnly(candidate.date);
+    const candidateCents=Math.round(reportNumberV217(candidate.sold)*100);
+    const manualIndex=legacyManual.findIndex((row,index)=>{
+      if(usedManual.has(index))return false;
+      const rowId=String(row.influencerId||"");
+      const linked=(Array.isArray(state.influencers)?state.influencers:[]).find(influencer=>String(influencer?.id||"")===rowId)||{};
+      const rowCoupon=wholesaleCouponKeyV277(row.coupon||row.influencerCoupon||linked.coupon);
+      const sameInfluencer=(rowId&&rowId===String(candidate.influencerId))||(rowCoupon&&rowCoupon===candidateCoupon);
+      const rowDate=normalizeDateOnly(row.date);
+      const rowMonth=String(row.accountingMonth||row.month||rowDate.slice(0,7));
+      const samePeriod=rowDate===candidateDate||(row.periodMode==="month"&&rowMonth===candidateDate.slice(0,7));
+      return sameInfluencer&&samePeriod&&
+        Math.round(reportNumberV217(row.sold)*100)===candidateCents;
+    });
+    if(manualIndex>=0){
+      usedManual.add(manualIndex);
+      return;
+    }
+    unmatched.push(candidate);
+  });
+
+  return [...manual,...unmatched];
+}
+/* ===== FIM V277 ===== */
 function reportInfluencerIdentityV217(infId){
   const selected=infById(infId)||{};
   const ids=new Set([String(infId??"")].filter(Boolean));
@@ -28001,7 +28118,7 @@ function reportLaunchAccumulatesV229(row){
 function reportLaunchRowsForRangeV218(infId,start,end){
   const startMonth=String(start||"").slice(0,7);
   const endMonth=String(end||"").slice(0,7);
-  return (state.launches||[])
+  return effectiveInfluencerLaunchesV277()
     .filter(row=>{
       const accountingMonth=launchRecordMonthV215(row);
       return row&&reportRecordBelongsToInfluencerV217(row,infId)&&row.status!=="Cancelado"&&accountingMonth&&accountingMonth>=startMonth&&accountingMonth<=endMonth;
@@ -28051,7 +28168,7 @@ function reportGeneratedForCoverageV218(infId,coverage,selectedMonth){
 
 function launchRowsForInfluencerMonthV215(infId,month=selectedMonth()){
   const targetMonth=validMonthValue(month)||selectedMonth();
-  return (state.launches||[])
+  return effectiveInfluencerLaunchesV277()
     .filter(row=>row&&reportRecordBelongsToInfluencerV217(row,infId)&&launchRecordMonthV215(row)===targetMonth)
     .slice()
     .sort((a,b)=>{
@@ -33473,7 +33590,7 @@ function reportCommissionLedgerEvents(infId,asOfDate){
   const historyRelatedIds=new Set(historyRows.map(row=>String(row.relatedId||"")).filter(Boolean));
   const historyKeys=new Set(historyRows.map(row=>`${normalizeDateOnly(row.createdAt||row.date)}|${row.type}`));
 
-  (state.launches||[]).forEach(row=>{
+  effectiveInfluencerLaunchesV277().forEach(row=>{
     const date=reportLaunchEffectiveDateV217(row);
     if(!row||!reportRecordBelongsToInfluencerV217(row,infId)||row.status==="Cancelado"||!date||date>end)return;
 
@@ -33758,7 +33875,7 @@ function reportHistoryForInfluencer(infId){
 function reportLegacyLastSentEnd(infId,beforeDate){
   const before=normalizeDateOnly(beforeDate)||"9999-12-31";
   const byMonth=new Map();
-  (state.launches||[]).forEach(row=>{
+  effectiveInfluencerLaunchesV277().forEach(row=>{
     const month=launchRecordMonthV215(row);
     const date=reportLaunchEffectiveDateV217(row);
     if(!row||!reportRecordBelongsToInfluencerV217(row,infId)||row.status==="Cancelado"||!month||!date||date>=before)return;
@@ -33794,7 +33911,7 @@ function reportCoverageRange(infId,month=selectedMonth()){
   const previousEnd=normalizeDateOnly(previous?.coverageEnd)||reportLegacyLastSentEnd(infId,selected.start);
   let start=previousEnd?reportDateAfter(previousEnd):selected.start;
 
-  const unsentDates=(state.launches||[])
+  const unsentDates=effectiveInfluencerLaunchesV277()
     .map(row=>({row,date:reportLaunchEffectiveDateV217(row),month:launchRecordMonthV215(row)}))
     .filter(item=>item.row&&reportRecordBelongsToInfluencerV217(item.row,infId)&&item.row.status!=="Cancelado"&&!reportBooleanV218(item.row.pdfSent)&&item.date&&item.month&&item.month<=selected.month)
     .map(item=>item.date)
