@@ -17031,7 +17031,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V278</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V279</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19622,7 +19622,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V278";
+const APP_BUILD_VERSION="V279";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
@@ -32339,6 +32339,31 @@ function wholesaleCurrentMonth(){
   return normalizeDateOnly(today()).slice(0,7);
 }
 
+/* V279 — Atacado e Varejo inicia no mês atual somente ao entrar na seção.
+   Renders de sincronização e a navegação listagem <-> comprovante preservam
+   qualquer período escolhido manualmente pelo usuário. */
+let wholesalePeriodEntryInitializedV279=false;
+
+function wholesaleIsSectionPageV279(page){
+  return page==="wholesaleRetail"||page==="wholesaleOrder";
+}
+
+function wholesaleShouldResetPeriodOnEntryV279(previousPage,nextPage,initialized=wholesalePeriodEntryInitializedV279){
+  if(nextPage!=="wholesaleRetail")return false;
+  if(!initialized)return true;
+  return !wholesaleIsSectionPageV279(previousPage);
+}
+
+function prepareWholesalePeriodOnEntryV279(previousPage,nextPage){
+  if(!wholesaleShouldResetPeriodOnEntryV279(previousPage,nextPage))return false;
+  if($("wholesaleFilterMonth"))$("wholesaleFilterMonth").value=wholesaleCurrentMonth();
+  if($("wholesaleFilterRangePicker"))$("wholesaleFilterRangePicker").value="";
+  writeWholesaleRange({start:"",end:""});
+  writeWholesalePeriodMode("month");
+  wholesalePeriodEntryInitializedV279=true;
+  return true;
+}
+
 function wholesaleRangeStorageKey(){
   return KEY+"_wholesale_range_filter_v200";
 }
@@ -32631,8 +32656,8 @@ function wholesaleCompareNewestFirstV228(a,b){
 
 const WHOLESALE_AUTO_REVEAL_KEY_V271=KEY+"_wholesale_auto_reveal_v271";
 function wholesaleShouldAutoRevealAllV271({allCount=0,visibleCount=0,mode="month",type="",status="",alreadyRevealed=false}={}){
-  return Number(allCount)>0&&Number(visibleCount)===0&&mode==="month"&&
-    !String(type||"").trim()&&!String(status||"").trim()&&!alreadyRevealed;
+  /* V279: mês vazio é um resultado válido. "Ver todos" permanece manual. */
+  return false;
 }
 function wholesaleAutoRevealAlreadyV271(){
   try{return sessionStorage.getItem(WHOLESALE_AUTO_REVEAL_KEY_V271)==="ok";}
@@ -34760,6 +34785,7 @@ function applyErpSectorAccessControl(){
 
 
 function showPage(id){
+  const previousPage=currentPage;
   let nextPage=id||"dashboard";
   const standaloneModules={suppliesPage:"insumos",commissionsPage:"comissoes"};
 
@@ -34784,6 +34810,7 @@ function showPage(id){
 
   const resolvedPage=id||"dashboard";
   const viewPage=standaloneModules[resolvedPage]?"erpTest":resolvedPage;
+  prepareWholesalePeriodOnEntryV279(previousPage,resolvedPage);
   const samePage=currentPage===resolvedPage&&$(viewPage)?.classList.contains("active");
 
   currentPage=resolvedPage;
