@@ -2834,6 +2834,16 @@ canvas{
   color:#047857;
   border-color:#bbf7d0;
 }
+.originPill.instagram{
+  background:linear-gradient(135deg,#fdf2f8,#f5f3ff);
+  color:#9d174d;
+  border-color:#f0abfc;
+}
+.originPill.whatsapp{
+  background:#dcfce7;
+  color:#166534;
+  border-color:#4ade80;
+}
 .feePill{
   display:inline-flex;
   align-items:center;
@@ -17021,7 +17031,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V277</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V278</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -17239,6 +17249,8 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
                   <select id="wholesaleOrigin" required>
                     <option value="Site">Site</option>
                     <option value="Loja Física">Loja Física</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="WhatsApp">WhatsApp</option>
                   </select>
                 </label>
               </div>
@@ -19610,7 +19622,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V277";
+const APP_BUILD_VERSION="V278";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
@@ -31312,7 +31324,10 @@ function cleanProductLines(value){
 
 
 function originPillClass(origin){
-  return origin==="Loja Física" ? "loja" : "site";
+  if(origin==="Loja Física")return "loja";
+  if(origin==="Instagram")return "instagram";
+  if(origin==="WhatsApp")return "whatsapp";
+  return "site";
 }
 
 

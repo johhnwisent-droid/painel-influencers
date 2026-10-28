@@ -1,5 +1,5 @@
-const WISENT_VERSION="V277";
-const WISENT_CACHE="wisent-erp-static-v277-wholesale-coupon-report-20261026a";
+const WISENT_VERSION="V278";
+const WISENT_CACHE="wisent-erp-static-v278-wholesale-origins-20261028a";
 const WISENT_CACHE_PREFIX="wisent-erp-static-";
 const WISENT_META_CACHE="wisent-erp-meta-v1";
 const WISENT_STABLE_REQUEST="./__wisent_stable_cache__";
