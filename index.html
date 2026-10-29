@@ -17031,7 +17031,7 @@ body.wholesale-receipt-measure-v259 #wholesaleReceiptPrint.wholesaleReceiptOnePa
     </nav>
   </aside>
   <main class="main">
-<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V279</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
+<div class="top noPrint"><div><h2 id="pageTitle">Visão geral</h2><div id="cloudStatus" class="muted">Conectando à nuvem...</div><div class="cloudDiagLine"><div id="cloudDebug" class="cloudDebug">Diagnóstico: iniciando painel...</div><button type="button" class="copyCloudDiagBtn noPrint" onclick="copyCloudDiagnostics()">Copiar diagnóstico</button></div><div class="versionBadge"><span></span> VERSÃO V280</div></div><div class="topUserBox profileMenuBox" id="topUserBox">
       <button type="button" class="profileMenuTrigger" id="profileMenuTrigger" onclick="toggleProfileMenu(event)">
         <span id="loggedUserName">Sem login</span>
         <span class="profileMenuArrow">▾</span>
@@ -19622,7 +19622,7 @@ function reloadAppNow(){
   url.searchParams.set("sw",Date.now().toString());
   window.location.replace(url.toString());
 }
-const APP_BUILD_VERSION="V279";
+const APP_BUILD_VERSION="V280";
 const CORE_RECORDS_AUTHORITATIVE_V212=true;
 /* V269 — orçamento de tráfego Supabase.
    Realtime continua entregando alterações pontuais. As leituras completas são
@@ -27408,7 +27408,7 @@ function normalize(){
     w.discountPercent=boundedPercent(w.discountPercent);
     w.cascadeDiscountPercent=boundedPercent(w.cascadeDiscountPercent);
     w.origin=w.origin||"Site";
-    if(!["Site","Loja Física"].includes(w.origin))w.origin="Site";
+    if(!["Site","Loja Física","Instagram","WhatsApp"].includes(w.origin))w.origin="Site";
     w.paymentMethod=w.paymentMethod||"PIX";
     w.installments=Math.min(20,Math.max(1,Math.round(finiteNumber(w.installments,1))));
     w.interestPayer=w.interestPayer||"loja";
